@@ -42,6 +42,13 @@
   .hidden {
       display: none;
     }
+
+    .center-wrapper {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full height of the viewport */
+  }
 </style>
 </head>
 <body>
@@ -64,18 +71,18 @@
 </div>
 </header>
 
-<div class="w3-row-padding w3-margin-top" style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-  <div class="w3-half full-height">
-    <div class="w3-card w3-container full-height w3-center">
-      <h3>Quote</h3><br>
-      <div class="form-container">
-        <form action="/submit" method="post" class="full-height">
-          <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea full-height" rows="8" cols="50" placeholder="copy and paste your inventory here"></textarea>
-        </form>
-      </div>
+<div class="center-wrapper">
+  <div class="w3-card w3-container w3-center">
+    <h3>Quote</h3><br>
+    <div class="form-container">
+      <form action="/submit" method="post" class="full-height">
+        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea full-height" rows="8" cols="50" placeholder="copy and paste your inventory here"></textarea>
+      </form>
     </div>
   </div>
 </div>
+
+
 <div class="w3-row-padding">
   <hr>
   <br> 
