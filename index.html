@@ -64,9 +64,9 @@
 </div>
 </header>
 
-<div class="w3-row-padding w3-margin-top">
+<div class="w3-row-padding w3-margin-top" style="height: 100vh; display: flex; align-items: center; justify-content: center;">
   <div class="w3-half full-height">
-    <div class="w3-card w3-containerfull-height">
+    <div class="w3-card w3-container full-height w3-center">
       <h3>Quote</h3><br>
       <div class="form-container">
         <form action="/submit" method="post" class="full-height">
@@ -75,11 +75,13 @@
       </div>
     </div>
   </div>
-  </div>
+</div>
 <div class="w3-row-padding">
   <hr>
   <br> 
 </div>
+
+<!--On Click Button Example-->
 <button onclick="showContent()">Click Me to Display Content</button>
 
 <div id="content" class="hidden">
@@ -110,6 +112,7 @@ function w3_close() {
   document.getElementById("mySidebar").style.display = "none";
 }
 
+// Hidden until clicked
 function showContent() {
       var content = document.getElementById('content');
       content.classList.toggle('hidden');
