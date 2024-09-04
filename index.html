@@ -7,6 +7,16 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<style>
+    .full-width-textarea {
+      width: 100%;
+      height: 100%;
+      resize: none; /* Prevent resizing */
+    }
+  </style>
+
+
 </head>
 <body>
 
@@ -33,7 +43,7 @@
   <div class="w3-card w3-container" style="min-height:460px">
   <h3>Quote</h3><br>
     <form action="/submit" method="post">
-        <textarea id="message" name="message" class="w3-input w3-border w3-round" rows="4" cols="50" placeholder="copy and paste your inventory here"></textarea>
+        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="4" cols="50" placeholder="copy and paste your inventory here"></textarea>
     </form>
 </div>
 </div>
