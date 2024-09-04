@@ -9,15 +9,22 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-    .full-width-textarea {
-      width: 100%;
-      box-sizing: border-box; /* Ensures padding is included in the width */
-      margin-bottom: 20px; /* Add margin below textarea */
-      resize: none; /* Prevent resizing */
-    }
-  </style>
-
-
+  .full-width-textarea {
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    margin-bottom: 20px; /* Add margin below textarea */
+    resize: none; /* Prevent resizing */
+    height: 100%; /* Fill the height of the container */
+  }
+  .full-height {
+    height: 100%;
+  }
+  .form-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
 </head>
 <body>
 
@@ -38,47 +45,47 @@
   </div>
 </header>
 
-
 <div class="w3-row-padding w3-center w3-margin-top">
-<div class="w3-full">
-  <div class="w3-card w3-container" style="min-height:460px">
-  <h3>Quote</h3><br>
-    <form action="/submit" method="post">
-        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="4" cols="50" placeholder="copy and paste your inventory here"></textarea>
-    </form>
-</div>
-</div>
-<br>
-<div class="w3-half">
-  <div class="w3-card w3-container" style="min-height:460px">
-  <h3>Market Watch</h3><br>
+  <div class="w3-full full-height">
+    <div class="w3-card w3-container full-height">
+      <h3>Quote</h3><br>
+      <div class="form-container">
+        <form action="/submit" method="post" class="full-height">
+          <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea full-height" rows="4" cols="50" placeholder="copy and paste your inventory here"></textarea>
+        </form>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="w3-half full-height">
+    <div class="w3-card w3-container full-height">
+      <h3>Market Watch</h3><br>
+    </div>
+  </div>
+
+  <div class="w3-half full-height">
+    <div class="w3-card w3-container full-height">
+      <h3>Refined Values</h3><br>
+    </div>
   </div>
 </div>
 
-<div class="w3-half">
-  <div class="w3-card w3-container" style="min-height:460px">
-  <h3>Refined Values</h3><br>
-</div>
-</div>
-
-
 <div class="w3-row-padding">
-<hr>
-<br> 
-</div>
+  <hr>
+  <br> 
 </div>
 
 <!-- Footer -->
 <footer class="w3-container w3-theme-dark w3-padding-16">
-    <p class="w3-center"><em>that was stellar</em></p>
+  <p class="w3-center"><em>that was stellar</em></p>
   <div style="position:relative;bottom:20px;" class="w3-tooltip w3-right">
-    <span class="w3-text w3-theme-light w3-padding">back to the surface</span>    
+    <span class="w3-text w3-theme-light w3-padding">back to the surface</span>   
     <a class="w3-text-white" href="#myHeader"><span class="w3-xlarge">
     <i class="fa fa-chevron-circle-up"></i></span></a>
   </div>
 </footer>
 
-<!-- Script for Sidebar, Tabs, Accordions, Progress bars and slideshows -->
+
 <script>
 // Side navigation
 function w3_open() {
@@ -91,7 +98,6 @@ function w3_open() {
 function w3_close() {
   document.getElementById("mySidebar").style.display = "none";
 }
-
 </script>
 
 </body>
