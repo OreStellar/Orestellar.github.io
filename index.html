@@ -122,7 +122,31 @@ header {
         0 12px 8px rgba(0, 0, 0, 0.7);
 }
 
+#leftContainer {
+    background-image: url('images/Contract 2.png'); /* Add your image */
+    background-size: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 630px;
+    height: 418px;
+    position: relative;
+    color: white;
+    border-radius: 15px;
+    margin-right: 20px; /* Add margin on the right */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: expand 1.5s ease-out;
+}
 
+#leftContainerText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
 </style>
 </head>
 <body>
@@ -135,6 +159,11 @@ header {
 </header>
 
 <div class="container-wrapper">
+    <!-- Left container (hidden initially) -->
+    <div id="leftContainer" class="total-cost-container hidden">
+      <p id="leftContainerText">Left Container</p>
+    </div>
+  
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Quote</h3><br>
     <div class="form-container">
@@ -377,7 +406,8 @@ function formatNumberWithCommas(number) {
 }
 
 function showContent() {
-    var totalCostContainer = document.getElementById('totalCostContainer');
+  var totalCostContainer = document.getElementById('totalCostContainer');
+    var leftContainer = document.getElementById('leftContainer');
     var textarea = document.getElementById('message').value;
 
     // Reset content before updating
@@ -412,7 +442,9 @@ function showContent() {
 
     // Display total cost and invalid items
     document.getElementById('totalCostText').innerHTML = resultText;
+    // Show both containers
     totalCostContainer.classList.remove('hidden');
+    leftContainer.classList.remove('hidden');
 }
 </script>
 
