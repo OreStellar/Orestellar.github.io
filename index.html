@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
+
 <style>
 html, body {
     background-color: black;
@@ -143,19 +144,14 @@ header {
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     background-color: #000000; /* Background color to match the other containers */
-    margin-bottom: 10px; /* Space between this container and the main container */
+    margin-bottom: 20px; /* Space between this container and the main container */
 }
 
 .info-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-}
-
-.info-button .w3-button {
-  border-radius: 50%;
-  padding: 15px;
-}
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
 
 </style>
 </head>
@@ -167,24 +163,25 @@ header {
   </div>
   <hr>
 </header>
+  <!-- Floating Info Button -->
+  <div class="info-button">
+    <button onclick="document.getElementById('infoModal').style.display='block'" class="w3-button w3-theme">i</button>
+</div>
 
-<div class="info-button">
-    <a href="#infoModal" class="w3-button w3-theme">i</a>
-  </div>
-  
-  <!-- Info Modal (optional) -->
-  <div id="infoModal" class="w3-modal">
+<!-- Info Modal -->
+<div id="infoModal" class="w3-modal">
     <div class="w3-modal-content">
-      <header class="w3-container w3-theme">
-        <span onclick="document.getElementById('infoModal').style.display='none'"
-        class="w3-button w3-display-topright">&times;</span>
-        <h2>Information</h2>
-      </header>
-      <div class="w3-container">
-        <p>Here is some additional information about the page.</p>
-      </div>
+        <header class="w3-container w3-theme">
+            <span onclick="document.getElementById('infoModal').style.display='none'"
+            class="w3-button w3-display-topright">&times;</span>
+            <h2>Information</h2>
+        </header>
+        <div class="w3-container">
+            <p>Here is some additional information about the page.</p>
+        </div>
     </div>
-  </div>
+</div>
+
 
 <div class="container-wrapper">
     <!-- Left container (hidden initially) -->
@@ -480,6 +477,6 @@ function showContent() {
     leftContainer.classList.remove('hidden');
 }
 </script>
-
+<script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
