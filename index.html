@@ -113,6 +113,12 @@ header {
     color: white; /* Change the color if needed */
     text-align: center;
 }
+
+.w3-button.custom-button:hover {
+    background: linear-gradient(45deg, #e4e9e4, #7d817d); /* Change gradient on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Darker shadow on hover */
+    color: black;
+}
 </style>
 </head>
 <body>
@@ -131,7 +137,7 @@ header {
       <form action="/submit" method="post" class="full-height">
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320&#10;Compressed Ytirium 60253&#10;Compressed Ueganite 10403&#10;Compressed Ducinium 2402"></textarea>
       </form>
-      <button onclick="showContent()" class="w3-button w3-round">Submit</button>
+      <button onclick="showContent()" class="w3-button w3-round custom-button">Submit</button>
     </div>
   </div>
 
