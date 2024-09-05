@@ -137,6 +137,15 @@ header {
     animation: expand 1.5s ease-out;
 }
 
+#unrecognizedItemsContainer {
+    width: 630px; /* Match the width of the other containers */
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #333; /* Background color to match the other containers */
+    margin-bottom: 20px; /* Space between this container and the main container */
+}
+
 </style>
 </head>
 <body>
@@ -149,6 +158,9 @@ header {
 </header>
 
 <div class="container-wrapper">
+    <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
+        <p id="unrecognizedItemsText" style="color: red;"></p>
+      </div>
     <!-- Left container (hidden initially) -->
     <div id="leftContainer" class="total-cost-container hidden">
     </div>
@@ -429,6 +441,12 @@ function showContent() {
         resultText += '<br><br><span style="color: red;">Unrecognized items: ' + invalidItems.join(', ') + '</span>';
     }
 
+    if (invalidItems.length > 0) {
+        var unrecognizedItems = 'Unrecognized items: ' + invalidItems.join(', ');
+        document.getElementById('unrecognizedItemsText').innerHTML = unrecognizedItems;
+        unrecognizedItemsContainer.classList.remove('hidden'); // Show unrecognized items container
+    }
+    
     // Display total cost and invalid items
     document.getElementById('totalCostText').innerHTML = resultText;
     // Show both containers
