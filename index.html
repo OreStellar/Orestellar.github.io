@@ -86,10 +86,10 @@ html, body {
 
 <script>
 const priceList = {
-    "Ytirium": "5.00 isk",
-    "Jet Ochre": "10.00 isk",
-    "Compressed Ytirium": "7.50 isk",
-    "Compressed Ducinium": "12.00 isk"
+    "Ytirium": 5.00,          // Price per unit
+    "Jet Ochre": 10.00,       // Price per unit
+    "Compressed Ytirium": 7.50, // Price per unit
+    "Compressed Ducinium": 12.00 // Price per unit
 };
 
 function showContent() {
@@ -108,16 +108,16 @@ function showContent() {
         var quantity = parseInt(matches[2]);
 
         if (priceList[item] !== undefined) {
-            var price = parseFloat(priceList[item].replace(' isk', '')); // Extract numeric value
+            var price = priceList[item];
             var cost = quantity * price;
             totalCost += cost;
-            result += item + ': ' + quantity + ' isk x ' + priceList[item] + ' = isk ' + cost.toFixed(2) + '<br>';
+            result += item + ': ' + quantity + ' units x ' + price.toFixed(2) + ' isk = ' + cost.toFixed(2) + ' isk<br>';
         } else {
-            result += item + ': ' + quantity + ' isk (price not found)<br>';
+            result += item + ': ' + quantity + ' units (price not found)<br>';
         }
     }
 
-    result += '<br><strong>Total Cost: isk ' + totalCost.toFixed(2) + '</strong>';
+    result += '<br><strong>Total Cost: ' + totalCost.toFixed(2) + ' isk</strong>';
 
     // Display extracted data and total cost
     document.getElementById('extractedData').innerHTML = result;
