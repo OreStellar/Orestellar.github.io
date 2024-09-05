@@ -36,7 +36,7 @@ header {
 }
 
 .main-container {
-    margin: 0 auto;
+    margin: 0 auto
     flex-shrink: 0; /* Prevent shrinking */
     width: 630px; /* Set the desired width */
     height: 418px; 
@@ -46,7 +46,6 @@ header {
     align-items: center;
     animation: expand 1.5s ease-out; /* Apply the animation on load */
 }
-
 @keyframes expand {
     from {
         transform: scale(0.5); /* Start small */
@@ -104,6 +103,17 @@ header {
     text-align: center;
 }
 
+#additionalText {
+    position: absolute;
+    top: 86%;  /* Adjust to position it vertically */
+    left: 55%; /* Adjust to center horizontally */
+    transform: translate(-50%, -50%);
+    font-size: 16px; /* Adjust font size */
+    font-weight: bold;
+    color: white; /* Change the color if needed */
+    text-align: center;
+}
+
 .quote-text {
     font-style: italic; /* Italicize the text */
     text-shadow: 
@@ -112,31 +122,7 @@ header {
         0 12px 8px rgba(0, 0, 0, 0.7);
 }
 
-#newContainer {
-    background-image: url('images/Contract 1.png'); /* Add your image */
-    background-size: auto; /* Keep the actual size of the image */
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 630px; /* Same size as the total-cost-container */
-    height: 418px;
-    position: relative;
-    color: white;
-    border-radius: 15px;
-    margin-left: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    animation: expand 1.5s ease-out;
-}
 
-#newContainerText {
-    position: absolute;
-    top: 52%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-}
 </style>
 </head>
 <body>
@@ -150,7 +136,7 @@ header {
 
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
-    <h3 class="quote-text">Morgan</h3><br>
+    <h3 class="quote-text">Quote</h3><br>
     <div class="form-container">
       <form action="/submit" method="post" class="full-height">
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320&#10;Compressed Ytirium 60253&#10;Compressed Ueganite 10403&#10;Compressed Ducinium 2402"></textarea>
@@ -163,10 +149,6 @@ header {
     <p id="totalCostText">0</p>
     <p id="additionalText">that was stellar</p> 
   </div>
-
-    <!-- New container on the right -->
-    <div id="newContainer" class="total-cost-container hidden">
-    </div>
 </div>
 
 <script>
