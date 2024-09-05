@@ -87,7 +87,7 @@ header {
       <form action="/submit" method="post" class="full-height">
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Compressed Ytirium 60253&#10;Compressed Ducinium 2402"></textarea>
       </form>
-      <button onclick="showContent()">Submit</button>
+      <button onclick="showContent()" class="w3-button w3-black w3-round">Submit</button>
     </div>
   </div>
 
@@ -112,11 +112,15 @@ function formatNumberWithCommas(number) {
 function showContent() {
     var totalCostContainer = document.getElementById('totalCostContainer');
     var textarea = document.getElementById('message').value;
-    
+
+    // Reset content before updating
+    document.getElementById('totalCostText').innerHTML = '';  
+
     // Define regex pattern
     var regex = /([\w\s]+?)\s+(\d+)/g;
     var matches;
     var totalCost = 0;
+    var invalidItems = [];
 
     // Iterate through all matches
     while ((matches = regex.exec(textarea)) !== null) {
@@ -127,11 +131,20 @@ function showContent() {
             var price = priceList[item];
             var cost = quantity * price;
             totalCost += cost;
+        } else {
+            invalidItems.push(item); // Collect invalid items
         }
     }
 
-    // Display total cost with commas
-    document.getElementById('totalCostText').innerHTML = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
+    var resultText = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
+    
+    // Show invalid items, if any
+    if (invalidItems.length > 0) {
+        resultText += '<br><br><span style="color: red;">Unrecognized items: ' + invalidItems.join(', ') + '</span>';
+    }
+
+    // Display total cost and invalid items
+    document.getElementById('totalCostText').innerHTML = resultText;
     totalCostContainer.classList.remove('hidden');
 }
 </script>
