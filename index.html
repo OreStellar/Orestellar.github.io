@@ -26,13 +26,19 @@ header {
     flex-shrink: 0; /* Prevent header from shrinking */
 }
 
-.center-wrapper {
+.container-wrapper {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    flex-grow: 1; /* Allow container to grow and fill the remaining space */
+    height: 100%;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.main-container {
+    flex: 1; /* Main container takes available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .w3-card, .w3-container {
@@ -53,6 +59,16 @@ header {
 .hidden {
     display: none;
 }
+
+.total-cost-container {
+    width: 300px; /* Width of the new container */
+    background-color: #333;
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-left: 20px; /* Space between containers */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
 </style>
 </head>
 <body>
@@ -64,19 +80,19 @@ header {
   <hr>
 </header>
 
-<div class="center-wrapper">
-  <div class="w3-card w3-container w3-center">
+<div class="container-wrapper">
+  <div class="main-container w3-card w3-container w3-center">
     <h3>Quote</h3><br>
     <div class="form-container">
       <form action="/submit" method="post" class="full-height">
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Compressed Ytirium 60253&#10;Compressed Ducinium 2402"></textarea>
       </form>
       <button onclick="showContent()">Submit</button>
-      <br>
-      <div id="content" class="hidden">
-        <p class="w3-center"><em id="extractedData">Total cost will appear here</em></p>
-      </div>
     </div>
+  </div>
+
+  <div id="totalCostContainer" class="total-cost-container hidden">
+    <p id="totalCostText" class="w3-center">Total cost will appear here</p>
   </div>
 </div>
 
@@ -94,7 +110,7 @@ function formatNumberWithCommas(number) {
 }
 
 function showContent() {
-    var content = document.getElementById('content');
+    var totalCostContainer = document.getElementById('totalCostContainer');
     var textarea = document.getElementById('message').value;
     
     // Define regex pattern
@@ -115,8 +131,8 @@ function showContent() {
     }
 
     // Display total cost with commas
-    document.getElementById('extractedData').innerHTML = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
-    content.classList.toggle('hidden');
+    document.getElementById('totalCostText').innerHTML = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
+    totalCostContainer.classList.remove('hidden');
 }
 </script>
 
