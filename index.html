@@ -157,10 +157,11 @@ header {
   <hr>
 </header>
 
+<div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
+    <p id="unrecognizedItemsText" style="color: red;"></p>
+  </div>
+
 <div class="container-wrapper">
-    <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
-        <p id="unrecognizedItemsText" style="color: red;"></p>
-      </div>
     <!-- Left container (hidden initially) -->
     <div id="leftContainer" class="total-cost-container hidden">
     </div>
@@ -437,16 +438,13 @@ function showContent() {
     var resultText = formatNumberWithCommas(totalCost.toFixed(2));
     
     // Show invalid items, if any
-    if (invalidItems.length > 0) {
-        resultText += '<br><br><span style="color: red;">Unrecognized items: ' + invalidItems.join(', ') + '</span>';
-    }
 
     if (invalidItems.length > 0) {
         var unrecognizedItems = 'Unrecognized items: ' + invalidItems.join(', ');
         document.getElementById('unrecognizedItemsText').innerHTML = unrecognizedItems;
         unrecognizedItemsContainer.classList.remove('hidden'); // Show unrecognized items container
     }
-    
+
     // Display total cost and invalid items
     document.getElementById('totalCostText').innerHTML = resultText;
     // Show both containers
