@@ -85,23 +85,41 @@ html, body {
 </div>
 
 <script>
+const priceList = {
+    "Ytirium": 5.00,
+    "Jet Ochre": 10.00,
+    "Compressed Ytirium": 7.50,
+    "Compressed Ducinium": 12.00
+};
+
 function showContent() {
     var content = document.getElementById('content');
     var textarea = document.getElementById('message').value;
     
     // Define regex pattern
-    var regex = /(\w+[\w\s]*?)\s+(\d+)/g;
+    var regex = /([\w\s]+?)\s+(\d+)/g;
     var matches;
     var result = '';
+    var totalCost = 0;
 
     // Iterate through all matches
     while ((matches = regex.exec(textarea)) !== null) {
         var item = matches[1].trim();
-        var quantity = matches[2];
-        result += item + ': ' + quantity + '<br>';
+        var quantity = parseInt(matches[2]);
+
+        if (priceList[item] !== undefined) {
+            var price = priceList[item];
+            var cost = quantity * price;
+            totalCost += cost;
+            result += item + ': ' + quantity + ' units x $' + price.toFixed(2) + ' = $' + cost.toFixed(2) + '<br>';
+        } else {
+            result += item + ': ' + quantity + ' units (price not found)<br>';
+        }
     }
 
-    // Display extracted data
+    result += '<br><strong>Total Cost: $' + totalCost.toFixed(2) + '</strong>';
+
+    // Display extracted data and total cost
     document.getElementById('extractedData').innerHTML = result;
     content.classList.toggle('hidden');
 }
