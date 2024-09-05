@@ -34,7 +34,9 @@ header {
 }
 
 .main-container {
-    flex: 1; /* Main container takes available space */
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 300px; /* Set the desired width */
+    height: auto; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -57,7 +59,7 @@ header {
     color: white; /* Solid dark grey background */
     opacity: 1; /* Ensure full opacity */
     border-radius: 15px; /* Add rounded corners */
-    width: 300px
+    
 }
 
 .full-width-textarea {
