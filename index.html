@@ -61,13 +61,28 @@ header {
 }
 
 .total-cost-container {
-    width: 300px; /* Width of the new container */
-    background-color: #333;
+    width: 300px;
+    height: 200px; /* Adjust the height as per the image size */
+    background-image: url('images/Contract 2.png'); /* Add your image here */
+    background-size: cover; /* Cover the container with the image */
+    background-position: center;
+    position: relative; /* Make it a positioned element */
     color: white;
     border-radius: 15px;
-    padding: 20px;
-    margin-left: 20px; /* Space between containers */
+    margin-left: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+}
+
+#totalCostText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
 }
 </style>
 </head>
@@ -92,7 +107,7 @@ header {
   </div>
 
   <div id="totalCostContainer" class="total-cost-container hidden">
-    <p id="totalCostText" class="w3-center">Total cost will appear here</p>
+    <p id="totalCostText">Total cost will appear here</p>
   </div>
 </div>
 
