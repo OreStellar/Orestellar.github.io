@@ -88,6 +88,11 @@ const priceList = {
     "Compressed Ducinium": 12.00 // Price per unit
 };
 
+// Function to add commas to a number
+function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function showContent() {
     var content = document.getElementById('content');
     var textarea = document.getElementById('message').value;
@@ -109,8 +114,8 @@ function showContent() {
         }
     }
 
-    // Display total cost only
-    document.getElementById('extractedData').innerHTML = '<strong>Total Cost: ' + totalCost.toFixed(2) + ' isk</strong>';
+    // Display total cost with commas
+    document.getElementById('extractedData').innerHTML = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
     content.classList.toggle('hidden');
 }
 </script>
