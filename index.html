@@ -157,9 +157,6 @@ header {
   <hr>
 </header>
 
-<div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
-    <p id="unrecognizedItemsText" style="color: red;"></p>
-  </div>
 
 <div class="container-wrapper">
     <!-- Left container (hidden initially) -->
@@ -173,6 +170,9 @@ header {
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320&#10;Compressed Ytirium 60253&#10;Compressed Ueganite 10403&#10;Compressed Ducinium 2402"></textarea>
       </form>
       <button onclick="showContent()" class="w3-button w3-black w3-round">Submit</button>
+      <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
+        <p id="unrecognizedItemsText" style="color: red;"></p>
+      </div>
     </div>
   </div>
 
