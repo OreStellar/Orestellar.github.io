@@ -39,6 +39,17 @@ header {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    animation: expand 1s ease-out; /* Apply the animation on load */
+}
+@keyframes expand {
+    from {
+        transform: scale(0.5); /* Start small */
+        opacity: 0.5;          /* Start with some transparency */
+    }
+    to {
+        transform: scale(1);   /* Final size (normal) */
+        opacity: 1;            /* Fully opaque */
+    }
 }
 
 .w3-card, .w3-container {
