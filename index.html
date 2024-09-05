@@ -9,6 +9,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
+
+html, body {
+
+    background-color: black;
+    color: white;
+  }
   .full-width-textarea {
     width: 100%;
     box-sizing: border-box; /* Ensures padding is included in the width */
@@ -39,86 +45,56 @@
     padding-top: 56.25%; /* Aspect ratio (16:9) */
     height: 0;
   }
+  .hidden {
+      display: none;
+    }
 
+    .center-wrapper {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 45vh; /* Full height of the viewport */
+  }
+  .w3-card, .w3-container {
+    background-color: #333;
+    color: white; /* Solid dark grey background */
+    opacity: 1; /* Ensure full opacity */
+    border-radius: 15px; /* Add rounded corners */
+}
 </style>
 </head>
 <body>
-
-<!-- Side Navigation -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
-  <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
-  <a href="#" class="w3-bar-item w3-button">Get a quote</a>
-  <a href="#" class="w3-bar-item w3-button">Link 2</a>
-  <a href="#" class="w3-bar-item w3-button">Link 3</a>
-  <a href="#" class="w3-bar-item w3-button">Link 4</a>
-</nav>
 
 <header class="w3-container w3-theme w3-padding" id="myHeader">
   <div class="w3-center">
     <img src="images/OreStellar Header.png" alt="Header Image" style="width: 300px; height: auto;">
   </div>
-  <div class="w3-left">
-  <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
-</div>
+  <hr>
 </header>
 
-<div class="w3-row-padding w3-center w3-margin-top">
-  <div class="w3-half full-height">
-    <div class="w3-card w3-container full-height">
-      <h3>Quote</h3><br>
-      <div class="form-container">
-        <form action="/submit" method="post" class="full-height">
-          <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea full-height" rows="8" cols="50" placeholder="copy and paste your inventory here"></textarea>
-        </form>
-      </div>
-    </div>
-  </div>
-  <br>
-  <div class="w3-half full-height">
-    <div class="w3-card w3-container full-height">
-      <h3>Market Watch</h3><br>
-    </div>
-  </div>
-<br>
-  <div class="w3-half full-height">
-    <div class="w3-card w3-container full-height">
-      <h3>Refined Values</h3><br>
-      <div class="iframe-container">
-        <iframe src="https://docs.google.com/spreadsheets/d/1ztS4BCTdt9HNesMJm1dQZPaRc0rdUtTMzkYqdHHXzxE/pubhtml?gid=1775135720&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
-    </div>
-</div>
-
-
-  </div>
-</div>
-
-<div class="w3-row-padding">
-  <hr>
-  <br> 
-</div>
-
-<!-- Footer -->
-<footer class="w3-container w3-theme-dark w3-padding-16">
+<div class="center-wrapper">
+  <div class="w3-card w3-container w3-center">
+    <h3>Quote</h3><br>
+    <div class="form-container">
+      <form action="/submit" method="post" class="full-height">
+        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea full-height" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Compressed Ytirium 60253&#10;Compressed Ducinium 2402"></textarea>
+      </form>
+      <button onclick="showContent()">Submit</button>
+      <br>
+<div id="content" class="hidden">
   <p class="w3-center"><em>that was stellar</em></p>
-  <div style="position:relative;bottom:10px;" class="w3-tooltip w3-center">
-    <a class="w3-text-white" href="#myHeader"><span class="w3-xlarge">
-    <i class="fa fa-chevron-circle-up"></i></span></a>
+</div>
+    </div>
   </div>
-</footer>
-
+</div>
 
 <script>
-// Side navigation
-function w3_open() {
-  var x = document.getElementById("mySidebar");
-  x.style.width = "25%";
-  x.style.fontSize = "15x";
-  x.style.paddingTop = "5%";
-  x.style.display = "block";
-}
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
+
+// Hidden until clicked
+function showContent() {
+      var content = document.getElementById('content');
+      content.classList.toggle('hidden');
+    }
 </script>
 
 </body>
