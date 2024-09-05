@@ -123,6 +123,31 @@ header {
         0 12px 8px rgba(0, 0, 0, 0.7);
 }
 
+#newContainer {
+    background-image: url('images/Contract 1.png'); /* Add your image */
+    background-size: auto; /* Keep the actual size of the image */
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 630px; /* Same size as the total-cost-container */
+    height: 418px;
+    position: relative;
+    color: white;
+    border-radius: 15px;
+    margin-left: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: expand 1.5s ease-out;
+}
+
+#newContainerText {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
 </style>
 </head>
 <body>
@@ -149,6 +174,11 @@ header {
     <p id="totalCostText">0</p>
     <p id="additionalText">that was stellar</p> 
   </div>
+
+    <!-- New container on the right -->
+    <div id="newContainer" class="total-cost-container">
+      <p id="newContainerText">Additional Content Here</p>
+    </div>
 </div>
 
 <script>
