@@ -119,6 +119,13 @@ header {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Darker shadow on hover */
     color: white;
 }
+
+.quote-text {
+    font-style: italic; /* Italicize the text */
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), 
+                 0 2px 2px rgba(0, 0, 0, 0.5), 
+                 0 3px 3px rgba(0, 0, 0, 0.5); /* Shadow layers for reflection effect */
+}
 </style>
 </head>
 <body>
@@ -132,7 +139,7 @@ header {
 
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
-    <h3><em>Quote</em></h3><br>
+    <h3 class="quote-text">Quote</h3><br>
     <div class="form-container">
       <form action="/submit" method="post" class="full-height">
         <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320&#10;Compressed Ytirium 60253&#10;Compressed Ueganite 10403&#10;Compressed Ducinium 2402"></textarea>
