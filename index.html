@@ -107,7 +107,7 @@ header {
   </div>
 
   <div id="totalCostContainer" class="total-cost-container hidden">
-    <p id="totalCostText">Total cost will appear here</p>
+    <p id="totalCostText">0 isk</p>
   </div>
 </div>
 
@@ -328,7 +328,7 @@ const priceList = {
 "Compressed Ytirium": 10,
 "Compressed Bootleg Ytirium": 10,
 "Compressed Firewater Ytirium": 10,
-"Compressed Moonshine Ytirium": 10
+"Compressed Moonshine Ytirium": 10,
 };
 
 // Function to add commas to a number
@@ -363,7 +363,7 @@ function showContent() {
         }
     }
 
-    var resultText = '<strong>Total Cost: ' + formatNumberWithCommas(totalCost.toFixed(2)) + ' isk</strong>';
+    var resultText = formatNumberWithCommas(totalCost.toFixed(2)) + ' isk';
     
     // Show invalid items, if any
     if (invalidItems.length > 0) {
