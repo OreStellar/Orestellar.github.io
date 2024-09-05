@@ -146,6 +146,17 @@ header {
     margin-bottom: 10px; /* Space between this container and the main container */
 }
 
+.info-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.info-button .w3-button {
+  border-radius: 50%;
+  padding: 15px;
+}
+
 </style>
 </head>
 <body>
@@ -157,6 +168,23 @@ header {
   <hr>
 </header>
 
+<div class="info-button">
+    <a href="#infoModal" class="w3-button w3-theme">i</a>
+  </div>
+  
+  <!-- Info Modal (optional) -->
+  <div id="infoModal" class="w3-modal">
+    <div class="w3-modal-content">
+      <header class="w3-container w3-theme">
+        <span onclick="document.getElementById('infoModal').style.display='none'"
+        class="w3-button w3-display-topright">&times;</span>
+        <h2>Information</h2>
+      </header>
+      <div class="w3-container">
+        <p>Here is some additional information about the page.</p>
+      </div>
+    </div>
+  </div>
 
 <div class="container-wrapper">
     <!-- Left container (hidden initially) -->
