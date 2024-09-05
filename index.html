@@ -86,6 +86,7 @@ header {
     border-radius: 15px;
     margin-left: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: expand 1.5s ease-out;
 }
 
 #totalCostText {
@@ -121,7 +122,7 @@ header {
 </header>
 
 <div class="container-wrapper">
-  <div class="main-container w3-card w3-container w3-center shrink-animation">
+  <div class="main-container w3-card w3-container w3-center">
     <h3>Quote</h3><br>
     <div class="form-container">
       <form action="/submit" method="post" class="full-height">
@@ -131,7 +132,7 @@ header {
     </div>
   </div>
 
-  <div id="totalCostContainer" class="total-cost-container hidden shrink-animation">
+  <div id="totalCostContainer" class="total-cost-container hidden">
     <p id="totalCostText">0</p>
     <p id="additionalText">that was stellar</p> 
   </div>
@@ -399,12 +400,7 @@ function showContent() {
     // Display total cost and invalid items
     document.getElementById('totalCostText').innerHTML = resultText;
     totalCostContainer.classList.remove('hidden');
-
-    totalCostContainer.classList.add('shrink-animation');
-
 }
-
-
 </script>
 
 </body>
