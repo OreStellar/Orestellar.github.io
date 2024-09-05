@@ -86,10 +86,10 @@ html, body {
 
 <script>
 const priceList = {
-    "Ytirium": 5.00,
-    "Jet Ochre": 10.00,
-    "Compressed Ytirium": 7.50,
-    "Compressed Ducinium": 12.00
+    "Ytirium": "5.00 isk",
+    "Jet Ochre": "10.00 isk",
+    "Compressed Ytirium": "7.50 isk",
+    "Compressed Ducinium": "12.00 isk"
 };
 
 function showContent() {
@@ -108,12 +108,12 @@ function showContent() {
         var quantity = parseInt(matches[2]);
 
         if (priceList[item] !== undefined) {
-            var price = priceList[item];
+            var price = parseFloat(priceList[item].replace(' isk', '')); // Extract numeric value
             var cost = quantity * price;
             totalCost += cost;
-            result += item + ': ' + quantity + ' units x isk ' + price.toFixed(2) + ' = isk ' + cost.toFixed(2) + '<br>';
+            result += item + ': ' + quantity + ' isk x ' + priceList[item] + ' = isk ' + cost.toFixed(2) + '<br>';
         } else {
-            result += item + ': ' + quantity + ' units (price not found)<br>';
+            result += item + ': ' + quantity + ' isk (price not found)<br>';
         }
     }
 
