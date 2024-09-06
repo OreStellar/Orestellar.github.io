@@ -37,13 +37,12 @@ header {
 }
 
 .main-container {
-    margin: 0 auto
+    margin: 0 auto;
     flex-shrink: 0; /* Prevent shrinking */
-    width: 630px; /* Set the desired width */
-    height: 418px; 
+   max-width: 1200px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     animation: expand 1.5s ease-out; /* Apply the animation on load */
 }
@@ -83,8 +82,9 @@ header {
     background-size: auto; /* Keep the actual size of the image */
     background-position: center;
     background-repeat: no-repeat;
-    width: 630px; /* Updated width */
-    height: 418px; /* Updated height */
+    width: 45%;
+    min-width: 300px /* Updated width */
+    height: auto; /* Updated height */
     position: relative; /* Make it a positioned element */
     color: white;
     border-radius: 15px;
@@ -128,8 +128,9 @@ header {
     background-size: auto;
     background-position: center;
     background-repeat: no-repeat;
-    width: 630px;
-    height: 418px;
+    width: 45%;
+    min-width: 300px /* Updated width */
+    height: auto; /* Updated height */
     position: relative;
     color: white;
     border-radius: 15px;
@@ -174,6 +175,13 @@ header {
     border-radius: 50%; /* Circular button */
 }
 
+/* For smaller screens, ensure the containers stay side by side */
+@media (max-width: 768px) {
+    #leftContainer, #totalCostContainer {
+        width: 45%; /* Ensure both still take up 45% of the available width */
+        min-width: 200px; /* Adjust the minimum width for smaller screens */
+    }
+}
 </style>
 </head>
 <body>
