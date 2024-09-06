@@ -178,9 +178,41 @@ header {
 .w3-modal-content {
     position: relative;
     z-index: 1000; /* Higher z-index to stay on top of the overlay */
-    /* Add any other styling you need */
+    background-color: #000000;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 600px; /* Limit the maximum width */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Box shadow for 3D effect */
+    animation: slideIn 0.5s ease; /* Slide in animation */
 }
 
+.w3-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    animation: fadeIn 0.5s ease; /* Fade in animation */
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -199,24 +231,25 @@ header {
 
 <!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
-    <div class="w3-modal-overlay" onclick="closeModal()"></div>
-    <div class="w3-modal-content" onclick="event.stopPropagation()">
+    <div class="w3-modal-content">
+        <span onclick="document.getElementById('infoModal').style.display='none'"
+        class="w3-button w3-display-topright">&times;</span>
         <header class="w3-container w3-theme">
-            <span onclick="closeModal()" class="w3-button w3-display-topright">&times;</span>
             <h2>Welcome to OreStellar's appraisal calculator!</h2>
         </header>
         <div class="w3-container">
-            <p>If you have any questions please feel free to message Morgan Auren in-game.
+            <p>If you have any questions, please feel free to message Morgan Auren in-game.
 
-                At the moment the calculator only gives quotes for asteroid ores. 
+                At the moment, the calculator only gives quotes for asteroid ores. 
 
                 OreStellar only accepts contracts in High-Security space (0.5 or higher.) 
                 
-        We will decline any contract made in a high-sec island (areas cut off from trade hubs by low-security systems.)
+                We will decline any contract made in a high-sec island (areas cut off from trade hubs by low-security systems.)
             </p>
         </div>
     </div>
 </div>
+
 
 
 <div class="container-wrapper">
