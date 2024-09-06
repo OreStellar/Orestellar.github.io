@@ -232,7 +232,7 @@ header {
 <!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
     <div class="w3-modal-content">
-        <span onclick="document.getElementById('infoModal').style.display='none'"
+        <span onclick="closeModal()"
         class="w3-button w3-display-topright">&times;</span>
         <header class="w3-container w3-theme">
             <h2>Welcome to OreStellar's appraisal calculator!</h2>
@@ -249,6 +249,7 @@ header {
         </div>
     </div>
 </div>
+
 
 
 
@@ -546,25 +547,29 @@ function showContent() {
     leftContainer.classList.remove('hidden');
 }
 
-function closeModal() {
-    document.getElementById('infoModal').style.display = 'none';
-}
-
-// Open the modal
+// Function to open the modal
 function openModal() {
     document.getElementById('infoModal').style.display = 'block';
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById('infoModal').style.display = 'none';
 }
 
 // Close the modal when clicking outside the modal content
 window.onclick = function(event) {
     var modal = document.getElementById('infoModal');
     if (event.target == modal) {
-        modal.style.display = 'none';
+        closeModal();
     }
 }
 
 // Add event listener to the info button
 document.querySelector('.info-button button').addEventListener('click', openModal);
+
+// Close the modal when clicking on the close button (X)
+document.querySelector('.w3-display-topright').addEventListener('click', closeModal);
 
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
