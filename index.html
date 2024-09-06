@@ -37,10 +37,10 @@ header {
 }
 
 .main-container {
-    width: 100%; /* Use full width on smaller screens */
-    max-width: 630px; /* Limit the max width to 630px */
-    height: auto; /* Allow height to adjust based on content */
-    flex-shrink: 1; /* Allow it to shrink */
+    margin: 0 auto
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 630px; /* Set the desired width */
+    height: 418px; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -83,10 +83,8 @@ header {
     background-size: auto; /* Keep the actual size of the image */
     background-position: center;
     background-repeat: no-repeat;
-    width: 100%; /* Use full width on smaller screens */
-    max-width: 630px; /* Limit the max width to 630px */
-    height: auto; /* Allow height to adjust based on content */
-    flex-shrink: 1; /* Allow it to shrink */
+    width: 630px; /* Updated width */
+    height: 418px; /* Updated height */
     position: relative; /* Make it a positioned element */
     color: white;
     border-radius: 15px;
@@ -130,10 +128,8 @@ header {
     background-size: auto;
     background-position: center;
     background-repeat: no-repeat;
-    width: 100%; /* Use full width on smaller screens */
-    max-width: 630px; /* Limit the max width to 630px */
-    height: auto; /* Allow height to adjust based on content */
-    flex-shrink: 1; /* Allow it to shrink */
+    width: 630px;
+    height: 418px;
     position: relative;
     color: white;
     border-radius: 15px;
@@ -176,24 +172,6 @@ header {
     background-color: #ffffff; /* Bright color */
     color: rgb(0, 0, 0); /* Text color */
     border-radius: 50%; /* Circular button */
-}
-
-/* For larger screens */
-@media (min-width: 768px) {
-    .main-container, 
-    #leftContainer, 
-    #totalCostContainer {
-        width: 45%; /* 45% width on larger screens */
-    }
-}
-
-/* For even smaller screens */
-@media (max-width: 480px) {
-    .main-container, 
-    #leftContainer, 
-    #totalCostContainer {
-        width: 100%; /* Take full width on very small screens */
-    }
 }
 
 </style>
