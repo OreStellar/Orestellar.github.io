@@ -213,6 +213,10 @@ header {
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+.modal-header {
+    text-align: center; /* Center the text */
+}
 </style>
 </head>
 <body>
@@ -234,7 +238,7 @@ header {
     <div class="w3-modal-content">
         <span onclick="closeModal()"
         class="w3-button w3-display-topright">&times;</span>
-        <header class="w3-container w3-theme">
+        <header class="w3-container w3-theme modal-header">
             <h2>Welcome to OreStellar's appraisal calculator!</h2>
         </header>
         <div class="w3-container">
