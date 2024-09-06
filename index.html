@@ -142,7 +142,7 @@ header {
             bottom: 20px;
             right: 20px;
             font-size: 28px; /* Larger icon */
-            z-index: 1000;
+             z-index: 1000;
 
         }
 
@@ -171,8 +171,14 @@ header {
     left: 0; 
     width: 100%; 
     height: 100%; 
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 999; /* Ensure it's behind the modal content but above other content */
+    background: transparent; /* No background color */
+    z-index: 999; /* Ensure it's above other content */
+}
+
+.w3-modal-content {
+    position: relative;
+    z-index: 1000; /* Higher z-index to stay on top of the overlay */
+    /* Add any other styling you need */
 }
 
 </style>
@@ -193,7 +199,7 @@ header {
 <!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
     <div class="w3-modal-overlay" onclick="closeModal()"></div>
-    <div class="w3-modal-content">
+    <div class="w3-modal-content" onclick="event.stopPropagation()">
         <header class="w3-container w3-theme">
             <span onclick="closeModal()" class="w3-button w3-display-topright">&times;</span>
             <h2>Welcome to OreStellar's appraisal calculator!</h2>
@@ -503,21 +509,21 @@ function showContent() {
     // Show both containers
     totalCostContainer.classList.remove('hidden');
     leftContainer.classList.remove('hidden');
+}
 
-    function closeModal() {
+function closeModal() {
     document.getElementById('infoModal').style.display = 'none';
 }
 
-// Existing code to open the modal
+// Open the modal
 document.querySelector('.info-button button').addEventListener('click', function() {
     document.getElementById('infoModal').style.display = 'block';
 });
 
-// Event listener for closing the modal when clicking outside
+// Close the modal when clicking on the overlay
 document.querySelector('.w3-modal-overlay').addEventListener('click', function() {
     closeModal();
 });
-
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
