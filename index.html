@@ -28,17 +28,13 @@ header {
 }
 
 .container-wrapper {
-    .container-wrapper {
     display: flex;
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
     justify-content: center; 
-    align-items: center;
-    flex-wrap: wrap; /* Allow containers to wrap on smaller screens */
-    flex-direction: row;
+    align-items: center; 
 }
-
 
 .main-container {
     margin: 0 auto
@@ -178,48 +174,6 @@ header {
     border-radius: 50%; /* Circular button */
 }
 
-auto; /* Adjust height automatically */
-    flex-grow: 1; /* Allow containers to grow to fill available space */
-    margin: 10px; /* Add margin between containers */
-}
-
-.contract-container {
-    display: flex;
-    justify-content: space-between; /* Align containers to the left and right */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    width: 100%;
-    max-width: 1300px; /* Max width for contract containers' parent */
-}
-
-.left-container, .right-container {
-    width: 48%; /* Set equal width for left and right containers */
-    max-width: 48%; /* Prevent the containers from growing larger than 48% */
-    min-width: 300px; /* Set a minimum width for the containers */
-    height: auto; /* Let the height adjust automatically */
-    margin: 10px; /* Add margin between containers */
-}
-
-@media (min-width: 768px) {
-    .main-container, .total-cost-container, .quote-container {
-        width: 48%; /* Take half the width on larger screens */
-        height: 418px; /* Keep the set height for larger screens */
-    }
-    
-    .left-container, .right-container {
-        width: 48%; /* Containers take up half of the contract container */
-        height: 418px; /* Set fixed height for larger screens */
-    }
-}
-
-@media (max-width: 480px) {
-    .main-container, .total-cost-container, .quote-container, 
-    .left-container, .right-container {
-        width: 90%; /* Shrink containers to 90% on smaller screens */
-        height: auto; /* Let the height adjust automatically */
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
 </style>
 </head>
 <body>
