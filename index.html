@@ -29,33 +29,24 @@ header {
 
 .container-wrapper {
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.main-container {
+    margin: 0 auto
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 630px; /* Set the desired width */
+    height: 418px; 
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    animation: expand 1.5s ease-out; /* Apply the animation on load */
 }
-
-.main-container, 
-#leftContainer, 
-#totalCostContainer {
-    flex-shrink: 0; /* Prevent shrinking */
-    width: 100%; /* Set width to 100% initially */
-    max-width: 630px; /* Limit the max width */
-    height: auto; /* Make height auto for flexibility */
-    margin: 10px; /* Add some margin */
-    box-sizing: border-box; /* Include padding/border in the size */
-    animation: expand 1.5s ease-out;
-}
-
-#leftContainer, 
-#totalCostContainer {
-    background-size: cover; /* Ensure background image covers the container */
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 @keyframes expand {
     from {
         transform: scale(0.5); /* Start small */
@@ -87,6 +78,20 @@ header {
     display: none;
 }
 
+.total-cost-container {
+    background-image: url('images/Contract 2.png'); /* Add your image */
+    background-size: auto; /* Keep the actual size of the image */
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 630px; /* Updated width */
+    height: 418px; /* Updated height */
+    position: relative; /* Make it a positioned element */
+    color: white;
+    border-radius: 15px;
+    margin-left: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: expand 1.5s ease-out;
+}
 
 #totalCostText {
     position: absolute;
@@ -118,6 +123,20 @@ header {
         0 12px 8px rgba(0, 0, 0, 0.7);
 }
 
+#leftContainer {
+    background-image: url('images/Contract 1.png'); /* Add your image */
+    background-size: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 630px;
+    height: 418px;
+    position: relative;
+    color: white;
+    border-radius: 15px;
+    margin-right: 20px; /* Add margin on the right */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: expand 1.5s ease-out;
+}
 
 #unrecognizedItemsContainer {
     width: 550px; /* Match the width of the other containers */
@@ -153,6 +172,26 @@ header {
     background-color: #ffffff; /* Bright color */
     color: rgb(0, 0, 0); /* Text color */
     border-radius: 50%; /* Circular button */
+}
+
+.main-container, 
+#leftContainer, 
+#totalCostContainer {
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 100%; /* Set width to 100% initially */
+    max-width: 630px; /* Limit the max width */
+    height: auto; /* Make height auto for flexibility */
+    margin: 10px; /* Add some margin */
+    box-sizing: border-box; /* Include padding/border in the size */
+    animation: expand 1.5s ease-out;
+}
+
+/* Adjust the image backgrounds */
+#leftContainer, 
+#totalCostContainer {
+    background-size: cover; /* Ensure background image covers the container */
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Ensure elements shrink on smaller screens */
