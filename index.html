@@ -106,7 +106,8 @@ header {
 
 #additionalText {
     position: absolute;
-
+    top: 86%;  /* Adjust to position it vertically */
+    left: 55%; /* Adjust to center horizontally */
     transform: translate(-50%, -50%);
     font-size: 16px; /* Adjust font size */
     font-weight: bold;
@@ -503,28 +504,6 @@ function showContent() {
     totalCostContainer.classList.remove('hidden');
     leftContainer.classList.remove('hidden');
 }
-
-function adjustTextPosition() {
-    var container = document.getElementById('totalCostContainer');
-    var additionalText = document.getElementById('additionalText');
-
-    // Get container dimensions
-    var containerWidth = container.offsetWidth;
-    var containerHeight = container.offsetHeight;
-
-    // Calculate new position (percentage of container size)
-    var topPercentage = 0.86; // 86% from top (adjust as needed)
-    var leftPercentage = 0.55; // 55% from left (adjust as needed)
-
-    // Apply new position
-    additionalText.style.top = (topPercentage * containerHeight) + '320px';
-    additionalText.style.left = (leftPercentage * containerWidth) + '270px';
-}
-
-// Adjust text position on page load and resize
-window.addEventListener('load', adjustTextPosition);
-window.addEventListener('resize', adjustTextPosition);
-
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
