@@ -29,12 +29,14 @@ header {
 
 .container-wrapper {
     display: flex;
-    height: 100%;
+    flex-wrap: wrap; /* Allow containers to wrap on smaller screens */
+    height: auto; /* Adjust height to fit content */
     padding: 20px;
     box-sizing: border-box;
-    justify-content: center; 
-    align-items: center; 
+    justify-content: center;
+    align-items: center;
 }
+
 
 .main-container {
     margin: 0 auto
@@ -174,6 +176,39 @@ header {
     border-radius: 50%; /* Circular button */
 }
 
+.main-container, 
+#leftContainer, 
+#totalCostContainer {
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 630px; /* Set the desired width */
+    height: 418px; /* Set the desired height */
+    margin: 20px; /* Add margin between containers */
+}
+/* Media query for smaller screens */
+@media (max-width: 1200px) {
+    .main-container, 
+    #leftContainer, 
+    #totalCostContainer {
+        width: 100%; /* Set containers to full width on smaller screens */
+        height: auto; /* Allow height to adjust based on content */
+        margin: 10px; /* Adjust margins for smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .container-wrapper {
+        flex-direction: column; /* Stack containers vertically on small screens */
+        align-items: stretch; /* Make containers take full width */
+    }
+
+    .main-container, 
+    #leftContainer, 
+    #totalCostContainer {
+        width: 100%; /* Full width for smaller screens */
+        height: auto; /* Adjust height based on content */
+        margin: 10px 0; /* Adjust margins */
+    }
+}
 </style>
 </head>
 <body>
