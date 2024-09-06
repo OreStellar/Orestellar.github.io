@@ -37,10 +37,10 @@ header {
 }
 
 .main-container {
-    margin: 0 auto
-    flex-shrink: 0; /* Prevent shrinking */
-    width: 630px; /* Set the desired width */
-    height: 418px; 
+    width: 100%; /* Use full width on smaller screens */
+    max-width: 630px; /* Limit the max width to 630px */
+    height: auto; /* Allow height to adjust based on content */
+    flex-shrink: 1; /* Allow it to shrink */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -83,8 +83,10 @@ header {
     background-size: auto; /* Keep the actual size of the image */
     background-position: center;
     background-repeat: no-repeat;
-    width: 630px; /* Updated width */
-    height: 418px; /* Updated height */
+    width: 100%; /* Use full width on smaller screens */
+    max-width: 630px; /* Limit the max width to 630px */
+    height: auto; /* Allow height to adjust based on content */
+    flex-shrink: 1; /* Allow it to shrink */
     position: relative; /* Make it a positioned element */
     color: white;
     border-radius: 15px;
@@ -128,8 +130,10 @@ header {
     background-size: auto;
     background-position: center;
     background-repeat: no-repeat;
-    width: 630px;
-    height: 418px;
+    width: 100%; /* Use full width on smaller screens */
+    max-width: 630px; /* Limit the max width to 630px */
+    height: auto; /* Allow height to adjust based on content */
+    flex-shrink: 1; /* Allow it to shrink */
     position: relative;
     color: white;
     border-radius: 15px;
@@ -174,45 +178,21 @@ header {
     border-radius: 50%; /* Circular button */
 }
 
-.main-container, 
-#leftContainer, 
-#totalCostContainer {
-    flex-shrink: 0; /* Prevent shrinking */
-    width: 100%; /* Set width to 100% initially */
-    max-width: 630px; /* Limit the max width */
-    height: auto; /* Make height auto for flexibility */
-    margin: 10px; /* Add some margin */
-    box-sizing: border-box; /* Include padding/border in the size */
-    animation: expand 1.5s ease-out;
-}
-
-/* Adjust the image backgrounds */
-#leftContainer, 
-#totalCostContainer {
-    background-size: cover; /* Ensure background image covers the container */
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* Ensure elements shrink on smaller screens */
-@media only screen and (max-width: 768px) {
+/* For larger screens */
+@media (min-width: 768px) {
     .main-container, 
     #leftContainer, 
     #totalCostContainer {
-        max-width: 100%; /* Allow elements to take full width */
-        height: auto; /* Auto height for flexibility */
+        width: 45%; /* 45% width on larger screens */
     }
 }
 
-/* Keyframes for animation */
-@keyframes expand {
-    from {
-        transform: scale(0.5);
-        opacity: 0.5;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
+/* For even smaller screens */
+@media (max-width: 480px) {
+    .main-container, 
+    #leftContainer, 
+    #totalCostContainer {
+        width: 100%; /* Take full width on very small screens */
     }
 }
 
