@@ -182,11 +182,11 @@ header {
 
 <!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
+    <div class="w3-modal-overlay" onclick="closeModal()"></div>
     <div class="w3-modal-content">
         <header class="w3-container w3-theme">
-            <span onclick="document.getElementById('infoModal').style.display='none'"
-            class="w3-button w3-display-topright">&times;</span>
-            <h2>Welcome to OreStellar's apparaisal calculator!</h2>
+            <span onclick="closeModal()" class="w3-button w3-display-topright">&times;</span>
+            <h2>Welcome to OreStellar's appraisal calculator!</h2>
         </header>
         <div class="w3-container">
             <p>If you have any questions please feel free to message Morgan Auren in-game.
