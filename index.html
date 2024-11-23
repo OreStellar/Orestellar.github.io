@@ -80,7 +80,7 @@ header {
 
 .total-cost-container {
     background-image: url('images/Contract 2.png'); /* Add your image */
-    background-size: auto; /* Keep the actual size of the image */
+    background-size: contain; /* Keep the actual size of the image */
     background-position: center;
     background-repeat: no-repeat;
     width: 630px; /* Updated width */
@@ -104,16 +104,6 @@ header {
     text-align: center;
 }
 
-#additionalText {
-    position: absolute;
-    top: 86%;  /* Adjust to position it vertically */
-    left: 55%; /* Adjust to center horizontally */
-    transform: translate(-50%, -50%);
-    font-size: 16px; /* Adjust font size */
-    font-weight: bold;
-    color: white; /* Change the color if needed */
-    text-align: center;
-}
 
 .quote-text {
     font-style: italic; /* Italicize the text */
@@ -125,7 +115,7 @@ header {
 
 #leftContainer {
     background-image: url('images/Contract 1.png'); /* Add your image */
-    background-size: auto;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
     width: 630px;
@@ -152,6 +142,7 @@ header {
             bottom: 20px;
             right: 20px;
             font-size: 28px; /* Larger icon */
+             z-index: 1000;
 
         }
 
@@ -174,12 +165,65 @@ header {
     border-radius: 50%; /* Circular button */
 }
 
+.w3-modal-overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: transparent; /* No background color */
+    z-index: 999; /* Ensure it's above other content */
+}
+
+.w3-modal-content {
+    position: relative;
+    z-index: 1000; /* Higher z-index to stay on top of the overlay */
+    background-color: #000000;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 600px; /* Limit the maximum width */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Box shadow for 3D effect */
+    animation: slideIn 0.5s ease; /* Slide in animation */
+}
+
+.w3-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    animation: fadeIn 0.5s ease; /* Fade in animation */
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    text-align: center; /* Center the text */
+}
 </style>
 </head>
 <body>
 
 <header class="w3-container w3-theme w3-padding" id="myHeader">
   <div class="w3-center">
+    <a href="https://orestellar.github.io/" target="_blank"></a>
     <img src="images/OreStellar Header.png" alt="Header Image" style="width: 300px; height: auto;">
   </div>
   <hr>
@@ -192,23 +236,26 @@ header {
 <!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
     <div class="w3-modal-content">
-        <header class="w3-container w3-theme">
-            <span onclick="document.getElementById('infoModal').style.display='none'"
-            class="w3-button w3-display-topright">&times;</span>
-            <h2>Welcome to OreStellar's apparaisal calculator!</h2>
+        <span onclick="closeModal()"
+        class="w3-button w3-display-topright">&times;</span>
+        <header class="w3-container w3-theme modal-header">
+            <h2>Welcome to OreStellar's appraisal calculator!</h2>
         </header>
         <div class="w3-container">
-            <p>If you have any questions please feel free to message Morgan Auren in-game.
+            <p>If you have any questions, please feel free to message Morgan Auren in-game.
 
-                At the moment the calculator only gives quotes for asteroid ores. 
+                At the moment, the calculator only gives quotes for asteroid ores. 
 
                 OreStellar only accepts contracts in High-Security space (0.5 or higher.) 
                 
-        We will decline any contract made in a high-sec island (areas cut off from trade hubs by low-security systems.)
+                We will decline any contract made in a high-sec island (areas cut off from trade hubs by low-security systems.)
             </p>
         </div>
     </div>
 </div>
+
+
+
 
 
 <div class="container-wrapper">
@@ -231,7 +278,6 @@ header {
 
   <div id="totalCostContainer" class="total-cost-container hidden">
     <p id="totalCostText">0</p>
-    <p id="additionalText">that was stellar</p> 
   </div>
 </div>
 
@@ -504,6 +550,31 @@ function showContent() {
     totalCostContainer.classList.remove('hidden');
     leftContainer.classList.remove('hidden');
 }
+
+// Function to open the modal
+function openModal() {
+    document.getElementById('infoModal').style.display = 'block';
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById('infoModal').style.display = 'none';
+}
+
+// Close the modal when clicking outside the modal content
+window.onclick = function(event) {
+    var modal = document.getElementById('infoModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+// Add event listener to the info button
+document.querySelector('.info-button button').addEventListener('click', openModal);
+
+// Close the modal when clicking on the close button (X)
+document.querySelector('.w3-display-topright').addEventListener('click', closeModal);
+
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
