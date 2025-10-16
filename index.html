@@ -23,8 +23,16 @@ header { flex-shrink: 0; }
 /* Contract images */
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
-#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-
+#totalCostText {
+    position: absolute;
+    top: calc(50% + 10px);   /* 10px lower */
+    left: calc(50% + 2px);   /* 2px to the right */
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
 /* Quote text glow */
 @keyframes pulseTextGlow {
   0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
