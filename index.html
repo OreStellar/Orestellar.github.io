@@ -9,26 +9,37 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
+html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; padding: 20px; }
+.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 10px; }
 @media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
-.main-container { width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
+@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+
+.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
 .full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
+.hidden { display: none; }
+
+/* Contract Images */
+.total-cost-container { width: 630px; height: 418px; background-size: contain; background-position: center; background-repeat: no-repeat; position: relative; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#leftContainer { background-image: url('images/contract1.png'); display: none; }
+#totalCostContainer { background-image: url('images/contract2.png'); display: none; }
+#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 
 /* Quote text glow */
 @keyframes pulseTextGlow {
   0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
   50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
 }
-.quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3s infinite; }
+.quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3.0s infinite; }
 
 /* Submit button */
 #submitButton {
-    background-color: #fff;
+    background-color: #ffffffff;
     color: black;
     border: none;
     border-radius: 8px;
@@ -37,7 +48,7 @@ header { flex-shrink: 0; }
     cursor: pointer;
     box-shadow: 0 0 15px 3px white;
     transition: all 0.3s ease;
-    margin-top: -3px;
+    margin-top: 10px;
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1cff; color: black; }
 
@@ -46,37 +57,25 @@ header { flex-shrink: 0; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 .info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
 
-/* Contract Images */
-.total-cost-container {
-    width: 400px; height: 418px;
-    background-size: contain; background-position: center; background-repeat: no-repeat;
-    position: relative;
-}
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 30px;
-    font-weight: bold;
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-}
-
 /* Modals */
-.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); }
-.w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border-radius:12px; width:80%; max-width:600px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.7);}
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
+.w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+
+/* Snazzy Total Price Modal */
 #totalPriceModal .w3-modal-content {
     border: 2px solid #00ff00;
     box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset;
-    animation: neonPulse 2s infinite alternate;
+    animation: neonPulse 2.1s infinite alternate;
 }
-@keyframes neonPulse { 0% {box-shadow:0 0 5px #00ff00,0 0 5px #00ff00 inset;} 100% {box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset;} }
-#popupTotalPrice { font-size:36px; font-weight:bold; color:#00ff00; margin-bottom:15px; text-shadow:0 0 10px #00ff00,0 0 20px #00ff00; }
-#closeTotalModal { padding:8px 20px; font-size:18px; font-weight:bold; border-radius:8px; cursor:pointer; margin-top:10px; }
-#copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); font-size:24px; z-index:2000; }
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 5px #00ff00, 0 0 5px #00ff00 inset; }
+    100% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
+}
+#popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+#closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+#copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 2000; }
 
 </style>
 </head>
@@ -111,7 +110,7 @@ header { flex-shrink: 0; }
   <div class="w3-modal-content w3-card w3-center">
     <h2 style="font-weight:bold;">Total Contract Value</h2>
     <p id="popupTotalPrice"></p>
-    <button id="closeTotalModal">copy</button>
+    <button id="closeTotalModal">o7</button>
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
@@ -202,17 +201,17 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Show contracts
+    // Show contract images
     document.getElementById('leftContainer').style.display = 'block';
     document.getElementById('totalCostContainer').style.display = 'block';
 
-    // Animate ISK over Contract 2
-    const totalCostText = document.getElementById('totalCostText');
-    animateCount(totalCostText, 0, totalCost, 2000);
-
-    // Show snazzy modal
-    const popupEl = document.getElementById('popupTotalPrice');
+    // Animate ISK over contract 2
+    const popupEl = document.getElementById('totalCostText');
     animateCount(popupEl, 0, totalCost, 2000);
+
+    // Show modal
+    const popupModalEl = document.getElementById('popupTotalPrice');
+    animateCount(popupModalEl, 0, totalCost, 2000);
     document.getElementById('totalPriceModal').style.display = 'block';
 }
 
