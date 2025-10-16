@@ -5,186 +5,243 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+
 <style>
-html,body{
-  background:black;
-  color:white;
-  margin:0;
-  padding:0;
-  height:100%;
+/* --- General Styles --- */
+html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
+body { display: flex; flex-direction: column; }
+header { flex-shrink: 0; }
+.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 5px; }
+@media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
+@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
+.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
+.hidden { display: none; }
+
+/* PNG Containers */
+.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
+
+/* Glowing quote text */
+@keyframes pulseTextGlow {
+    0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
+    50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
 }
-.container-wrapper{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  padding:20px;
+.quote-text {
+    font-style: italic;
+    font-weight: bold;
+    color: #fff;
+    font-size: 21px;
+    animation: pulseTextGlow 2.0s infinite;
 }
-.total-cost-container{
-  width:630px;
-  height:418px;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
-  display:none;
-  border:2px solid rgba(0,255,0,0.3);
-  border-radius:12px;
-  transition:opacity 0.8s ease;
-  opacity:0;
+
+/* Submit button glow */
+#submitButton {
+    background-color: #ffffff;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: -10px;
+    box-shadow: 0 0 15px 3px white;
+    transition: all 0.3s ease;
 }
-.total-cost-container.show{
-  display:block;
-  opacity:1;
+#submitButton:hover {
+    background-color: #ccffcc;
+    color: black;
+    box-shadow: 0 0 25px 5px #00ff2a;
 }
-.main-container{
-  width:650px;
-  height:450px;
-  background:#333;
-  border-radius:20px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 0 20px rgba(255,255,255,0.1);
+
+/* Info button */
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+@keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+.info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
+
+/* Modal styling */
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
+.w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+
+/* Snazzy total price modal */
+#totalPriceModal .w3-modal-content {
+    padding: 40px;
+    max-width: 420px;
+    border: 2px solid #00ffcc;
+    border-radius: 20px;
+    background: radial-gradient(circle at top left, #0a0a0a, #1b1b1b, #000);
+    box-shadow: 0 0 25px 5px #00ffcc, inset 0 0 20px #007a66;
+    animation: popupGlow 1.2s ease-out;
 }
-.quote-text{
-  font-style:italic;
-  font-weight:bold;
-  color:white;
-  text-shadow:0 0 10px #fff,0 0 20px #bff;
-  animation:pulseGlow 2s infinite alternate;
+@keyframes popupGlow {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
 }
-@keyframes pulseGlow{
-  0%{text-shadow:0 0 5px #fff;}
-  100%{text-shadow:0 0 20px #9f9;}
+#popupTotalPrice {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #00ffcc, #00ffaa, #00ffcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px #00ffaa88, 0 0 20px #00ffcc55;
 }
-.full-width-textarea{width:90%;height:160px;margin-bottom:15px;border-radius:8px;}
-#submitButton{
-  background:white;
-  color:black;
-  padding:10px 25px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  box-shadow:0 0 15px white;
-  transition:all 0.3s;
-}
-#submitButton:hover{
-  background:#eaffea;
-  box-shadow:0 0 25px #2fff1c;
-}
-.w3-modal{
-  display:none;
-  position:fixed;
-  z-index:999;
-  left:0;top:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.9);
-}
-.w3-modal-content{
-  background:radial-gradient(circle,#111,#000);
-  margin:10% auto;
-  padding:20px;
-  border-radius:15px;
-  color:#b8ffbe;
-  width:400px;
-  text-align:center;
-  box-shadow:0 0 30px #2fff1c;
-  border:2px solid #2fff1c;
-}
-#popupTotalPrice{
-  font-size:28px;
-  font-weight:bold;
-  color:white;
-  text-shadow:0 0 15px #00ff6e,0 0 30px #2fff1c;
-  animation:pulse 1.5s infinite alternate;
-}
-@keyframes pulse{
-  0%{text-shadow:0 0 10px #00ff6e;}
-  100%{text-shadow:0 0 30px #2fff1c;}
-}
+#totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
 </style>
+</head>
+<body>
+
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+  <div class="w3-center">
+    <img src="images/OreStellar Header.png" alt="Header Image" style="width:300px; height:auto;">
+  </div>
+  <hr>
+</header>
+
+<div class="info-button">
+    <button id="infoButton" class="w3-button w3-theme">i</button>
+</div>
+
+<div id="infoModal" class="w3-modal">
+    <div class="w3-modal-content">
+        <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
+        <header class="w3-container w3-theme modal-header">
+            <h2>Welcome to OreStellar's appraisal calculator!</h2>
+        </header>
+        <div class="w3-container">
+            <p>If you have any questions, please message Morgan Auren in-game.</p>
+            <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
+        </div>
+    </div>
+</div>
+
+<!-- Total Price Modal -->
+<div id="totalPriceModal" class="w3-modal">
+  <div class="w3-modal-content w3-card w3-center">
+    <span id="closeTotalModal" class="w3-button w3-display-topright">&times;</span>
+    <h2>Total Contract Value</h2>
+    <p id="popupTotalPrice"></p>
+  </div>
+</div>
+
+<div class="container-wrapper">
+    <div id="leftContainer" class="total-cost-container hidden" style="background-image: url('images/Contract 1.png');"></div>
+  
+    <div class="main-container w3-card w3-container w3-center">
+        <h3 class="quote-text">paste your in-game inventory below</h3><br>
+        <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
+        <button id="submitButton" disabled>Submit</button>
+        <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
+            <p id="unrecognizedItemsText" style="color:red;"></p>
+        </div>
+    </div>
+
+    <div id="totalCostContainer" class="total-cost-container hidden" style="background-image: url('images/Contract 2.png');"></div>
+</div>
 
 <script>
 let priceList = {};
-let csvLoaded = false;
 
+// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
-  try {
-    const response = await fetch("data/prices.csv");
-    if (!response.ok) throw new Error("CSV not found");
-    const csv = await response.text();
-    const lines = csv.trim().split("\n");
-    const headers = lines[0].split(",");
-    const priceIndex = headers.findIndex(h => h.toLowerCase().includes("150%"));
-    for (let i=1;i<lines.length;i++){
-      const parts = lines[i].split(",");
-      const name = parts[0].trim();
-      const price = parseFloat(parts[priceIndex]);
-      if (!isNaN(price)) priceList[name] = price;
+    try {
+        const response = await fetch('data/prices.csv');
+        if (!response.ok) throw new Error('CSV not found');
+
+        const csvText = await response.text();
+        const lines = csvText.split('\n').filter(l => l.trim() !== '');
+        const headers = lines[0].split(',');
+        const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+        if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
+
+        for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',');
+            const oreName = cols[0].trim();
+            const price = parseFloat(cols[priceIndex]);
+            if (!isNaN(price)) priceList[oreName] = price;
+        }
+        console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
+        document.getElementById('submitButton').disabled = false;
+    } catch (err) {
+        console.error('⚠️ Error loading CSV:', err);
     }
-    csvLoaded = true;
-    console.log("✅ CSV loaded:", Object.keys(priceList).length, "ores");
-  } catch(e){
-    console.error("⚠️ Failed to load CSV:", e);
-  }
 }
 
-function formatNumber(num){return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");}
-
-function animateValue(id, start, end, duration){
-  const obj=document.getElementById(id);
-  let startTime=null;
-  function step(time){
-    if(!startTime) startTime=time;
-    const progress=Math.min((time-startTime)/duration,1);
-    const val=start+(end-start)*progress;
-    obj.innerText=formatNumber(val.toFixed(2))+" ISK";
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
+// Format numbers
+function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function showContent(){
-  console.log("📨 Submit button clicked");
+// Show calculation
+function showContent() {
+    console.log("📨 Submit button clicked");
 
-  // fade in both contract containers
-  const left = document.getElementById('leftContainer');
-  const right = document.getElementById('totalCostContainer');
-  left.classList.add('show');
-  right.classList.add('show');
+    if (Object.keys(priceList).length === 0) {
+        alert("Price data still loading. Try again in a moment.");
+        return;
+    }
 
-  // open popup modal
-  const modal=document.getElementById('totalPriceModal');
-  modal.style.display='block';
+    const textarea = document.getElementById('message').value;
+    const regex = /([\w\s]+?)\s+(\d+)/g;
+    let matches;
+    let totalCost = 0;
+    let invalidItems = [];
 
-  // perform ore price calc
-  const input=document.getElementById('message').value;
-  const regex=/([\w\s]+?)\s+(\d+)/g;
-  let match,total=0;
-  let unknown=[];
-  while((match=regex.exec(input))!==null){
-    const item=match[1].trim();
-    const qty=parseInt(match[2]);
-    if(priceList[item]) total+=qty*priceList[item];
-    else unknown.push(item);
-  }
-  if(!csvLoaded) total=9999999; // fallback for testing
+    while ((matches = regex.exec(textarea)) !== null) {
+        const item = matches[1].trim();
+        const qty = parseInt(matches[2]);
+        if (priceList[item] !== undefined) {
+            totalCost += qty * priceList[item];
+        } else {
+            invalidItems.push(item);
+        }
+    }
 
-  animateValue("popupTotalPrice",0,total,1500);
+    console.log("💰 Total calculated:", totalCost);
 
-  if(unknown.length>0){
-    document.getElementById('unrecognizedItemsText').innerText="Unrecognized items: "+unknown.join(", ");
-    document.getElementById('unrecognizedItemsContainer').classList.remove("hidden");
-  }
+    const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
+
+    document.getElementById('leftContainer').classList.remove('hidden');
+    document.getElementById('totalCostContainer').classList.remove('hidden');
+
+    if (invalidItems.length > 0) {
+        document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
+    } else {
+        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    }
+
+    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
+    document.getElementById('totalPriceModal').style.display = 'block';
 }
 
-document.getElementById("submitButton").addEventListener("click", showContent);
-document.getElementById("closeTotalModal").addEventListener("click", ()=>document.getElementById("totalPriceModal").style.display="none");
-document.getElementById("closeBtn").addEventListener("click", ()=>document.getElementById("totalPriceModal").style.display="none");
+// Modal functionality
+function openModal() { document.getElementById('infoModal').style.display='block'; }
+function closeModal() { document.getElementById('infoModal').style.display='none'; }
+document.getElementById('infoButton').addEventListener('click', openModal);
+document.getElementById('closeModal').addEventListener('click', closeModal);
+window.onclick = function(event) { 
+    if (event.target == document.getElementById('infoModal')) closeModal();
+}
+document.getElementById('closeTotalModal').addEventListener('click', () => {
+    document.getElementById('totalPriceModal').style.display = 'none';
+});
+window.addEventListener('click', (event) => {
+    if (event.target == document.getElementById('totalPriceModal')) {
+        document.getElementById('totalPriceModal').style.display = 'none';
+    }
+});
+
+// Hook up submit button
+document.getElementById('submitButton').addEventListener('click', showContent);
 
 loadPrices();
 </script>
+<script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
