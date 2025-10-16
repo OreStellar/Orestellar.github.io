@@ -104,23 +104,19 @@ header { flex-shrink: 0; }
 
 <!-- Total Price Modal -->
 <div id="totalPriceModal" class="w3-modal">
-  <div class="w3-modal-content w3-card w3-center" style="position:relative;">
-    <h2 style="color:#39ff14; font-weight:bold;">Total Contract Value</h2>
-    <p id="popupTotalPrice" style="color:#39ff14; font-size:28px; font-weight:bold; text-shadow:0 0 8px #39ff14;"></p>
-    <button id="closeTotalModal" style="margin-top:20px; background:#111; color:#39ff14; font-weight:bold; border-radius:8px; padding:10px 20px; cursor:pointer; box-shadow:0 0 10px #39ff14;">o7</button>
+  <div class="w3-modal-content w3-card w3-center">
+    <h2 style="font-weight:bold;">Total Contract Value</h2>
+    <p id="popupTotalPrice" style="color:#00ff00; font-size:30px; font-weight:bold; text-shadow: 0 0 10px #00ff00;"></p>
+    <button id="closeTotalModal" style="margin-top:15px;">o7</button>
+    <div id="copiedMessage" class="hidden">Copied!</div>
   </div>
 </div>
-
-<!-- Copied Message -->
-<div id="copiedMessage" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-background-color:rgba(57,255,20,0.9); color:black; font-size:28px; font-weight:bold;
-padding:15px 30px; border-radius:10px; text-align:center; z-index:2000; display:none;">Copied!</div>
 
 <div class="container-wrapper">
     <div id="leftContainer" class="total-cost-container hidden"></div>
   
     <div class="main-container w3-card w3-container w3-center">
-        <h3 class="quote-text" style="font-style:italic; font-weight:bold;">Copy & Paste Your Inventory Below</h3><br>
+        <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
         <button id="submitButton" disabled>Submit</button>
         <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
@@ -218,21 +214,21 @@ window.onclick = function(event){
     if(event.target==document.getElementById('infoModal')) closeModal();
 };
 
-// Total price modal copy functionality
-const o7Btn=document.getElementById('closeTotalModal');
+// Total price modal O7 copy functionality
+const closeTotalBtn=document.getElementById('closeTotalModal');
 const copiedMsg=document.getElementById('copiedMessage');
-o7Btn.addEventListener('click',()=>{
+closeTotalBtn.addEventListener('click',()=>{
     const text=document.getElementById('popupTotalPrice').innerText;
     navigator.clipboard.writeText(text).then(()=>{
-        copiedMsg.style.display='block';
-        setTimeout(()=>copiedMsg.style.display='none',1500);
+        copiedMsg.classList.remove('hidden');
+        setTimeout(()=>copiedMsg.classList.add('hidden'),1500);
     });
     document.getElementById('totalPriceModal').style.display='none';
 });
 
-// Clicking outside only closes modal without copying
+// Close modal when clicking outside (does NOT copy)
 window.addEventListener('click',(event)=>{
-    if(event.target==document.getElementById('totalPriceModal')){
+    if(event.target==document.getElementById('totalPriceModal')) {
         document.getElementById('totalPriceModal').style.display='none';
     }
 });
