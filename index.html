@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-/* --- Keep all your existing styles unchanged --- */
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
@@ -18,22 +17,24 @@ header { flex-shrink: 0; }
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 .w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
 .full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
-.hidden { display: none; }
-.total-cost-container { background-image: url('images/Contract 2.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-left: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); animation: expand 1.5s ease-out; }
+.hidden { display: none; opacity: 0; }
+.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin: 0 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
 #totalCostText { position: absolute; top: 52%; left: 53%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 .quote-text { font-style: italic; text-shadow: 0 2px 1px rgba(0,0,0,0.3), 0 6px 4px rgba(0,0,0,0.5), 0 12px 8px rgba(0,0,0,0.7); }
-#leftContainer { background-image: url('images/Contract 1.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-right: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
-#unrecognizedItemsContainer { width: 550px; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); background-color: #000000; margin-bottom: 20px; }
+.expand-animation { animation: expand 1.5s ease-out; opacity: 1; }
+#leftContainer { background-image: url('images/Contract 1.png'); }
+#totalCostContainer { background-image: url('images/Contract 2.png'); }
+#unrecognizedItemsContainer { width: 550px; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); background-color: #000; margin-top: 10px; }
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
-.info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
+.info-button button { animation: bounce 2s infinite; background-color: #fff; color: black; border-radius: 50%; }
 .w3-modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: transparent; z-index: 999; }
 .w3-modal-content { position: relative; z-index:1000; background-color:#000; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.5); animation: slideIn 0.5s ease; }
 .w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 .modal-header { text-align: center; }
-#loadingMsg { font-size: 14px; color: #ccc; margin-bottom: 10px; }
+.loading-message { color: yellow; font-weight: bold; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -68,14 +69,10 @@ header { flex-shrink: 0; }
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
-            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 39&#10;Jet Ochre 1"></textarea>
-
-            <!-- 👇 Loading message -->
-            <p id="loadingMsg">⏳ Loading prices…</p>
-
+            <div id="loadingMessage" class="loading-message">Loading prices...</div>
+            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 6460&#10;Jet Ochre 1"></textarea>
             <button id="submitButton" class="w3-button w3-black w3-round" disabled>Submit</button>
-
-            <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
+            <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
             </div>
         </div>
@@ -85,61 +82,53 @@ header { flex-shrink: 0; }
         <p id="totalCostText">0</p>
     </div>
 </div>
+
 <script>
 let priceList = {};
-let pricesLoaded = false;
+const loadingMessage = document.getElementById('loadingMessage');
+const submitButton = document.getElementById('submitButton');
+const leftContainer = document.getElementById('leftContainer');
+const totalCostContainer = document.getElementById('totalCostContainer');
+const unrecognizedContainer = document.getElementById('unrecognizedItemsContainer');
 
-// Show a loading message
-function showLoadingMessage(msg) {
-    const costText = document.getElementById('totalCostText');
-    costText.innerText = msg;
-    document.getElementById('totalCostContainer').classList.remove('hidden');
-    document.getElementById('leftContainer').classList.remove('hidden');
-}
-
-// Load CSV and extract “Suggested 150%” price
+// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
-    showLoadingMessage("Loading price data...");
     try {
         const response = await fetch('data/prices.csv');
         if (!response.ok) throw new Error('CSV not found');
 
         const csvText = await response.text();
         const lines = csvText.split('\n').filter(l => l.trim() !== '');
-
-        if (lines.length < 2) throw new Error('CSV appears empty');
-
         const headers = lines[0].split(',');
-        const priceIndex = headers.findIndex(h => h.includes("Suggested 150%"));
+        const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+
         if (priceIndex === -1) throw new Error('Could not find “Suggested 150%” column');
 
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(',');
-            if (!cols[0]) continue; // skip empty rows
             const oreName = cols[0].trim();
-            const rawPrice = cols[priceIndex]?.replace(/[^\d.]/g, '');
-            const price = parseFloat(rawPrice);
+            const price = parseFloat(cols[priceIndex]);
             if (!isNaN(price)) priceList[oreName] = price;
         }
 
-        pricesLoaded = true;
         console.log('✅ Prices loaded:', priceList);
-        document.getElementById('submitButton').disabled = false;
-        showLoadingMessage("Prices loaded! Ready to use.");
+        loadingMessage.style.display = 'none';
+        submitButton.disabled = false;
+
     } catch (err) {
         console.error('⚠️ Error loading CSV:', err);
-        showLoadingMessage("⚠️ Error loading price data");
+        loadingMessage.innerText = 'Error loading prices. Refresh page.';
     }
 }
 
-// Format number with commas
+// Format numbers with commas
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Calculate total
+// Show calculation
 function showContent() {
-    if (!pricesLoaded || Object.keys(priceList).length === 0) {
+    if (Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
@@ -163,28 +152,35 @@ function showContent() {
     document.getElementById('totalCostText').innerText = formatNumberWithCommas(totalCost.toFixed(2));
 
     if (invalidItems.length > 0) {
-        document.getElementById('unrecognizedItemsText').innerText =
-            'Unrecognized items: ' + invalidItems.join(', ');
-        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
+        document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        unrecognizedContainer.classList.remove('hidden');
     } else {
-        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+        unrecognizedContainer.classList.add('hidden');
     }
 
-    document.getElementById('totalCostContainer').classList.remove('hidden');
-    document.getElementById('leftContainer').classList.remove('hidden');
+    // Show result containers with animation
+    leftContainer.classList.remove('hidden');
+    leftContainer.classList.add('expand-animation');
+    totalCostContainer.classList.remove('hidden');
+    totalCostContainer.classList.add('expand-animation');
 }
 
-// Modal functions
+// Initialize
+async function init() {
+    await loadPrices();
+}
+
+// Modal functionality
 function openModal() { document.getElementById('infoModal').style.display='block'; }
 function closeModal() { document.getElementById('infoModal').style.display='none'; }
 document.getElementById('infoButton').addEventListener('click', openModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
 window.onclick = function(event) { if (event.target == document.getElementById('infoModal')) closeModal(); }
 
-document.getElementById('submitButton').addEventListener('click', showContent);
+// Hook up submit button
+submitButton.addEventListener('click', showContent);
 
-// Start loading
-loadPrices();
+init();
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
