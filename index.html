@@ -166,7 +166,6 @@ function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Show calculation
 function showContent() {
     if (Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
@@ -191,7 +190,6 @@ function showContent() {
 
     const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
     document.getElementById('totalCostText').innerText = formattedTotal;
-    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
 
     if (invalidItems.length > 0) {
         document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
@@ -200,9 +198,18 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Show PNGs and modal
-    document.getElementById('totalCostContainer').classList.remove('hidden');
-    document.getElementById('leftContainer').classList.remove('hidden');
+    // --- THIS PART ADDS THE PNGS ---
+    const leftContainer = document.getElementById('leftContainer');
+    const totalCostContainer = document.getElementById('totalCostContainer');
+
+    leftContainer.style.backgroundImage = "url('images/Contract 1.png')";
+    totalCostContainer.style.backgroundImage = "url('images/Contract 2.png')";
+
+    leftContainer.classList.remove('hidden');
+    totalCostContainer.classList.remove('hidden');
+
+    // Show total price popup
+    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
     document.getElementById('totalPriceModal').style.display = 'block';
 }
 
