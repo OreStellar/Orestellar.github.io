@@ -9,26 +9,60 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-/* --- General Styles --- */
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
-.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 5px; }
+
+.container-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
 @media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
-.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
+
+.main-container {
+    margin: 0 auto;
+    flex-shrink: 0;
+    width: 630px;
+    height: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: expand 2.5s ease-out;
+    background-color: #333;
+    border-radius: 15px;
+    padding: 10px;
+}
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
-.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
-.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
+
+.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 10px; resize: none; height: 100%; }
+
 .hidden { display: none; }
 
-/* PNG Containers */
-.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+/* PNG containers */
+.total-cost-container {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 630px;
+    height: 418px;
+    position: relative;
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    animation: expand 1.5s ease-out;
+}
 #totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 
-/* Glowing quote text */
+/* Quote text */
 @keyframes pulseTextGlow {
-    0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
-    50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
+    0%, 100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1, 0 0 20px #b0b3b2; }
+    50% { text-shadow: 0 0 15px #f0faf9, 0 0 15px #b8c2c1, 0 0 25px #a8adad; }
 }
 .quote-text {
     font-style: italic;
@@ -38,39 +72,33 @@ header { flex-shrink: 0; }
     animation: pulseTextGlow 2.0s infinite;
 }
 
-/* Submit button glow */
-@keyframes glowPulse {
-    0%, 100% { box-shadow: 0 0 10px #04ff19ff, 0 0 20px #04ff19ff, 0 0 30px #04ff19ff; }
-    50% { box-shadow: 0 0 20px #04ff19ff, 0 0 40px #04ff19ff, 0 0 60px #04ff19ff; }
-}
+/* Submit button */
 #submitButton {
-    background-color: #ffffffff;          /* base color */
-    color: black;                    /* text color */
+    background-color: #ffffff;
+    color: black;
     border: none;
     border-radius: 8px;
     padding: 11px 25px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0 15px 3px white;  /* white glow all the time */
-    transition: all 2.0s ease;       /* smooth hover transition */
+    box-shadow: 0 0 15px 3px white; 
+    transition: all 0.3s ease;
+}
+#submitButton:hover {
+    background-color: #b0ff8d;  /* light green hover */
+    box-shadow: 0 0 25px 5px #2fff1c;
 }
 
-#submitButton:hover {
-    background-color: #f5f5f5ff;       /* light green hover */
-    color: black;                     /* optional text change */
-    box-shadow: 0 0 25px 5px #2fff1cff; /* stronger green glow on hover */
-}
 /* Info button and modal */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 .info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
 
-.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.95); animation: fadeIn 0.5s ease; }
 .w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 
-/* Total Price Modal */
 #totalPriceModal .w3-modal-content { padding: 30px; max-width: 400px; }
 #totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
 </style>
@@ -112,9 +140,9 @@ header { flex-shrink: 0; }
 
 <div class="container-wrapper">
     <div id="leftContainer" class="total-cost-container hidden"></div>
-  
+
     <div class="main-container w3-card w3-container w3-center">
-        <h3 class="quote-text">paste your in-game inventory below</h3><br>
+        <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
         <button id="submitButton" disabled>Submit</button>
         <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
@@ -133,7 +161,6 @@ async function loadPrices() {
     try {
         const response = await fetch('data/prices.csv');
         if (!response.ok) throw new Error('CSV not found');
-
         const csvText = await response.text();
         const lines = csvText.split('\n').filter(l => l.trim() !== '');
         const headers = lines[0].split(',');
@@ -152,12 +179,12 @@ async function loadPrices() {
     }
 }
 
-// Format numbers
+// Format numbers with commas
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Show calculation
+// Calculate and show content
 function showContent() {
     if (Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
@@ -190,8 +217,11 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    document.getElementById('totalCostContainer').classList.remove('hidden');
+    // Show PNGs
+    document.getElementById('leftContainer').style.backgroundImage = "url('images/Contract 1.png')";
+    document.getElementById('totalCostContainer').style.backgroundImage = "url('images/Contract 2.png')";
     document.getElementById('leftContainer').classList.remove('hidden');
+    document.getElementById('totalCostContainer').classList.remove('hidden');
 
     // Show total price popup
     document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
@@ -204,7 +234,7 @@ async function init() {
     document.getElementById('submitButton').disabled = false;
 }
 
-// Modal functionality
+// Modals
 function openModal() { document.getElementById('infoModal').style.display='block'; }
 function closeModal() { document.getElementById('infoModal').style.display='none'; }
 document.getElementById('infoButton').addEventListener('click', openModal);
@@ -221,7 +251,7 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// Hook up submit button
+// Submit button
 document.getElementById('submitButton').addEventListener('click', showContent);
 
 init();
