@@ -14,9 +14,27 @@ body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 5px; }
-@media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
-.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
+.container-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+}
+@media (max-width: 1400px) { 
+    .container-wrapper { flex-direction: column; align-items: center; } 
+}
+
+.main-container { 
+    flex-shrink: 0; 
+    width: 630px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    animation: expand 2.5s ease-out; 
+}
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 
 .w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
@@ -24,10 +42,19 @@ header { flex-shrink: 0; }
 .hidden { display: none; }
 
 /* PNG Containers */
-.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
-#totalCostContainer { background-image: url('https://github.com/OreStellar/Orestellar.github.io/blob/main/images/Contract2.png'); display: none; }
-#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
+.total-cost-container {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 300px;
+    height: 418px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    animation: expand 1.5s ease-out;
+}
+
+#leftContainer { background-image: url('images/contract1.png'); }
+#totalCostContainer { background-image: url('images/contract2.png'); }
 
 /* Quote text glow */
 @keyframes pulseTextGlow {
@@ -47,7 +74,7 @@ header { flex-shrink: 0; }
     cursor: pointer;
     box-shadow: 0 0 15px 3px white;
     transition: all 0.3s ease;
-    margin-top: 10px; /* move down/up pixels */
+    margin-top: 10px;
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1cff; color: black; }
 
@@ -108,8 +135,8 @@ header { flex-shrink: 0; }
   <div class="w3-modal-content w3-card w3-center">
     <h2 style="font-weight:bold;">Total Contract Value</h2>
     <p id="popupTotalPrice"></p>
-    <button id="closeTotalModal">copy</button>
-    <div id="copiedMessage">copied</div>
+    <button id="closeTotalModal">o7</button>
+    <div id="copiedMessage">Copied!</div>
   </div>
 </div>
 
@@ -197,9 +224,11 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Show contract images
-    document.getElementById('leftContainer').style.display = 'block';       
-    document.getElementById('totalCostContainer').style.display = 'block';  
+    // Show contract images (left/right)
+    const left = document.getElementById('leftContainer');
+    const right = document.getElementById('totalCostContainer');
+    left.classList.remove('hidden');
+    right.classList.remove('hidden');
 
     // Animate and show total price modal
     const popupEl = document.getElementById('popupTotalPrice');
