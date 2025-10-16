@@ -11,8 +11,9 @@
 <style>
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
-
 header { flex-shrink: 0; }
+
+/* Container with PNGs on sides */
 .container-wrapper {
     display: flex;
     flex-direction: row;
@@ -20,28 +21,43 @@ header { flex-shrink: 0; }
     padding: 20px;
     box-sizing: border-box;
     justify-content: center;
-    align-items: flex-start; /* start at top instead of center */
-    gap: 5px;
-    margin-top: 50px; /* optional, pushes it down slightly from header */
+    align-items: flex-start;
+    gap: 10px;
 }
 
+/* Stack vertically on small screens */
 @media (max-width: 1400px) {
-    .container-wrapper { flex-direction: column; align-items: center; }
+    .container-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .main-container { 
+    margin: 0 auto; 
+    flex-shrink: 0; 
     width: 630px; 
+    height: 500px; /* taller to fit textarea */
     display: flex; 
     flex-direction: column; 
     justify-content: flex-start; 
     align-items: center; 
+    padding: 20px; 
     animation: expand 1.5s ease-out; 
-    margin-top: 20px;
 }
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 
-.w3-card, .w3-container { background-color: #333; color: white; border-radius: 15px; }
-.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 240px; background-color: white; color: black; padding: 10px; border-radius: 8px; font-size: 14px; }
+.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
+
+.full-width-textarea {
+    width: 100%;
+    flex-grow: 1;
+    min-height: 300px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    resize: none;
+}
+
 .hidden { display: none; }
 
 .total-cost-container { 
@@ -55,46 +71,61 @@ header { flex-shrink: 0; }
     border-radius: 15px; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.5); 
     animation: expand 1.5s ease-out; 
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
 }
-.total-cost-container.show { opacity: 1; }
 
 #totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 
-.quote-text { font-style: italic; text-shadow: 0 2px 1px rgba(0,0,0,0.3), 0 6px 4px rgba(0,0,0,0.5), 0 12px 8px rgba(0,0,0,0.7); }
+#leftContainer { 
+    background-size: contain; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    width: 630px; 
+    height: 418px; 
+    position: relative; 
+    color: white; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5); 
+    animation: expand 1.5s ease-out; 
+}
+
+#unrecognizedItemsContainer { width: 550px; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); background-color: #000; margin-top: 10px; }
 
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 .info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
 
-.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
-.w3-modal-content { position: relative; z-index:1000; background-color:#000; margin:15% auto; padding:20px; border-radius:10px; max-width:600px; box-shadow:0 4px 8px rgba(0,0,0,0.5); }
+.w3-modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 999; } /* darker overlay */
+.w3-modal-content { position: relative; z-index:1000; background-color:#000; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.5); animation: slideIn 0.5s ease; }
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+.modal-header { text-align: center; }
 
+/* Total Price Modal */
 #totalPriceModal .w3-modal-content {
-    background-color: #111;
+    background-color: #111;       
     color: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.99);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.99);
     text-align: center;
     padding: 30px;
     max-width: 400px;
 }
 #totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
 
+/* Submit button styling */
 #submitButton {
-    background-color: white;
+    background-color: gold;
     color: black;
     font-weight: bold;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 12px 20px;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.7);
-    transition: transform 0.1s, box-shadow 5.0s;
+    box-shadow: 0 4px 12px rgba(255, 255, 0, 0.9);
+    transition: transform 0.1s, box-shadow 0.2s;
 }
 #submitButton:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(21, 255, 0, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 0, 1);
 }
 </style>
 </head>
@@ -111,6 +142,7 @@ header { flex-shrink: 0; }
     <button id="infoButton" class="w3-button w3-theme">i</button>
 </div>
 
+<!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
     <div class="w3-modal-content">
         <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
@@ -135,11 +167,12 @@ header { flex-shrink: 0; }
 
 <div class="container-wrapper">
     <div id="leftContainer" class="total-cost-container hidden"></div>
-
+  
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
-        <div class="form-container">
-            <textarea id="message" class="full-width-textarea" placeholder="Paste inventory here:&#10;Compressed Ytirium 80&#10;Jet Ochre 6533"></textarea>
+        <div class="form-container" style="display:flex; flex-direction:column; width:100%; height:100%;">
+            <textarea id="message" class="full-width-textarea" placeholder="Paste inventory here: Ytirium 80&#10;Jet Ochre 1"></textarea>
+            <button id="submitButton" disabled>Submit</button>
             <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
             </div>
@@ -147,19 +180,14 @@ header { flex-shrink: 0; }
     </div>
 
     <div id="totalCostContainer" class="total-cost-container hidden">
-    <p id="totalCostText">0</p>
+        <p id="totalCostText">0</p>
     </div>
 </div>
-
-<!-- Submit button completely outside the container-wrapper, centered below -->
-<div style="width:100%; display:flex; justify-content:center; margin-top:15px;">
-    <button id="submitButton" class="w3-button" disabled>Submit</button>
-</div>
-
 
 <script>
 let priceList = {};
 
+// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
     try {
         const response = await fetch('data/prices.csv');
@@ -169,6 +197,7 @@ async function loadPrices() {
         const headers = lines[0].split(',');
         const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
         if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
+
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(',');
             const oreName = cols[0].trim();
@@ -190,12 +219,12 @@ function showContent() {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
-
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches;
     let totalCost = 0;
     let invalidItems = [];
+
     while ((matches = regex.exec(textarea)) !== null) {
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
@@ -216,13 +245,8 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Show PNGs with fade
-    const left = document.getElementById('leftContainer');
-    const right = document.getElementById('totalCostContainer');
-    left.classList.remove('hidden');
-    right.classList.remove('hidden');
-    left.classList.add('show');
-    right.classList.add('show');
+    document.getElementById('totalCostContainer').classList.remove('hidden');
+    document.getElementById('leftContainer').classList.remove('hidden');
 
     // Show total price popup
     document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
@@ -238,22 +262,21 @@ function openModal() { document.getElementById('infoModal').style.display='block
 function closeModal() { document.getElementById('infoModal').style.display='none'; }
 document.getElementById('infoButton').addEventListener('click', openModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
-window.onclick = (event) => { if(event.target==document.getElementById('infoModal')) closeModal(); };
-
+window.onclick = function(event) { 
+    if (event.target == document.getElementById('infoModal')) closeModal();
+}
 document.getElementById('closeTotalModal').addEventListener('click', () => {
     document.getElementById('totalPriceModal').style.display = 'none';
 });
 window.addEventListener('click', (event) => {
-    if(event.target==document.getElementById('totalPriceModal')) {
+    if (event.target == document.getElementById('totalPriceModal')) {
         document.getElementById('totalPriceModal').style.display = 'none';
     }
 });
-
 document.getElementById('submitButton').addEventListener('click', showContent);
 
 init();
 </script>
-
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
