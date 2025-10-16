@@ -9,15 +9,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
-/* Container Layout */
+/* Containers */
 .container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 5px; }
 @media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
-
-.main-container { width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; margin: 0 auto; }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 
 .w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
@@ -25,13 +24,13 @@ header { flex-shrink: 0; }
 .hidden { display: none; }
 
 /* PNG Containers */
-.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
 #totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 
-/* Glowing quote text */
+/* Quote text glow */
 @keyframes pulseTextGlow {
-    0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
-    50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
+  0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
+  50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
 }
 .quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 2.0s infinite; }
 
@@ -45,43 +44,37 @@ header { flex-shrink: 0; }
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 0 15px 3px white;
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
 }
-#submitButton:hover {
-    background-color: #f5fff5ff;
-    box-shadow: 0 0 25px 5px #2fff1cff;
-}
+#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1cff; color: black; }
 
-/* Info button and modal */
+/* Info button */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 .info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
 
-.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.95); animation: fadeIn 0.5s ease; }
+/* Modal */
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
 .w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 
-/* Total Price Modal */
-#totalPriceModal .w3-modal-content { padding: 30px; max-width: 400px; }
-#totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
-
-/* Copied message */
-#copiedMsg {
-    position: fixed;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #04ff19;
-    color: black;
-    padding: 10px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1100;
+/* Snazzy Total Price Modal */
+#totalPriceModal .w3-modal-content {
+    padding: 30px;
+    max-width: 400px;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 30px #00ff00, 0 0 50px #00ff00 inset;
+    animation: neonPulse 1.5s infinite alternate;
 }
-#copiedMsg.show { opacity: 1; }
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00 inset; }
+    100% { box-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00 inset; }
+}
+#popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+#closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+#copiedMessage { color: yellow; font-weight: bold; margin-top: 10px; display:none; }
+
 </style>
 </head>
 <body>
@@ -114,18 +107,17 @@ header { flex-shrink: 0; }
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-card w3-center">
     <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice" style="font-size: 32px; font-weight: bold; color: #00ff00; margin-bottom: 20px;"></p>
-    <button id="closeTotalModal" style="padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer;">o7</button>
+    <p id="popupTotalPrice">0 ISK</p>
+    <button id="closeTotalModal">o7</button>
+    <div id="copiedMessage">Copied!</div>
   </div>
 </div>
 
-<div id="copiedMsg">Copied!</div>
-
 <div class="container-wrapper">
-    <div id="leftContainer" class="total-cost-container hidden" style="background-image:url('images/Contract 1.png');"></div>
+    <div id="leftContainer" class="total-cost-container hidden"></div>
   
     <div class="main-container w3-card w3-container w3-center">
-        <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
+        <h3 class="quote-text">paste your in-game inventory below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
         <button id="submitButton" disabled>Submit</button>
         <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
@@ -133,9 +125,7 @@ header { flex-shrink: 0; }
         </div>
     </div>
 
-    <div id="totalCostContainer" class="total-cost-container hidden" style="background-image:url('images/Contract 2.png');">
-        <p id="totalCostText">0</p>
-    </div>
+    <div id="totalCostContainer" class="total-cost-container hidden"></div>
 </div>
 
 <script>
@@ -151,93 +141,97 @@ async function loadPrices() {
         const headers = lines[0].split(',');
         const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
         if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
-
-        for (let i=1; i<lines.length; i++){
+        for (let i=1;i<lines.length;i++){
             const cols = lines[i].split(',');
             const oreName = cols[0].trim();
             const price = parseFloat(cols[priceIndex]);
-            if(!isNaN(price)) priceList[oreName] = price;
+            if (!isNaN(price)) priceList[oreName] = price;
         }
-        console.log('✅ CSV loaded:', Object.keys(priceList).length + ' ores');
-    } catch(err){ console.error('⚠️ Error loading CSV:', err); }
+        console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
+    } catch(err){
+        console.error('⚠️ Error loading CSV:', err);
+    }
 }
 
 // Format numbers
-function formatNumberWithCommas(number){
+function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");
 }
 
-// Show calculation
-function showContent(){
-    if(Object.keys(priceList).length === 0){
-        alert("Price data still loading. Try again in a moment."); return;
+// Animate counting
+function animateCount(el, start, end, duration=2000) {
+    let startTime = null;
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime)/duration,1);
+        el.innerText = formatNumberWithCommas(Math.floor(progress*(end-start)+start)) + " ISK";
+        if(progress<1) requestAnimationFrame(step);
     }
+    requestAnimationFrame(step);
+}
 
+// Show content
+function showContent() {
+    if(Object.keys(priceList).length===0){
+        alert("Price data still loading. Try again in a moment.");
+        return;
+    }
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
-    let matches;
-    let totalCost = 0;
-    let invalidItems = [];
-
-    while((matches = regex.exec(textarea)) !== null){
-        const item = matches[1].trim();
-        const qty = parseInt(matches[2]);
-        if(priceList[item] !== undefined) totalCost += qty * priceList[item];
-        else invalidItems.push(item);
+    let matches, totalCost=0, invalidItems=[];
+    while((matches=regex.exec(textarea))!==null){
+        const item=matches[1].trim(), qty=parseInt(matches[2]);
+        if(priceList[item]!==undefined){ totalCost += qty*priceList[item]; }
+        else{ invalidItems.push(item); }
     }
 
-    const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
-    document.getElementById('totalCostText').innerText = formattedTotal;
-
-    if(invalidItems.length > 0){
-        document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+    if(invalidItems.length>0){
+        document.getElementById('unrecognizedItemsText').innerText='Unrecognized items: '+invalidItems.join(', ');
         document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
-    } else document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    } else { document.getElementById('unrecognizedItemsContainer').classList.add('hidden'); }
 
+    // Show contract images
     document.getElementById('totalCostContainer').classList.remove('hidden');
     document.getElementById('leftContainer').classList.remove('hidden');
 
-    // Show modal with counting effect
-    const popup = document.getElementById('popupTotalPrice');
-    popup.innerText = "0 ISK";
-    document.getElementById('totalPriceModal').style.display = 'block';
-
-    const numericTotal = totalCost;
-    let startTime = performance.now();
-    function countUp(timestamp){
-        const progress = Math.min((timestamp - startTime)/1000,1);
-        const value = Math.floor(progress * numericTotal);
-        popup.innerText = formatNumberWithCommas(value) + " ISK";
-        if(progress<1) requestAnimationFrame(countUp);
-        else popup.innerText = formatNumberWithCommas(numericTotal) + " ISK";
-    }
-    requestAnimationFrame(countUp);
-}
-
-// Copy total to clipboard and close modal
-function copyAndCloseModal(){
-    const popup = document.getElementById('popupTotalPrice');
-    const total = popup.innerText;
-    navigator.clipboard.writeText(total).then(()=>{
-        const msg = document.getElementById('copiedMsg');
-        msg.classList.add('show');
-        setTimeout(()=>msg.classList.remove('show'),1200);
-    });
-    document.getElementById('totalPriceModal').style.display = 'none';
+    // Show modal with counting
+    const popupEl=document.getElementById('popupTotalPrice');
+    animateCount(popupEl,0,totalCost,2000);
+    document.getElementById('totalPriceModal').style.display='block';
 }
 
 // Initialize
-async function init(){ await loadPrices(); document.getElementById('submitButton').disabled = false; }
+async function init(){
+    await loadPrices();
+    document.getElementById('submitButton').disabled=false;
+}
 
-// Event listeners
-document.getElementById('submitButton').addEventListener('click', showContent);
-document.getElementById('closeTotalModal').addEventListener('click', copyAndCloseModal);
-document.getElementById('infoButton').addEventListener('click', ()=>{document.getElementById('infoModal').style.display='block';});
-document.getElementById('closeModal').addEventListener('click', ()=>{document.getElementById('infoModal').style.display='none';});
-window.onclick = (event)=>{
-    if(event.target == document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none';
-    if(event.target == document.getElementById('totalPriceModal')) copyAndCloseModal();
+// Info modal
+function openModal(){ document.getElementById('infoModal').style.display='block'; }
+function closeModal(){ document.getElementById('infoModal').style.display='none'; }
+document.getElementById('infoButton').addEventListener('click', openModal);
+document.getElementById('closeModal').addEventListener('click', closeModal);
+window.onclick = function(event){ 
+    if(event.target==document.getElementById('infoModal')) closeModal();
 };
+
+// Total price modal copy functionality
+const closeTotalBtn=document.getElementById('closeTotalModal');
+const copiedMsg=document.getElementById('copiedMessage');
+closeTotalBtn.addEventListener('click',()=>{
+    const text=document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+        copiedMsg.style.display='block';
+        setTimeout(()=>copiedMsg.style.display='none',1500);
+    });
+    document.getElementById('totalPriceModal').style.display='none';
+});
+window.addEventListener('click',(event)=>{
+    if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
+});
+
+// Hook submit button
+document.getElementById('submitButton').addEventListener('click', showContent);
 
 init();
 </script>
