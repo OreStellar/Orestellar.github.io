@@ -20,9 +20,11 @@ header { flex-shrink: 0; }
     padding: 20px;
     box-sizing: border-box;
     justify-content: center;
-    align-items: flex-start; /* quote box slightly raised */
-    gap: 10px;
+    align-items: flex-start; /* start at top instead of center */
+    gap: 5px;
+    margin-top: 50px; /* optional, pushes it down slightly from header */
 }
+
 @media (max-width: 1400px) {
     .container-wrapper { flex-direction: column; align-items: center; }
 }
@@ -144,7 +146,9 @@ header { flex-shrink: 0; }
         </div>
     </div>
 
-    <div id="totalCostContainer" class="total-cost-container hidden"></div>
+    <div id="totalCostContainer" class="total-cost-container hidden">
+    <p id="totalCostText">0</p>
+    </div>
 </div>
 
 <!-- Submit button completely outside the container-wrapper, centered below -->
