@@ -251,6 +251,22 @@ window.addEventListener('click',(event)=>{
 document.getElementById('submitButton').addEventListener('click', showContent);
 
 init();
+// Refresh inventory on header click
+document.querySelector('#myHeader img').addEventListener('click', () => {
+    // Clear the textarea
+    document.getElementById('message').value = '';
+    
+    // Hide unrecognized items
+    document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    
+    // Hide contract images
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    
+    // Reset total ISK in right contract
+    document.getElementById('totalCostText').innerText = '0 ISK';
+});
+
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
