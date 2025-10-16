@@ -86,7 +86,7 @@ let priceList = {};
 // Load CSV and extract 150% suggested buy price
 async function loadPrices() {
     try {
-        const response = await fetch('data/prices.csv');
+        const response = await fetch('ore_prices_full.csv');
         if (!response.ok) throw new Error('CSV not found');
 
         const csvText = await response.text();
