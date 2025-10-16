@@ -6,57 +6,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <style>
-html,body{background:black;color:white;margin:0;padding:0;height:100%;}
-.container-wrapper{display:flex;justify-content:center;align-items:center;gap:5px;padding:20px;flex-wrap:wrap;}
-.main-container{width:650px;height:450px;background:#333;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.quote-text{font-style:italic;font-weight:bold;color:white;text-shadow:0 0 10px #fff,0 0 20px #bff;animation:pulseGlow 2s infinite alternate;}
-@keyframes pulseGlow{0%{text-shadow:0 0 5px #fff;}100%{text-shadow:0 0 20px #9f9;}}
+html,body{
+  background:black;
+  color:white;
+  margin:0;
+  padding:0;
+  height:100%;
+}
+.container-wrapper{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:20px;
+}
+.total-cost-container{
+  width:630px;
+  height:418px;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  display:none;
+  border:2px solid rgba(0,255,0,0.3);
+  border-radius:12px;
+  transition:opacity 0.8s ease;
+  opacity:0;
+}
+.total-cost-container.show{
+  display:block;
+  opacity:1;
+}
+.main-container{
+  width:650px;
+  height:450px;
+  background:#333;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 20px rgba(255,255,255,0.1);
+}
+.quote-text{
+  font-style:italic;
+  font-weight:bold;
+  color:white;
+  text-shadow:0 0 10px #fff,0 0 20px #bff;
+  animation:pulseGlow 2s infinite alternate;
+}
+@keyframes pulseGlow{
+  0%{text-shadow:0 0 5px #fff;}
+  100%{text-shadow:0 0 20px #9f9;}
+}
 .full-width-textarea{width:90%;height:160px;margin-bottom:15px;border-radius:8px;}
-#submitButton{background:white;color:black;padding:10px 25px;border:none;border-radius:10px;cursor:pointer;
-box-shadow:0 0 15px white;transition:all 0.3s;}
-#submitButton:hover{background:#eaffea;box-shadow:0 0 25px #2fff1c;}
-.total-cost-container{width:630px;height:418px;background-size:contain;background-repeat:no-repeat;background-position:center;display:none;}
-.w3-modal{display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);}
-.w3-modal-content{background:radial-gradient(circle,#111,#000);margin:10% auto;padding:20px;border-radius:15px;color:#b8ffbe;width:400px;text-align:center;
-box-shadow:0 0 30px #2fff1c;border:2px solid #2fff1c;}
-#popupTotalPrice{font-size:28px;font-weight:bold;color:white;text-shadow:0 0 15px #00ff6e,0 0 30px #2fff1c;animation:pulse 1.5s infinite alternate;}
-@keyframes pulse{0%{text-shadow:0 0 10px #00ff6e;}100%{text-shadow:0 0 30px #2fff1c;}}
+#submitButton{
+  background:white;
+  color:black;
+  padding:10px 25px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  box-shadow:0 0 15px white;
+  transition:all 0.3s;
+}
+#submitButton:hover{
+  background:#eaffea;
+  box-shadow:0 0 25px #2fff1c;
+}
+.w3-modal{
+  display:none;
+  position:fixed;
+  z-index:999;
+  left:0;top:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.9);
+}
+.w3-modal-content{
+  background:radial-gradient(circle,#111,#000);
+  margin:10% auto;
+  padding:20px;
+  border-radius:15px;
+  color:#b8ffbe;
+  width:400px;
+  text-align:center;
+  box-shadow:0 0 30px #2fff1c;
+  border:2px solid #2fff1c;
+}
+#popupTotalPrice{
+  font-size:28px;
+  font-weight:bold;
+  color:white;
+  text-shadow:0 0 15px #00ff6e,0 0 30px #2fff1c;
+  animation:pulse 1.5s infinite alternate;
+}
+@keyframes pulse{
+  0%{text-shadow:0 0 10px #00ff6e;}
+  100%{text-shadow:0 0 30px #2fff1c;}
+}
 </style>
-</head>
-<body>
-
-<header class="w3-center" style="padding:10px;">
-  <img src="images/OreStellar Header.png" style="width:300px;">
-</header>
-
-<!-- Total Price Modal -->
-<div id="totalPriceModal" class="w3-modal">
-  <div class="w3-modal-content">
-    <span id="closeTotalModal" style="cursor:pointer;float:right;font-size:22px;">&times;</span>
-    <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice"></p>
-    <button id="closeBtn" style="margin-top:15px;background:#2fff1c;color:black;font-weight:bold;padding:8px 18px;border:none;border-radius:8px;cursor:pointer;">o7</button>
-  </div>
-</div>
-
-<div class="container-wrapper">
-  <div id="leftContainer" class="total-cost-container" style="background-image:url('images/Contract1.png');"></div>
-
-  <div class="main-container">
-    <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="full-width-textarea" placeholder="Compressed Ytirium 99
-Jet Ochre 135
-Compressed Gneiss 10240
-Bistot 305115
-Magma Mercoxit 4055"></textarea>
-    <button id="submitButton">Submit</button>
-    <div id="unrecognizedItemsContainer" class="hidden" style="margin-top:10px;">
-      <p id="unrecognizedItemsText" style="color:red;"></p>
-    </div>
-  </div>
-
-  <div id="totalCostContainer" class="total-cost-container" style="background-image:url('images/Contract2.png');"></div>
-</div>
 
 <script>
 let priceList = {};
@@ -100,12 +148,18 @@ function animateValue(id, start, end, duration){
 
 function showContent(){
   console.log("📨 Submit button clicked");
-  document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
 
+  // fade in both contract containers
+  const left = document.getElementById('leftContainer');
+  const right = document.getElementById('totalCostContainer');
+  left.classList.add('show');
+  right.classList.add('show');
+
+  // open popup modal
   const modal=document.getElementById('totalPriceModal');
   modal.style.display='block';
 
+  // perform ore price calc
   const input=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0;
@@ -116,11 +170,10 @@ function showContent(){
     if(priceList[item]) total+=qty*priceList[item];
     else unknown.push(item);
   }
-  if(!csvLoaded) total=9999999; // fallback for debugging
+  if(!csvLoaded) total=9999999; // fallback for testing
 
-  console.log("💰 Total calculated:", total);
   animateValue("popupTotalPrice",0,total,1500);
-  
+
   if(unknown.length>0){
     document.getElementById('unrecognizedItemsText').innerText="Unrecognized items: "+unknown.join(", ");
     document.getElementById('unrecognizedItemsContainer').classList.remove("hidden");
