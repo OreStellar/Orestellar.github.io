@@ -23,7 +23,7 @@ body {
 header { flex-shrink: 0; }
 .container-wrapper {
     display: flex;
-    flex-direction: row; /* side by side */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -62,6 +62,7 @@ header { flex-shrink: 0; }
     color: white;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    display: none; /* hidden initially */
 }
 #totalCostText {
     position: absolute;
@@ -82,7 +83,7 @@ header { flex-shrink: 0; }
 .w3-display-topright { font-size:28px; cursor:pointer; color:white; }
 #leftContainer { background-image: url('images/Contract 1.png'); }
 #totalCostContainer { background-image: url('images/Contract 2.png'); }
-#submitButton { background-color: #ffcc00; color: black; font-weight: bold; padding: 10px 20px; font-size: 18px; }
+#submitButton { background-color: #09ff00ff; color: black; font-weight: bold; padding: 10px 20px; font-size: 18px; }
 </style>
 </head>
 <body>
@@ -134,7 +135,6 @@ header { flex-shrink: 0; }
 <script>
 let priceList = {};
 
-// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
     try {
         const response = await fetch('data/prices.csv');
@@ -185,8 +185,6 @@ function showContent() {
     }
 
     const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
-    document.getElementById('totalCostText').innerText = formattedTotal;
-    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
 
     if (invalidItems.length > 0) {
         document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
@@ -195,9 +193,13 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    document.getElementById('totalCostContainer').classList.remove('hidden');
-    document.getElementById('leftContainer').classList.remove('hidden');
+    // Show PNGs only after submit
+    document.getElementById('totalCostContainer').style.display = 'block';
+    document.getElementById('leftContainer').style.display = 'block';
+    document.getElementById('totalCostText').innerText = formattedTotal;
 
+    // Show total price popup
+    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
     document.getElementById('totalPriceModal').style.display = 'block';
 }
 
@@ -206,7 +208,6 @@ async function init() {
     document.getElementById('submitButton').disabled = false;
 }
 
-// Modal functionality
 document.getElementById('infoButton').addEventListener('click', () => document.getElementById('infoModal').style.display='block');
 document.getElementById('closeModal').addEventListener('click', () => document.getElementById('infoModal').style.display='none');
 document.getElementById('closeTotalModal').addEventListener('click', () => document.getElementById('totalPriceModal').style.display='none');
