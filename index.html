@@ -82,16 +82,6 @@ header { flex-shrink: 0; }
     z-index: 1100;
 }
 #copiedMsg.show { opacity: 1; }
-
-/* Overlay total on Contract2 */
-#overlayTotalText {
-    position: absolute;
-    font-size: 20px;
-    font-weight: bold;
-    color: #04ff19;
-    text-shadow: 0 0 10px white;
-    pointer-events: none;
-}
 </style>
 </head>
 <body>
@@ -135,7 +125,7 @@ header { flex-shrink: 0; }
     <div id="leftContainer" class="total-cost-container hidden" style="background-image:url('images/Contract 1.png');"></div>
   
     <div class="main-container w3-card w3-container w3-center">
-        <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
+        <h3 class="quote-text">paste your in-game inventory below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
         <button id="submitButton" disabled>Submit</button>
         <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
@@ -145,7 +135,6 @@ header { flex-shrink: 0; }
 
     <div id="totalCostContainer" class="total-cost-container hidden" style="background-image:url('images/Contract 2.png');">
         <p id="totalCostText">0</p>
-        <div id="overlayTotalText" class="hidden"></div>
     </div>
 </div>
 
@@ -163,28 +152,25 @@ async function loadPrices() {
         const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
         if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
 
-        for (let i = 1; i < lines.length; i++) {
+        for (let i=1; i<lines.length; i++){
             const cols = lines[i].split(',');
             const oreName = cols[0].trim();
             const price = parseFloat(cols[priceIndex]);
-            if (!isNaN(price)) priceList[oreName] = price;
+            if(!isNaN(price)) priceList[oreName] = price;
         }
-        console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
-    } catch (err) {
-        console.error('⚠️ Error loading CSV:', err);
-    }
+        console.log('✅ CSV loaded:', Object.keys(priceList).length + ' ores');
+    } catch(err){ console.error('⚠️ Error loading CSV:', err); }
 }
 
 // Format numbers
-function formatNumberWithCommas(number) {
-    return number.toLocaleString();
+function formatNumberWithCommas(number){
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");
 }
 
 // Show calculation
-function showContent() {
-    if (Object.keys(priceList).length === 0) {
-        alert("Price data still loading. Try again in a moment.");
-        return;
+function showContent(){
+    if(Object.keys(priceList).length === 0){
+        alert("Price data still loading. Try again in a moment."); return;
     }
 
     const textarea = document.getElementById('message').value;
@@ -193,17 +179,17 @@ function showContent() {
     let totalCost = 0;
     let invalidItems = [];
 
-    while ((matches = regex.exec(textarea)) !== null) {
+    while((matches = regex.exec(textarea)) !== null){
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
-        if (priceList[item] !== undefined) totalCost += qty * priceList[item];
+        if(priceList[item] !== undefined) totalCost += qty * priceList[item];
         else invalidItems.push(item);
     }
 
     const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
     document.getElementById('totalCostText').innerText = formattedTotal;
 
-    if (invalidItems.length > 0) {
+    if(invalidItems.length > 0){
         document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
         document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
     } else document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
@@ -217,69 +203,38 @@ function showContent() {
     document.getElementById('totalPriceModal').style.display = 'block';
 
     const numericTotal = totalCost;
-    let current = 0;
-    const duration = 1000;
-    const startTime = performance.now();
-
-    function countUp(timestamp) {
-        const progress = Math.min((timestamp - startTime)/duration, 1);
+    let startTime = performance.now();
+    function countUp(timestamp){
+        const progress = Math.min((timestamp - startTime)/1000,1);
         const value = Math.floor(progress * numericTotal);
         popup.innerText = formatNumberWithCommas(value) + " ISK";
-        if(progress < 1) requestAnimationFrame(countUp);
+        if(progress<1) requestAnimationFrame(countUp);
         else popup.innerText = formatNumberWithCommas(numericTotal) + " ISK";
     }
     requestAnimationFrame(countUp);
 }
 
-// Copy and overlay on Contract 2
-function copyAndCloseModal() {
+// Copy total to clipboard and close modal
+function copyAndCloseModal(){
     const popup = document.getElementById('popupTotalPrice');
     const total = popup.innerText;
-
-    // Copy
-    navigator.clipboard.writeText(total).then(() => {
+    navigator.clipboard.writeText(total).then(()=>{
         const msg = document.getElementById('copiedMsg');
         msg.classList.add('show');
-        setTimeout(() => msg.classList.remove('show'), 1200);
+        setTimeout(()=>msg.classList.remove('show'),1200);
     });
-
-    // Overlay on Contract 2
-    const overlay = document.getElementById('overlayTotalText');
-    overlay.style.top = 'calc(50% - 25px)';
-    overlay.style.left = 'calc(50% - 120px)';
-    overlay.classList.remove('hidden');
-
-    const numericTotal = parseFloat(total.replace(/,/g,''));
-    let start = 0;
-    const duration = 1000;
-    const startTime = performance.now();
-
-    function step(timestamp) {
-        const progress = Math.min((timestamp - startTime)/duration,1);
-        const value = Math.floor(progress * numericTotal);
-        overlay.innerText = formatNumberWithCommas(value) + " ISK";
-        if(progress < 1) requestAnimationFrame(step);
-        else overlay.innerText = formatNumberWithCommas(numericTotal) + " ISK";
-    }
-    requestAnimationFrame(step);
-
-    // Close modal
     document.getElementById('totalPriceModal').style.display = 'none';
 }
 
 // Initialize
-async function init() {
-    await loadPrices();
-    document.getElementById('submitButton').disabled = false;
-}
+async function init(){ await loadPrices(); document.getElementById('submitButton').disabled = false; }
 
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 document.getElementById('closeTotalModal').addEventListener('click', copyAndCloseModal);
-
-document.getElementById('infoButton').addEventListener('click', () => { document.getElementById('infoModal').style.display='block'; });
-document.getElementById('closeModal').addEventListener('click', () => { document.getElementById('infoModal').style.display='none'; });
-window.onclick = (event) => {
+document.getElementById('infoButton').addEventListener('click', ()=>{document.getElementById('infoModal').style.display='block';});
+document.getElementById('closeModal').addEventListener('click', ()=>{document.getElementById('infoModal').style.display='none';});
+window.onclick = (event)=>{
     if(event.target == document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none';
     if(event.target == document.getElementById('totalPriceModal')) copyAndCloseModal();
 };
