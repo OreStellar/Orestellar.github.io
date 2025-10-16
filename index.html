@@ -9,117 +9,132 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
+/* --- General Styles --- */
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
-
-.container-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 20px;
-}
-
-.main-container {
-  width: 630px;
-  height: 430px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #333;
-  border-radius: 15px;
-  padding: 25px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.7);
-}
-
-.full-width-textarea {
-  width: 100%;
-  height: 200px;
-  resize: none;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
+.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 5px; }
+@media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 650px; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
+@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
+.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
 .hidden { display: none; }
 
-.total-cost-container {
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 630px;
-  height: 430px;
-  position: relative;
-  color: white;
-  border-radius: 15px;
-  transition: opacity 0.5s ease;
-}
+/* PNG Containers */
+.total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 
-#totalCostText {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 20px;
-  font-weight: bold;
-  text-shadow: 0 0 10px black;
-}
-
+/* Glowing quote text */
 @keyframes pulseTextGlow {
-  0%, 100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1, 0 0 20px #b0b3b2; }
-  50% { text-shadow: 0 0 15px #f0faf9, 0 0 15px #b8c2c1, 0 0 25px #a8adad; }
+    0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
+    50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
 }
 .quote-text {
-  font-style: italic;
-  font-weight: bold;
-  font-size: 21px;
-  color: #fff;
-  animation: pulseTextGlow 2s infinite;
+    font-style: italic;
+    font-weight: bold;
+    color: #fff;
+    font-size: 21px;
+    animation: pulseTextGlow 2.0s infinite;
 }
 
 /* Submit button glow */
 #submitButton {
-  background-color: #ffffff;
-  color: black;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 25px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white; 
-  transition: all 0.3s ease;
-  margin-top: -100px; /* lifted slightly */
+    background-color: #fff;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px 3px white;
+    transition: all 0.4s ease;
+    margin-top: -10px;
 }
 #submitButton:hover {
-  background-color: #b0ff8d;  /* light green */
-  box-shadow: 0 0 25px 5px #2fff1c;
+    background-color: #eaffea;
+    box-shadow: 0 0 25px 5px #2fff1cff;
 }
 
-/* Modal */
-.w3-modal {
-  display:none;
+/* Info button */
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+@keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+.info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
+
+/* Info modal */
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.95); animation: fadeIn 0.5s ease; }
+.w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+
+/* --- Total Price Modal Styling --- */
+#totalPriceModal {
+  display: none;
   position: fixed;
-  z-index:999;
-  left:0; top:0;
-  width:100%; height:100%;
-  background-color: rgba(0,0,0,0.95);
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(3px);
+  animation: modalFade 0.5s ease;
 }
-.w3-modal-content {
-  background-color:#111;
-  margin:15% auto;
-  padding:20px;
-  border-radius:12px;
-  color:white;
-  max-width:400px;
+@keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
+
+#totalPriceModal .w3-modal-content {
+  background: radial-gradient(circle at top, #121212 0%, #000 100%);
+  margin: 10% auto;
+  padding: 25px 35px;
+  border-radius: 15px;
+  color: #fff;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0, 255, 128, 0.3), inset 0 0 20px rgba(0, 255, 128, 0.2);
+  border: 2px solid rgba(0, 255, 128, 0.4);
+  transform: scale(0.85);
+  animation: modalPopIn 0.4s ease forwards;
 }
-.w3-display-topright {
-  color:white;
-  font-size:28px;
-  cursor:pointer;
+@keyframes modalPopIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#closeTotalModal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  color: #2fff1c;
+  transition: 0.3s;
+}
+#closeTotalModal:hover { color: #fff; text-shadow: 0 0 8px #2fff1c; }
+
+#totalPriceModal h2 {
+  font-size: 26px;
+  font-weight: bold;
+  color: #b8ffbe;
+  text-shadow: 0 0 10px #2fff1c, 0 0 20px #38ff46;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* Animated total number */
+#popupTotalPrice {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px #00ff6e, 0 0 20px #2fff1c, 0 0 30px #00ff6e;
+  animation: pulseGlow 1.5s infinite alternate;
+}
+@keyframes pulseGlow {
+  0% { text-shadow: 0 0 8px #00ff6e, 0 0 15px #00ff6e; }
+  100% { text-shadow: 0 0 20px #2fff1c, 0 0 40px #00ff6e; }
 }
 </style>
 </head>
+
 <body>
 
 <header class="w3-container w3-theme w3-padding" id="myHeader">
@@ -129,106 +144,170 @@ header { flex-shrink: 0; }
   <hr>
 </header>
 
+<div class="info-button">
+  <button id="infoButton" class="w3-button w3-theme">i</button>
+</div>
+
+<!-- Info Modal -->
+<div id="infoModal" class="w3-modal">
+  <div class="w3-modal-content">
+    <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
+    <header class="w3-container w3-theme modal-header">
+      <h2>Welcome to OreStellar's appraisal calculator!</h2>
+    </header>
+    <div class="w3-container">
+      <p>If you have any questions, please message Morgan Auren in-game.</p>
+      <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
+    </div>
+  </div>
+</div>
+
 <!-- Total Price Modal -->
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-card w3-center">
-    <span id="closeTotalModal" class="w3-button w3-display-topright">&times;</span>
+    <span id="closeTotalModal">&times;</span>
     <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice" style="font-size: 24px; font-weight: bold;"></p>
+    <p id="popupTotalPrice"></p>
   </div>
 </div>
 
 <div class="container-wrapper">
-  <div id="leftContainer" class="total-cost-container hidden"></div>
-
-  <div class="main-container w3-card w3-center">
-    <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055&#10;Compressed Mordunium 52600040"></textarea>
-    <button id="submitButton" disabled>Submit</button>
-    <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
-      <p id="unrecognizedItemsText" style="color:red;"></p>
-    </div>
+  <div id="leftContainer" class="total-cost-container hidden" style="background-image:url('images/Contract1.png');"></div>
+  
+  <div class="main-container w3-card w3-container w3-center">
+      <h3 class="quote-text">paste your in-game inventory below</h3><br>
+      <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99
+Jet Ochre 135
+Compressed Gneiss 10240
+Bistot 305115
+Magma Mercoxit 4055"></textarea>
+      <button id="submitButton" disabled>Submit</button>
+      <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
+          <p id="unrecognizedItemsText" style="color:red;"></p>
+      </div>
   </div>
 
-  <div id="totalCostContainer" class="total-cost-container hidden">
-    <p id="totalCostText">0</p>
-  </div>
+  <div id="totalCostContainer" class="total-cost-container hidden" style="background-image:url('images/Contract2.png');"></div>
 </div>
 
 <script>
 let priceList = {};
 
+// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
   try {
     const response = await fetch('data/prices.csv');
-    const csv = await response.text();
-    const lines = csv.trim().split('\n');
+    if (!response.ok) throw new Error('CSV not found');
+
+    const csvText = await response.text();
+    const lines = csvText.split('\n').filter(l => l.trim() !== '');
     const headers = lines[0].split(',');
-    const priceIndex = headers.findIndex(h => h.toLowerCase().includes('150%'));
-    for (let i=1; i<lines.length; i++) {
+    const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+    if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
+
+    for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split(',');
-      const ore = cols[0].trim();
+      const oreName = cols[0].trim();
       const price = parseFloat(cols[priceIndex]);
-      if (!isNaN(price)) priceList[ore] = price;
+      if (!isNaN(price)) priceList[oreName] = price;
     }
-    document.getElementById('submitButton').disabled = false;
-  } catch (e) {
-    console.error('Error loading CSV', e);
+    console.log('✅ Prices loaded:', priceList);
+  } catch (err) {
+    console.error('⚠️ Error loading CSV:', err);
   }
 }
 
-function formatNumber(n) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+// Format numbers
+function formatNumberWithCommas(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+// Animated counter
+function animateValue(id, start, end, duration) {
+  const obj = document.getElementById(id);
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    const value = start + (end - start) * progress;
+    obj.innerText = formatNumberWithCommas(value.toFixed(2)) + " ISK";
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  window.requestAnimationFrame(step);
+}
+
+// Show calculation
 function showContent() {
-  const text = document.getElementById('message').value;
+  if (Object.keys(priceList).length === 0) {
+    alert("Price data still loading. Try again in a moment.");
+    return;
+  }
+
+  const textarea = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total = 0, invalid = [];
-  while ((match = regex.exec(text)) !== null) {
-    const name = match[1].trim();
-    const qty = parseInt(match[2]);
-    if (priceList[name]) total += qty * priceList[name];
-    else invalid.push(name);
+  let matches;
+  let totalCost = 0;
+  let invalidItems = [];
+
+  while ((matches = regex.exec(textarea)) !== null) {
+    const item = matches[1].trim();
+    const qty = parseInt(matches[2]);
+    if (priceList[item] !== undefined) {
+      totalCost += qty * priceList[item];
+    } else {
+      invalidItems.push(item);
+    }
   }
 
-  const formatted = formatNumber(total.toFixed(2));
-  document.getElementById('totalCostText').innerText = formatted;
-  document.getElementById('popupTotalPrice').innerText = formatted + " ISK";
+  const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
+  document.getElementById('totalCostText').innerText = formattedTotal;
 
-  // Show PNGs
-  const left = document.getElementById('leftContainer');
-  const right = document.getElementById('totalCostContainer');
-  left.style.backgroundImage = "url('images/Contract 1.png')";
-  right.style.backgroundImage = "url('images/Contract 2.png')";
-  left.classList.remove('hidden');
-  right.classList.remove('hidden');
-
-  // Modal
-  document.getElementById('totalPriceModal').style.display = 'block';
-
-  // Show unrecognized if any
-  const unrecognized = document.getElementById('unrecognizedItemsContainer');
-  if (invalid.length) {
-    document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized: ' + invalid.join(', ');
-    unrecognized.classList.remove('hidden');
+  if (invalidItems.length > 0) {
+    document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+    document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
   } else {
-    unrecognized.classList.add('hidden');
+    document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
   }
+
+  document.getElementById('totalCostContainer').classList.remove('hidden');
+  document.getElementById('leftContainer').classList.remove('hidden');
+
+  // Show popup with animation
+  const modal = document.getElementById('totalPriceModal');
+  modal.style.display = 'block';
+  animateValue('popupTotalPrice', 0, totalCost, 1500);
 }
 
-// Event listeners
-document.getElementById('submitButton').addEventListener('click', showContent);
+// Initialize
+async function init() {
+  await loadPrices();
+  document.getElementById('submitButton').disabled = false;
+}
+
+// Modal functionality
+function openModal() { document.getElementById('infoModal').style.display='block'; }
+function closeModal() { document.getElementById('infoModal').style.display='none'; }
+document.getElementById('infoButton').addEventListener('click', openModal);
+document.getElementById('closeModal').addEventListener('click', closeModal);
+window.onclick = function(event) { 
+  if (event.target == document.getElementById('infoModal')) closeModal();
+}
 document.getElementById('closeTotalModal').addEventListener('click', () => {
   document.getElementById('totalPriceModal').style.display = 'none';
 });
-window.onclick = (e) => {
-  if (e.target === document.getElementById('totalPriceModal')) {
+window.addEventListener('click', (event) => {
+  if (event.target == document.getElementById('totalPriceModal')) {
     document.getElementById('totalPriceModal').style.display = 'none';
   }
-};
+});
 
-loadPrices();
+// Hook up submit button
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+init();
 </script>
+<script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
