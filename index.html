@@ -62,6 +62,21 @@ header { flex-shrink: 0; }
     max-width: 400px;
 }
 #totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
+/* Make submit button more distinguishable */
+#submitButton {
+    background-color: #FFD700; /* bright gold */
+    color: black;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5); /* subtle glow */
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+#submitButton:hover {
+    transform: scale(1.05); /* slightly grow on hover */
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.8); /* stronger glow */
+}
 
 </style>
 </head>
