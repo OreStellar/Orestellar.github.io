@@ -138,13 +138,15 @@ header { flex-shrink: 0; }
 
 /* Submit button: restored to your previous gold glow style */
 #submitButton {
-    background-color: #ffffffff; /* bright gold */
+    position: relative; /* ensure it's on top */
+    z-index: 10;
+    background-color: #ffffffff; 
     color: black;
     font-weight: bold;
     border-radius: 8px;
     padding: 12px 20px;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 1); /* subtle glow */
-    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 1);
+    transition: transform 0.1s, box-shadow 0.4s;
 }
 
 #submitButton:hover {
