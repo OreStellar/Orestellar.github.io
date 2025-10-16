@@ -44,21 +44,22 @@ header { flex-shrink: 0; }
     50% { box-shadow: 0 0 20px #04ff19ff, 0 0 40px #04ff19ff, 0 0 60px #04ff19ff; }
 }
 #submitButton {
-    background-color: #ffffffff;
-    color: #080808ff;
-    border: 2px solid #939c9cff;
-    padding: 10px 50px;
-    font-size: 16px;
-    font-weight: bold;
+    background-color: #ffffffff;          /* base color */
+    color: black;                    /* text color */
+    border: none;
     border-radius: 8px;
+    padding: 30px 20px;
+    font-weight: bold;
     cursor: pointer;
-    animation: glowPulse 2.0s infinite;
-}
-#submitButton:hover {
-    background-color: #fcfcfcff;
-    color: black;
+    box-shadow: 0 0 15px 3px white;  /* white glow all the time */
+    transition: all 2.0s ease;       /* smooth hover transition */
 }
 
+#submitButton:hover {
+    background-color: #f5f5f5ff;       /* light green hover */
+    color: black;                     /* optional text change */
+    box-shadow: 0 0 25px 5px #2fff1cff; /* stronger green glow on hover */
+}
 /* Info button and modal */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
