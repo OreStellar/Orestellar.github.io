@@ -81,6 +81,21 @@ header { flex-shrink: 0; }
     box-shadow: 0 0 15px rgba(0, 255, 76, 1), 0 0 30px #00ff6aff, 0 0 45px #00ff0dff;
     margin-top: 25px; /* moves the button up 10 pixels */
 }
+<style>
+/* --- Glow effect for main container --- */
+.main-container-glow {
+    box-shadow: 0 0 20px #fd1100ff, 0 0 40px #ff1100ff, 0 0 60px #dd5b05ff;
+    border-radius: 15px;
+    transition: box-shadow 0.3s ease-in-out;
+}
+.main-container-glow:hover {
+    animation: pulseContainerGlow 1.5s infinite;
+}
+@keyframes pulseContainerGlow {
+    0% { box-shadow: 0 0 20px #00ffea, 0 0 40px #00ffea, 0 0 60px #00ffea; }
+    50% { box-shadow: 0 0 30px #00ffea, 0 0 60px #00ffea, 0 0 90px #00ffea; }
+    100% { box-shadow: 0 0 20px #00ffea, 0 0 40px #00ffea, 0 0 60px #00ffea; }
+}
 </style>
 </head>
 <body>
@@ -121,14 +136,14 @@ header { flex-shrink: 0; }
 <div class="container-wrapper">
     <div id="leftContainer" class="total-cost-container hidden"></div>
   
-    <div class="main-container w3-card w3-container w3-center">
-        <h3 class="quote-text">paste your in-game inventory below</h3><br>
-        <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
-        <button id="submitButton" disabled>Submit</button>
-        <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
-            <p id="unrecognizedItemsText" style="color:red;"></p>
-        </div>
+<div class="main-container w3-card w3-container w3-center main-container-glow">
+    <h3 class="quote-text">paste your in-game inventory below</h3><br>
+    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
+    <button id="submitButton" disabled>Submit</button>
+    <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
+        <p id="unrecognizedItemsText" style="color:red;"></p>
     </div>
+</div>
 
     <div id="totalCostContainer" class="total-cost-container hidden">
         <p id="totalCostText">0</p>
