@@ -12,7 +12,16 @@
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
-.container-wrapper { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; box-sizing: border-box; }
+.container-wrapper {
+    display: flex;
+    flex-direction: row;       /* Keep children in a row */
+    flex-wrap: nowrap;         /* Prevent wrapping to next line */
+    justify-content: center;   /* Center horizontally */
+    align-items: center;       /* Align vertically */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-x: auto;          /* Add horizontal scroll if screen is too small */
+}
 .main-container { flex-shrink: 0; width: 630px; height: 418px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 1.5s ease-out; margin-bottom:20px; }
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 .w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
@@ -66,7 +75,7 @@ header { flex-shrink: 0; }
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
-            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 81460&#10;Jet Ochre 1"></textarea>
+            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 8&#10;Jet Ochre 1"></textarea>
             <button id="submitButton" class="w3-button w3-black w3-round" disabled>Submit</button>
             <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
