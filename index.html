@@ -25,6 +25,8 @@ header { flex-shrink: 0; }
 
 /* PNG Containers */
 .total-cost-container { background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#leftContainer { background-image: url('contract 1.png'); display: none; }
+#totalCostContainer { background-image: url('contract 2.png'); display: none; }
 #totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 
 /* Quote text glow */
@@ -45,7 +47,7 @@ header { flex-shrink: 0; }
     cursor: pointer;
     box-shadow: 0 0 15px 3px white;
     transition: all 0.3s ease;
-    margin-top: -35px; /* move up 3 pixels */
+    margin-top: 10px; /* move down/up pixels */
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1cff; color: black; }
 
@@ -63,18 +65,16 @@ header { flex-shrink: 0; }
 /* Snazzy Total Price Modal */
 #totalPriceModal .w3-modal-content {
     border: 2px solid #00ff00;
-    box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset; /* smaller glow */
+    box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset;
     animation: neonPulse 2.1s infinite alternate;
 }
 @keyframes neonPulse {
     0% { box-shadow: 0 0 5px #00ff00, 0 0 5px #00ff00 inset; }
     100% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
 }
-
 #popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 #closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-#copiedMessage { color: yellow; font-weight: bold; margin-top: 10px; display:none; }
-
+#copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 2000; }
 </style>
 </head>
 <body>
@@ -107,9 +107,9 @@ header { flex-shrink: 0; }
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-card w3-center">
     <h2 style="font-weight:bold;">Total Contract Value</h2>
-    <p id="popupTotalPrice" style="color:#00ff00; font-size:30px; font-weight:bold; text-shadow: 0 0 10px #00ff00;"></p>
-    <button id="closeTotalModal" style="margin-top:15px;">o7</button>
-    <div id="copiedMessage" class="hidden">Copied!</div>
+    <p id="popupTotalPrice"></p>
+    <button id="closeTotalModal">o7</button>
+    <div id="copiedMessage">Copied!</div>
   </div>
 </div>
 
@@ -178,26 +178,33 @@ function showContent() {
     }
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
-    let matches, totalCost=0, invalidItems=[];
-    while((matches=regex.exec(textarea))!==null){
-        const item=matches[1].trim(), qty=parseInt(matches[2]);
-        if(priceList[item]!==undefined){ totalCost += qty*priceList[item]; }
-        else{ invalidItems.push(item); }
+    let matches, totalCost = 0, invalidItems = [];
+    while((matches = regex.exec(textarea))!==null){
+        const item = matches[1].trim();
+        const qty = parseInt(matches[2]);
+        if(priceList[item] !== undefined){
+            totalCost += qty * priceList[item];
+        } else {
+            invalidItems.push(item);
+        }
     }
 
-    if(invalidItems.length>0){
-        document.getElementById('unrecognizedItemsText').innerText='Unrecognized items: '+invalidItems.join(', ');
+    if(invalidItems.length > 0){
+        document.getElementById('unrecognizedItemsText').innerText =
+            'Unrecognized items: ' + invalidItems.join(', ');
         document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
-    } else { document.getElementById('unrecognizedItemsContainer').classList.add('hidden'); }
+    } else {
+        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    }
 
     // Show contract images
-    document.getElementById('totalCostContainer').classList.remove('hidden');
-    document.getElementById('leftContainer').classList.remove('hidden');
+    document.getElementById('leftContainer').style.display = 'block';       
+    document.getElementById('totalCostContainer').style.display = 'block';  
 
-    // Show modal with counting
-    const popupEl=document.getElementById('popupTotalPrice');
-    animateCount(popupEl,0,totalCost,2000);
-    document.getElementById('totalPriceModal').style.display='block';
+    // Animate and show total price modal
+    const popupEl = document.getElementById('popupTotalPrice');
+    animateCount(popupEl, 0, totalCost, 2000);
+    document.getElementById('totalPriceModal').style.display = 'block';
 }
 
 // Initialize
@@ -216,13 +223,13 @@ window.onclick = function(event){
 };
 
 // Total price modal O7 copy functionality
-const closeTotalBtn=document.getElementById('closeTotalModal');
-const copiedMsg=document.getElementById('copiedMessage');
+const closeTotalBtn = document.getElementById('closeTotalModal');
+const copiedMsg = document.getElementById('copiedMessage');
 closeTotalBtn.addEventListener('click',()=>{
-    const text=document.getElementById('popupTotalPrice').innerText;
+    const text = document.getElementById('popupTotalPrice').innerText;
     navigator.clipboard.writeText(text).then(()=>{
-        copiedMsg.classList.remove('hidden');
-        setTimeout(()=>copiedMsg.classList.add('hidden'),1500);
+        copiedMsg.style.display='block';
+        setTimeout(()=>copiedMsg.style.display='none',1500);
     });
     document.getElementById('totalPriceModal').style.display='none';
 });
