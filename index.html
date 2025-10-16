@@ -68,7 +68,7 @@ header { flex-shrink: 0; }
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
-            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 3&#10;Jet Ochre 1"></textarea>
+            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 39&#10;Jet Ochre 1"></textarea>
 
             <!-- 👇 Loading message -->
             <p id="loadingMsg">⏳ Loading prices…</p>
@@ -85,67 +85,61 @@ header { flex-shrink: 0; }
         <p id="totalCostText">0</p>
     </div>
 </div>
-
 <script>
 let priceList = {};
-let loading = true;
+let pricesLoaded = false;
 
-// 🔄 Show a visible loading message
-const loadingMessage = document.createElement('div');
-loadingMessage.id = "loadingMessage";
-loadingMessage.innerText = "⏳ Loading latest ore prices...";
-loadingMessage.style.textAlign = "center";
-loadingMessage.style.color = "orange";
-loadingMessage.style.marginTop = "10px";
-document.querySelector('.form-container').appendChild(loadingMessage);
+// Show a loading message
+function showLoadingMessage(msg) {
+    const costText = document.getElementById('totalCostText');
+    costText.innerText = msg;
+    document.getElementById('totalCostContainer').classList.remove('hidden');
+    document.getElementById('leftContainer').classList.remove('hidden');
+}
 
-// Load CSV and extract 150% suggested buy price
+// Load CSV and extract “Suggested 150%” price
 async function loadPrices() {
+    showLoadingMessage("Loading price data...");
     try {
-        const response = await fetch('https://orestellar.github.io/data/prices.csv');
+        const response = await fetch('data/prices.csv');
         if (!response.ok) throw new Error('CSV not found');
 
         const csvText = await response.text();
         const lines = csvText.split('\n').filter(l => l.trim() !== '');
 
-        const headers = lines[0].split(',');
-        // Make it flexible for variations in the column name
-        const priceIndex = headers.findIndex(h => h.toLowerCase().includes("150"));
+        if (lines.length < 2) throw new Error('CSV appears empty');
 
-        if (priceIndex === -1) {
-            console.error("❌ 'Suggested 150%' column not found in CSV headers:", headers);
-            alert("Error: 150% price column not found in CSV.");
-            return;
-        }
+        const headers = lines[0].split(',');
+        const priceIndex = headers.findIndex(h => h.includes("Suggested 150%"));
+        if (priceIndex === -1) throw new Error('Could not find “Suggested 150%” column');
 
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(',');
+            if (!cols[0]) continue; // skip empty rows
             const oreName = cols[0].trim();
-            const price = parseFloat(cols[priceIndex].replace(/[^\d.]/g, ""));
+            const rawPrice = cols[priceIndex]?.replace(/[^\d.]/g, '');
+            const price = parseFloat(rawPrice);
             if (!isNaN(price)) priceList[oreName] = price;
         }
 
+        pricesLoaded = true;
         console.log('✅ Prices loaded:', priceList);
         document.getElementById('submitButton').disabled = false;
-        loading = false;
-        loadingMessage.innerText = "✅ Prices loaded (cached)";
-        loadingMessage.style.color = "lightgreen";
-
+        showLoadingMessage("Prices loaded! Ready to use.");
     } catch (err) {
         console.error('⚠️ Error loading CSV:', err);
-        loadingMessage.innerText = "⚠️ Error loading CSV data";
-        loadingMessage.style.color = "red";
+        showLoadingMessage("⚠️ Error loading price data");
     }
 }
 
-// Format numbers with commas
+// Format number with commas
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Show calculation
+// Calculate total
 function showContent() {
-    if (loading || Object.keys(priceList).length === 0) {
+    if (!pricesLoaded || Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
@@ -169,7 +163,8 @@ function showContent() {
     document.getElementById('totalCostText').innerText = formatNumberWithCommas(totalCost.toFixed(2));
 
     if (invalidItems.length > 0) {
-        document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        document.getElementById('unrecognizedItemsText').innerText =
+            'Unrecognized items: ' + invalidItems.join(', ');
         document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
     } else {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
@@ -179,20 +174,17 @@ function showContent() {
     document.getElementById('leftContainer').classList.remove('hidden');
 }
 
-// Initialize
-async function init() {
-    await loadPrices();
-    document.getElementById('submitButton').addEventListener('click', showContent);
-}
-
-// Modal functionality
+// Modal functions
 function openModal() { document.getElementById('infoModal').style.display='block'; }
 function closeModal() { document.getElementById('infoModal').style.display='none'; }
 document.getElementById('infoButton').addEventListener('click', openModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
 window.onclick = function(event) { if (event.target == document.getElementById('infoModal')) closeModal(); }
 
-init();
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+// Start loading
+loadPrices();
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
