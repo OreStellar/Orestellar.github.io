@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
-
 <style>
 html, body {
     background-color: black;
@@ -17,206 +16,28 @@ html, body {
     padding: 0;
     height: 100%;
 }
-
-body {
-    display: flex;
-    flex-direction: column;
-}
-
-header {
-    flex-shrink: 0; /* Prevent header from shrinking */
-}
-
-.container-wrapper {
-    display: flex;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    justify-content: center; 
-    align-items: center; 
-}
-
-.main-container {
-    margin: 0 auto
-    flex-shrink: 0; /* Prevent shrinking */
-    width: 630px; /* Set the desired width */
-    height: 418px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    animation: expand 1.5s ease-out; /* Apply the animation on load */
-}
-@keyframes expand {
-    from {
-        transform: scale(0.5); /* Start small */
-        opacity: 0.5;          /* Start with some transparency */
-    }
-    to {
-        transform: scale(1);   /* Final size (normal) */
-        opacity: 1;            /* Fully opaque */
-    }
-}
-
-.w3-card, .w3-container {
-    background-color: #333;
-    color: white; /* Solid dark grey background */
-    opacity: 1; /* Ensure full opacity */
-    border-radius: 15px; /* Add rounded corners */
-    
-}
-
-.full-width-textarea {
-    width: 100%;
-    box-sizing: border-box; /* Ensures padding is included in the width */
-    margin-bottom: 20px; /* Add margin below textarea */
-    resize: none; /* Prevent resizing */
-    height: 100%; /* Fill the height of the container */
-}
-
-.hidden {
-    display: none;
-}
-
-.total-cost-container {
-    background-image: url('images/Contract 2.png'); /* Add your image */
-    background-size: contain; /* Keep the actual size of the image */
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 630px; /* Updated width */
-    height: 418px; /* Updated height */
-    position: relative; /* Make it a positioned element */
-    color: white;
-    border-radius: 15px;
-    margin-left: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    animation: expand 1.5s ease-out;
-}
-
-#totalCostText {
-    position: absolute;
-    top: 52%;  /* Move it down a bit */
-    left: 53%; /* Move it to the right a bit */
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-}
-
-
-.quote-text {
-    font-style: italic; /* Italicize the text */
-    text-shadow: 
-        0 2px 1px rgba(0, 0, 0, 0.3), /* Base shadow layer */
-        0 6px 4px rgba(0, 0, 0, 0.5), /* Wider and more pronounced shadow layer */
-        0 12px 8px rgba(0, 0, 0, 0.7);
-}
-
-#leftContainer {
-    background-image: url('images/Contract 1.png'); /* Add your image */
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 630px;
-    height: 418px;
-    position: relative;
-    color: white;
-    border-radius: 15px;
-    margin-right: 20px; /* Add margin on the right */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    animation: expand 1.5s ease-out;
-}
-
-#unrecognizedItemsContainer {
-    width: 550px; /* Match the width of the other containers */
-    color: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    background-color: #000000; /* Background color to match the other containers */
-    margin-bottom: 20px; /* Space between this container and the main container */
-}
-
-.info-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 28px; /* Larger icon */
-             z-index: 1000;
-
-        }
-
-        @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
-}
-
-.info-button button {
-    animation: bounce 2s infinite; /* Bounce animation */
-    background-color: #ffffff; /* Bright color */
-    color: rgb(0, 0, 0); /* Text color */
-    border-radius: 50%; /* Circular button */
-}
-
-.w3-modal-overlay {
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: transparent; /* No background color */
-    z-index: 999; /* Ensure it's above other content */
-}
-
-.w3-modal-content {
-    position: relative;
-    z-index: 1000; /* Higher z-index to stay on top of the overlay */
-    background-color: #000000;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 600px; /* Limit the maximum width */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Box shadow for 3D effect */
-    animation: slideIn 0.5s ease; /* Slide in animation */
-}
-
-.w3-modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 999; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    animation: fadeIn 0.5s ease; /* Fade in animation */
-}
-
-/* Fade in animation */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Slide in animation */
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-    text-align: center; /* Center the text */
-}
+body { display: flex; flex-direction: column; }
+header { flex-shrink: 0; }
+.container-wrapper { display: flex; height: 100%; padding: 20px; box-sizing: border-box; justify-content: center; align-items: center; }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 418px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 1.5s ease-out; }
+@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
+.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
+.hidden { display: none; }
+.total-cost-container { background-image: url('images/Contract 2.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-left: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#totalCostText { position: absolute; top: 52%; left: 53%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
+.quote-text { font-style: italic; text-shadow: 0 2px 1px rgba(0,0,0,0.3), 0 6px 4px rgba(0,0,0,0.5), 0 12px 8px rgba(0,0,0,0.7); }
+#leftContainer { background-image: url('images/Contract 1.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-right: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+#unrecognizedItemsContainer { width: 550px; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); background-color: #000000; margin-bottom: 20px; }
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+@keyframes bounce { 0%,20%,50%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+.info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: rgb(0,0,0); border-radius: 50%; }
+.w3-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 999; }
+.w3-modal-content { position: relative; z-index: 1000; background-color: #000000; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: slideIn 0.5s ease; }
+.w3-modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-header { text-align: center; }
 </style>
 </head>
 <body>
@@ -228,46 +49,32 @@ header {
   </div>
   <hr>
 </header>
-  <!-- Floating Info Button -->
-  <div class="info-button">
-    <button onclick="document.getElementById('infoModal').style.display='block'" class="w3-button w3-theme">i</button>
+
+<div class="info-button">
+  <button onclick="document.getElementById('infoModal').style.display='block'" class="w3-button w3-theme">i</button>
 </div>
 
-<!-- Info Modal -->
 <div id="infoModal" class="w3-modal">
-    <div class="w3-modal-content">
-        <span onclick="closeModal()"
-        class="w3-button w3-display-topright">&times;</span>
-        <header class="w3-container w3-theme modal-header">
-            <h2>Welcome to OreStellar's appraisal calculator!</h2>
-        </header>
-        <div class="w3-container">
-            <p>If you have any questions, please feel free to message Morgan Auren in-game.
-
-                At the moment, the calculator only gives quotes for asteroid ores. 
-
-                OreStellar only accepts contracts in High-Security space (0.5 or higher.) 
-                
-                We will decline any contract made in a high-sec island (areas cut off from trade hubs by low-security systems.)
-            </p>
-        </div>
+  <div class="w3-modal-content">
+    <span onclick="closeModal()" class="w3-button w3-display-topright">&times;</span>
+    <header class="w3-container w3-theme modal-header">
+      <h2>Welcome to OreStellar's appraisal calculator!</h2>
+    </header>
+    <div class="w3-container">
+      <p>If you have any questions, message Morgan in-game. Calculator uses 150% suggested buy prices for asteroid ores.</p>
     </div>
+  </div>
 </div>
-
-
-
-
 
 <div class="container-wrapper">
-    <!-- Left container (hidden initially) -->
-    <div id="leftContainer" class="total-cost-container hidden">
-    </div>
-  
+  <div id="leftContainer" class="total-cost-container hidden"></div>
+
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Quote</h3><br>
     <div class="form-container">
       <form action="/submit" method="post" class="full-height">
-        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50" placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320&#10;Compressed Ytirium 60253&#10;Compressed Ueganite 10403&#10;Compressed Ducinium 2402"></textarea>
+        <textarea id="message" name="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" cols="50"
+          placeholder="Copy and paste your inventory here..&#10;&#10;Ytirium  82460&#10;Jet Ochre 1045&#10;Pellucid Crokite 320"></textarea>
       </form>
       <button onclick="showContent()" class="w3-button w3-black w3-round">Submit</button><br>
       <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-bottom: 20px;">
@@ -280,44 +87,40 @@ header {
     <p id="totalCostText">0</p>
   </div>
 </div>
+
 <script>
 let priceList = {};
 
-// Function to fetch CSV and build priceList
+// Load CSV and use Suggested 150% as price
 async function loadPrices() {
     try {
-        const response = await fetch('data/prices.csv'); // Adjust path if needed
+        const response = await fetch('data/prices.csv'); // path to your CSV
         if (!response.ok) throw new Error('Failed to fetch CSV');
 
         const csvText = await response.text();
         const lines = csvText.split('\n');
 
-        // Find header row
+        // Find header row index for "Suggested Buy Price @ 150%"
         const headerRow = lines[0].split(',');
-        const iskIndex = headerRow.findIndex(h => h.includes("ISK per m³"));
+        const priceIndex = headerRow.findIndex(h => h.includes("Suggested Buy Price @ 150%"));
 
         for (let i = 1; i < lines.length; i++) {
             const line = lines[i].trim();
-            if (!line) continue; // skip empty lines
+            if (!line) continue;
             const cols = line.split(',');
-
             const oreName = cols[0].trim();
-            const iskPerM3 = parseFloat(cols[iskIndex]);
-            if (!isNaN(iskPerM3)) {
-                priceList[oreName] = iskPerM3;
+            const price = parseFloat(cols[priceIndex]);
+            if (!isNaN(price)) {
+                priceList[oreName] = price;
             }
         }
-
         console.log('✅ Prices loaded', priceList);
     } catch (err) {
         console.error('⚠️ Error loading CSV:', err);
     }
 }
-
-// Call this at the top of your page so priceList is ready
 loadPrices();
 
-// Function to add commas to a number
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -332,8 +135,7 @@ function showContent() {
     const leftContainer = document.getElementById('leftContainer');
     const textarea = document.getElementById('message').value;
 
-    document.getElementById('totalCostText').innerHTML = '';  
-
+    document.getElementById('totalCostText').innerHTML = '';
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches;
     let totalCost = 0;
@@ -342,39 +144,13 @@ function showContent() {
     while ((matches = regex.exec(textarea)) !== null) {
         const item = matches[1].trim();
         const quantity = parseInt(matches[2]);
-
         if (priceList[item] !== undefined) {
-            const price = priceList[item];
-            totalCost += quantity * price;
+            totalCost += quantity * priceList[item];
         } else {
             invalidItems.push(item);
         }
     }
 
     const resultText = formatNumberWithCommas(totalCost.toFixed(2));
-
     if (invalidItems.length > 0) {
-        const unrecognizedItems = 'Unrecognized items: ' + invalidItems.join(', ');
-        document.getElementById('unrecognizedItemsText').innerHTML = unrecognizedItems;
-        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
-    } else {
-        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
-    }
-
-    document.getElementById('totalCostText').innerHTML = resultText;
-    totalCostContainer.classList.remove('hidden');
-    leftContainer.classList.remove('hidden');
-}
-
-// Modal functions remain unchanged
-function openModal() { document.getElementById('infoModal').style.display='block'; }
-function closeModal() { document.getElementById('infoModal').style.display='none'; }
-window.onclick = function(event) {
-    if (event.target == document.getElementById('infoModal')) closeModal();
-}
-document.querySelector('.info-button button').addEventListener('click', openModal);
-document.querySelector('.w3-display-topright').addEventListener('click', closeModal);
-</script>
-<script src="https://www.w3schools.com/lib/w3.js"></script>
-</body>
-</html>
+        document.getElementById('unrecognizedItemsText').innerHTML
