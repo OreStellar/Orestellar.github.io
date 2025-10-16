@@ -14,47 +14,15 @@ body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 20px;
-    padding: 20px;
-}
-@media (max-width: 1400px) { 
-    .container-wrapper { flex-direction: column; align-items: center; } 
-}
+.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: flex-start; gap: 20px; }
+@media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
 
-.main-container { 
-    flex-shrink: 0; 
-    width: 630px; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    animation: expand 2.5s ease-out; 
-}
-@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
-
-.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
-.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 200px; }
 .hidden { display: none; }
 
-/* PNG Containers */
-.total-cost-container {
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 300px;
-    height: 418px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    animation: expand 1.5s ease-out;
-}
-
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+/* Contract Images */
+.contract-image { width: 400px; height: auto; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
 
 /* Quote text glow */
 @keyframes pulseTextGlow {
@@ -135,13 +103,15 @@ header { flex-shrink: 0; }
   <div class="w3-modal-content w3-card w3-center">
     <h2 style="font-weight:bold;">Total Contract Value</h2>
     <p id="popupTotalPrice"></p>
-    <button id="closeTotalModal">copy</button>
+    <button id="closeTotalModal">o7</button>
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
 
 <div class="container-wrapper">
-    <div id="leftContainer" class="total-cost-container hidden"></div>
+    <div id="leftContainer">
+        <img src="images/contract1.png" class="contract-image hidden" id="contract1">
+    </div>
   
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
@@ -152,7 +122,9 @@ header { flex-shrink: 0; }
         </div>
     </div>
 
-    <div id="totalCostContainer" class="total-cost-container hidden"></div>
+    <div id="totalCostContainer">
+        <img src="images/contract2.png" class="contract-image hidden" id="contract2">
+    </div>
 </div>
 
 <script>
@@ -224,11 +196,11 @@ function showContent() {
         document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Show contract images (left/right)
-    const left = document.getElementById('leftContainer');
-    const right = document.getElementById('totalCostContainer');
-    left.classList.remove('hidden');
-    right.classList.remove('hidden');
+    // Show contract images
+    const c1 = document.getElementById('contract1');
+    const c2 = document.getElementById('contract2');
+    c1.classList.remove('hidden');
+    c2.classList.remove('hidden');
 
     // Animate and show total price modal
     const popupEl = document.getElementById('popupTotalPrice');
