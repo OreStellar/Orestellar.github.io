@@ -14,18 +14,13 @@ body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper { display: flex; flex-direction: row; height: 100%; padding: 20px; justify-content: center; align-items: center; gap: 10px; }
-@media (max-width: 1400px) { .container-wrapper { flex-direction: column; align-items: center; } }
+.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; }
 
-.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 430px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 2.5s ease-out; }
-@keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
-
-.w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
-.full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
-.hidden { display: none; }
-
-/* Contract Images */
+/* Contracts wrapper */
+.contracts-wrapper { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; }
 .total-cost-container { width: 630px; height: 418px; background-size: contain; background-position: center; background-repeat: no-repeat; position: relative; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
+
+/* Contract images */
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
 #totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
@@ -36,6 +31,9 @@ header { flex-shrink: 0; }
   50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
 }
 .quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3.0s infinite; }
+
+/* Main container */
+.main-container { width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
 /* Submit button */
 #submitButton {
@@ -76,7 +74,6 @@ header { flex-shrink: 0; }
 #popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 #closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
 #copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 2000; }
-
 </style>
 </head>
 <body>
@@ -116,8 +113,15 @@ header { flex-shrink: 0; }
 </div>
 
 <div class="container-wrapper">
-    <div id="leftContainer" class="total-cost-container"></div>
+    <!-- Contracts side by side -->
+    <div class="contracts-wrapper">
+        <div id="leftContainer" class="total-cost-container"></div>
+        <div id="totalCostContainer" class="total-cost-container">
+            <div id="totalCostText">0 ISK</div>
+        </div>
+    </div>
 
+    <!-- Main input container -->
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
@@ -126,16 +130,14 @@ header { flex-shrink: 0; }
             <p id="unrecognizedItemsText" style="color:red;"></p>
         </div>
     </div>
-
-    <div id="totalCostContainer" class="total-cost-container">
-        <div id="totalCostText">0 ISK</div>
-    </div>
 </div>
 
 <script>
+// Your existing JS here (loadPrices, animateCount, showContent, init, modals, submit button, etc.)
+// Just update showContent to show contracts side by side
+
 let priceList = {};
 
-// Load CSV
 async function loadPrices() {
     try {
         const response = await fetch('data/prices.csv');
@@ -157,12 +159,10 @@ async function loadPrices() {
     }
 }
 
-// Format numbers
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");
 }
 
-// Animate counting
 function animateCount(el, start, end, duration=2000) {
     let startTime = null;
     function step(timestamp) {
@@ -174,7 +174,6 @@ function animateCount(el, start, end, duration=2000) {
     requestAnimationFrame(step);
 }
 
-// Show content
 function showContent() {
     if(Object.keys(priceList).length===0){
         alert("Price data still loading. Try again in a moment.");
@@ -196,64 +195,4 @@ function showContent() {
     if(invalidItems.length > 0){
         document.getElementById('unrecognizedItemsText').innerText =
             'Unrecognized items: ' + invalidItems.join(', ');
-        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
-    } else {
-        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
-    }
-
-    // Show contract images
-    document.getElementById('leftContainer').style.display = 'block';
-    document.getElementById('totalCostContainer').style.display = 'block';
-
-    // Animate ISK over contract 2
-    const popupEl = document.getElementById('totalCostText');
-    animateCount(popupEl, 0, totalCost, 2000);
-
-    // Show modal
-    const popupModalEl = document.getElementById('popupTotalPrice');
-    animateCount(popupModalEl, 0, totalCost, 2000);
-    document.getElementById('totalPriceModal').style.display = 'block';
-}
-
-// Initialize
-async function init(){
-    await loadPrices();
-    document.getElementById('submitButton').disabled=false;
-}
-
-// Info modal
-function openModal(){ document.getElementById('infoModal').style.display='block'; }
-function closeModal(){ document.getElementById('infoModal').style.display='none'; }
-document.getElementById('infoButton').addEventListener('click', openModal);
-document.getElementById('closeModal').addEventListener('click', closeModal);
-window.onclick = function(event){ 
-    if(event.target==document.getElementById('infoModal')) closeModal();
-};
-
-// Total price modal O7 copy functionality
-const closeTotalBtn = document.getElementById('closeTotalModal');
-const copiedMsg = document.getElementById('copiedMessage');
-closeTotalBtn.addEventListener('click',()=>{
-    const text = document.getElementById('popupTotalPrice').innerText;
-    navigator.clipboard.writeText(text).then(()=>{
-        copiedMsg.style.display='block';
-        setTimeout(()=>copiedMsg.style.display='none',1500);
-    });
-    document.getElementById('totalPriceModal').style.display='none';
-});
-
-// Close modal when clicking outside (does NOT copy)
-window.addEventListener('click',(event)=>{
-    if(event.target==document.getElementById('totalPriceModal')) {
-        document.getElementById('totalPriceModal').style.display='none';
-    }
-});
-
-// Hook submit button
-document.getElementById('submitButton').addEventListener('click', showContent);
-
-init();
-</script>
-<script src="https://www.w3schools.com/lib/w3.js"></script>
-</body>
-</html>
+        document.getElementById('unrecognizedItemsContainer').classList
