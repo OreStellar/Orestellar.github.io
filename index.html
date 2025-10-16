@@ -281,225 +281,41 @@ header {
   </div>
 </div>
 
-<script>
-const priceList = {
-"Arkonor": 4500,
-"Crimson Arkonor": 4700,
-"Prime Arkonor": 4900,
-"Flawless Arkonor": 5100,
-"Compressed Arkonor": 4500,
-"Compressed Crimson Arkonor": 4700,
-"Compressed Prime Arkonor": 4900,
-"Compressed Flawless Arkonor": 5100,
-"Bezdnacine": 15000,
-"Abyssal Bezdnacine": 15700,
-"Hadal Bezdnacine": 16300,
-"Compressed Bezdnacine": 15000,
-"Compressed Abyssal Bezdnacine": 15700,
-"Compressed Hadal Bezdnacine": 16300,
-"Bistot": 3300,
-"Triclinic Bistot": 3500,
-"Monoclinic Bistot": 3700,
-"Cubic Bistot": 3900,
-"Compressed Bistot": 3300,
-"Compressed Triclinic Bistot": 3400,
-"Compressed Monoclinic Bistot": 3700,
-"Compressed Cubic Bistot": 3900,
-"Crokite": 8000,
-"Sharp Crokite": 8400,
-"Crystalline Crokite": 8800,
-"Pellucid Crokite": 9000,
-"Compressed Crokite": 8000,
-"Compressed Sharp Crokite": 8400,
-"Compressed Crystalline Crokite": 8800,
-"Compressed Pellucid Crokite": 9000,
-"Dark Ochre": 6200,
-"Onyx Ochre": 6500,
-"Obsidian Ochre": 6800,
-"Jet Ochre": 7100,
-"Compressed Dark Ochre": 6200,
-"Compressed Onyx Ochre": 6500,
-"Compressed Obsidian Ochre": 6800,
-"Compressed Jet Ochre": 7100,
-"Ducinium": 4400,
-"Noble Ducinium": 4500,
-"Royal Ducinium": 4800,
-"Imperial Ducinium": 4900,
-"Compressed Ducinium": 4400,
-"Compressed Noble Ducinium": 4500,
-"Compressed Royal Ducinium": 4800,
-"Compressed Imperial Ducinium": 4000,
-"Eifyrium": 3300,
-"Doped Eifyrium": 3400,
-"Boosted Eifyrium": 3600,
-"Augmented Eifyrium": 3800,
-"Compressed Eifyrium": 3300,
-"Compressed Doped Eifyrium": 3400,
-"Compressed Boosted Eifyrium": 3600,
-"Compressed Augmented Eifyrium": 3800,
-"Gneiss": 3100,
-"Iridescent Gneiss": 3200,
-"Prismatic Gneiss": 3400,
-"Brilliant Gneiss": 3500,
-"Compressed Gneiss": 3100,
-"Compressed Iridescent Gneiss": 3200,
-"Compressed Prismatic Gneiss": 3400,
-"Compressed Brilliant Gneiss": 3500,
-"Griemeer": 170,
-"Clear Griemeer": 180,
-"Inky Griemeer": 190,
-"Opaque Griemeer": 200,
-"Compressed Griemeer": 170,
-"Compressed Clear Griemeer": 180,
-"Compressed Inky Griemeer": 190,
-"Compressed Opaque Griemeer": 200,
-"Hedbergite": 900,
-"Vitric Hedbergite": 950,
-"Glazed Hedbergite": 1000,
-"Lustrous Hedbergite": 1050,
-"Compressed Hedbergite": 900,
-"Compressed Vitric Hedbergite": 950,
-"Compressed Glazed Hedbergite": 1000,
-"Compressed Lustrous Hedbergite": 1050,
-"Hemorphite": 1100,
-"Vivid Hemorphite": 1150,
-"Radiant Hemorphite": 1200,
-"Scintillating Hemorphite": 1300,
-"Compressed Hemorphite": 1100,
-"Compressed Vivid Hemorphite": 1150,
-"Compressed Radiant Hemorphite": 1200,
-"Compressed Scintillating Hemorphite": 1300,
-"Hezorime": 900,
-"Dull Hezorime": 1000,
-"Serrated Hezorime": 1100,
-"Sharp Hezorime": 1200,
-"Compressed Hezorime": 900,
-"Compressed Dull Hezorime": 1000,
-"Compressed Serrated Hezorime": 1100,
-"Compressed Sharp Hezorime": 1200,
-"Jaspet": 400,
-"Pure Jaspet": 410,
-"Pristine Jaspet": 420,
-"Immaculate Jaspet": 430,
-"Compressed Jaspet": 400,
-"Compressed Pure Jaspet": 410,
-"Compressed Pristine Jaspet": 420,
-"Compressed Immaculate Jaspet": 430,
-"Kernite": 295,
-"Luminous Kernite": 300,
-"Fiery Kernite": 305,
-"Resplendent Kernite": 310,
-"Compressed Kernite": 295,
-"Compressed Luminous Kernite": 300,
-"Compressed Fiery Kernite": 305,
-"Compressed Resplendent Kernite": 310,
-"Kylixium": 295,
-"Kaolin Kylixium": 300,
-"Argil Kylixium": 305,
-"Adobe Kylixium": 310,
-"Compressed Kylixium": 295,
-"Compressed Kaolin Kylixium": 300,
-"Compressed Argil Kylixium": 305,
-"Compressed Adobe Kylixium": 310,
-"Mercoxit": 23000,
-"Magma Mercoxit": 24000,
-"Vitreous Mercoxit": 25000,
-"Compressed Mercoxit": 234000,
-"Compressed Magma Mercoxit": 24000,
-"Compressed Vitreous Mercoxit": 25000,
-"Mordunium": 10,
-"Plum Mordunium": 11,
-"Prize Mordunium": 12,
-"Plunder Mordunium": 13,
-"Compressed Mordunium": 10,
-"Compressed Plum Mordunium": 11,
-"Compressed Prize Mordunium": 12,
-"Compressed Plunder Mordunium": 13,
-"Nocxite": 800,
-"Fragrant Nocxite": 850,
-"Intoxicating Nocxite": 900,
-"Ambrosial Nocxite": 950,
-"Compressed Nocxite": 800,
-"Compressed Fragrant Nocxite": 850,
-"Compressed Intoxicating Nocxite": 900,
-"Compressed Ambrosial Nocxite": 950,
-"Omber": 160,
-"Silvery Omber": 170,
-"Golden Omber": 180,
-"Platinoid Omber": 190,
-"Compressed Omber": 160,
-"Compressed Silvery Omber": 170,
-"Compressed Golden Omber": 180,
-"Compressed Platinoid Omber": 190,
-"Plagioclase": 25,
-"Azure Plagioclase": 28,
-"Rich Plagioclase": 30,
-"Sparkling Plagioclase": 32,
-"Compressed Plagioclase": 25,
-"Compressed Azure Plagioclase": 28,
-"Compressed Rich Plagioclase": 30,
-"Compressed Sparkling Plagioclase": 32,
-"Pyroxeres": 28,
-"Solid Pyroxeres": 30,
-"Viscous Pyroxeres": 32,
-"Opulent Pyroxeres": 35,
-"Compressed Pyroxeres": 28,
-"Compressed Solid Pyroxeres": 30,
-"Compressed Viscous Pyroxeres": 32,
-"Compressed Opulent Pyroxeres": 35,
-"Rakovene": 10000,
-"Abyssal Rakovene": 10500,
-"Hadal Rakovene": 11000,
-"Compressed Rakovene": 10000,
-"Compressed Abyssal Rakovene": 10500,
-"Compressed Hadal Rakovene": 11000,
-"Scordite": 13,
-"Condensed Scordite": 13.5,
-"Massive Scordite": 14,
-"Glossy Scordite": 14.5,
-"Compressed Scordite": 13,
-"Compressed Condensed Scordite": 13.5,
-"Compressed Massive Scordite": 14,
-"Compressed Glossy Scordite": 14.5,
-"Spodumain": 7100,
-"Bright Spodumain": 7300,
-"Gleaming Spodumain": 8000,
-"Dazzling Spodumain": 8200,
-"Compressed Spodumain": 7100,
-"Compressed Bright Spodumain": 7300,
-"Compressed Gleaming Spodumain": 8000,
-"Compressed Dazzling Spodumain": 8200,
-"Talassonite": 8000,
-"Abyssal Talassonite": 8500,
-"Hadal Talassonite": 8700,
-"Compressed Talassonite": 8000,
-"Compressed Abyssal Talassonite": 8500,
-"Compressed Hadal Talassonite": 8700,
-"Ueganite": 900,
-"Foggy Ueganite": 925,
-"Overcast Ueganite": 950,
-"Stormy Ueganite": 975,
-"Compressed Ueganite": 900,
-"Compressed Foggy Ueganite": 925,
-"Compressed Overcast Ueganite": 950,
-"Compressed Stormy Ueganite": 975,
-"Veldspar": 4,
-"Concentrated Veldspar": 4.2,
-"Dense Veldspar": 4.4,
-"Stable Veldspar": 4.5,
-"Compressed Veldspar": 4,
-"Compressed Concentrated Veldspar": 4.2,
-"Compressed Dense Veldspar": 4.4,
-"Compressed Stable Veldspar": 4.5,
-"Ytirium": 480,
-"Bootleg Ytirium": 490,
-"Firewater Ytirium": 500,
-"Moonshine Ytirium": 525,
-"Compressed Ytirium": 480,
-"Compressed Bootleg Ytirium": 490,
-"Compressed Firewater Ytirium": 500,
-"Compressed Moonshine Ytirium": 525,
-};
+let priceList = {};
+
+// Function to fetch CSV and build priceList
+async function loadPrices() {
+    try {
+        const response = await fetch('data/prices.csv'); // Adjust path if needed
+        if (!response.ok) throw new Error('Failed to fetch CSV');
+
+        const csvText = await response.text();
+        const lines = csvText.split('\n');
+
+        // Find header row
+        const headerRow = lines[0].split(',');
+        const iskIndex = headerRow.findIndex(h => h.includes("ISK per m³"));
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue; // skip empty lines
+            const cols = line.split(',');
+
+            const oreName = cols[0].trim();
+            const iskPerM3 = parseFloat(cols[iskIndex]);
+            if (!isNaN(iskPerM3)) {
+                priceList[oreName] = iskPerM3;
+            }
+        }
+
+        console.log('✅ Prices loaded', priceList);
+    } catch (err) {
+        console.error('⚠️ Error loading CSV:', err);
+    }
+}
+
+// Call this at the top of your page so priceList is ready
+loadPrices();
 
 // Function to add commas to a number
 function formatNumberWithCommas(number) {
@@ -507,74 +323,57 @@ function formatNumberWithCommas(number) {
 }
 
 function showContent() {
-  var totalCostContainer = document.getElementById('totalCostContainer');
-    var leftContainer = document.getElementById('leftContainer');
-    var textarea = document.getElementById('message').value;
+    if (Object.keys(priceList).length === 0) {
+        alert("Price data is still loading. Please try again in a moment.");
+        return;
+    }
 
-    // Reset content before updating
+    const totalCostContainer = document.getElementById('totalCostContainer');
+    const leftContainer = document.getElementById('leftContainer');
+    const textarea = document.getElementById('message').value;
+
     document.getElementById('totalCostText').innerHTML = '';  
 
-    // Define regex pattern
-    var regex = /([\w\s]+?)\s+(\d+)/g;
-    var matches;
-    var totalCost = 0;
-    var invalidItems = [];
+    const regex = /([\w\s]+?)\s+(\d+)/g;
+    let matches;
+    let totalCost = 0;
+    let invalidItems = [];
 
-    // Iterate through all matches
     while ((matches = regex.exec(textarea)) !== null) {
-        var item = matches[1].trim();
-        var quantity = parseInt(matches[2]);
+        const item = matches[1].trim();
+        const quantity = parseInt(matches[2]);
 
         if (priceList[item] !== undefined) {
-            var price = priceList[item];
-            var cost = quantity * price;
-            totalCost += cost;
+            const price = priceList[item];
+            totalCost += quantity * price;
         } else {
-            invalidItems.push(item); // Collect invalid items
+            invalidItems.push(item);
         }
     }
 
-    var resultText = formatNumberWithCommas(totalCost.toFixed(2));
-    
-    // Show invalid items, if any
+    const resultText = formatNumberWithCommas(totalCost.toFixed(2));
 
     if (invalidItems.length > 0) {
-        var unrecognizedItems = 'Unrecognized items: ' + invalidItems.join(', ');
+        const unrecognizedItems = 'Unrecognized items: ' + invalidItems.join(', ');
         document.getElementById('unrecognizedItemsText').innerHTML = unrecognizedItems;
-        unrecognizedItemsContainer.classList.remove('hidden'); // Show unrecognized items container
+        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
+    } else {
+        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
     }
 
-    // Display total cost and invalid items
     document.getElementById('totalCostText').innerHTML = resultText;
-    // Show both containers
     totalCostContainer.classList.remove('hidden');
     leftContainer.classList.remove('hidden');
 }
 
-// Function to open the modal
-function openModal() {
-    document.getElementById('infoModal').style.display = 'block';
-}
-
-// Function to close the modal
-function closeModal() {
-    document.getElementById('infoModal').style.display = 'none';
-}
-
-// Close the modal when clicking outside the modal content
+// Modal functions remain unchanged
+function openModal() { document.getElementById('infoModal').style.display='block'; }
+function closeModal() { document.getElementById('infoModal').style.display='none'; }
 window.onclick = function(event) {
-    var modal = document.getElementById('infoModal');
-    if (event.target == modal) {
-        closeModal();
-    }
+    if (event.target == document.getElementById('infoModal')) closeModal();
 }
-
-// Add event listener to the info button
 document.querySelector('.info-button button').addEventListener('click', openModal);
-
-// Close the modal when clicking on the close button (X)
 document.querySelector('.w3-display-topright').addEventListener('click', closeModal);
-
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
