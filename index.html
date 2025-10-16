@@ -64,18 +64,18 @@ header { flex-shrink: 0; }
 #totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
 /* Make submit button more distinguishable */
 #submitButton {
-    background-color: #05ff27ff; /* bright gold */
+    background-color: #ffffffff; /* bright gold */
     color: black;
     font-weight: bold;
     border-radius: 8px;
     padding: 12px 20px;
-    box-shadow: 0 4px 12px rgba(25, 0, 255, 1); /* subtle glow */
+    box-shadow: 0 4px 12px rgba(37, 52, 255, 1); /* subtle glow */
     transition: transform 0.1s, box-shadow 0.2s;
 }
 
 #submitButton:hover {
     transform: scale(1.05); /* slightly grow on hover */
-    box-shadow: 0 6px 16px rgba(255, 0, 0, 0.8); /* stronger glow */
+    box-shadow: 0 6px 16px rgba(9, 255, 0, 1); /* stronger glow */
 }
 
 </style>
@@ -121,7 +121,7 @@ header { flex-shrink: 0; }
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
-            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 10&#10;Jet Ochre 1"></textarea>
+            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 80&#10;Jet Ochre 1"></textarea>
             <button id="submitButton" class="w3-button w3-black w3-round" disabled>Submit</button>
             <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
