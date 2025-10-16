@@ -33,6 +33,7 @@ header { flex-shrink: 0; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 .modal-header { text-align: center; }
+#loadingMsg { font-size: 14px; color: #ccc; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -68,7 +69,12 @@ header { flex-shrink: 0; }
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
             <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 81460&#10;Jet Ochre 1"></textarea>
+
+            <!-- 👇 Loading message -->
+            <p id="loadingMsg">⏳ Loading prices…</p>
+
             <button id="submitButton" class="w3-button w3-black w3-round" disabled>Submit</button>
+
             <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
             </div>
@@ -82,39 +88,64 @@ header { flex-shrink: 0; }
 
 <script>
 let priceList = {};
+let pricesReady = false;
+const CACHE_KEY = 'orePriceCSV';
+const CACHE_TIME_KEY = 'orePriceTime';
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
-// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
     try {
-        const response = await fetch('ore_prices_full.csv');
-        if (!response.ok) throw new Error('CSV not found');
+        const now = Date.now();
+        const cached = localStorage.getItem(CACHE_KEY);
+        const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
 
-        const csvText = await response.text();
-        const lines = csvText.split('\n').filter(l => l.trim() !== '');
+        // If cache exists and is fresh
+        if (cached && cacheTime && now - cacheTime < CACHE_DURATION) {
+            parseCSV(cached);
+            pricesReady = true;
+            document.getElementById('loadingMsg').textContent = '✅ Prices loaded (cached)';
+            document.getElementById('submitButton').disabled = false;
+        } else {
+            document.getElementById('loadingMsg').textContent = '⏳ Fetching latest prices...';
+            const response = await fetch('ore_prices_full.csv', { cache: 'no-store' });
+            if (!response.ok) throw new Error('CSV not found');
 
-        const headers = lines[0].split(',');
-        const priceIndex = headers.findIndex(h => h.includes("Suggested 150%"));
+            const csvText = await response.text();
+            localStorage.setItem(CACHE_KEY, csvText);
+            localStorage.setItem(CACHE_TIME_KEY, now);
 
-        for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(',');
-            const oreName = cols[0].trim();
-            const price = parseFloat(cols[priceIndex]);
-            if (!isNaN(price)) priceList[oreName] = price;
+            parseCSV(csvText);
+            pricesReady = true;
+            document.getElementById('loadingMsg').classList.add('hidden');
+            document.getElementById('submitButton').disabled = false;
         }
+
         console.log('✅ Prices loaded:', priceList);
     } catch (err) {
         console.error('⚠️ Error loading CSV:', err);
+        document.getElementById('loadingMsg').textContent = '⚠️ Failed to load prices.';
     }
 }
 
-// Format numbers with commas
+function parseCSV(csvText) {
+    const lines = csvText.split('\n').filter(l => l.trim() !== '');
+    const headers = lines[0].split(',');
+    const priceIndex = headers.findIndex(h => h.includes("Suggested 150%"));
+    priceList = {};
+    for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        const oreName = cols[0].trim();
+        const price = parseFloat(cols[priceIndex]);
+        if (!isNaN(price)) priceList[oreName] = price;
+    }
+}
+
 function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Show calculation
 function showContent() {
-    if (Object.keys(priceList).length === 0) {
+    if (!pricesReady || Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
@@ -148,10 +179,8 @@ function showContent() {
     document.getElementById('leftContainer').classList.remove('hidden');
 }
 
-// Initialize
 async function init() {
     await loadPrices();
-    document.getElementById('submitButton').disabled = false;
 }
 
 // Modal functionality
