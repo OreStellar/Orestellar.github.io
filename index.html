@@ -9,28 +9,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
+/* --- Existing styles --- */
 html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
-.container-wrapper {
-    display: flex;
-    flex-direction: row;       /* Keep children in a row */
-    flex-wrap: nowrap;         /* Prevent wrapping to next line */
-    justify-content: center;   /* Center horizontally */
-    align-items: center;       /* Align vertically */
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-x: auto;          /* Add horizontal scroll if screen is too small */
-}
-.main-container { flex-shrink: 0; width: 630px; height: 418px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 1.5s ease-out; margin-bottom:20px; }
+.container-wrapper { display: flex; height: 100%; padding: 20px; box-sizing: border-box; justify-content: center; align-items: center; flex-wrap: wrap; }
+.main-container { margin: 0 auto; flex-shrink: 0; width: 630px; height: 418px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: expand 1.5s ease-out; }
 @keyframes expand { from { transform: scale(0.5); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
 .w3-card, .w3-container { background-color: #333; color: white; opacity: 1; border-radius: 15px; }
 .full-width-textarea { width: 100%; box-sizing: border-box; margin-bottom: 20px; resize: none; height: 100%; }
 .hidden { display: none; }
-.total-cost-container { background-image: url('images/Contract 2.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); margin-left: 20px; margin-bottom:20px; }
-#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; word-break: break-word; }
+.total-cost-container { background-image: url('images/Contract 2.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-left: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); animation: expand 1.5s ease-out; }
+#totalCostText { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: white; text-align: center; }
 .quote-text { font-style: italic; text-shadow: 0 2px 1px rgba(0,0,0,0.3), 0 6px 4px rgba(0,0,0,0.5), 0 12px 8px rgba(0,0,0,0.7); }
-#leftContainer { background-image: url('images/Contract 1.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); margin-right: 20px; }
+#leftContainer { background-image: url('images/Contract 1.png'); background-size: contain; background-position: center; background-repeat: no-repeat; width: 630px; height: 418px; position: relative; color: white; border-radius: 15px; margin-right: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: expand 1.5s ease-out; }
 #unrecognizedItemsContainer { width: 550px; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); background-color: #000000; margin-top: 10px; }
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
@@ -41,6 +33,19 @@ header { flex-shrink: 0; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 .modal-header { text-align: center; }
+
+/* Total Price Modal overrides */
+#totalPriceModal .w3-modal-content {
+    background-color: #111;       
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    text-align: center;
+    padding: 30px;
+    max-width: 400px;
+}
+#totalPriceModal .w3-display-topright { color: white; font-size: 28px; cursor: pointer; }
+
 </style>
 </head>
 <body>
@@ -69,15 +74,24 @@ header { flex-shrink: 0; }
     </div>
 </div>
 
+<!-- Total Price Modal -->
+<div id="totalPriceModal" class="w3-modal">
+  <div class="w3-modal-content w3-card w3-center">
+    <span id="closeTotalModal" class="w3-button w3-display-topright">&times;</span>
+    <h2>Total Contract Value</h2>
+    <p id="popupTotalPrice" style="font-size: 24px; font-weight: bold;"></p>
+  </div>
+</div>
+
 <div class="container-wrapper">
     <div id="leftContainer" class="total-cost-container hidden"></div>
   
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Quote</h3><br>
         <div class="form-container">
-            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 8&#10;Jet Ochre 1"></textarea>
+            <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Paste inventory here: Ytirium 1&#10;Jet Ochre 1"></textarea>
             <button id="submitButton" class="w3-button w3-black w3-round" disabled>Submit</button>
-            <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center">
+            <div id="unrecognizedItemsContainer" class="hidden w3-container w3-card w3-center" style="margin-top:10px;">
                 <p id="unrecognizedItemsText" style="color:red;"></p>
             </div>
         </div>
@@ -91,7 +105,7 @@ header { flex-shrink: 0; }
 <script>
 let priceList = {};
 
-// Load CSV and extract 150% suggested buy price robustly
+// Load CSV and extract 150% suggested buy price
 async function loadPrices() {
     try {
         const response = await fetch('data/prices.csv');
@@ -109,7 +123,7 @@ async function loadPrices() {
             const price = parseFloat(cols[priceIndex]);
             if (!isNaN(price)) priceList[oreName] = price;
         }
-        console.log('✅ Prices loaded (cached):', priceList);
+        console.log('✅ Prices loaded:', priceList);
     } catch (err) {
         console.error('⚠️ Error loading CSV:', err);
     }
@@ -143,13 +157,8 @@ function showContent() {
         }
     }
 
-    const totalTextEl = document.getElementById('totalCostText');
-    totalTextEl.innerText = formatNumberWithCommas(totalCost.toFixed(2));
-
-    // Ensure totalCostText stays centered on the PNG
-    totalTextEl.style.top = "50%";
-    totalTextEl.style.left = "50%";
-    totalTextEl.style.transform = "translate(-50%, -50%)";
+    const formattedTotal = formatNumberWithCommas(totalCost.toFixed(2));
+    document.getElementById('totalCostText').innerText = formattedTotal;
 
     if (invalidItems.length > 0) {
         document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
@@ -160,6 +169,10 @@ function showContent() {
 
     document.getElementById('totalCostContainer').classList.remove('hidden');
     document.getElementById('leftContainer').classList.remove('hidden');
+
+    // Show total price popup
+    document.getElementById('popupTotalPrice').innerText = formattedTotal + " ISK";
+    document.getElementById('totalPriceModal').style.display = 'block';
 }
 
 // Initialize
@@ -173,7 +186,19 @@ function openModal() { document.getElementById('infoModal').style.display='block
 function closeModal() { document.getElementById('infoModal').style.display='none'; }
 document.getElementById('infoButton').addEventListener('click', openModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
-window.onclick = function(event) { if (event.target == document.getElementById('infoModal')) closeModal(); }
+window.onclick = function(event) { 
+    if (event.target == document.getElementById('infoModal')) closeModal();
+}
+
+// Close total price popup
+document.getElementById('closeTotalModal').addEventListener('click', () => {
+    document.getElementById('totalPriceModal').style.display = 'none';
+});
+window.addEventListener('click', (event) => {
+    if (event.target == document.getElementById('totalPriceModal')) {
+        document.getElementById('totalPriceModal').style.display = 'none';
+    }
+});
 
 // Hook up submit button
 document.getElementById('submitButton').addEventListener('click', showContent);
