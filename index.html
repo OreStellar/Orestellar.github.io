@@ -61,16 +61,15 @@ header { flex-shrink: 0; }
 
 /* Snazzy Total Price Modal */
 #totalPriceModal .w3-modal-content {
-    padding: 30px;
-    max-width: 400px;
     border: 2px solid #00ff00;
-    box-shadow: 0 0 30px #00ff00, 0 0 50px #00ff00 inset;
+    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00 inset; /* smaller glow */
     animation: neonPulse 1.5s infinite alternate;
 }
 @keyframes neonPulse {
-    0% { box-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00 inset; }
-    100% { box-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00 inset; }
+    0% { box-shadow: 0 0 10px #00ff00, 0 0 15px #00ff00 inset; }
+    100% { box-shadow: 0 0 25px #00ff00, 0 0 35px #00ff00 inset; }
 }
+
 #popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 #closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
 #copiedMessage { color: yellow; font-weight: bold; margin-top: 10px; display:none; }
