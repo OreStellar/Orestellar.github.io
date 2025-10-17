@@ -211,7 +211,10 @@ function showContent() {
     // Show contracts side by side
     document.getElementById('leftContainer').style.display = 'block';
     document.getElementById('totalCostContainer').style.display = 'block';
-
+    
+    // Hide the inventory container after submission
+    document.querySelector('.main-container').style.display = 'none';
+    
     // Animate ISK over contract 2
     const popupEl = document.getElementById('totalCostText');
     animateCount(popupEl, 0, totalCost, 2000);
@@ -265,6 +268,10 @@ document.querySelector('#myHeader img').addEventListener('click', () => {
     
     // Reset total ISK in right contract
     document.getElementById('totalCostText').innerText = '0 ISK';
+    
+    // Show the inventory container again
+document.querySelector('.main-container').style.display = 'flex';
+
 });
 
 </script>
