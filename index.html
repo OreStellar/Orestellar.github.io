@@ -17,48 +17,54 @@ header { flex-shrink: 0; }
 .container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; }
 
 /* Contracts wrapper */
-.contracts-wrapper { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; }
+.contracts-wrapper { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; width: 100%; }
 
 /* Contract images */
-.total-cost-container { width: 400px; height: 300px; background-size: contain; background-position: center; background-repeat: no-repeat; position: relative; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+.total-cost-container { width: 350px; height: 418px; background-size: contain; background-position: center; background-repeat: no-repeat; position: relative; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
-#totalCostText {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    font-size: 13px;
-    font-weight: bold;
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-}
+#totalCostText { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 14px; font-weight: bold; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 
 /* Summary container */
-.summary-container {
+#summaryContainer {
     display: none;
-    background-color: rgba(20, 20, 20, 0.9);
+    background-color: rgba(20,20,20,0.9);
     border: 1px solid #00ff00;
-    box-shadow: 0 0 10px #00ff00;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
     border-radius: 10px;
-    padding: 15px 25px;
+    padding: 10px 20px;
     color: white;
     font-family: monospace;
     max-height: 400px;
     overflow-y: auto;
-    width: fit-content;
-    max-width: 650px;
-    margin: 10px auto;
-    animation: fadeIn 0.6s ease;
+    align-self: center;
 }
-.summary-container h4 {
-    color: #00ff00;
-    text-shadow: 0 0 8px #00ff00;
-    margin-bottom: 10px;
+#summaryContainer h4 { color: #00ff00; text-shadow: 0 0 8px #00ff00; margin-bottom: 10px; text-align: center; }
+#summaryContainer ul { list-style: none; margin: 0; padding: 0; }
+#summaryContainer li { text-align: right; border-bottom: 1px solid rgba(0,255,0,0.2); padding: 2px 0; }
+
+/* Unrecognized items container */
+#unrecognizedItemsContainer {
+    display: none;
+    background-color: rgba(20,0,0,0.9);
+    border: 1px solid #ff0000;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #ff5555;
+    font-family: monospace;
+    text-align: right;
+    max-width: 350px;
+    align-self: center;
+    box-shadow: 0 0 10px #ff0000, 0 0 20px #ff5555 inset;
 }
-.summary-container ul { list-style-type: none; padding: 0; margin: 0; }
-.summary-container li { padding: 3px 0; border-bottom: 1px solid rgba(0,255,0,0.2); text-align: right; }
-#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; text-shadow: 0 0 8px #00ff00; }
+#unrecognizedItemsContainer p { color: #ff5555; text-shadow: 0 0 8px #ff0000, 0 0 12px #ff5555; font-weight: bold; margin: 0; }
+
+/* Quote text glow */
+@keyframes pulseTextGlow {
+  0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
+  50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
+}
+.quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3.0s infinite; }
 
 /* Main container */
 .main-container { width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -83,19 +89,22 @@ header { flex-shrink: 0; }
 @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 .info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
 
-/* Quote text glow */
-@keyframes pulseTextGlow {
-  0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
-  50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
-}
-.quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3.0s infinite; }
-
 /* Modals */
 .w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
 .w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 
+/* Total Price Modal */
+#totalPriceModal .w3-modal-content {
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset;
+    animation: neonPulse 2.1s infinite alternate;
+}
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 5px #00ff00, 0 0 5px #00ff00 inset; }
+    100% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
+}
 #popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
 #closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
 #copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 2000; }
@@ -139,32 +148,31 @@ header { flex-shrink: 0; }
 
 <div class="container-wrapper">
 
-    <!-- Contracts side by side -->
-    <div class="contracts-wrapper">
-        <div id="leftContainer" class="total-cost-container"></div>
-        <div id="totalCostContainer" class="total-cost-container">
-            <div id="totalCostText">0 ISK</div>
-        </div>
-    </div>
-
-    <!-- Summary container -->
-    <div id="summaryContainer" class="summary-container">
-        <h4>Submitted Inventory</h4>
-        <ul id="summaryList"></ul>
-        <p id="summaryTotal"></p>
-    </div>
-
-    <!-- Unrecognized items container -->
-    <div id="unrecognizedItemsContainer" class="summary-container">
-        <p id="unrecognizedItemsText" style="color:red; font-weight:bold;"></p>
-    </div>
-
-    <!-- Main input container -->
+    <!-- Main input container at top -->
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
         <button id="submitButton" disabled>Submit</button>
     </div>
+
+    <!-- Contracts side by side -->
+    <div class="contracts-wrapper">
+        <div id="leftContainer" class="total-cost-container"></div>
+        <div id="summaryContainer">
+            <h4>Submitted Inventory</h4>
+            <ul id="summaryList"></ul>
+            <p id="summaryTotal"></p>
+        </div>
+        <div id="totalCostContainer" class="total-cost-container">
+            <div id="totalCostText">0 ISK</div>
+        </div>
+    </div>
+
+    <!-- Unrecognized items -->
+    <div id="unrecognizedItemsContainer">
+        <p id="unrecognizedItemsText"></p>
+    </div>
+
 </div>
 
 <script>
@@ -178,6 +186,7 @@ async function loadPrices() {
         const lines = csvText.split('\n').filter(l => l.trim() !== '');
         const headers = lines[0].split(',');
         const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+        if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
         for (let i=1;i<lines.length;i++){
             const cols = lines[i].split(',');
             const oreName = cols[0].trim();
@@ -191,7 +200,7 @@ async function loadPrices() {
 }
 
 function formatNumberWithCommas(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");
+    return number.toLocaleString();
 }
 
 function animateCount(el, start, end, duration=2000) {
@@ -210,23 +219,28 @@ function showContent() {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
+
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
-    let matches, totalCost = 0, invalidItems = [];
+    let matches;
+    let totalCost = 0;
+    let invalidItems = [];
 
     const summaryList = document.getElementById('summaryList');
     summaryList.innerHTML = '';
+    let summaryTotal = 0;
 
-    while ((matches = regex.exec(textarea)) !== null) {
+    while((matches = regex.exec(textarea))!==null){
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
-
         if(priceList[item] !== undefined){
-            const li = document.createElement('li');
             const itemTotal = qty * priceList[item];
-            li.textContent = `${item}: ${qty.toLocaleString()} × ${priceList[item].toLocaleString()} ISK = ${itemTotal.toLocaleString()} ISK`;
-            li.style.textAlign = "right";
+            summaryTotal += itemTotal;
+
+            const li = document.createElement('li');
+            li.textContent = `${item}: ${formatNumberWithCommas(itemTotal)} ISK`;
             summaryList.appendChild(li);
+
             totalCost += itemTotal;
         } else {
             invalidItems.push(item);
@@ -234,30 +248,28 @@ function showContent() {
     }
 
     // Show summary
-    const summaryContainer = document.getElementById('summaryContainer');
-    summaryContainer.style.display = 'block';
-    document.getElementById('summaryTotal').innerText = `Total: ${totalCost.toLocaleString()} ISK`;
+    if(summaryList.childElementCount > 0){
+        document.getElementById('summaryContainer').style.display = 'block';
+        document.getElementById('summaryTotal').innerText = `Total: ${formatNumberWithCommas(summaryTotal)} ISK`;
+    }
 
-    // Show unrecognized items below summary
-    const unrecognizedContainer = document.getElementById('unrecognizedItemsContainer');
+    // Show unrecognized items
     if(invalidItems.length > 0){
         document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
-        unrecognizedContainer.style.display = 'block';
+        document.getElementById('unrecognizedItemsContainer').style.display = 'block';
     } else {
-        unrecognizedContainer.style.display = 'none';
+        document.getElementById('unrecognizedItemsContainer').style.display = 'none';
     }
 
     // Show contracts
     document.getElementById('leftContainer').style.display = 'block';
     document.getElementById('totalCostContainer').style.display = 'block';
     
-    // Hide input after submit
+    // Hide inventory
     document.querySelector('.main-container').style.display = 'none';
 
-    // Animate totals on contracts
-    animateCount(document.getElementById('totalCostText'),0,totalCost,2000);
-    animateCount(document.getElementById('popupTotalPrice'),0,totalCost,2000);
-    document.getElementById('totalPriceModal').style.display='block';
+    // Animate total in right contract
+    animateCount(document.getElementById('totalCostText'), 0, totalCost, 2000);
 }
 
 async function init(){
@@ -265,13 +277,19 @@ async function init(){
     document.getElementById('submitButton').disabled=false;
 }
 
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+// Info modal
 document.getElementById('infoButton').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='block'; });
 document.getElementById('closeModal').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='none'; });
 window.onclick = function(event){ if(event.target==document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; };
 
-document.getElementById('closeTotalModal').addEventListener('click',()=>{
-    navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText).then(()=>{
-        const copiedMsg = document.getElementById('copiedMessage');
+// Total price modal
+const closeTotalBtn = document.getElementById('closeTotalModal');
+const copiedMsg = document.getElementById('copiedMessage');
+closeTotalBtn.addEventListener('click',()=>{
+    const text = document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
         copiedMsg.style.display='block';
         setTimeout(()=>copiedMsg.style.display='none',1500);
     });
@@ -279,24 +297,24 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
 });
 
 window.addEventListener('click',(event)=>{
-    if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
+    if(event.target==document.getElementById('totalPriceModal')) {
+        document.getElementById('totalPriceModal').style.display='none';
+    }
 });
 
-document.getElementById('submitButton').addEventListener('click', showContent);
-
-// Reset on header click
+// Reset header click
 document.querySelector('#myHeader img').addEventListener('click', () => {
-    document.getElementById('message').value='';
-    document.getElementById('unrecognizedItemsContainer').style.display='none';
-    document.getElementById('summaryContainer').style.display='none';
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('totalCostText').innerText='0 ISK';
-    document.querySelector('.main-container').style.display='flex';
+    document.getElementById('message').value = '';
+    document.getElementById('summaryContainer').style.display = 'none';
+    document.getElementById('unrecognizedItemsContainer').style.display = 'none';
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    document.querySelector('.main-container').style.display = 'flex';
 });
 
 init();
 </script>
+
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
