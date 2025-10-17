@@ -14,15 +14,15 @@ body { display: flex; flex-direction: column; align-items: center; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1200px; }
+.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1300px; }
 
 /* Contracts wrapper */
 .contracts-wrapper { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; width: 100%; }
 
 /* Contract images */
 .total-cost-container {
-    width: 630px;
-    height: 418px;
+    width: 630px;  /* restored full width */
+    height: 418px; /* restored full height */
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -56,13 +56,21 @@ header { flex-shrink: 0; }
     max-height: 418px;
     overflow-y: auto;
     animation: fadeIn 0.6s ease;
+    display: flex;
+    flex-direction: column;
 }
 #summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
 #summaryContainer li { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,0,0.2); padding: 2px 0; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; margin-top: 5px; }
 
 /* Unrecognized items */
-#unrecognizedItemsContainer { display: none; color: red; text-shadow: 0 0 10px red; margin-top: 5px; font-weight: bold; }
+#unrecognizedItemsContainer {
+    display: none;
+    color: red;
+    font-weight: bold;
+    margin-top: 5px;
+    text-shadow: 0 0 8px red, 0 0 15px red, 0 0 20px red;
+}
 
 /* Main container */
 .main-container { width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -188,7 +196,9 @@ async function loadPrices() {
         console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
     } catch(err){ console.error('⚠️ Error loading CSV:', err); }
 }
+
 function formatNumberWithCommas(number) { return number.toLocaleString(); }
+
 function animateCount(el, start, end, duration=2000) {
     let startTime = null;
     function step(timestamp) {
@@ -207,7 +217,6 @@ function showContent() {
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches, totalCost = 0, summaryTotal = 0, invalidItems = [], summaryItems = [];
 
-    // Build summary items only with recognized ores
     while ((matches = regex.exec(textarea)) !== null) {
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
@@ -216,12 +225,9 @@ function showContent() {
             totalCost += value;
             summaryTotal += value;
             summaryItems.push({name:item, qty:qty, value:value});
-        } else {
-            invalidItems.push(item);
-        }
+        } else { invalidItems.push(item); }
     }
 
-    // Sort: compressed ores first alphabetically, then others
     summaryItems.sort((a,b)=>{
         const aComp = a.name.toLowerCase().includes('compressed');
         const bComp = b.name.toLowerCase().includes('compressed');
@@ -230,15 +236,14 @@ function showContent() {
         return a.name.localeCompare(b.name);
     });
 
-    // Populate summary container
     const summaryList = document.getElementById('summaryList');
     summaryList.innerHTML = '';
     summaryItems.forEach(it=>{
         const li = document.createElement('li');
-        li.innerHTML = `<span>${it.name}</span><span>${formatNumberWithCommas(it.value)} ISK</span>`;
+        li.innerHTML = `<span>${it.name} ${formatNumberWithCommas(it.qty)}</span><span>= ${formatNumberWithCommas(it.value)} ISK</span>`;
         summaryList.appendChild(li);
     });
-    document.getElementById('summaryTotal').innerText = `Total: ${formatNumberWithCommas(summaryTotal)} ISK`;
+    document.getElementById('summaryTotal').innerText = `Total = ${formatNumberWithCommas(summaryTotal)} ISK`;
 
     // Show summary and contracts
     document.getElementById('summaryContainer').style.display='flex';
