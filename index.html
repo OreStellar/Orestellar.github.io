@@ -30,14 +30,22 @@ header { flex-shrink: 0; }
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
-    #leftContainer,
+#leftContainer,
 #totalCostContainer {
-    transform: scale(1.1);
-    transform-origin: center top;
+    width: 110%;      /* expands to ~1.1x visually */
+    height: auto;
+    transform: none;  /* remove previous scale */
 }
-    #summaryContainer {
-    transform: scale(1.05);
-    transform-origin: center top;
+
+#summaryContainer {
+    width: 105%;
+    height: auto;
+    transform: none;
+}
+
+.contracts-wrapper {
+    align-items: flex-start;
+    gap: 25px; /* prevent columns from touching */
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
