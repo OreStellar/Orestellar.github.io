@@ -14,16 +14,25 @@ body { display: flex; flex-direction: column; align-items: center; }
 header { flex-shrink: 0; }
 
 /* Containers */
-.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1200px; }
+.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1920px; }
 
-/* --- Stable layout fix (non-destructive) --- */
+/* --- Contracts wrapper updated for right-to-left --- */
 .contracts-wrapper {
-  align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;    /* center summary */
+    align-items: flex-start;
+    gap: 30px;
+    width: 100%;
 }
+
+/* Assign order for right-to-left */
+#totalCostContainer { order: 1; flex-shrink: 0; }       /* leftmost */
+#summaryContainer { order: 2; flex: 1; min-width: 630px; max-width: 630px; display: none; flex-direction: column; } /* middle */
+#leftContainer { order: 3; flex-shrink: 0; }            /* rightmost */
 
 /* Contract images */
 .total-cost-container {
-    flex-shrink: 0;
     width: 630px;
     height: 418px;
     background-size: contain;
@@ -36,24 +45,6 @@ header { flex-shrink: 0; }
     transform-origin: top center;
     z-index: 5;
 }
-/* ✅ Proper scaling without breaking background images */
-#leftContainer,
-#totalCostContainer {
-  flex-shrink: 0;        /* prevents them from shrinking */
-  height: 418px;         /* keep contract image height consistent */
-}
-
-#summaryContainer {
-  flex-shrink: 0;        /* prevents summary from forcing shrinkage */
-  max-height: 418px;     /* keeps it level with contracts */
-  overflow-y: auto;      /* scrolls if too tall */
-}
-.contracts-wrapper {
-    align-items: flex-start;
-    justify-content: center;
-    gap: 30px;
-}
-
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
 #totalCostText {
@@ -69,7 +60,6 @@ header { flex-shrink: 0; }
 
 /* Summary container */
 #summaryContainer {
-    display: none; /* hidden on load */
     background-color: rgba(20,20,20,0.9);
     border: 1px solid #00ff00;
     box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
@@ -79,7 +69,6 @@ header { flex-shrink: 0; }
     font-family: monospace;
     max-height: 418px;
     overflow-y: auto;
-    flex-direction: column;
     justify-content: flex-start;
     animation: fadeIn 0.6s ease;
 }
@@ -93,19 +82,8 @@ header { flex-shrink: 0; }
     font-size: 15px;
     letter-spacing: 0.5px;
 }
-
-#summaryContainer li span:first-child {
-    text-align: left;
-    flex: 1;
-}
-
-#summaryContainer li span:last-child {
-    text-align: right;
-    min-width: 120px;
-    font-family: monospace;
-    color: #00ff00;
-}
-
+#summaryContainer li span:first-child { text-align: left; flex: 1; }
+#summaryContainer li span:last-child { text-align: right; min-width: 120px; font-family: monospace; color: #00ff00; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; margin-top: 5px; }
 
 /* Unrecognized items */
@@ -201,14 +179,14 @@ header { flex-shrink: 0; }
 
     <!-- Contracts and summary -->
     <div class="contracts-wrapper">
-        <div id="leftContainer" class="total-cost-container"></div>
+        <div id="totalCostContainer" class="total-cost-container">
+            <div id="totalCostText">0 ISK</div>
+        </div>
         <div id="summaryContainer">
             <ul id="summaryList"></ul>
             <div id="summaryTotal"></div>
         </div>
-        <div id="totalCostContainer" class="total-cost-container">
-            <div id="totalCostText">0 ISK</div>
-        </div>
+        <div id="leftContainer" class="total-cost-container"></div>
     </div>
 
     <!-- Unrecognized items below summary -->
@@ -254,7 +232,6 @@ function showContent() {
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches, totalCost = 0, summaryTotal = 0, invalidItems = [], summaryItems = [];
 
-    // Build summary items only with recognized ores
     while ((matches = regex.exec(textarea)) !== null) {
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
@@ -268,7 +245,6 @@ function showContent() {
         }
     }
 
-    // Sort: compressed ores first alphabetically, then others
     summaryItems.sort((a,b)=>{
         const aComp = a.name.toLowerCase().includes('compressed');
         const bComp = b.name.toLowerCase().includes('compressed');
@@ -277,7 +253,6 @@ function showContent() {
         return a.name.localeCompare(b.name);
     });
 
-    // Populate summary container
     const summaryList = document.getElementById('summaryList');
     summaryList.innerHTML = '';
     summaryItems.forEach(it=>{
@@ -287,26 +262,21 @@ function showContent() {
     });
     document.getElementById('summaryTotal').innerText = `Total: ${formatNumberWithCommas(summaryTotal)} ISK`;
 
-    // Show summary and contracts
     const summary = document.getElementById('summaryContainer');
     summary.style.display='flex';
     summary.style.flexDirection='column';
     document.getElementById('leftContainer').style.display='block';
     document.getElementById('totalCostContainer').style.display='block';
 
-    // Animate contract ISK
     const popupEl = document.getElementById('totalCostText');
     animateCount(popupEl,0,totalCost,2000);
 
-    // Show modal total
     const popupModalEl = document.getElementById('popupTotalPrice');
     animateCount(popupModalEl,0,totalCost,2000);
     document.getElementById('totalPriceModal').style.display='block';
 
-    // Hide input container
     document.querySelector('.main-container').style.display='none';
 
-    // Unrecognized items
     const unrec = document.getElementById('unrecognizedItemsContainer');
     if(invalidItems.length>0){
         unrec.innerText = 'Unrecognized items: ' + invalidItems.join(', ');
@@ -337,7 +307,6 @@ window.addEventListener('click',(event)=>{
     if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
 });
 
-// Reset everything on header click
 document.querySelector('#myHeader img').addEventListener('click',()=>{
     document.getElementById('message').value='';
     document.getElementById('unrecognizedItemsContainer').style.display='none';
