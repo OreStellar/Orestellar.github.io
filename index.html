@@ -16,24 +16,23 @@ header { flex-shrink: 0; }
 /* Containers */
 .container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1920px; }
 
-/* --- Contracts wrapper updated for right-to-left --- */
+/* --- Responsive right-to-left layout --- */
 .contracts-wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: center;    /* center summary */
+    justify-content: space-evenly; /* evenly spaced across the container */
     align-items: flex-start;
-    gap: 30px;
+    gap: 20px;
     width: 100%;
+    flex-wrap: wrap; /* wrap on small screens */
 }
-
-/* Assign order for right-to-left */
-#totalCostContainer { order: 1; flex-shrink: 0; }       /* leftmost */
-#summaryContainer { order: 2; flex: 1; min-width: 630px; max-width: 630px; display: none; flex-direction: column; } /* middle */
-#leftContainer { order: 3; flex-shrink: 0; }            /* rightmost */
-
-/* Contract images */
+/* Assign order (corrected) */
+#leftContainer { order: 1; flex: 1 1 200px; max-width: 35%; min-width: 200px; }   /* left image */
+#summaryContainer { order: 2; flex: 2 1 300px; min-width: 300px; max-width: 40%; display: none; flex-direction: column; } /* middle */
+#totalCostContainer { order: 3; flex: 1 1 200px; max-width: 35%; min-width: 200px; } /* right image */
+    
+/* Containers scale dynamically */
 .total-cost-container {
-    width: 630px;
     height: 418px;
     background-size: contain;
     background-position: center;
@@ -41,10 +40,10 @@ header { flex-shrink: 0; }
     position: relative;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    transform: scale(1.1);
+    transform: scale(1.05);
     transform-origin: top center;
-    z-index: 5;
 }
+    
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
 #totalCostText {
