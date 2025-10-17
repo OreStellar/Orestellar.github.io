@@ -216,25 +216,39 @@ function animateCount(el, start, end, duration=2000) {
 }
 
 function showContent() {
-    if(Object.keys(priceList).length===0){
+    if (Object.keys(priceList).length === 0) {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
+
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches, totalCost = 0, invalidItems = [];
-    while((matches = regex.exec(textarea))!==null){
-        // Create summary list
-        const summaryList = document.getElementById('summaryList');
-        summaryList.innerHTML = ''; // clear previous
-        regex.lastIndex = 0;
-        while ((matches = regex.exec(textarea)) !== null) {
-            const item = matches[1].trim();
-            const qty = parseInt(matches[2]);
-            const li = document.createElement('li');
-            li.textContent = `${item}: ${qty.toLocaleString()}`;
-            summaryList.appendChild(li);
+
+    // Clear previous summary
+    const summaryList = document.getElementById('summaryList');
+    summaryList.innerHTML = '';
+
+    while ((matches = regex.exec(textarea)) !== null) {
+        const item = matches[1].trim();
+        const qty = parseInt(matches[2]);
+
+        // Add to summary
+        const li = document.createElement('li');
+        li.textContent = `${item}: ${qty.toLocaleString()}`;
+        summaryList.appendChild(li);
+
+        if (priceList[item] !== undefined) {
+            totalCost += qty * priceList[item];
+        } else {
+            invalidItems.push(item);
         }
+    }
+
+    // Show summary box
+    document.getElementById('summaryContainer').classList.remove('hidden');
+    ...
+
         document.getElementById('summaryContainer').classList.remove('hidden');
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
