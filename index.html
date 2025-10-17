@@ -36,18 +36,21 @@ header { flex-shrink: 0; }
 
 /* Summary container */
 #summaryContainer {
-    display: none;
+    display: none; /* initially hidden */
+    flex: 1; /* take remaining space */
+    max-width: 400px; /* optional max width */
+    min-width: 200px; /* optional min width */
+    margin: 0 10px;
     flex-direction: column;
     background-color: rgba(20, 20, 20, 0.9);
     border: 1px solid #00ff00;
     box-shadow: 0 0 10px #00ff00;
     border-radius: 10px;
-    padding: 15px 20px;
+    padding: 15px 25px;
     color: white;
     font-family: monospace;
-    max-height: 418px;
-    width: 250px;
-    display: flex;
+    max-height: 400px;
+    overflow-y: auto;
 }
 #summaryContainer h4 {
     color: #00ff00;
