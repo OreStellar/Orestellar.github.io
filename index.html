@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <style>
-html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
+html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; font-family: monospace; }
 body { display: flex; flex-direction: column; }
 header { flex-shrink: 0; }
 
@@ -83,36 +83,35 @@ header { flex-shrink: 0; }
 
 /* Summary container */
 .summary-container {
-    background-color: rgba(0,0,0,0.75);
+    background-color: rgba(20, 20, 20, 0.9);
     border: 1px solid #00ff00;
-    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00 inset;
+    box-shadow: 0 0 10px #00ff00;
     border-radius: 10px;
     padding: 15px 25px;
     color: white;
     font-family: monospace;
     max-height: 400px;
     overflow-y: auto;
-    margin: 10px auto;
-    width: 40%;
     animation: fadeIn 0.6s ease;
+    width: 630px;
+    text-align: left;
 }
-.summary-container h3 {
+.summary-container h4 {
     color: #00ff00;
     text-shadow: 0 0 8px #00ff00;
-    text-align: center;
     margin-bottom: 10px;
 }
-.summary-container ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+.summary-container ul { list-style-type: none; padding: 0; margin: 0; }
 .summary-container li {
     padding: 3px 0;
     border-bottom: 1px solid rgba(0,255,0,0.2);
 }
-
-/* Hidden class */
+.summary-container .value, .summary-container .total-value {
+    color: #00ff00;
+    text-shadow: 0 0 6px #00ff00, 0 0 12px #00ff00;
+    font-weight: bold;
+    display: inline-block;
+}
 .hidden { display: none; }
 
 #popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
@@ -158,7 +157,7 @@ header { flex-shrink: 0; }
 
 <div class="container-wrapper">
 
-    <!-- Inventory container at top -->
+    <!-- Inventory input at top -->
     <div class="main-container w3-card w3-container w3-center">
         <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
         <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
@@ -168,12 +167,16 @@ header { flex-shrink: 0; }
         </div>
     </div>
 
-    <!-- Summary container -->
-    <div id="summaryContainer" class="summary-container hidden"></div>
-
     <!-- Contracts side by side -->
     <div class="contracts-wrapper">
         <div id="leftContainer" class="total-cost-container"></div>
+
+        <!-- Summary container -->
+        <div id="summaryContainer" class="w3-card summary-container hidden">
+            <h4>Submitted Inventory</h4>
+            <ul id="summaryList"></ul>
+        </div>
+
         <div id="totalCostContainer" class="total-cost-container">
             <div id="totalCostText">0 ISK</div>
         </div>
@@ -224,59 +227,75 @@ function showContent() {
         alert("Price data still loading. Try again in a moment.");
         return;
     }
+
     const textarea = document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let matches, totalCost = 0, invalidItems = [];
 
-    // Prepare items list
-    let itemsList = [];
-    regex.lastIndex = 0;
-    while ((matches = regex.exec(textarea)) !== null) {
+    const summaryList = document.getElementById('summaryList');
+    summaryList.innerHTML = '';
+
+    const itemsArray = [];
+    while((matches = regex.exec(textarea))!==null){
         const item = matches[1].trim();
         const qty = parseInt(matches[2]);
-        if (!isNaN(qty)) itemsList.push({ name: item, qty });
-        if(priceList[item] !== undefined) totalCost += qty * priceList[item];
-        else invalidItems.push(item);
+
+        if(priceList[item] !== undefined){
+            const value = qty * priceList[item];
+            totalCost += value;
+            itemsArray.push({name: item, qty, price: priceList[item], value});
+        } else {
+            invalidItems.push(item);
+        }
     }
 
-    // Unrecognized items
-    if(invalidItems.length > 0){
-        document.getElementById('unrecognizedItemsText').innerText =
-            'Unrecognized items: ' + invalidItems.join(', ');
-        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
-    } else {
-        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
-    }
-
-    // Sort items: compressed first alphabetically
-    const compressed = itemsList.filter(i=>i.name.toLowerCase().startsWith('compressed ')).sort((a,b)=>a.name.localeCompare(b.name));
-    const uncompressed = itemsList.filter(i=>!i.name.toLowerCase().startsWith('compressed ')).sort((a,b)=>a.name.localeCompare(b.name));
-    const sortedItems = [...compressed, ...uncompressed];
-
-    // Build summary
-    const summaryContainer = document.getElementById('summaryContainer');
-    summaryContainer.innerHTML = '';
-    const title = document.createElement('h3'); title.textContent='Summary'; summaryContainer.appendChild(title);
-    const ul = document.createElement('ul');
-    sortedItems.forEach(i=>{
-        const li = document.createElement('li');
-        li.textContent = `${i.name}: ${i.qty.toLocaleString()}`;
-        ul.appendChild(li);
+    // Sort: compressed first, then uncompressed
+    itemsArray.sort((a,b)=>{
+        const aCompressed = a.name.toLowerCase().includes("compressed");
+        const bCompressed = b.name.toLowerCase().includes("compressed");
+        if(aCompressed && !bCompressed) return -1;
+        if(!aCompressed && bCompressed) return 1;
+        return a.name.localeCompare(b.name);
     });
-    summaryContainer.appendChild(ul);
-    summaryContainer.classList.remove('hidden');
+
+    // Populate summary
+    itemsArray.forEach(obj => {
+        const li = document.createElement('li');
+        li.innerHTML = `${obj.name}: ${obj.qty.toLocaleString()} × ${obj.price.toLocaleString()} = <span class="value">${obj.value.toLocaleString()} ISK</span>`;
+        summaryList.appendChild(li);
+    });
+
+    // Total in summary
+    let totalEl = document.querySelector('.summary-container .total-value');
+    if(!totalEl){
+        totalEl = document.createElement('div');
+        totalEl.classList.add('total-value');
+        document.getElementById('summaryContainer').appendChild(totalEl);
+    }
+    totalEl.innerText = "Total: " + totalCost.toLocaleString() + " ISK";
+
+    // Show summary container
+    document.getElementById('summaryContainer').classList.remove('hidden');
 
     // Show contracts
     document.getElementById('leftContainer').style.display = 'block';
     document.getElementById('totalCostContainer').style.display = 'block';
 
-    // Hide inventory box
+    // Hide inventory
     document.querySelector('.main-container').style.display = 'none';
 
     // Animate ISK
-    animateCount(document.getElementById('totalCostText'),0,totalCost,2000);
-    animateCount(document.getElementById('popupTotalPrice'),0,totalCost,2000);
-    document.getElementById('totalPriceModal').style.display='block';
+    animateCount(document.getElementById('totalCostText'), 0, totalCost, 2000);
+    animateCount(document.getElementById('popupTotalPrice'), 0, totalCost, 2000);
+    document.getElementById('totalPriceModal').style.display = 'block';
+
+    // Handle unrecognized
+    if(invalidItems.length > 0){
+        document.getElementById('unrecognizedItemsText').innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        document.getElementById('unrecognizedItemsContainer').classList.remove('hidden');
+    } else {
+        document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    }
 }
 
 async function init(){
@@ -284,38 +303,41 @@ async function init(){
     document.getElementById('submitButton').disabled=false;
 }
 
-// Event listeners
 document.getElementById('infoButton').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='block'; });
 document.getElementById('closeModal').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='none'; });
 window.onclick = function(event){ if(event.target==document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; };
 
-document.getElementById('closeTotalModal').addEventListener('click', ()=>{
-    navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText).then(()=>{
-        const msg = document.getElementById('copiedMessage');
-        msg.style.display='block';
-        setTimeout(()=>msg.style.display='none',1500);
+const closeTotalBtn = document.getElementById('closeTotalModal');
+const copiedMsg = document.getElementById('copiedMessage');
+closeTotalBtn.addEventListener('click',()=>{
+    const text = document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+        copiedMsg.style.display='block';
+        setTimeout(()=>copiedMsg.style.display='none',1500);
     });
     document.getElementById('totalPriceModal').style.display='none';
 });
 
-window.addEventListener('click',(event)=>{ 
-    if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
+window.addEventListener('click',(event)=>{
+    if(event.target==document.getElementById('totalPriceModal')) {
+        document.getElementById('totalPriceModal').style.display='none';
+    }
 });
 
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-// Reset on header click
-document.querySelector('#myHeader img').addEventListener('click', () => {
-    document.getElementById('message').value='';
-    document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('summaryContainer').classList.add('hidden');
-    document.getElementById('totalCostText').innerText='0 ISK';
-    document.querySelector('.main-container').style.display='flex';
-});
-
 init();
+
+// Header click resets
+document.querySelector('#myHeader img').addEventListener('click', () => {
+    document.getElementById('message').value = '';
+    document.getElementById('unrecognizedItemsContainer').classList.add('hidden');
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    document.getElementById('summaryContainer').classList.add('hidden');
+    document.getElementById('totalCostText').innerText = '0 ISK';
+    document.querySelector('.main-container').style.display = 'flex';
+});
 </script>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
