@@ -319,7 +319,7 @@ document.querySelector('#myHeader img').addEventListener('click',()=>{
 init();
 </script>
 
-<!-- STARFIELD SCRIPT -->
+<!-- STARFIELD SCRIPT WITH GLOW -->
 <script>
 const starCanvas = document.getElementById('starfield');
 const starCtx = starCanvas.getContext('2d');
@@ -341,7 +341,7 @@ for (let i = 0; i < numStars; i++) {
     y: Math.random()*starCanvas.height - starCanvas.height/2,
     z: Math.random()*starCanvas.width,
     color: colors[Math.floor(Math.random()*colors.length)],
-    size: Math.random()*1+0.3
+    size: Math.random()*0.6+0.2
   });
 }
 
@@ -359,13 +359,25 @@ function animateStars() {
       star.x = Math.random()*starCanvas.width - starCanvas.width/2;
       star.y = Math.random()*starCanvas.height - starCanvas.height/2;
       star.color = colors[Math.floor(Math.random()*colors.length)];
-      star.size = Math.random()*1+0.3;
+      star.size = Math.random()*0.6+0.2;
     }
 
     const sx = cx + (star.x / star.z) * starCanvas.width;
     const sy = cy + (star.y / star.z) * starCanvas.width;
     const radius = star.size * (starCanvas.width / star.z);
 
+    // Draw glow
+    const gradient = starCtx.createRadialGradient(sx, sy, 0, sx, sy, radius*4);
+    gradient.addColorStop(0, star.color);
+    gradient.addColorStop(0.2, star.color + '33');
+    gradient.addColorStop(1, 'transparent');
+
+    starCtx.fillStyle = gradient;
+    starCtx.beginPath();
+    starCtx.arc(sx, sy, radius*4, 0, Math.PI*2);
+    starCtx.fill();
+
+    // Draw core star
     starCtx.beginPath();
     starCtx.arc(sx, sy, radius, 0, Math.PI*2);
     starCtx.fillStyle = star.color;
