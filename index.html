@@ -22,13 +22,12 @@ header { flex-shrink:0; }
     flex-wrap:wrap;
 }
 
+/* Contracts fixed size */
 #leftContainer, #totalCostContainer {
     display:none;
-    flex:1 1 250px;
-    max-width:35%;
-    min-width:200px;
-    height:418px;           /* fixed height for images */
-    position:relative;       /* needed for absolute children */
+    width:630px;
+    height:418px;
+    position:relative;
     background-size:contain;
     background-repeat:no-repeat;
     background-position:center;
@@ -36,6 +35,7 @@ header { flex-shrink:0; }
     box-shadow:0 4px 8px rgba(0,0,0,0.5);
 }
 
+/* Total ISK text on right container */
 #totalCostText {
     position:absolute;
     top:50%;
@@ -47,11 +47,9 @@ header { flex-shrink:0; }
     text-shadow:0 0 20px #00ff00,0 0 30px #00ff00;
 }
 
+/* Summary container centered between contracts */
 #summaryContainer {
     order:2;
-    flex:0 1 300px;
-    max-width:300px;
-    min-width:200px;
     display:none;
     flex-direction:column;
     overflow-x:auto;
@@ -61,6 +59,7 @@ header { flex-shrink:0; }
     box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset;
     border-radius:10px;
     padding:10px 15px;
+    width:300px;
 }
 
 #summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
