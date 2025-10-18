@@ -2,123 +2,95 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>OreStellar with Stars</title>
+<title>OreStellar Starfield Test</title>
 <style>
 html, body { margin:0; padding:0; overflow:hidden; height:100%; background:black; color:white; font-family:monospace; }
-canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+canvas#starfield { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; display:block; }
 
-header, .container-wrapper, .main-container, .contracts-wrapper { position:relative; z-index:1; }
-
-#summaryContainer, #leftContainer, #totalCostContainer { display:none; }
-
-.sleek-modal { width:350px; max-width:90%; padding:20px 25px; background-color:#111; border:2px solid #00ff00; border-radius:12px; box-shadow:0 0 15px #00ff00,0 0 25px #00ff00 inset; text-align:center; font-family:monospace; }
-#popupTotalPrice { font-size:28px; font-weight:bold; color:#00ff00; margin:15px 0; text-shadow:0 0 8px #00ff00,0 0 15px #00ff00; }
-#closeTotalModal { padding:6px 18px; font-size:16px; font-weight:bold; border-radius:8px; cursor:pointer; background-color:#111; color:#00ff00; border:1px solid #00ff00; box-shadow:0 0 6px #00ff00; }
+#mainContent { position:relative; z-index:1; text-align:center; padding:20px; }
+button { padding:10px 20px; font-weight:bold; cursor:pointer; margin-top:10px; }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
 
-<header><h1>OreStellar</h1></header>
-
-<div class="container-wrapper">
-    <div class="main-container">
-        <textarea id="message" rows="6" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea>
-        <button id="submitButton">Submit</button>
-    </div>
-</div>
-
-<div id="totalPriceModal" class="sleek-modal">
-    <h2>Total ISK</h2>
-    <p id="popupTotalPrice">0 ISK</p>
-    <button id="closeTotalModal">Copy</button>
+<div id="mainContent">
+    <h1>OreStellar Demo</h1>
+    <textarea id="message" rows="6" cols="40" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea><br>
+    <button id="submitButton">Submit</button>
+    <p id="totalPrice">0 ISK</p>
 </div>
 
 <script>
-// ---------- STARFIELD ----------
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize);
-resize();
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-const numStars = 400;
-const colors = ['#ffffff','#ffffcc','#ffcccc'];
 const stars = [];
-const galaxies = [];
+const colors = ['#ffffff','#ffffcc','#ffcccc'];
+const numStars = 300;
 
-// galaxy centers
-for(let i=0;i<8;i++){
-    galaxies.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, spread:Math.random()*100+50});
-}
-
-// stars
+// generate stars randomly
 for(let i=0;i<numStars;i++){
-    let inGal=Math.random()<0.3;
-    let x=Math.random()*canvas.width;
-    let y=Math.random()*canvas.height;
-    if(inGal){
-        const g=galaxies[Math.floor(Math.random()*galaxies.length)];
-        x = g.x + (Math.random()-0.5)*g.spread;
-        y = g.y + (Math.random()-0.5)*g.spread;
-    }
-    stars.push({x:x, y:y, z:Math.random()*300+50, color:colors[Math.floor(Math.random()*colors.length)], size:Math.random()*0.5+0.2});
+    stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        z: Math.random()*300+50,
+        size: Math.random()*0.5+0.2,
+        color: colors[Math.floor(Math.random()*colors.length)]
+    });
 }
 
+// animate stars moving forward slowly
 function animate(){
     ctx.fillStyle='black';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    const cx=canvas.width/2, cy=canvas.height/2;
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
 
     for(let s of stars){
-        s.z -= 0.1;
-        if(s.z<=1){
-            s.z=Math.random()*300+50;
-            let inGal=Math.random()<0.3;
-            if(inGal){
-                const g=galaxies[Math.floor(Math.random()*galaxies.length)];
-                s.x = g.x + (Math.random()-0.5)*g.spread;
-                s.y = g.y + (Math.random()-0.5)*g.spread;
-            } else {
-                s.x=Math.random()*canvas.width;
-                s.y=Math.random()*canvas.height;
-            }
-            s.color=colors[Math.floor(Math.random()*colors.length)];
-            s.size=Math.random()*0.5+0.2;
+        s.z -= 0.2; // forward speed
+        if(s.z <= 1){
+            s.z = Math.random()*300+50;
+            s.x = Math.random()*canvas.width;
+            s.y = Math.random()*canvas.height;
         }
-        const sx=cx+(s.x-cx)*(200/s.z);
-        const sy=cy+(s.y-cy)*(200/s.z);
-        const r=s.size*(200/s.z);
-        const grad=ctx.createRadialGradient(sx,sy,0,sx,sy,r*2);
+
+        const sx = cx + (s.x-cx)*(200/s.z);
+        const sy = cy + (s.y-cy)*(200/s.z);
+        const r = s.size*(200/s.z);
+
+        const grad = ctx.createRadialGradient(sx,sy,0,sx,sy,r*2);
         grad.addColorStop(0,s.color);
         grad.addColorStop(0.2,s.color+'33');
         grad.addColorStop(1,'transparent');
-        ctx.fillStyle=grad;
+
+        ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(sx,sy,r*2,0,Math.PI*2);
         ctx.fill();
     }
+
     requestAnimationFrame(animate);
 }
 animate();
 
-// ---------- SUBMIT BUTTON ----------
-document.getElementById('submitButton').addEventListener('click',()=>{
+// demo submit button
+document.getElementById('submitButton').addEventListener('click', ()=>{
     const val = document.getElementById('message').value;
-    const total = val.split('\n').reduce((acc,line)=>{
-        const m=line.match(/(\d+)$/);
-        return acc + (m?parseInt(m[1])*100:0); // fake price example
-    },0);
-    document.getElementById('popupTotalPrice').innerText = total.toLocaleString() + " ISK";
-    document.getElementById('totalPriceModal').style.display='block';
-});
-
-// ---------- COPY BUTTON ----------
-document.getElementById('closeTotalModal').addEventListener('click',()=>{
-    navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
-    document.getElementById('totalPriceModal').style.display='none';
+    let total = 0;
+    val.split('\n').forEach(line=>{
+        const m = line.match(/(\d+)$/);
+        if(m) total += parseInt(m[1])*100;
+    });
+    document.getElementById('totalPrice').innerText = total.toLocaleString() + ' ISK';
 });
 </script>
 
