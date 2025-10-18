@@ -132,53 +132,64 @@ canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-ind
 
 <script>
 // ---------- Starfield ----------
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let W=canvas.width=window.innerWidth;
-let H=canvas.height=window.innerHeight;
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
 
-window.addEventListener('resize',()=>{ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; });
+window.addEventListener('resize', () => {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+});
 
-const starColors=['#ffffff','#ffddaa','#ff9999'];
-const numStars=250;
-let stars=[];
+const starColors = ['#ffffff', '#ffddaa', '#ff9999'];
+const numStars = 300;
+let stars = [];
 
-for(let i=0;i<numStars;i++){
+for (let i = 0; i < numStars; i++) {
     stars.push({
-        x:Math.random()*W,
-        y:Math.random()*H,
-        z:Math.random()*W,
-        color:starColors[Math.floor(Math.random()*starColors.length)],
-        size:Math.random()*1.2+0.3
+        x: Math.random() * W,
+        y: Math.random() * H,
+        z: Math.random() * W,
+        color: starColors[Math.floor(Math.random() * starColors.length)],
+        size: Math.random() * 0.4 + 0.1 // smaller points
     });
 }
 
-function drawStars(){
-    ctx.fillStyle='black';
-    ctx.fillRect(0,0,W,H);
-    for(let i=0;i<stars.length;i++){
-        let s=stars[i];
-        let sx=(s.x-W/2)/(s.z/W*2)+W/2;
-        let sy=(s.y-H/2)/(s.z/H*2)+H/2;
-        let radius=s.size*(1/(s.z/W*2));
+function drawStars() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, W, H);
+
+    for (let i = 0; i < stars.length; i++) {
+        let s = stars[i];
+        let sx = (s.x - W / 2) / (s.z / W * 2) + W / 2;
+        let sy = (s.y - H / 2) / (s.z / H * 2) + H / 2;
+        let radius = s.size * (1 / (s.z / W * 2));
+
         ctx.beginPath();
-        ctx.fillStyle=s.color;
-        ctx.shadowColor=s.color;
-        ctx.shadowBlur=8;
-        ctx.arc(sx,sy,radius,0,2*Math.PI);
+        ctx.fillStyle = s.color;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 25; // much larger glow
+        ctx.arc(sx, sy, radius, 0, 2 * Math.PI);
         ctx.fill();
-        s.z-=0.5; // slower movement
-        if(s.z<=0){
-            s.x=Math.random()*W;
-            s.y=Math.random()*H;
-            s.z=W;
-            s.color=starColors[Math.floor(Math.random()*starColors.length)];
-            s.size=Math.random()*1.2+0.3;
+
+        // slower drift
+        s.z -= 0.3;
+
+        if (s.z <= 0) {
+            s.x = Math.random() * W;
+            s.y = Math.random() * H;
+            s.z = W;
+            s.color = starColors[Math.floor(Math.random() * starColors.length)];
+            s.size = Math.random() * 0.4 + 0.1;
         }
     }
+
     requestAnimationFrame(drawStars);
 }
+
 drawStars();
+
 
 // ---------- Load Prices ----------
 let priceList={};
