@@ -5,9 +5,9 @@
 <title>Starfield Test</title>
 <style>
 html, body { margin:0; padding:0; overflow:hidden; height:100%; background:black; }
-canvas { position:fixed; top:0; left:0; z-index:-1; display:block; }
+canvas { position:fixed; top:0; left:0; z-index:0; }
 #content { position:relative; z-index:1; text-align:center; color:white; font-family:monospace; padding:20px; }
-button { padding:10px 20px; font-weight:bold; margin-top:10px; cursor:pointer; }
+button { padding:10px 20px; font-weight:bold; cursor:pointer; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -15,8 +15,9 @@ button { padding:10px 20px; font-weight:bold; margin-top:10px; cursor:pointer; }
 <canvas id="starfield"></canvas>
 
 <div id="content">
-    <h1>OreStellar Demo</h1>
-    <textarea id="message" rows="6" cols="40" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea><br>
+    <h1>OreStellar Test</h1>
+    <textarea id="message" rows="6" cols="40">Compressed Ytirium 99
+Jet Ochre 135</textarea><br>
     <button id="submitButton">Submit</button>
     <p id="totalPrice">0 ISK</p>
 </div>
@@ -25,18 +26,15 @@ button { padding:10px 20px; font-weight:bold; margin-top:10px; cursor:pointer; }
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+// force canvas to fill screen in pixels
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
 
-const colors = ['#ffffff','#ffffcc','#ffcccc'];
-const numStars = 300;
+// generate stars
 const stars = [];
-
-for(let i=0;i<numStars;i++){
+const colors = ['#ffffff','#ffffcc','#ffcccc'];
+for(let i=0;i<300;i++){
     stars.push({
         x: Math.random()*canvas.width,
         y: Math.random()*canvas.height,
@@ -46,21 +44,19 @@ for(let i=0;i<numStars;i++){
     });
 }
 
-function animate() {
-    ctx.fillStyle = 'black';
+// animate stars forward
+function animate(){
+    ctx.fillStyle='black';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    const cx = canvas.width/2;
-    const cy = canvas.height/2;
-
+    const cx = canvas.width/2, cy = canvas.height/2;
     for(let s of stars){
-        s.z -= 0.5; // slow forward movement
+        s.z -= 0.5;
         if(s.z <= 0){
             s.z = canvas.width;
             s.x = Math.random()*canvas.width;
             s.y = Math.random()*canvas.height;
             s.color = colors[Math.floor(Math.random()*colors.length)];
         }
-
         const sx = cx + (s.x-cx)*(canvas.width/s.z);
         const sy = cy + (s.y-cy)*(canvas.width/s.z);
         const r = s.size*(canvas.width/s.z*0.5);
@@ -75,20 +71,19 @@ function animate() {
         ctx.arc(sx,sy,r,0,Math.PI*2);
         ctx.fill();
     }
-
     requestAnimationFrame(animate);
 }
 animate();
 
-// Submit button demo
+// submit button demo
 document.getElementById('submitButton').addEventListener('click', ()=>{
-    const val = document.getElementById('message').value;
-    let total = 0;
+    const val=document.getElementById('message').value;
+    let total=0;
     val.split('\n').forEach(line=>{
-        const m = line.match(/(\d+)$/);
+        const m=line.match(/(\d+)$/);
         if(m) total += parseInt(m[1])*100;
     });
-    document.getElementById('totalPrice').innerText = total.toLocaleString() + ' ISK';
+    document.getElementById('totalPrice').innerText = total.toLocaleString()+' ISK';
 });
 </script>
 
