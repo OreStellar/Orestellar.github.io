@@ -19,9 +19,9 @@ header, .container-wrapper, .main-container, .contracts-wrapper, #totalPriceModa
 
 .contracts-wrapper { display:flex; flex-direction:row; justify-content:space-evenly; align-items:flex-start; gap:5px; width:100%; flex-wrap:wrap; }
 
-#leftContainer { order:1; flex:1 1 250px; max-width:35%; min-width:200px; display:none; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); }
+#leftContainer { order:1; flex:1 1 250px; max-width:35%; min-width:200px; display:none; min-height:400px; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); }
 #summaryContainer { order:2; flex:1 1 auto; max-width:300px; min-width:150px; display:none; flex-direction:column; overflow-x:auto; overflow-y:auto; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; }
-#totalCostContainer { order:3; flex:1 1 250px; max-width:35%; min-width:200px; display:none; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); position:relative; }
+#totalCostContainer { order:3; flex:1 1 250px; max-width:35%; min-width:200px; display:none; min-height:400px; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); position:relative; }
 #totalCostText { position:absolute; top:calc(50% + 18px); left:calc(50% + 5px); transform:translate(-50%,-50%); font-size:13px; font-weight:bold; color:#00ff00; text-shadow:0 0 10px #00ff00,0 0 20px #00ff00; }
 
 #summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
@@ -99,34 +99,28 @@ header, .container-wrapper, .main-container, .contracts-wrapper, #totalPriceModa
 
 <script>
 // ---------- STARFIELD ----------
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
+const canvas=document.getElementById('starfield');
+const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
 window.addEventListener('resize',resize);
 resize();
 
 const colors=['#ffffff','#ffffcc','#ffcccc'];
-const stars=[];
-const galaxies=[];
-
-// galaxy clusters
-for(let i=0;i<10;i++){galaxies.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, spread:Math.random()*150+50});}
-
-// initialize stars
+const stars=[], galaxies=[];
+for(let i=0;i<10;i++){galaxies.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,spread:Math.random()*150+50});}
 for(let i=0;i<500;i++){
     let inGal=Math.random()<0.3;
-    let x=Math.random()*canvas.width;
-    let y=Math.random()*canvas.height;
+    let x=Math.random()*canvas.width, y=Math.random()*canvas.height;
     if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; x=g.x+(Math.random()-0.5)*g.spread; y=g.y+(Math.random()-0.5)*g.spread;}
-    stars.push({x:x, y:y, z:Math.random()*300+50, color:colors[Math.floor(Math.random()*colors.length)], size:Math.random()*0.7+0.3});
+    stars.push({x:x,y:y,z:Math.random()*300+50,color:colors[Math.floor(Math.random()*colors.length)],size:Math.random()*0.7+0.3});
 }
 
-function animate(){
+function animateStars(){
     ctx.fillStyle='black'; ctx.fillRect(0,0,canvas.width,canvas.height);
     const cx=canvas.width/2, cy=canvas.height/2;
     for(let s of stars){
-        s.z -= 0.1;
-        if(s.z <= 1){
+        s.z-=0.1;
+        if(s.z<=1){
             s.z=Math.random()*300+50;
             let inGal=Math.random()<0.3;
             if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; s.x=g.x+(Math.random()-0.5)*g.spread; s.y=g.y+(Math.random()-0.5)*g.spread;}
@@ -146,19 +140,19 @@ function animate(){
         ctx.arc(sx,sy,r*2,0,Math.PI*2);
         ctx.fill();
     }
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animateStars);
 }
-animate();
+animateStars();
 
-// ---------- CSV Price Loading ----------
-let priceList = {};
+// ---------- CSV PRICE LOADING ----------
+let priceList={};
 async function loadPrices(){
     try{
         const res=await fetch('data/prices.csv');
         const text=await res.text();
         const lines=text.split('\n').filter(l=>l.trim()!=='');
         const headers=lines[0].split(',');
-        const priceIndex=headers.findIndex(h=>h.trim().toLowerCase().includes("150%"));
+        const priceIndex=headers.findIndex(h=>h.toLowerCase().includes("150%"));
         for(let i=1;i<lines.length;i++){
             const cols=lines[i].split(',');
             const ore=cols[0].trim();
@@ -166,12 +160,12 @@ async function loadPrices(){
             if(!isNaN(price)) priceList[ore]=price;
         }
         document.getElementById('submitButton').disabled=false;
-    } catch(err){ console.error(err); }
+    }catch(err){console.error(err);}
 }
 loadPrices();
 
 // ---------- UTILITIES ----------
-function formatNumber(n){ return n.toLocaleString(); }
+function formatNumber(n){return n.toLocaleString();}
 function animateCount(el,start,end,duration=2000){
     let startTime=null;
     function step(timestamp){
@@ -184,40 +178,43 @@ function animateCount(el,start,end,duration=2000){
 }
 
 // ---------- SUBMIT BUTTON ----------
-document.getElementById('submitButton').addEventListener('click', ()=>{
-    if(Object.keys(priceList).length===0){ alert("Price data loading"); return; }
-    const textarea=document.getElementById('message').value;
+document.getElementById('submitButton').addEventListener('click',()=>{
+    if(Object.keys(priceList).length===0){alert("Price data loading"); return;}
+    const text=document.getElementById('message').value;
     const regex=/([\w\s]+?)\s+(\d+)/g;
     let match,totalCost=0,summaryItems=[],invalid=[];
-    while(match=regex.exec(textarea)){
-        const item=match[1].trim();
-        const qty=parseInt(match[2]);
+    while(match=regex.exec(text)){
+        const item=match[1].trim(), qty=parseInt(match[2]);
         if(priceList[item]!==undefined){
-            const val=qty*priceList[item];
-            totalCost+=val;
+            const val=qty*priceList[item]; totalCost+=val;
             summaryItems.push({name:item, qty:qty, value:val});
         } else invalid.push(item);
     }
     summaryItems.sort((a,b)=>{
-        const aComp=a.name.toLowerCase().includes('compressed');
-        const bComp=b.name.toLowerCase().includes('compressed');
-        if(aComp&&!bComp) return -1;
-        if(!aComp&&bComp) return 1;
-        return a.name.localeCompare(b.name);
+        const aC=a.name.toLowerCase().includes('compressed'), bC=b.name.toLowerCase().includes('compressed');
+        if(aC&&!bC) return -1; if(!aC&&bC) return 1; return a.name.localeCompare(b.name);
     });
     const list=document.getElementById('summaryList'); list.innerHTML='';
     summaryItems.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=`<span>${it.name}</span><span>${formatNumber(it.value)} ISK</span>`; list.appendChild(li); });
     document.getElementById('summaryTotal').innerText='Total: '+formatNumber(totalCost)+' ISK';
-    document.getElementById('summaryContainer').style.display='flex';
-    document.getElementById('leftContainer').style.display='block';
-    document.getElementById('totalCostContainer').style.display='block';
+
+    const left=document.getElementById('leftContainer');
+    const total=document.getElementById('totalCostContainer');
+    const summary=document.getElementById('summaryContainer');
+    left.style.display='flex';
+    left.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png')";
+    total.style.display='flex';
+    total.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png')";
+    summary.style.display='flex'; summary.style.flexDirection='column';
     document.querySelector('.main-container').style.display='none';
+
     animateCount(document.getElementById('totalCostText'),0,totalCost);
     animateCount(document.getElementById('popupTotalPrice'),0,totalCost);
-    document.getElementById('totalPriceModal').style.display='block';
+
+    if(invalid.length>0){ alert('Unrecognized items: '+invalid.join(', ')); }
 });
 
-// ---------- TOTAL ISK COPY BUTTON ----------
+// ---------- TOTAL ISK COPY ----------
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
     navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
     document.getElementById('totalPriceModal').style.display='none';
