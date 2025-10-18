@@ -195,7 +195,7 @@ header { flex-shrink: 0; }
 </div>
 
 <script>
-// --- Price loading and OreStellar logic ---
+// ---------- Price Loader & Calculator ----------
 let priceList = {};
 async function loadPrices() {
     try {
@@ -215,7 +215,9 @@ async function loadPrices() {
         console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
     } catch(err){ console.error('⚠️ Error loading CSV:', err); }
 }
+
 function formatNumberWithCommas(number) { return number.toLocaleString(); }
+
 function animateCount(el, start, end, duration=2000) {
     let startTime = null;
     function step(timestamp) {
@@ -319,78 +321,77 @@ document.querySelector('#myHeader img').addEventListener('click',()=>{
 init();
 </script>
 
-<!-- STARFIELD SCRIPT WITH GLOW -->
+<!-- ---------- STARFIELD SCRIPT WITH TWINKLE ---------- -->
 <script>
 const starCanvas = document.getElementById('starfield');
 const starCtx = starCanvas.getContext('2d');
 
-function resizeCanvas() {
-    starCanvas.width = window.innerWidth;
-    starCanvas.height = window.innerHeight;
-}
+function resizeCanvas() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
 resizeCanvas();
 
 const numStars = 400;
 const stars = [];
-const speed = 0.25; // slow forward motion
+const speed = 0.1; // slow forward
 const colors = ['#ffffff','#ffffcc','#ffcccc']; // white, yellow, red
 
-for (let i = 0; i < numStars; i++) {
-  stars.push({
-    x: Math.random()*starCanvas.width - starCanvas.width/2,
-    y: Math.random()*starCanvas.height - starCanvas.height/2,
-    z: Math.random()*starCanvas.width,
-    color: colors[Math.floor(Math.random()*colors.length)],
-    size: Math.random()*0.6+0.2
-  });
+for (let i=0;i<numStars;i++){
+    stars.push({
+        x: Math.random()*starCanvas.width - starCanvas.width/2,
+        y: Math.random()*starCanvas.height - starCanvas.height/2,
+        z: Math.random()*starCanvas.width,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        size: Math.random()*0.3+0.1,
+        twinklePhase: Math.random()*Math.PI*2
+    });
 }
 
-function animateStars() {
-  starCtx.fillStyle = 'black';
-  starCtx.fillRect(0,0,starCanvas.width,starCanvas.height);
+function animateStars(){
+    starCtx.fillStyle = 'black';
+    starCtx.fillRect(0,0,starCanvas.width,starCanvas.height);
 
-  const cx = starCanvas.width/2;
-  const cy = starCanvas.height/2;
+    const cx = starCanvas.width/2;
+    const cy = starCanvas.height/2;
 
-  for (let star of stars) {
-    star.z -= speed;
-    if(star.z <= 0){
-      star.z = starCanvas.width;
-      star.x = Math.random()*starCanvas.width - starCanvas.width/2;
-      star.y = Math.random()*starCanvas.height - starCanvas.height/2;
-      star.color = colors[Math.floor(Math.random()*colors.length)];
-      star.size = Math.random()*0.6+0.2;
+    for (let star of stars){
+        star.z -= speed;
+        if(star.z <=0){
+            star.z = starCanvas.width;
+            star.x = Math.random()*starCanvas.width - starCanvas.width/2;
+            star.y = Math.random()*starCanvas.height - starCanvas.height/2;
+            star.color = colors[Math.floor(Math.random()*colors.length)];
+            star.size = Math.random()*0.3+0.1;
+            star.twinklePhase = Math.random()*Math.PI*2;
+        }
+
+        const sx = cx + (star.x / star.z) * starCanvas.width;
+        const sy = cy + (star.y / star.z) * starCanvas.width;
+        const baseRadius = star.size * (starCanvas.width / star.z);
+
+        // Twinkle
+        const twinkle = baseRadius * (0.7 + 0.3 * Math.sin(Date.now()/500 + star.twinklePhase));
+
+        const gradient = starCtx.createRadialGradient(sx, sy, 0, sx, sy, twinkle*4);
+        gradient.addColorStop(0, star.color);
+        gradient.addColorStop(0.2, star.color + '33');
+        gradient.addColorStop(1, 'transparent');
+
+        starCtx.fillStyle = gradient;
+        starCtx.beginPath();
+        starCtx.arc(sx, sy, twinkle*4,0,Math.PI*2);
+        starCtx.fill();
+
+        starCtx.beginPath();
+        starCtx.arc(sx, sy, twinkle,0,Math.PI*2);
+        starCtx.fillStyle = star.color;
+        starCtx.fill();
     }
 
-    const sx = cx + (star.x / star.z) * starCanvas.width;
-    const sy = cy + (star.y / star.z) * starCanvas.width;
-    const radius = star.size * (starCanvas.width / star.z);
-
-    // Draw glow
-    const gradient = starCtx.createRadialGradient(sx, sy, 0, sx, sy, radius*4);
-    gradient.addColorStop(0, star.color);
-    gradient.addColorStop(0.2, star.color + '33');
-    gradient.addColorStop(1, 'transparent');
-
-    starCtx.fillStyle = gradient;
-    starCtx.beginPath();
-    starCtx.arc(sx, sy, radius*4, 0, Math.PI*2);
-    starCtx.fill();
-
-    // Draw core star
-    starCtx.beginPath();
-    starCtx.arc(sx, sy, radius, 0, Math.PI*2);
-    starCtx.fillStyle = star.color;
-    starCtx.fill();
-  }
-
-  requestAnimationFrame(animateStars);
+    requestAnimationFrame(animateStars);
 }
 
 animateStars();
 window.addEventListener('resize', resizeCanvas);
 </script>
-
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 </body>
 </html>
