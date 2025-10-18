@@ -1,274 +1,346 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <title>OreStellar</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+
 <style>
-html, body { margin:0; padding:0; height:100%; background:black; color:white; font-family:monospace; overflow-x:hidden; }
-body { display:flex; flex-direction:column; align-items:center; position:relative; }
+html, body {
+  margin: 0; padding: 0;
+  height: 100%; overflow: hidden;
+  background: black; color: white;
+  font-family: monospace;
+}
+canvas#starfield {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
 
-header { flex-shrink:0; z-index:10; position:relative; }
+/* Layout */
+body { display: flex; flex-direction: column; align-items: center; }
+header { flex-shrink: 0; background: transparent; position: relative; z-index: 3; }
 
-.container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; z-index:10; position:relative; }
+/* Header logo */
+header img {
+  width: 300px;
+  height: auto;
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px white) drop-shadow(0 0 20px white);
+}
 
+/* Containers */
+.container-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding: 20px;
+  width: 100%; max-width: 1920px;
+}
 .contracts-wrapper {
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    gap:10px;
-    flex-wrap:wrap;
-    position:relative;
-    z-index:10;
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: 10px; flex-wrap: wrap; width: 100%;
 }
 
-/* Contracts fixed size */
-#leftContainer, #totalCostContainer {
-    display:none;
-    width:630px;
-    height:418px;
-    position:relative;
-    background-size:contain;
-    background-repeat:no-repeat;
-    background-position:center;
-    border-radius:15px;
-    box-shadow:0 4px 8px rgba(0,0,0,0.5);
+/* Contract containers */
+.total-cost-container {
+  width: 630px; height: 418px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  display: none;
 }
 
-/* Total ISK text on right container */
+#leftContainer {
+  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');
+}
+#totalCostContainer {
+  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');
+}
 #totalCostText {
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:13px;
-    font-weight:bold;
-    color:#00ff00;
-    text-shadow:0 0 20px #00ff00,0 0 30px #00ff00;
+  position: absolute;
+  top: calc(50% + 18px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
 }
 
-/* Summary container centered between contracts */
+/* Summary container */
 #summaryContainer {
-    display:none;
-    flex-direction:column;
-    overflow-x:auto;
-    overflow-y:auto;
-    background-color:rgba(20,20,20,0.9);
-    border:1px solid #00ff00;
-    box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset;
-    border-radius:10px;
-    padding:10px 15px;
-    width:300px;
-    align-self:center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(20,20,20,0.9);
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
+  border-radius: 10px;
+  padding: 10px 15px;
+  color: white;
+  font-family: monospace;
+  max-height: 418px;
+  overflow-y: auto;
+  max-width: 300px;
+}
+#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
+#summaryContainer li {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15);
+  font-size: 15px;
+}
+#summaryContainer li span:last-child {
+  color: #00ff00; min-width: 120px; text-align: right;
+}
+#summaryTotal {
+  text-align: right; color: #00ff00;
+  font-weight: bold;
+  margin-top: 5px;
 }
 
-#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
-#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
-#summaryContainer li span:first-child { text-align:left; flex:1; }
-#summaryContainer li span:last-child { text-align:right; min-width:120px; color:#00ff00; font-family:monospace; }
-#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; margin-top:5px; }
+/* Main input */
+.main-container {
+  width: 630px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+}
+.quote-text { font-style: italic; font-weight: bold; font-size: 21px; animation: glowPulse 3s infinite; }
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
+  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
+}
 
-.main-container { width:630px; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; position:relative; }
-#submitButton { background-color:#ffffffff; color:black; border:none; border-radius:8px; padding:11px 25px; font-weight:bold; cursor:pointer; box-shadow:0 0 15px 3px white; margin-top:10px; }
-#submitButton:hover { box-shadow:0 0 25px 5px #2fff1cff; }
+/* Submit button */
+#submitButton {
+  background-color: #fff; color: black;
+  border: none; border-radius: 8px;
+  padding: 11px 25px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px 3px white;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-#totalPriceModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background-color:#111; border:2px solid #00ff00; border-radius:12px; padding:20px 25px; text-align:center; z-index:20; }
-#popupTotalPrice { font-size:28px; font-weight:bold; color:#00ff00; margin:15px 0; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; }
-#closeTotalModal { padding:6px 18px; font-size:16px; font-weight:bold; border-radius:8px; cursor:pointer; background-color:#111; color:#00ff00; border:1px solid #00ff00; box-shadow:0 0 8px #00ff00; }
+/* Total ISK popup */
+#totalPriceModal .w3-modal-content {
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset;
+  border-radius: 10px;
+  width: 300px;
+  background: rgba(0,0,0,0.95);
+  animation: neonPulse 2s infinite alternate;
+}
+@keyframes neonPulse {
+  0% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00 inset; }
+  100% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
+}
+#popupTotalPrice { font-size: 28px; color: #00ff00; font-weight: bold; }
+#copiedMessage { display:none; color: yellow; position: fixed; top:50%; left:50%; transform:translate(-50%,-50%); }
 
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index:10; }
+/* Info button */
+.info-button {
+  position: fixed; bottom: 20px; right: 20px;
+  font-size: 28px; z-index: 1000;
+}
+.info-button button { background: white; color: black; border-radius: 50%; }
 
-canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
 
-<header class="w3-container w3-theme w3-padding">
-    <div class="w3-center"><img src="images/OreStellar Header.png" alt="Header Image" style="width:300px; height:auto;"></div>
-    <hr>
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+  <div class="w3-center">
+    <img src="https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/16f71443-963c-483c-a6c1-1742a5d552c8.png" alt="OreStellar Logo">
+  </div>
+  <hr>
 </header>
 
 <div class="info-button">
-    <button id="infoButton" class="w3-button w3-theme">i</button>
+  <button id="infoButton" class="w3-button w3-theme">i</button>
 </div>
 
 <div id="infoModal" class="w3-modal">
-    <div class="w3-modal-content">
-        <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
-        <header class="w3-container w3-theme">
-            <h2>Welcome to OreStellar's appraisal calculator!</h2>
-        </header>
-        <div class="w3-container">
-            <p>If you have questions, message Morgan Auren in-game.</p>
-            <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
-        </div>
+  <div class="w3-modal-content">
+    <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
+    <header class="w3-container w3-theme modal-header"><h2>Welcome to OreStellar's appraisal calculator!</h2></header>
+    <div class="w3-container">
+      <p>If you have any questions, message Morgan Auren in-game.</p>
+      <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
     </div>
+  </div>
+</div>
+
+<!-- Total ISK Modal -->
+<div id="totalPriceModal" class="w3-modal">
+  <div class="w3-modal-content w3-center">
+    <h2>Total Contract Value</h2>
+    <p id="popupTotalPrice"></p>
+    <button id="closeTotalModal">copy</button>
+    <div id="copiedMessage">Copied!</div>
+  </div>
 </div>
 
 <div class="container-wrapper">
-    <div class="main-container w3-card w3-container w3-center">
-        <h3>Copy & Paste Your Inventory Below</h3>
-        <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea>
-        <button id="submitButton" disabled>Submit</button>
-    </div>
+  <div class="main-container w3-card w3-container w3-center">
+    <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
+    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea>
+    <button id="submitButton" disabled>Submit</button>
+  </div>
 
-    <div class="contracts-wrapper">
-        <div id="leftContainer"></div>
-        <div id="summaryContainer"><ul id="summaryList"></ul><div id="summaryTotal"></div></div>
-        <div id="totalCostContainer"><div id="totalCostText">0 ISK</div></div>
+  <div class="contracts-wrapper">
+    <div id="leftContainer" class="total-cost-container"></div>
+    <div id="summaryContainer">
+      <ul id="summaryList"></ul>
+      <div id="summaryTotal"></div>
     </div>
-</div>
+    <div id="totalCostContainer" class="total-cost-container">
+      <div id="totalCostText">0 ISK</div>
+    </div>
+  </div>
 
-<div id="totalPriceModal">
-    <h2>Total ISK</h2>
-    <p id="popupTotalPrice">0 ISK</p>
-    <button id="closeTotalModal">Copy</button>
+  <div id="unrecognizedItemsContainer" style="display:none; color:red; text-shadow:0 0 10px red;"></div>
 </div>
 
 <script>
-// ---------- Starfield ----------
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
-let W = canvas.width = window.innerWidth;
-let H = canvas.height = window.innerHeight;
-
-window.addEventListener('resize', () => {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-});
-
-const starColors = ['#ffffff', '#ffddaa', '#ff9999'];
-const numStars = 300;
+// === Starfield ===
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
 let stars = [];
-
-for (let i = 0; i < numStars; i++) {
-    stars.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        z: Math.random() * W,
-        color: starColors[Math.floor(Math.random() * starColors.length)],
-        size: Math.random() * 0.4 + 0.1 // smaller points
-    });
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
+resizeCanvas();
+
+function createStars() {
+  stars = [];
+  for (let i = 0; i < 400; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      z: Math.random() * canvas.width,
+      size: Math.random() * 1.5 + 0.2,
+      color: ["#fff7e6", "#ffeedd", "#ffccaa", "#ffd1b3"][Math.floor(Math.random()*4)]
+    });
+  }
+}
+createStars();
 
 function drawStars() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, W, H);
-
-    for (let i = 0; i < stars.length; i++) {
-        let s = stars[i];
-        let sx = (s.x - W / 2) / (s.z / W * 2) + W / 2;
-        let sy = (s.y - H / 2) / (s.z / H * 2) + H / 2;
-        let radius = s.size * (1 / (s.z / W * 2));
-
-        ctx.beginPath();
-        ctx.fillStyle = s.color;
-        ctx.shadowColor = s.color;
-        ctx.shadowBlur = 25; // much larger glow
-        ctx.arc(sx, sy, radius, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // slower drift
-        s.z -= 0.3;
-
-        if (s.z <= 0) {
-            s.x = Math.random() * W;
-            s.y = Math.random() * H;
-            s.z = W;
-            s.color = starColors[Math.floor(Math.random() * starColors.length)];
-            s.size = Math.random() * 0.4 + 0.1;
-        }
-    }
-
-    requestAnimationFrame(drawStars);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let s of stars) {
+    s.z -= 0.5; // slower movement
+    if (s.z <= 0) s.z = canvas.width;
+    let k = 128 / s.z;
+    let px = s.x * k + canvas.width / 2;
+    let py = s.y * k + canvas.height / 2;
+    if (px < 0 || px >= canvas.width || py < 0 || py >= canvas.height) continue;
+    let glow = ctx.createRadialGradient(px, py, 0, px, py, s.size*6);
+    glow.addColorStop(0, s.color);
+    glow.addColorStop(1, "transparent");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, s.size*3, 0, Math.PI*2);
+    ctx.fill();
+  }
+  requestAnimationFrame(drawStars);
 }
-
 drawStars();
+window.addEventListener("resize", resizeCanvas);
 
+// === App logic ===
+let priceList = {};
+async function loadPrices() {
+  const response = await fetch('data/prices.csv');
+  const text = await response.text();
+  const lines = text.split('\n').filter(l=>l.trim());
+  const headers = lines[0].split(',');
+  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for (let i=1;i<lines.length;i++) {
+    const cols = lines[i].split(',');
+    const ore = cols[0].trim();
+    const price = parseFloat(cols[idx]);
+    if(!isNaN(price)) priceList[ore]=price;
+  }
+  document.getElementById('submitButton').disabled=false;
+}
+loadPrices();
 
-// ---------- Load Prices ----------
-let priceList={};
-async function loadPrices(){
-    try{
-        const res=await fetch('data/prices.csv');
-        const text=await res.text();
-        const lines=text.split('\n').filter(l=>l.trim()!=='');
-        const headers=lines[0].split(',');
-        const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
-        for(let i=1;i<lines.length;i++){
-            const cols=lines[i].split(',');
-            const ore=cols[0].trim();
-            const price=parseFloat(cols[idx]);
-            if(!isNaN(price)) priceList[ore]=price;
-        }
-    } catch(e){ console.error(e); }
+function formatNumber(n){return n.toLocaleString();}
+function animateCount(el,start,end,duration=2000){
+  let startTime=null;
+  function step(t){
+    if(!startTime)startTime=t;
+    let progress=Math.min((t-startTime)/duration,1);
+    el.innerText=formatNumber(Math.floor(progress*(end-start)+start))+" ISK";
+    if(progress<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
 
-// ---------- Helpers ----------
-function formatNumber(n){ return n.toLocaleString(); }
-function animateCount(el,start,end,duration=2000){ let startTime=null;
-    function step(ts){ if(!startTime) startTime=ts; const p=Math.min((ts-startTime)/duration,1); el.innerText=formatNumber(Math.floor(p*(end-start)+start))+' ISK'; if(p<1) requestAnimationFrame(step);}
-    requestAnimationFrame(step);
+function showContent(){
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
+  let invalid=[];
+  while((match=regex.exec(t))!==null){
+    const name=match[1].trim(), qty=parseInt(match[2]);
+    if(priceList[name]) summary.push({name,qty,val:qty*priceList[name]}), total+=qty*priceList[name];
+    else invalid.push(name);
+  }
+  const list=document.getElementById('summaryList');
+  list.innerHTML='';
+  summary.forEach(i=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    list.appendChild(li);
+  });
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
+  document.getElementById('summaryContainer').style.display='flex';
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
+  document.querySelector('.main-container').style.display='none';
+  animateCount(document.getElementById('totalCostText'),0,total);
+  animateCount(document.getElementById('popupTotalPrice'),0,total);
+  document.getElementById('totalPriceModal').style.display='block';
+  const un=document.getElementById('unrecognizedItemsContainer');
+  un.style.display=invalid.length?'block':'none';
+  un.innerText=invalid.length?'Unrecognized: '+invalid.join(', '):'';
 }
 
-// ---------- Submit ----------
-document.getElementById('submitButton').addEventListener('click',()=>{
-    const textarea=document.getElementById('message').value;
-    const regex=/([\w\s]+?)\s+(\d+)/g;
-    let match,total=0,summaryItems=[],invalid=[];
-    while((match=regex.exec(textarea))!==null){
-        const item=match[1].trim(); const qty=parseInt(match[2]);
-        if(priceList[item]!==undefined){ const val=qty*priceList[item]; total+=val; summaryItems.push({name:item,value:val}); }
-        else invalid.push(item);
-    }
+document.getElementById('submitButton').addEventListener('click',showContent);
 
-    const listEl=document.getElementById('summaryList'); listEl.innerHTML='';
-    summaryItems.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=`<span>${it.name}</span><span>${formatNumber(it.value)} ISK</span>`; listEl.appendChild(li); });
-    document.getElementById('summaryTotal').innerText='Total: '+formatNumber(total)+' ISK';
-    document.getElementById('summaryContainer').style.display='flex';
-
-    const left=document.getElementById('leftContainer');
-    const right=document.getElementById('totalCostContainer');
-    left.style.display='block';
-    right.style.display='block';
-    left.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png')";
-    right.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png')";
-
-    document.querySelector('.main-container').style.display='none';
-
-    animateCount(document.getElementById('totalCostText'),0,total);
-    animateCount(document.getElementById('popupTotalPrice'),0,total);
-    document.getElementById('totalPriceModal').style.display='block';
-
-    if(invalid.length>0) alert('Unrecognized items: '+invalid.join(', '));
-});
-
-// ---------- Modals ----------
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
-    navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
-    document.getElementById('totalPriceModal').style.display='none';
-});
-document.getElementById('infoButton').addEventListener('click',()=>document.getElementById('infoModal').style.display='block');
-document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('infoModal').style.display='none');
-
-document.querySelector('header img').addEventListener('click',()=>{
-    document.getElementById('message').value='';
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('summaryContainer').style.display='none';
-    document.getElementById('totalCostText').innerText='0 ISK';
-    document.getElementById('totalPriceModal').style.display='none';
-    document.querySelector('.main-container').style.display='flex';
+  const txt=document.getElementById('popupTotalPrice').innerText;
+  navigator.clipboard.writeText(txt);
+  document.getElementById('copiedMessage').style.display='block';
+  setTimeout(()=>document.getElementById('copiedMessage').style.display='none',1500);
+  document.getElementById('totalPriceModal').style.display='none';
 });
 
-// ---------- Init ----------
-async function init(){ await loadPrices(); document.getElementById('submitButton').disabled=false; }
-init();
+document.querySelector('#myHeader img').addEventListener('click',()=>{
+  document.getElementById('message').value='';
+  document.querySelector('.main-container').style.display='flex';
+  document.getElementById('leftContainer').style.display='none';
+  document.getElementById('totalCostContainer').style.display='none';
+  document.getElementById('summaryContainer').style.display='none';
+  document.getElementById('totalCostText').innerText='0 ISK';
+  document.getElementById('totalPriceModal').style.display='none';
+});
 </script>
 
 </body>
