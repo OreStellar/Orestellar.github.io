@@ -1,59 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>OreStellar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<style>
+html, body { background-color: black; color: white; margin: 0; padding: 0; height: 100%; }
+body { display: flex; flex-direction: column; align-items: center; }
+
+/* Canvas starfield behind everything */
+canvas#starfield {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
+
+/* Containers */
+header { flex-shrink: 0; }
+.container-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; width: 100%; max-width: 1920px; }
+
+.contracts-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+#leftContainer { order: 1; flex: 1 1 250px; max-width: 35%; min-width: 200px; }   
+#summaryContainer {
+    order: 2;
+    flex: 1 1 auto;
+    max-width: 300px;
+    min-width: 150px;
+    display: none;
+    flex-direction: column;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+#totalCostContainer { order: 3; flex: 1 1 250px; max-width: 35%; min-width: 200px; }
+
+.total-cost-container {
+    height: 418px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    transform: scale(1.05);
+    transform-origin: top center;
+}
+
+#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); display: none; }
+#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); display: none; }
+#totalCostText {
+    position: absolute;
+    top: calc(50% + 18px);
+    left: calc(50% + 5px);
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
+
+#summaryContainer {
+    background-color: rgba(20,20,20,0.9);
+    border: 1px solid #00ff00;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
+    border-radius: 10px;
+    padding: 10px 15px;
+    color: white;
+    font-family: monospace;
+    max-height: 418px;
+    overflow-y: auto;
+    justify-content: flex-start;
+    animation: fadeIn 0.6s ease;
+}
+#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
+#summaryContainer li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(0,255,0,0.15);
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+#summaryContainer li span:first-child { text-align: left; flex: 1; }
+#summaryContainer li span:last-child { text-align: right; min-width: 120px; font-family: monospace; color: #00ff00; }
+#summaryTotal { text-align: right; color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; margin-top: 5px; }
+
+#unrecognizedItemsContainer { display: none; color: red; text-shadow: 0 0 10px red; margin-top: 5px; font-weight: bold; }
+
+.main-container { width: 630px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+#submitButton {
+    background-color: #ffffffff;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px 3px white;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1cff; color: black; }
+
+@keyframes pulseTextGlow {
+  0%, 100% { text-shadow: 0 0 5px #b3b4b4ff, 0 0 10px #d5e2e1ff, 0 0 20px #b0b3b2ff; }
+  50% { text-shadow: 0 0 15px #f0faf9ff, 0 0 15px #b8c2c1ff, 0 0 25px #a8adadff; }
+}
+.quote-text { font-style: italic; font-weight: bold; color: #fff; font-size: 21px; animation: pulseTextGlow 3.0s infinite; }
+
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+@keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+.info-button button { animation: bounce 2s infinite; background-color: #ffffff; color: black; border-radius: 50%; }
+
+.w3-modal { display:none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.9); animation: fadeIn 0.5s ease; }
+.w3-modal-content { position: relative; z-index:1000; background-color:#111; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:600px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.7); animation: slideIn 0.5s ease; text-align:center; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes slideIn { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+
+#totalPriceModal .w3-modal-content { border: 2px solid #00ff00; box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset; animation: neonPulse 2.1s infinite alternate; }
+@keyframes neonPulse { 0% { box-shadow: 0 0 5px #00ff00, 0 0 5px #00ff00 inset; } 100% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; } }
+#popupTotalPrice { font-size: 36px; font-weight: bold; color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+#closeTotalModal { padding: 8px 20px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+#copiedMessage { color: yellow; font-weight: bold; display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 2000; }
+</style>
+</head>
+<body>
+
+<!-- STARFIELD CANVAS -->
 <canvas id="starfield"></canvas>
+
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+  <div class="w3-center">
+    <img src="images/OreStellar Header.png" alt="Header Image" style="width:300px; height:auto;">
+  </div>
+  <hr>
+</header>
+
+<div class="info-button">
+    <button id="infoButton" class="w3-button w3-theme">i</button>
+</div>
+
+<div id="infoModal" class="w3-modal">
+    <div class="w3-modal-content">
+        <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
+        <header class="w3-container w3-theme modal-header">
+            <h2>Welcome to OreStellar's appraisal calculator!</h2>
+        </header>
+        <div class="w3-container">
+            <p>If you have any questions, please message Morgan Auren in-game.</p>
+            <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
+        </div>
+    </div>
+</div>
+
+<!-- Total Price Modal -->
+<div id="totalPriceModal" class="w3-modal">
+  <div class="w3-modal-content w3-card w3-center">
+    <h2 style="font-weight:bold;">Total Contract Value</h2>
+    <p id="popupTotalPrice"></p>
+    <button id="closeTotalModal">copy</button>
+    <div id="copiedMessage">Copied!</div>
+  </div>
+</div>
+
+<div class="container-wrapper">
+    <div class="main-container w3-card w3-container w3-center">
+        <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
+        <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135&#10;Compressed Gneiss 10240&#10;Bistot 305115&#10;Magma Mercoxit 4055"></textarea>
+        <button id="submitButton" disabled>Submit</button>
+    </div>
+
+    <div class="contracts-wrapper">
+        <div id="totalCostContainer" class="total-cost-container">
+            <div id="totalCostText">0 ISK</div>
+        </div>
+        <div id="summaryContainer">
+            <ul id="summaryList"></ul>
+            <div id="summaryTotal"></div>
+        </div>
+        <div id="leftContainer" class="total-cost-container"></div>
+    </div>
+
+    <div id="unrecognizedItemsContainer"></div>
+</div>
+
 <script>
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let priceList = {};
+async function loadPrices() {
+    try {
+        const response = await fetch('data/prices.csv');
+        if (!response.ok) throw new Error('CSV not found');
+        const csvText = await response.text();
+        const lines = csvText.split('\n').filter(l => l.trim() !== '');
+        const headers = lines[0].split(',');
+        const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+        if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
+        for (let i=1;i<lines.length;i++){
+            const cols = lines[i].split(',');
+            const oreName = cols[0].trim();
+            const price = parseFloat(cols[priceIndex]);
+            if (!isNaN(price)) priceList[oreName] = price;
+        }
+        console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
+    } catch(err){ console.error('⚠️ Error loading CSV:', err); }
+}
+
+function formatNumberWithCommas(number) { return number.toLocaleString(); }
+function animateCount(el, start, end, duration=2000) {
+    let startTime = null;
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime)/duration,1);
+        el.innerText = formatNumberWithCommas(Math.floor(progress*(end-start)+start)) + " ISK";
+        if(progress<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+function showContent() {
+    if(Object.keys(priceList).length===0){ alert("Price data still loading."); return; }
+
+    const textarea = document.getElementById('message').value;
+    const regex = /([\w\s]+?)\s+(\d+)/g;
+    let matches, totalCost = 0, summaryTotal = 0, invalidItems = [], summaryItems = [];
+
+    while ((matches = regex.exec(textarea)) !== null) {
+        const item = matches[1].trim();
+        const qty = parseInt(matches[2]);
+        if(priceList[item] !== undefined){
+            const value = qty * priceList[item];
+            totalCost += value;
+            summaryTotal += value;
+            summaryItems.push({name:item, qty:qty, value:value});
+        } else {
+            invalidItems.push(item);
+        }
+    }
+
+    summaryItems.sort((a,b)=>{
+        const aComp = a.name.toLowerCase().includes('compressed');
+        const bComp = b.name.toLowerCase().includes('compressed');
+        if(aComp && !bComp) return -1;
+        if(!aComp && bComp) return 1;
+        return a.name.localeCompare(b.name);
+    });
+
+    const summaryList = document.getElementById('summaryList');
+    summaryList.innerHTML = '';
+    summaryItems.forEach(it=>{
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${it.name}</span><span>${formatNumberWithCommas(it.value)} ISK</span>`;
+        summaryList.appendChild(li);
+    });
+    document.getElementById('summaryTotal').innerText = `Total: ${formatNumberWithCommas(summaryTotal)} ISK`;
+
+    const summary = document.getElementById('summaryContainer');
+    summary.style.display='flex';
+    summary.style.flexDirection='column';
+    document.getElementById('leftContainer').style.display='block';
+    document.getElementById('totalCostContainer').style.display='block';
+
+    const popupEl = document.getElementById('totalCostText');
+    animateCount(popupEl,0,totalCost,2000);
+
+    const popupModalEl = document.getElementById('popupTotalPrice');
+    animateCount(popupModalEl,0,totalCost,2000);
+    document.getElementById('totalPriceModal').style.display='block';
+
+    document.querySelector('.main-container').style.display='none';
+
+    const unrec = document.getElementById('unrecognizedItemsContainer');
+    if(invalidItems.length>0){
+        unrec.innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        unrec.style.display='block';
+    } else { unrec.style.display='none'; }
+}
+
+async function init(){ await loadPrices(); document.getElementById('submitButton').disabled=false; }
+
+document.getElementById('infoButton').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='block'; });
+document.getElementById('closeModal').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='none'; });
+window.onclick = function(event){ if(event.target==document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; };
+
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+const closeTotalBtn = document.getElementById('closeTotalModal');
+const copiedMsg = document.getElementById('copiedMessage');
+closeTotalBtn.addEventListener('click',()=>{
+    const text = document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+        copiedMsg.style.display='block';
+        setTimeout(()=>copiedMsg.style.display='none',1500);
+    });
+    document.getElementById('totalPriceModal').style.display='none';
+});
+
+window.addEventListener('click',(event)=>{
+    if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
+});
+
+document.querySelector('#myHeader img').addEventListener('click',()=>{
+    document.getElementById('message').value='';
+    document.getElementById('unrecognizedItemsContainer').style.display='none';
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
+    document.getElementById('summaryContainer').style.display='none';
+    document.getElementById('totalCostText').innerText='0 ISK';
+    document.querySelector('.main-container').style.display='flex';
+});
+
+init();
+</script>
+
+<!-- STARFIELD SCRIPT -->
+<script>
+const starCanvas = document.getElementById('starfield');
+const starCtx = starCanvas.getContext('2d');
+starCanvas.width = window.innerWidth;
+starCanvas.height = window.innerHeight;
 
 const numStars = 300;
 const stars = [];
-const speed = 0.5; // forward speed, adjust for slower/faster
+const speed = 0.2; // slow forward motion
+const colors = ['#ffffff','#ffff99','#ff9999']; // white, yellow, red
 
-// Initialize stars with depth
 for (let i = 0; i < numStars; i++) {
   stars.push({
-    x: Math.random() * canvas.width - canvas.width/2,
-    y: Math.random() * canvas.height - canvas.height/2,
-    z: Math.random() * canvas.width, // depth
+    x: Math.random() * starCanvas.width - starCanvas.width/2,
+    y: Math.random() * starCanvas.height - starCanvas.height/2,
+    z: Math.random() * starCanvas.width,
+    color: colors[Math.floor(Math.random()*colors.length)],
     size: Math.random() * 1 + 0.5
   });
 }
 
-function animate() {
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+function animateStars() {
+  starCtx.fillStyle = 'black';
+  starCtx.fillRect(0,0,starCanvas.width,starCanvas.height);
 
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
+  const cx = starCanvas.width / 2;
+  const cy = starCanvas.height / 2;
 
   for (let i = 0; i < numStars; i++) {
-    let star = stars[i];
+    const star = stars[i];
     star.z -= speed;
     if (star.z <= 0) {
-      // reset star to far distance
-      star.z = canvas.width;
-      star.x = Math.random() * canvas.width - canvas.width/2;
-      star.y = Math.random() * canvas.height - canvas.height/2;
+      star.z = starCanvas.width;
+      star.x = Math.random() * starCanvas.width - starCanvas.width/2;
+      star.y = Math.random() * starCanvas.height - starCanvas.height/2;
+      star.color = colors[Math.floor(Math.random()*colors.length)];
       star.size = Math.random() * 1 + 0.5;
     }
 
-    const sx = cx + (star.x / star.z) * canvas.width;
-    const sy = cy + (star.y / star.z) * canvas.width;
-    const radius = star.size * (canvas.width / star.z);
+    const sx = cx + (star.x / star.z) * starCanvas.width;
+    const sy = cy + (star.y / star.z) * starCanvas.width;
+    const radius = star.size * (starCanvas.width / star.z);
 
-    ctx.beginPath();
-    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = 'white';
-    ctx.fill();
+    starCtx.beginPath();
+    starCtx.arc(sx, sy, radius, 0, Math.PI*2);
+    starCtx.fillStyle = star.color;
+    starCtx.fill();
   }
 
-  requestAnimationFrame(animate);
+  requestAnimationFrame(animateStars);
 }
 
-animate();
+animateStars();
 
 window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  starCanvas.width = window.innerWidth;
+  starCanvas.height = window.innerHeight;
 });
 </script>
+
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+</body>
+</html>
