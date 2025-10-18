@@ -9,10 +9,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 <style>
 html, body { margin:0; padding:0; height:100%; background:black; color:white; font-family:monospace; overflow-x:hidden; }
-body { display:flex; flex-direction:column; align-items:center; }
-header { flex-shrink:0; }
+body { display:flex; flex-direction:column; align-items:center; position:relative; }
 
-.container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; }
+header { flex-shrink:0; z-index:10; position:relative; }
+
+.container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; z-index:10; position:relative; }
 
 .contracts-wrapper {
     display:flex;
@@ -20,6 +21,8 @@ header { flex-shrink:0; }
     align-items:flex-start;
     gap:10px;
     flex-wrap:wrap;
+    position:relative;
+    z-index:10;
 }
 
 /* Contracts fixed size */
@@ -49,7 +52,6 @@ header { flex-shrink:0; }
 
 /* Summary container centered between contracts */
 #summaryContainer {
-    order:2;
     display:none;
     flex-direction:column;
     overflow-x:auto;
@@ -60,6 +62,7 @@ header { flex-shrink:0; }
     border-radius:10px;
     padding:10px 15px;
     width:300px;
+    align-self:center;
 }
 
 #summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
@@ -68,18 +71,22 @@ header { flex-shrink:0; }
 #summaryContainer li span:last-child { text-align:right; min-width:120px; color:#00ff00; font-family:monospace; }
 #summaryTotal { text-align:right; color:#00ff00; font-weight:bold; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; margin-top:5px; }
 
-.main-container { width:630px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+.main-container { width:630px; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; position:relative; }
 #submitButton { background-color:#ffffffff; color:black; border:none; border-radius:8px; padding:11px 25px; font-weight:bold; cursor:pointer; box-shadow:0 0 15px 3px white; margin-top:10px; }
 #submitButton:hover { box-shadow:0 0 25px 5px #2fff1cff; }
 
-#totalPriceModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background-color:#111; border:2px solid #00ff00; border-radius:12px; padding:20px 25px; text-align:center; z-index:1000; }
+#totalPriceModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background-color:#111; border:2px solid #00ff00; border-radius:12px; padding:20px 25px; text-align:center; z-index:20; }
 #popupTotalPrice { font-size:28px; font-weight:bold; color:#00ff00; margin:15px 0; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; }
 #closeTotalModal { padding:6px 18px; font-size:16px; font-weight:bold; border-radius:8px; cursor:pointer; background-color:#111; color:#00ff00; border:1px solid #00ff00; box-shadow:0 0 8px #00ff00; }
 
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index:10; }
+
+canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 </style>
 </head>
 <body>
+
+<canvas id="starfield"></canvas>
 
 <header class="w3-container w3-theme w3-padding">
     <div class="w3-center"><img src="images/OreStellar Header.png" alt="Header Image" style="width:300px; height:auto;"></div>
@@ -124,6 +131,55 @@ header { flex-shrink:0; }
 </div>
 
 <script>
+// ---------- Starfield ----------
+const canvas=document.getElementById('starfield');
+const ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth;
+let H=canvas.height=window.innerHeight;
+
+window.addEventListener('resize',()=>{ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; });
+
+const starColors=['#ffffff','#ffddaa','#ff9999'];
+const numStars=250;
+let stars=[];
+
+for(let i=0;i<numStars;i++){
+    stars.push({
+        x:Math.random()*W,
+        y:Math.random()*H,
+        z:Math.random()*W,
+        color:starColors[Math.floor(Math.random()*starColors.length)],
+        size:Math.random()*1.2+0.3
+    });
+}
+
+function drawStars(){
+    ctx.fillStyle='black';
+    ctx.fillRect(0,0,W,H);
+    for(let i=0;i<stars.length;i++){
+        let s=stars[i];
+        let sx=(s.x-W/2)/(s.z/W*2)+W/2;
+        let sy=(s.y-H/2)/(s.z/H*2)+H/2;
+        let radius=s.size*(1/(s.z/W*2));
+        ctx.beginPath();
+        ctx.fillStyle=s.color;
+        ctx.shadowColor=s.color;
+        ctx.shadowBlur=8;
+        ctx.arc(sx,sy,radius,0,2*Math.PI);
+        ctx.fill();
+        s.z-=0.5; // slower movement
+        if(s.z<=0){
+            s.x=Math.random()*W;
+            s.y=Math.random()*H;
+            s.z=W;
+            s.color=starColors[Math.floor(Math.random()*starColors.length)];
+            s.size=Math.random()*1.2+0.3;
+        }
+    }
+    requestAnimationFrame(drawStars);
+}
+drawStars();
+
 // ---------- Load Prices ----------
 let priceList={};
 async function loadPrices(){
@@ -142,6 +198,7 @@ async function loadPrices(){
     } catch(e){ console.error(e); }
 }
 
+// ---------- Helpers ----------
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){ let startTime=null;
     function step(ts){ if(!startTime) startTime=ts; const p=Math.min((ts-startTime)/duration,1); el.innerText=formatNumber(Math.floor(p*(end-start)+start))+' ISK'; if(p<1) requestAnimationFrame(step);}
