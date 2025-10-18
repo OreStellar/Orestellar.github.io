@@ -118,10 +118,132 @@ header { flex-shrink:0; }
 
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 
-<!-- ---------- FULL Price Loader & Calculator ---------- -->
+<!-- ---------- PRICE LOADER & SUBMIT ---------- -->
 <script>
-// Your working code for loadPrices(), showContent(), init(), modals, etc.
-// Make sure this part is copied fully from the previous working OreStellar version
+let priceList = {};
+async function loadPrices() {
+    try {
+        const response = await fetch('data/prices.csv');
+        if (!response.ok) throw new Error('CSV not found');
+        const csvText = await response.text();
+        const lines = csvText.split('\n').filter(l => l.trim() !== '');
+        const headers = lines[0].split(',');
+        const priceIndex = headers.findIndex(h => h.trim().toLowerCase().includes("150%"));
+        if (priceIndex === -1) throw new Error('Could not find "Suggested 150%" column');
+        for (let i=1;i<lines.length;i++){
+            const cols = lines[i].split(',');
+            const oreName = cols[0].trim();
+            const price = parseFloat(cols[priceIndex]);
+            if (!isNaN(price)) priceList[oreName] = price;
+        }
+        console.log('✅ CSV loaded:', Object.keys(priceList).length, 'ores');
+    } catch(err){ console.error('⚠️ Error loading CSV:', err); }
+}
+
+function formatNumberWithCommas(number) { return number.toLocaleString(); }
+function animateCount(el, start, end, duration=2000) {
+    let startTime = null;
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime)/duration,1);
+        el.innerText = formatNumberWithCommas(Math.floor(progress*(end-start)+start)) + " ISK";
+        if(progress<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+function showContent() {
+    if(Object.keys(priceList).length===0){ alert("Price data still loading."); return; }
+
+    const textarea = document.getElementById('message').value;
+    const regex = /([\w\s]+?)\s+(\d+)/g;
+    let matches, totalCost = 0, summaryTotal = 0, invalidItems = [], summaryItems = [];
+
+    while ((matches = regex.exec(textarea)) !== null) {
+        const item = matches[1].trim();
+        const qty = parseInt(matches[2]);
+        if(priceList[item] !== undefined){
+            const value = qty * priceList[item];
+            totalCost += value;
+            summaryTotal += value;
+            summaryItems.push({name:item, qty:qty, value:value});
+        } else {
+            invalidItems.push(item);
+        }
+    }
+
+    summaryItems.sort((a,b)=>{
+        const aComp = a.name.toLowerCase().includes('compressed');
+        const bComp = b.name.toLowerCase().includes('compressed');
+        if(aComp && !bComp) return -1;
+        if(!aComp && bComp) return 1;
+        return a.name.localeCompare(b.name);
+    });
+
+    const summaryList = document.getElementById('summaryList');
+    summaryList.innerHTML = '';
+    summaryItems.forEach(it=>{
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${it.name}</span><span>${formatNumberWithCommas(it.value)} ISK</span>`;
+        summaryList.appendChild(li);
+    });
+    document.getElementById('summaryTotal').innerText = `Total: ${formatNumberWithCommas(summaryTotal)} ISK`;
+
+    const summary = document.getElementById('summaryContainer');
+    summary.style.display='flex';
+    summary.style.flexDirection='column';
+    document.getElementById('leftContainer').style.display='block';
+    document.getElementById('totalCostContainer').style.display='block';
+
+    const popupEl = document.getElementById('totalCostText');
+    animateCount(popupEl,0,totalCost,2000);
+
+    const popupModalEl = document.getElementById('popupTotalPrice');
+    animateCount(popupModalEl,0,totalCost,2000);
+    document.getElementById('totalPriceModal').style.display='block';
+
+    document.querySelector('.main-container').style.display='none';
+
+    const unrec = document.getElementById('unrecognizedItemsContainer');
+    if(invalidItems.length>0){
+        unrec.innerText = 'Unrecognized items: ' + invalidItems.join(', ');
+        unrec.style.display='block';
+    } else { unrec.style.display='none'; }
+}
+
+async function init(){ await loadPrices(); document.getElementById('submitButton').disabled=false; }
+
+document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('infoButton').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='block'; });
+document.getElementById('closeModal').addEventListener('click', ()=>{ document.getElementById('infoModal').style.display='none'; });
+window.onclick = function(event){ if(event.target==document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; };
+
+const closeTotalBtn = document.getElementById('closeTotalModal');
+const copiedMsg = document.getElementById('copiedMessage');
+closeTotalBtn.addEventListener('click',()=>{
+    const text = document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+        copiedMsg.style.display='block';
+        setTimeout(()=>copiedMsg.style.display='none',1500);
+    });
+    document.getElementById('totalPriceModal').style.display='none';
+});
+
+window.addEventListener('click',(event)=>{
+    if(event.target==document.getElementById('totalPriceModal')) document.getElementById('totalPriceModal').style.display='none';
+});
+
+document.querySelector('#myHeader img').addEventListener('click',()=>{
+    document.getElementById('message').value='';
+    document.getElementById('unrecognizedItemsContainer').style.display='none';
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
+    document.getElementById('summaryContainer').style.display='none';
+    document.getElementById('totalCostText').innerText='0 ISK';
+    document.querySelector('.main-container').style.display='flex';
+});
+
+init();
 </script>
 
 <!-- ---------- STARFIELD ---------- -->
@@ -152,7 +274,7 @@ for(let i=0;i<numStars;i++){
         x = g.x + (Math.random()-0.5)*g.spread;
         y = g.y + (Math.random()-0.5)*g.spread;
     }
-    stars.push({x:x, y:y, z:Math.random()*300+50, color:colors[Math.floor(Math.random()*colors.length)], size:Math.random()*0.8+0.2});
+    stars.push({x:x, y:y, z:Math.random()*300+50, color:colors[Math.floor(Math.random()*colors.length)], size:Math.random()*0.5+0.2});
 }
 
 function animate(){
@@ -161,7 +283,7 @@ function animate(){
     const cx=canvas.width/2, cy=canvas.height/2;
 
     for(let s of stars){
-        s.z-=0.2;
+        s.z-=0.1; // slower forward movement
         if(s.z<=1){
             s.z=Math.random()*300+50;
             let inGal=Math.random()<0.3;
@@ -174,7 +296,7 @@ function animate(){
                 s.y=Math.random()*canvas.height;
             }
             s.color=colors[Math.floor(Math.random()*colors.length)];
-            s.size=Math.random()*0.8+0.2;
+            s.size=Math.random()*0.5+0.2;
         }
 
         const sx=cx+(s.x-cx)*(200/s.z);
@@ -195,6 +317,5 @@ function animate(){
 }
 animate();
 </script>
-
 </body>
 </html>
