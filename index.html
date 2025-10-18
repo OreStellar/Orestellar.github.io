@@ -219,6 +219,20 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
     navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
     document.getElementById('totalPriceModal').style.display='none';
 });
+    
+// ---------- HEADER CLICK RESET ----------
+document.querySelector('header img').addEventListener('click', ()=>{
+    // Clear inventory textarea
+    document.getElementById('message').value = '';
+    // Hide all containers
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    document.getElementById('summaryContainer').style.display = 'none';
+    document.getElementById('totalCostText').innerText = '0 ISK';
+    // Show main container again
+    document.querySelector('.main-container').style.display = 'flex';
+});
+    
 
 // ---------- INFO MODAL ----------
 document.getElementById('infoButton').addEventListener('click',()=>{ document.getElementById('infoModal').style.display='block'; });
