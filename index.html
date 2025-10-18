@@ -2,136 +2,93 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>OreStellar</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<title>Starfield Test</title>
 <style>
-html, body { margin:0; padding:0; height:100%; background:black; color:white; font-family:monospace; overflow-x:hidden; }
-canvas#starfield { position:fixed; top:0; left:0; z-index:-1; display:block; }
-
-header, .container-wrapper, .main-container, .contracts-wrapper, #totalPriceModal { position:relative; z-index:1; }
-
-.container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; }
-
-.contracts-wrapper { display:flex; flex-direction:row; justify-content:space-evenly; align-items:flex-start; gap:5px; width:100%; flex-wrap:wrap; }
-
-#leftContainer { order:1; flex:1 1 250px; max-width:35%; min-width:200px; display:none; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); }
-#summaryContainer { order:2; flex:1 1 auto; max-width:300px; min-width:150px; display:none; flex-direction:column; overflow-x:auto; overflow-y:auto; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; }
-#totalCostContainer { order:3; flex:1 1 250px; max-width:35%; min-width:200px; display:none; background-size:contain; background-repeat:no-repeat; background-position:center; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); position:relative; }
-#totalCostText { position:absolute; top:calc(50% + 18px); left:calc(50% + 5px); transform:translate(-50%,-50%); font-size:13px; font-weight:bold; color:#00ff00; text-shadow:0 0 10px #00ff00,0 0 20px #00ff00; }
-
-#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
-#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; letter-spacing:0.5px; }
-#summaryContainer li span:first-child { text-align:left; flex:1; }
-#summaryContainer li span:last-child { text-align:right; min-width:120px; font-family:monospace; color:#00ff00; }
-#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; text-shadow:0 0 10px #00ff00,0 0 20px #00ff00; margin-top:5px; }
-
-.main-container { width:630px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-
-#submitButton { background-color:#ffffffff; color:black; border:none; border-radius:8px; padding:11px 25px; font-weight:bold; cursor:pointer; box-shadow:0 0 15px 3px white; transition:all 0.3s ease; margin-top:10px; }
-#submitButton:hover { box-shadow:0 0 25px 5px #2fff1cff; color:black; }
-
-#totalPriceModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background-color:#111; border:2px solid #00ff00; border-radius:12px; padding:20px 25px; text-align:center; box-shadow:0 0 12px #00ff00,0 0 25px #00ff00 inset; font-family:monospace; z-index:1000; }
-#popupTotalPrice { font-size:28px; font-weight:bold; color:#00ff00; margin:15px 0; text-shadow:0 0 8px #00ff00,0 0 15px #00ff00; }
-#closeTotalModal { padding:6px 18px; font-size:16px; font-weight:bold; border-radius:8px; cursor:pointer; background-color:#111; color:#00ff00; border:1px solid #00ff00; box-shadow:0 0 6px #00ff00; }
+html, body { margin:0; padding:0; overflow:hidden; height:100%; background:black; }
+canvas { position:fixed; top:0; left:0; z-index:-1; display:block; }
+#content { position:relative; z-index:1; text-align:center; color:white; font-family:monospace; padding:20px; }
+button { padding:10px 20px; font-weight:bold; margin-top:10px; cursor:pointer; }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
 
-<header class="w3-container w3-theme w3-padding">
-    <div class="w3-center"><img src="images/OreStellar Header.png" alt="Header Image" style="width:300px; height:auto;"></div>
-    <hr>
-</header>
-
-<div class="container-wrapper">
-    <div class="main-container w3-card w3-container w3-center">
-        <h3>Copy & Paste Your Inventory Below</h3>
-        <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea>
-        <button id="submitButton">Submit</button>
-    </div>
-
-    <div class="contracts-wrapper">
-        <div id="totalCostContainer" class="total-cost-container"><div id="totalCostText">0 ISK</div></div>
-        <div id="summaryContainer"><ul id="summaryList"></ul><div id="summaryTotal"></div></div>
-        <div id="leftContainer" class="total-cost-container"></div>
-    </div>
-</div>
-
-<div id="totalPriceModal">
-    <h2>Total ISK</h2>
-    <p id="popupTotalPrice">0 ISK</p>
-    <button id="closeTotalModal">Copy</button>
+<div id="content">
+    <h1>OreStellar Demo</h1>
+    <textarea id="message" rows="6" cols="40" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea><br>
+    <button id="submitButton">Submit</button>
+    <p id="totalPrice">0 ISK</p>
 </div>
 
 <script>
-// ---------- STARFIELD ----------
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
-function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-window.addEventListener('resize',resize);resize();
 
-const colors=['#ffffff','#ffffcc','#ffcccc'];
-const stars=[];
-const galaxies=[];
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-// galaxy clusters
-for(let i=0;i<10;i++){galaxies.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, spread:Math.random()*150+50});}
+const colors = ['#ffffff','#ffffcc','#ffcccc'];
+const numStars = 300;
+const stars = [];
 
-for(let i=0;i<500;i++){
-    let inGal=Math.random()<0.3;
-    let x=Math.random()*canvas.width;
-    let y=Math.random()*canvas.height;
-    if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; x=g.x+(Math.random()-0.5)*g.spread; y=g.y+(Math.random()-0.5)*g.spread;}
-    stars.push({x:x, y:y, z:Math.random()*300+50, color:colors[Math.floor(Math.random()*colors.length)], size:Math.random()*0.7+0.3});
+for(let i=0;i<numStars;i++){
+    stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        z: Math.random()*canvas.width,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        size: Math.random()*1+0.2
+    });
 }
 
-function animate(){
-    ctx.fillStyle='black'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    const cx=canvas.width/2, cy=canvas.height/2;
+function animate() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+
     for(let s of stars){
-        s.z-=0.1;
-        if(s.z<=1){
-            s.z=Math.random()*300+50;
-            let inGal=Math.random()<0.3;
-            if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; s.x=g.x+(Math.random()-0.5)*g.spread; s.y=g.y+(Math.random()-0.5)*g.spread;}
-            else {s.x=Math.random()*canvas.width; s.y=Math.random()*canvas.height;}
-            s.color=colors[Math.floor(Math.random()*colors.length)];
-            s.size=Math.random()*0.7+0.3;
+        s.z -= 0.5; // slow forward movement
+        if(s.z <= 0){
+            s.z = canvas.width;
+            s.x = Math.random()*canvas.width;
+            s.y = Math.random()*canvas.height;
+            s.color = colors[Math.floor(Math.random()*colors.length)];
         }
-        const sx=cx+(s.x-cx)*(200/s.z);
-        const sy=cy+(s.y-cy)*(200/s.z);
-        const r=s.size*(200/s.z);
-        const grad=ctx.createRadialGradient(sx,sy,0,sx,sy,r*2);
+
+        const sx = cx + (s.x-cx)*(canvas.width/s.z);
+        const sy = cy + (s.y-cy)*(canvas.width/s.z);
+        const r = s.size*(canvas.width/s.z*0.5);
+
+        const grad = ctx.createRadialGradient(sx,sy,0,sx,sy,r);
         grad.addColorStop(0,s.color);
         grad.addColorStop(0.2,s.color+'33');
         grad.addColorStop(1,'transparent');
-        ctx.fillStyle=grad;
+
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(sx,sy,r*2,0,Math.PI*2);
+        ctx.arc(sx,sy,r,0,Math.PI*2);
         ctx.fill();
     }
+
     requestAnimationFrame(animate);
 }
 animate();
 
-// ---------- SUBMIT BUTTON ----------
+// Submit button demo
 document.getElementById('submitButton').addEventListener('click', ()=>{
-    const val=document.getElementById('message').value;
-    const lines=val.split('\n');
-    let totalCost=0;
-    lines.forEach(line=>{const m=line.match(/(\d+)$/); if(m){totalCost+=parseInt(m[1])*100;}});
-    document.getElementById('popupTotalPrice').innerText=totalCost.toLocaleString()+' ISK';
-    document.getElementById('totalPriceModal').style.display='block';
-});
-
-// ---------- COPY BUTTON ----------
-document.getElementById('closeTotalModal').addEventListener('click',()=>{
-    navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
-    document.getElementById('totalPriceModal').style.display='none';
+    const val = document.getElementById('message').value;
+    let total = 0;
+    val.split('\n').forEach(line=>{
+        const m = line.match(/(\d+)$/);
+        if(m) total += parseInt(m[1])*100;
+    });
+    document.getElementById('totalPrice').innerText = total.toLocaleString() + ' ISK';
 });
 </script>
 
