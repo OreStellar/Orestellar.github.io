@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Visible Starfield Demo</title>
+<title>Working Starfield</title>
 <style>
 html, body {
   margin: 0;
@@ -13,65 +13,71 @@ html, body {
   background: black;
   overflow: hidden;
 }
-
-/* === STARFIELD === */
-.starfield {
+canvas#starfield {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at center, #000000 0%, #000010 100%);
-}
-
-.star {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 6px 2px rgba(255,255,255,0.8);
-  border-radius: 50%;
-  animation: moveStar linear infinite;
-}
-
-/* Motion + glow */
-@keyframes moveStar {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0.2;
-  }
+  display: block;
 }
 </style>
 </head>
 <body>
 
-<div class="starfield" id="starfield"></div>
+<canvas id="starfield"></canvas>
 
 <script>
-function createStarfield(numStars = 250) {
-  const starfield = document.getElementById('starfield');
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+
+let stars = [];
+const numStars = 400;
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+function initStars() {
+  stars = [];
   for (let i = 0; i < numStars; i++) {
-    const star = document.createElement('div');
-    star.classList.add('star');
-
-    // Random size, duration, and position
-    const size = Math.random() * 2 + 1.5;
-    const duration = Math.random() * 15 + 10;
-    const delay = Math.random() * -duration;
-
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.animationDuration = duration + 's';
-    star.style.animationDelay = delay + 's';
-
-    starfield.appendChild(star);
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2,
+      speed: 0.2 + Math.random() * 0.8,
+    });
   }
 }
-createStarfield();
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  for (const star of stars) {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function animate() {
+  for (const star of stars) {
+    star.y += star.speed;
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  }
+  drawStars();
+  requestAnimationFrame(animate);
+}
+
+initStars();
+animate();
 </script>
 
 </body>
