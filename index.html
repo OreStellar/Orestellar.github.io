@@ -139,6 +139,7 @@ function animateCount(el,start,end,duration=2000){ let startTime=null;
     requestAnimationFrame(step);
 }
 
+// ---------- Submit ----------
 document.getElementById('submitButton').addEventListener('click',()=>{
     const textarea=document.getElementById('message').value;
     const regex=/([\w\s]+?)\s+(\d+)/g;
@@ -149,20 +150,17 @@ document.getElementById('submitButton').addEventListener('click',()=>{
         else invalid.push(item);
     }
 
-    // show summary
     const listEl=document.getElementById('summaryList'); listEl.innerHTML='';
     summaryItems.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=`<span>${it.name}</span><span>${formatNumber(it.value)} ISK</span>`; listEl.appendChild(li); });
     document.getElementById('summaryTotal').innerText='Total: '+formatNumber(total)+' ISK';
     document.getElementById('summaryContainer').style.display='flex';
 
-    // show contracts
     const left=document.getElementById('leftContainer');
     const right=document.getElementById('totalCostContainer');
     left.style.display='block'; right.style.display='block';
-    left.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png')";
-    right.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png')";
+    left.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png')";
+    right.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png')";
 
-    // hide inventory
     document.querySelector('.main-container').style.display='none';
 
     animateCount(document.getElementById('totalCostText'),0,total);
@@ -172,11 +170,11 @@ document.getElementById('submitButton').addEventListener('click',()=>{
     if(invalid.length>0) alert('Unrecognized items: '+invalid.join(', '));
 });
 
+// ---------- Modals ----------
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
     navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
     document.getElementById('totalPriceModal').style.display='none';
 });
-
 document.getElementById('infoButton').addEventListener('click',()=>document.getElementById('infoModal').style.display='block');
 document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('infoModal').style.display='none');
 
@@ -190,6 +188,7 @@ document.querySelector('header img').addEventListener('click',()=>{
     document.querySelector('.main-container').style.display='flex';
 });
 
+// ---------- Init ----------
 async function init(){ await loadPrices(); document.getElementById('submitButton').disabled=false; }
 init();
 </script>
