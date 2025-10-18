@@ -8,11 +8,9 @@
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 <style>
-/* --- Base --- */
 html, body { margin:0; padding:0; height:100%; background:black; color:white; font-family:monospace; overflow-x:hidden; }
 canvas#starfield { position:fixed; top:0; left:0; z-index:0; display:block; }
 
-/* --- Content --- */
 header, .container-wrapper, .main-container, .contracts-wrapper, #totalPriceModal, #infoModal { position:relative; z-index:1; }
 
 .container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; }
@@ -99,7 +97,7 @@ header, .container-wrapper, .main-container, .contracts-wrapper, #totalPriceModa
 </div>
 
 <script>
-// ---------- STARFIELD ----------
+// ---------- STARFIELD WITH ROTATING CLUSTERS ----------
 const canvas=document.getElementById('starfield');
 const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
@@ -107,42 +105,80 @@ window.addEventListener('resize',resize); resize();
 
 const colors=['#ffffff','#ffff99','#ff9999'];
 const stars=[], galaxies=[];
-for(let i=0;i<10;i++){galaxies.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,spread:Math.random()*200+100});}
-for(let i=0;i<500;i++){
+const galaxyCount=10;
+const starCount=500;
+
+// Create galaxy clusters
+for(let i=0;i<galaxyCount;i++){
+    galaxies.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        spread: Math.random()*200+100,
+        angle: Math.random()*2*Math.PI,
+        speed: (Math.random()*0.0005+0.0002) // slow rotation
+    });
+}
+
+// Create stars
+for(let i=0;i<starCount;i++){
     let inGal=Math.random()<0.3;
     let x=Math.random()*canvas.width, y=Math.random()*canvas.height;
-    if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; x=g.x+(Math.random()-0.5)*g.spread; y=g.y+(Math.random()-0.5)*g.spread;}
-    stars.push({x:x,y:y,z:Math.random()*300+50,color:colors[Math.floor(Math.random()*colors.length)],size:Math.random()*1+0.5});
+    if(inGal){ const g=galaxies[Math.floor(Math.random()*galaxies.length)]; x=g.x+(Math.random()-0.5)*g.spread; y=g.y+(Math.random()-0.5)*g.spread; }
+    stars.push({x:x,y:y,z:Math.random()*300+50,color:colors[Math.floor(Math.random()*colors.length)],size:Math.random()*1+0.5, galaxy: inGal});
 }
 
 function animateStars(){
     ctx.fillStyle='black'; ctx.fillRect(0,0,canvas.width,canvas.height);
     const cx=canvas.width/2, cy=canvas.height/2;
+
+    // Rotate galaxy clusters slowly
+    galaxies.forEach(g=>{
+        g.angle += g.speed;
+    });
+
     for(let s of stars){
-        s.z-=0.01; // slower movement
+        // Move forward
+        s.z -= 0.01;
         if(s.z<=1){
             s.z=Math.random()*300+50;
-            let inGal=Math.random()<0.3;
-            if(inGal){const g=galaxies[Math.floor(Math.random()*galaxies.length)]; s.x=g.x+(Math.random()-0.5)*g.spread; s.y=g.y+(Math.random()-0.5)*g.spread;}
-            else {s.x=Math.random()*canvas.width; s.y=Math.random()*canvas.height;}
+            if(s.galaxy){
+                const g=galaxies[Math.floor(Math.random()*galaxies.length)];
+                s.x=g.x+(Math.random()-0.5)*g.spread;
+                s.y=g.y+(Math.random()-0.5)*g.spread;
+            } else {
+                s.x=Math.random()*canvas.width; s.y=Math.random()*canvas.height;
+            }
             s.color=colors[Math.floor(Math.random()*colors.length)];
             s.size=Math.random()*1+0.5;
         }
-        const sx=cx+(s.x-cx)*(200/s.z);
-        const sy=cy+(s.y-cy)*(200/s.z);
+
+        // Apply rotation if in galaxy
+        let drawX=s.x, drawY=s.y;
+        if(s.galaxy){
+            const g=galaxies[Math.floor(Math.random()*galaxies.length)];
+            const dx=s.x-g.x, dy=s.y-g.y;
+            const angle = g.angle;
+            drawX = g.x + dx*Math.cos(angle) - dy*Math.sin(angle);
+            drawY = g.y + dx*Math.sin(angle) + dy*Math.cos(angle);
+        }
+
+        const sx=cx+(drawX-cx)*(200/s.z);
+        const sy=cy+(drawY-cy)*(200/s.z);
         const radius=s.size*(200/s.z);
+
         const grad=ctx.createRadialGradient(sx,sy,radius/4,sx,sy,radius);
         grad.addColorStop(0,s.color);
         grad.addColorStop(1,'transparent');
         ctx.fillStyle=grad;
         ctx.beginPath();
-        ctx.arc(sx,sy,radius,0,2*Math.PI); ctx.fill();
+        ctx.arc(sx,sy,radius,0,2*Math.PI);
+        ctx.fill();
     }
     requestAnimationFrame(animateStars);
 }
 animateStars();
 
-// ---------- LOAD PRICES ----------
+// ---------- PRICES & SUBMIT ----------
 let priceList={};
 async function loadPrices(){
     try{
@@ -155,7 +191,6 @@ async function loadPrices(){
 }
 loadPrices().then(()=>document.getElementById('submitButton').disabled=false);
 
-// ---------- HELPERS ----------
 function formatNumber(n){return n.toLocaleString();}
 function animateCount(el,start,end,duration=2000){
     let startTime=null;
@@ -168,13 +203,12 @@ function animateCount(el,start,end,duration=2000){
     requestAnimationFrame(step);
 }
 
-// ---------- SUBMIT ----------
 document.getElementById('submitButton').addEventListener('click',()=>{
     if(Object.keys(priceList).length===0){ alert("Prices still loading."); return; }
     const text=document.getElementById('message').value;
-    const regex=/([\w\s]+?)\s+(\d+)/g; let matches, total=0, invalid=[], summaryItems=[];
+    const regex=/([\w\s]+?)\s+(\d+)/g; let matches,total=0,invalid=[],summaryItems=[];
     while((matches=regex.exec(text))!==null){
-        const name=matches[1].trim(), qty=parseInt(matches[2]);
+        const name=matches[1].trim(),qty=parseInt(matches[2]);
         if(priceList[name]!==undefined){ const val=qty*priceList[name]; total+=val; summaryItems.push({name:name,qty:qty,value:val}); }
         else invalid.push(name);
     }
@@ -196,18 +230,18 @@ document.getElementById('submitButton').addEventListener('click',()=>{
     if(invalid.length>0) alert('Unrecognized items: '+invalid.join(', '));
 });
 
-// ---------- COPY TOTAL ----------
+// Copy total
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
     navigator.clipboard.writeText(document.getElementById('popupTotalPrice').innerText);
     document.getElementById('totalPriceModal').style.display='none';
 });
 
-// ---------- INFO MODAL ----------
-document.getElementById('infoButton').addEventListener('click',()=>{ document.getElementById('infoModal').style.display='block'; });
-document.getElementById('closeModal').addEventListener('click',()=>{ document.getElementById('infoModal').style.display='none'; });
+// Info modal
+document.getElementById('infoButton').addEventListener('click',()=>document.getElementById('infoModal').style.display='block');
+document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('infoModal').style.display='none');
 window.addEventListener('click',e=>{ if(e.target==document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; });
 
-// ---------- HEADER CLICK RESET ----------
+// Header reset
 document.querySelector('header img').addEventListener('click', ()=>{
     document.getElementById('message').value='';
     document.getElementById('leftContainer').style.display='none';
