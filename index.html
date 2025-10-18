@@ -29,7 +29,16 @@ header { flex-shrink: 0; }
 
 /* Assign order and flexible widths */
 #leftContainer { order: 1; flex: 1 1 250px; max-width: 35%; min-width: 200px; }   /* left contract image */
-#summaryContainer { order: 2; flex: 1 1 200px; min-width: 150px; max-width: 50%; display: none; flex-direction: column; } /* middle, smaller */
+#summaryContainer {
+    order: 2;
+    flex: 1 1 auto;           /* allow flexible shrinking/growing */
+    max-width: 300px;          /* visible width limit */
+    min-width: 150px;          /* optional minimum width */
+    display: none;
+    flex-direction: column;
+    overflow-x: auto;          /* horizontal scroll if content is too wide */
+    overflow-y: auto;          /* keep vertical scroll too */
+}
 #totalCostContainer { order: 3; flex: 1 1 250px; max-width: 35%; min-width: 200px; } /* right contract image */
 
     
