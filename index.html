@@ -2,20 +2,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>OreStellar Starfield Test</title>
+<title>Starfield Test</title>
 <style>
-html, body { margin:0; padding:0; overflow:hidden; height:100%; background:black; color:white; font-family:monospace; }
-canvas#starfield { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; display:block; }
-
-#mainContent { position:relative; z-index:1; text-align:center; padding:20px; }
-button { padding:10px 20px; font-weight:bold; cursor:pointer; margin-top:10px; }
+html, body { margin:0; padding:0; overflow:hidden; background:black; }
+canvas { display:block; position:fixed; top:0; left:0; z-index:-1; }
+#content { position:relative; z-index:1; text-align:center; color:white; font-family:monospace; padding:20px; }
+button { padding:10px 20px; font-weight:bold; margin-top:10px; cursor:pointer; }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
 
-<div id="mainContent">
+<div id="content">
     <h1>OreStellar Demo</h1>
     <textarea id="message" rows="6" cols="40" placeholder="Compressed Ytirium 99&#10;Jet Ochre 135"></textarea><br>
     <button id="submitButton">Submit</button>
@@ -26,55 +25,55 @@ button { padding:10px 20px; font-weight:bold; cursor:pointer; margin-top:10px; }
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas(){
+function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', resize);
+resize();
 
-const stars = [];
 const colors = ['#ffffff','#ffffcc','#ffcccc'];
-const numStars = 300;
+const numStars = 400;
+const stars = [];
 
-// generate stars randomly
+// Initialize stars
 for(let i=0;i<numStars;i++){
     stars.push({
         x: Math.random()*canvas.width,
         y: Math.random()*canvas.height,
-        z: Math.random()*300+50,
-        size: Math.random()*0.5+0.2,
-        color: colors[Math.floor(Math.random()*colors.length)]
+        z: Math.random()*canvas.width,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        size: Math.random()*1+0.2
     });
 }
 
-// animate stars moving forward slowly
-function animate(){
+function animate() {
     ctx.fillStyle='black';
     ctx.fillRect(0,0,canvas.width,canvas.height);
     const cx = canvas.width/2;
     const cy = canvas.height/2;
 
     for(let s of stars){
-        s.z -= 0.2; // forward speed
-        if(s.z <= 1){
-            s.z = Math.random()*300+50;
+        s.z -= 1; // forward speed
+        if(s.z <= 0) {
+            s.z = canvas.width;
             s.x = Math.random()*canvas.width;
             s.y = Math.random()*canvas.height;
+            s.color = colors[Math.floor(Math.random()*colors.length)];
         }
 
-        const sx = cx + (s.x-cx)*(200/s.z);
-        const sy = cy + (s.y-cy)*(200/s.z);
-        const r = s.size*(200/s.z);
+        const sx = cx + (s.x-cx)*(canvas.width/s.z);
+        const sy = cy + (s.y-cy)*(canvas.width/s.z);
+        const r = s.size*(canvas.width/s.z*0.5);
 
-        const grad = ctx.createRadialGradient(sx,sy,0,sx,sy,r*2);
+        const grad = ctx.createRadialGradient(sx,sy,0,sx,sy,r);
         grad.addColorStop(0,s.color);
         grad.addColorStop(0.2,s.color+'33');
         grad.addColorStop(1,'transparent');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(sx,sy,r*2,0,Math.PI*2);
+        ctx.arc(sx,sy,r,0,Math.PI*2);
         ctx.fill();
     }
 
@@ -82,7 +81,7 @@ function animate(){
 }
 animate();
 
-// demo submit button
+// Submit button demo
 document.getElementById('submitButton').addEventListener('click', ()=>{
     const val = document.getElementById('message').value;
     let total = 0;
