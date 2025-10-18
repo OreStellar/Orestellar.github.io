@@ -10,7 +10,6 @@
 <style>
 html, body { margin:0; padding:0; height:100%; background:black; color:white; font-family:monospace; overflow-x:hidden; }
 body { display:flex; flex-direction:column; align-items:center; }
-
 header { flex-shrink:0; }
 
 .container-wrapper { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; width:100%; max-width:1920px; }
@@ -28,11 +27,24 @@ header { flex-shrink:0; }
     flex:1 1 250px;
     max-width:35%;
     min-width:200px;
+    height:418px;           /* fixed height for images */
+    position:relative;       /* needed for absolute children */
     background-size:contain;
     background-repeat:no-repeat;
     background-position:center;
     border-radius:15px;
     box-shadow:0 4px 8px rgba(0,0,0,0.5);
+}
+
+#totalCostText {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:13px;
+    font-weight:bold;
+    color:#00ff00;
+    text-shadow:0 0 20px #00ff00,0 0 30px #00ff00;
 }
 
 #summaryContainer {
@@ -60,8 +72,6 @@ header { flex-shrink:0; }
 .main-container { width:630px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
 #submitButton { background-color:#ffffffff; color:black; border:none; border-radius:8px; padding:11px 25px; font-weight:bold; cursor:pointer; box-shadow:0 0 15px 3px white; margin-top:10px; }
 #submitButton:hover { box-shadow:0 0 25px 5px #2fff1cff; }
-
-#totalCostText { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:13px; font-weight:bold; color:#00ff00; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; }
 
 #totalPriceModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background-color:#111; border:2px solid #00ff00; border-radius:12px; padding:20px 25px; text-align:center; z-index:1000; }
 #popupTotalPrice { font-size:28px; font-weight:bold; color:#00ff00; margin:15px 0; text-shadow:0 0 20px #00ff00,0 0 30px #00ff00; }
@@ -157,7 +167,8 @@ document.getElementById('submitButton').addEventListener('click',()=>{
 
     const left=document.getElementById('leftContainer');
     const right=document.getElementById('totalCostContainer');
-    left.style.display='block'; right.style.display='block';
+    left.style.display='block';
+    right.style.display='block';
     left.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png')";
     right.style.backgroundImage="url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png')";
 
