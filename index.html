@@ -93,7 +93,7 @@ textarea#message {
   border-radius: 10px;
   resize: vertical;
   background-color: #111;           /* dark background */
-  color: #ffffff !important;        /* force text to be white */
+  color: #ffffff !important;        /* force text to white */
   border: 1px solid #333;
   text-align: center;               /* center text */
   font-family: 'Share Tech Mono', monospace;
@@ -101,11 +101,13 @@ textarea#message {
   transition: all 0.2s ease-in-out;
 }
 
-/* Placeholder text also white */
-textarea#message::placeholder {
-  color: #ffffff !important;
-  opacity: 0.6;
-}
+/* Placeholder text (all major browsers) */
+textarea#message::placeholder { color: #ffffff !important; opacity: 0.6; }
+textarea#message::-webkit-input-placeholder { color: #ffffff !important; }
+textarea#message:-ms-input-placeholder { color: #ffffff !important; }
+textarea#message::-ms-input-placeholder { color: #ffffff !important; }
+textarea#message::-moz-placeholder { color: #ffffff !important; opacity: 0.6; }
+textarea#message:-moz-placeholder { color: #ffffff !important; opacity: 0.6; }
 
 textarea#message:focus {
   outline: none;
