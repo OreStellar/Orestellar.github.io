@@ -92,20 +92,27 @@ textarea#message {
   padding: 15px;
   border-radius: 10px;
   resize: vertical;
-  background-color: #111;          /* very dark, sleek background */
-  color: #ffffff;                  /* keep text white */
-  border: 1px solid #333;          /* subtle dark border */
-  text-align: center;              /* center the text */
+  background-color: #111;           /* dark background */
+  color: #ffffff !important;        /* force text to be white */
+  border: 1px solid #333;
+  text-align: center;               /* center text */
   font-family: 'Orbitron', monospace;
-  box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20; /* inner depth glow */
+  box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20;
   transition: all 0.2s ease-in-out;
+}
+
+/* Placeholder text also white */
+textarea#message::placeholder {
+  color: #ffffff !important;
+  opacity: 0.6;
 }
 
 textarea#message:focus {
   outline: none;
-  box-shadow: inset 0 0 12px #555, 0 0 15px #00ffff80; /* sci-fi glow on focus */
-  border-color: #00ffff; /* cyan glow border */
+  box-shadow: inset 0 0 12px #555, 0 0 15px #00ffff80;
+  border-color: #00ffff;
 }
+
 
 
 .quote-text {
