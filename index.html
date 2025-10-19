@@ -197,7 +197,6 @@ header img {
 </div>
 
 <script>
-// === Starfield with full-screen coverage, slower motion, and higher density ===
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
@@ -208,27 +207,31 @@ function resizeCanvas() {
 }
 resizeCanvas();
 
+// Create a dense, layered starfield
 function createStars() {
   stars = [];
-  const numStars = Math.floor(window.innerWidth * window.innerHeight / 800); 
-  // dynamic density based on screen size (approx 700–1000 stars)
+  const numStars = Math.floor(window.innerWidth * window.innerHeight / 800); // very dense
+
   for (let i = 0; i < numStars; i++) {
+    const layer = Math.random(); // 0 = far, 1 = near
     stars.push({
       x: Math.random() * canvas.width - canvas.width / 2,
       y: Math.random() * canvas.height - canvas.height / 2,
       z: Math.random() * canvas.width,
-      color: ["#ffffff", "#ffffcc", "#ffcccc"][Math.floor(Math.random() * 3)],
-      size: Math.random() * 1.4 + 0.4
+      size: layer * 1.5 + 0.2, // smaller = far, larger = near
+      color: ["#ffffff", "#ffffcc", "#ffcccc", "#ccccff"][Math.floor(Math.random() * 4)],
+      speed: layer * 0.25 + 0.05 // slower = far, faster = near
     });
   }
 }
 createStars();
 
+// Draw stars with perspective and depth
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let s of stars) {
-    s.z -= 0.075; // slower forward movement
+    s.z -= s.speed; // each star has its own speed
     if (s.z <= 0) s.z = canvas.width;
 
     const k = 128 / s.z;
@@ -240,7 +243,7 @@ function drawStars() {
     ctx.beginPath();
     ctx.arc(px, py, s.size, 0, Math.PI * 2);
     ctx.fillStyle = s.color;
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = s.size * 5;
     ctx.shadowColor = s.color;
     ctx.fill();
   }
@@ -253,9 +256,6 @@ window.addEventListener("resize", () => {
   resizeCanvas();
   createStars();
 });
-
-drawStars();
-window.addEventListener("resize", resizeCanvas);
 
 // === App logic ===
 let priceList = {};
