@@ -214,53 +214,96 @@ const clusterCount=12;
 function resizeCanvas(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
 resizeCanvas();
 
-function createStars(){stars=[]; const clusterCenters=[]; for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height}); const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200); for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const r=Math.random()*120; const a=Math.random()*Math.PI*2; x=c.x+r*Math.cos(a); y=c.y+r*Math.sin(a);} else {x=Math.random()*canvas.width; y=Math.random()*canvas.height;} stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2});}}
+function createStars(){stars=[]; const clusterCenters=[]; for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height}); const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200); for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const r=Math.random()*120; const a=Math.random()*Math.PI*2; x=c.x+r*Math.cos(a); y=c.y+r*Math.sin(a);} else {x=Math.random()*canvas.width; y=Math.random()*canvas.height;} stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.05+0.02,phase:Math.random()*Math.PI*2});}}
 createStars();
 
-function drawStars(time=0){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){ s.z-=s.speed; if(s.z<=0) s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill(); } ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
+function drawStars(time=0){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){ s.z-=s.speed; if(s.z<=0) s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur = s.size*4; ctx.shadowColor = s.color; ctx.fill(); } ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
 drawStars(0);
 window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-// === Prices ===
+// === Prices & Inventory ===
 let priceList={};
 async function loadPrices(){ const res=await fetch('data/prices.csv'); const text=await res.text(); const lines=text.split('\n').filter(l=>l.trim()); const headers=lines[0].split(','); const idx=headers.findIndex(h=>h.toLowerCase().includes('150%')); for(let i=1;i<lines.length;i++){ const cols=lines[i].split(','); const ore=cols[0].trim().toLowerCase(); const price=parseFloat(cols[idx]); if(!isNaN(price)) priceList[ore]=price;} document.getElementById('submitButton').disabled=false;}
 loadPrices();
 function formatNumber(n){return n.toLocaleString();}
 
-// === Submit logic ===
-function showContent(){ const t=document.getElementById('message').value; const regex=/([\w\s]+?)\s+(\d+)/g; let match,total=0,summary=[]; while((match=regex.exec(t))!==null){ const name=match[1].trim().toLowerCase(),qty=parseInt(match[2]); let val=0; if(priceList[name]) val=qty*priceList[name]; summary.push({name,qty,val,recognized:!!priceList[name]}); total+=val;} const list=document.getElementById('summaryList'); list.innerHTML=''; summary.forEach(i=>{ const li=document.createElement('li'); li.innerHTML=`<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`; list.appendChild(li); }); document.getElementById('summaryContainer').style.display='flex'; document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`; document.getElementById('leftContainer').style.display='block'; const totalContainer=document.getElementById('totalCostContainer'); const totalCostText=document.getElementById('totalCostText'); const copiedMessage=document.getElementById('copiedMessage'); totalContainer.style.display='block'; document.querySelector('.main-container').style.display='none'; totalCostText.innerText=`${formatNumber(total)} ISK`; totalContainer.onclick=()=>{navigator.clipboard.writeText(totalCostText.innerText); totalCostText.style.display='none'; copiedMessage.style.display='block'; setTimeout(()=>{copiedMessage.style.display='none'; totalCostText.style.display='block';},1500);};}
+function showContent(){ 
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g; 
+  let match,total=0,summary=[];
+  while((match=regex.exec(t))!==null){ 
+    const name=match[1].trim().toLowerCase(),qty=parseInt(match[2]);
+    let val=0; if(priceList[name]) val=qty*priceList[name];
+    summary.push({name,qty,val,recognized:!!priceList[name]}); 
+    total+=val;
+  }
+  const list=document.getElementById('summaryList'); list.innerHTML=''; 
+  summary.forEach(i=>{ const li=document.createElement('li'); li.innerHTML=`<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`; list.appendChild(li); });
+  document.getElementById('summaryContainer').style.display='flex';
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
+  document.getElementById('leftContainer').style.display='block';
+  const totalContainer=document.getElementById('totalCostContainer');
+  const totalCostText=document.getElementById('totalCostText');
+  const copiedMessage=document.getElementById('copiedMessage');
+  totalContainer.style.display='block';
+  document.querySelector('.main-container').style.display='none';
+  totalCostText.innerText=`${formatNumber(total)} ISK`;
+  totalContainer.onclick=()=>{
+    navigator.clipboard.writeText(totalCostText.innerText);
+    totalCostText.style.display='none';
+    copiedMessage.style.display='block';
+    setTimeout(()=>{copiedMessage.style.display='none'; totalCostText.style.display='block';},1500);
+  };
+}
 document.getElementById('submitButton').addEventListener('click',showContent);
 
-// === Logo supernova explosion ===
+// === Supernova logo explosion ===
 const logo=document.getElementById('logoText');
 logo.addEventListener('click',()=>{ 
   const rect=logo.getBoundingClientRect();
   const particles=[];
-  const count=50;
-  const colors=['#fff','#ff99aa','#99ccff','#ffcc66'];
+  const count=80;
+  const colors=['#fff','#ff99aa','#99ccff','#ffcc66','#ffff99'];
   for(let i=0;i<count;i++){
+    const angle=Math.random()*2*Math.PI;
+    const speed=Math.random()*8+4;
     particles.push({
       x:rect.left+rect.width/2,
       y:rect.top+rect.height/2,
-      vx:(Math.random()-0.5)*10,
-      vy:(Math.random()-0.5)*10,
-      size:Math.random()*8+4,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed,
+      size:Math.random()*6+3,
       color:colors[Math.floor(Math.random()*colors.length)]
     });
   }
-  logo.style.visibility='hidden';
+
+  // Central flash
+  let flashAlpha=1;
   function animateParticles(){ 
     ctx.clearRect(0,0,canvas.width,canvas.height);
     drawStars();
+    // Flash
+    if(flashAlpha>0){
+      ctx.beginPath();
+      ctx.arc(rect.left+rect.width/2, rect.top+rect.height/2, 50,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${flashAlpha})`;
+      ctx.fill();
+      flashAlpha-=0.05;
+    }
+
     let alive=false;
     for(let p of particles){
-      p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; // gravity
+      p.x+=p.vx; p.y+=p.vy;
+      p.vx*=0.99; p.vy*=0.99; // slow down gradually
       p.size*=0.96;
-      if(p.size>0.5){ alive=true; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); }
+      if(p.size>0.5){ alive=true; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();}
     }
-    if(alive) requestAnimationFrame(animateParticles);
+
+    if(alive || flashAlpha>0) requestAnimationFrame(animateParticles);
     else location.reload();
   }
+
+  logo.style.visibility='hidden';
   animateParticles();
 });
 
