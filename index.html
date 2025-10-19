@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron for sleek sci-fi -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -44,7 +43,7 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-transform: capitalize; /* ensures OreStellar casing */
+  text-transform: capitalize;
 }
 
 /* Scanline overlay */
@@ -139,14 +138,22 @@ textarea#message {
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
-  top: calc(50% + 23px); /* lowered 5px */
-  left: calc(50% + 10px); /* moved 10px right */
+  top: calc(50% + 23px);
+  left: calc(50% + 10px);
   font-size: 16px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
+#copiedMessage {
+  display:none;
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 18px;
+  position: absolute;
+}
 
+/* Summary container */
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -167,14 +174,6 @@ textarea#message {
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
-
-#copiedMessage {
-  display:none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-}
 
 </style>
 </head>
@@ -212,199 +211,89 @@ const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
 const clusterCount = 12;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas();
 
 function createStars() {
   stars = [];
-  const clusterCenters = [];
-  for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
-  }
-  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
-  for (let i = 0; i < totalStars; i++) {
-    let x, y;
-    if (Math.random() < 0.6) {
-      const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
-      const radius = Math.random() * 120;
-      const angle = Math.random() * Math.PI * 2;
-      x = c.x + radius * Math.cos(angle);
-      y = c.y + radius * Math.sin(angle);
-    } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
-    }
-    stars.push({
-      x, y,
-      z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.2,
-      color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.2 + 0.05,
-      phase: Math.random() * Math.PI * 2
-    });
+  const clusterCenters=[];
+  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height});
+  const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200);
+  for(let i=0;i<totalStars;i++){
+    let x,y;
+    if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const r=Math.random()*120; const a=Math.random()*Math.PI*2; x=c.x+r*Math.cos(a); y=c.y+r*Math.sin(a); }
+    else {x=Math.random()*canvas.width; y=Math.random()*canvas.height;}
+    stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2});
   }
 }
 createStars();
 
-function drawStars(time=0) {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for (let s of stars) {
-    s.z -= s.speed;
-    if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = shimmer;
-    ctx.shadowBlur = s.size*4;
-    ctx.shadowColor = s.color;
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(drawStars);
-}
+function drawStars(time=0){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){ s.z-=s.speed; if(s.z<=0) s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill(); } ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
 drawStars(0);
-window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
+window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-// === Price loading ===
-let priceList = {};
-async function loadPrices() {
-  const response = await fetch('data/prices.csv');
-  const text = await response.text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  const headers = lines[0].split(',');
-  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for (let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',');
-    const ore = cols[0].trim().toLowerCase();
-    const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore]=price;
-  }
+// === Prices ===
+let priceList={};
+async function loadPrices(){
+  const res=await fetch('data/prices.csv');
+  const text=await res.text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',');
+  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for(let i=1;i<lines.length;i++){ const cols=lines[i].split(','); const ore=cols[0].trim().toLowerCase(); const price=parseFloat(cols[idx]); if(!isNaN(price)) priceList[ore]=price; }
   document.getElementById('submitButton').disabled=false;
 }
 loadPrices();
-
-function formatNumber(n){ return n.toLocaleString(); }
-
-// Animate numbers
-function animateCount(el, start, end, duration=2000) {
-  let startTime = null;
-  const numberSpan = el.querySelector(".number");
-  const iskSpan = el.querySelector(".isk");
-  function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    if(numberSpan) numberSpan.innerText = current.toLocaleString();
-    if(iskSpan) iskSpan.innerText = "ISK";
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+function formatNumber(n){return n.toLocaleString();}
 
 // === Submit logic ===
 function showContent(){
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total = 0, summary = [];
-
-  while((match = regex.exec(t)) !== null){
-    const name = match[1].trim().toLowerCase(), qty = parseInt(match[2]);
-    let val = 0;
-    if(priceList[name]) val = qty*priceList[name];
-    summary.push({name, qty, val, recognized: !!priceList[name]});
-    total += val;
-  }
-
-  // Populate summary
-  const list = document.getElementById('summaryList');
-  list.innerHTML = '';
-  summary.forEach(i=>{
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`;
-    list.appendChild(li);
-  });
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.style.display='flex';
-  document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
-
-  // Show contracts
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
+  while((match=regex.exec(t))!==null){ const name=match[1].trim().toLowerCase(),qty=parseInt(match[2]); let val=0; if(priceList[name]) val=qty*priceList[name]; summary.push({name,qty,val,recognized:!!priceList[name]}); total+=val; }
+  const list=document.getElementById('summaryList'); list.innerHTML=''; summary.forEach(i=>{ const li=document.createElement('li'); li.innerHTML=`<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`; list.appendChild(li); });
+  document.getElementById('summaryContainer').style.display='flex';
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
   document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
-
-  // Hide inventory box
+  const totalContainer=document.getElementById('totalCostContainer');
+  const totalCostText=document.getElementById('totalCostText');
+  const copiedMessage=document.getElementById('copiedMessage');
+  totalContainer.style.display='block';
   document.querySelector('.main-container').style.display='none';
-
-  // Set total cost text
-  const totalCostText = document.getElementById('totalCostText');
-  totalCostText.innerText = `${formatNumber(total)} ISK`;
-
-  // Copy on click
-  const totalContainer = document.getElementById('totalCostContainer');
-  const copiedMessage = document.getElementById('copiedMessage');
-  totalContainer.onclick = ()=>{
-    navigator.clipboard.writeText(totalCostText.innerText);
-    totalCostText.style.display='none';
-    copiedMessage.style.display='block';
-    setTimeout(()=>{
-      copiedMessage.style.display='none';
-      totalCostText.style.display='block';
-    },1500);
-  };
+  totalCostText.innerText=`${formatNumber(total)} ISK`;
+  totalContainer.onclick=()=>{ navigator.clipboard.writeText(totalCostText.innerText); totalCostText.style.display='none'; copiedMessage.style.display='block'; setTimeout(()=>{copiedMessage.style.display='none'; totalCostText.style.display='block'; },1500);};
 }
+document.getElementById('submitButton').addEventListener('click',showContent);
 
-document.getElementById('submitButton').addEventListener('click', showContent);
-
-// === Logo shatter on click ===
-const logo = document.getElementById('logoText');
-logo.addEventListener('click', () => {
-    const rect = logo.getBoundingClientRect();
-    const pieces = [];
-    const totalPieces = 40;
-
-    for (let i = 0; i < totalPieces; i++) {
-        const piece = document.createElement('div');
-        const size = Math.random() * 12 + 6;
-        piece.style.width = piece.style.height = size + 'px';
-        piece.style.borderRadius = '50%';
-        piece.style.background = '#fff';
-        piece.style.position = 'fixed';
-        piece.style.left = rect.left + Math.random() * rect.width + 'px';
-        piece.style.top = rect.top + Math.random() * rect.height + 'px';
-        piece.style.zIndex = 10000;
-        document.body.appendChild(piece);
-        pieces.push({
-            el: piece,
-            vx: (Math.random() - 0.5) * 2,
-            vy: Math.random() * -2 - 1,
-            gravity: 0.05 + Math.random() * 0.05
-        });
-    }
-
-    let frame = 0;
-    const anim = setInterval(() => {
-        frame++;
-        pieces.forEach(p => {
-            p.vy += p.gravity;
-            const left = parseFloat(p.el.style.left) + p.vx;
-            const top = parseFloat(p.el.style.top) + p.vy;
-            p.el.style.left = left + 'px';
-            p.el.style.top = top + 'px';
-        });
-        if (frame > 150) { // slower fall
-            clearInterval(anim);
-            pieces.forEach(p => document.body.removeChild(p.el));
-            location.reload();
-        }
-    }, 16);
+// === Logo shatter with colored spherical chunks ===
+const logo=document.getElementById('logoText');
+logo.addEventListener('click',()=>{
+  const rect=logo.getBoundingClientRect();
+  logo.style.display='none'; // hide logo
+  const pieces=[]; const totalPieces=50;
+  const colors=['#fff','#ffaaaa','#aaffff','#ffee99'];
+  for(let i=0;i<totalPieces;i++){
+    const piece=document.createElement('div');
+    const size=Math.random()*10+5;
+    piece.style.width=piece.style.height=size+'px';
+    piece.style.borderRadius='50%';
+    piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.position='fixed';
+    piece.style.left=rect.left+Math.random()*rect.width+'px';
+    piece.style.top=rect.top+Math.random()*rect.height+'px';
+    piece.style.zIndex=10000;
+    document.body.appendChild(piece);
+    pieces.push({el:piece,vx:(Math.random()-0.5)*2,vy:Math.random()*-2-1,gravity:0.05+Math.random()*0.05});
+  }
+  let frame=0;
+  const anim=setInterval(()=>{
+    frame++;
+    pieces.forEach(p=>{p.vy+=p.gravity; const left=parseFloat(p.el.style.left)+p.vx; const top=parseFloat(p.el.style.top)+p.vy; p.el.style.left=left+'px'; p.el.style.top=top+'px';});
+    if(frame>150){ clearInterval(anim); pieces.forEach(p=>document.body.removeChild(p.el)); location.reload();}
+  },16);
 });
 
-// Refresh page on header click (optional)
-document.getElementById('myHeader').addEventListener('dblclick',()=>location.reload());
 </script>
 
 </body>
