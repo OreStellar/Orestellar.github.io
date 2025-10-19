@@ -337,13 +337,18 @@ function showContent(){
 }
 
 // Copied functionality
-const totalText = document.getElementById('totalCostText');
-const copiedMsg = document.getElementById('copiedMessage');
-totalText.addEventListener('click',()=>{
-  navigator.clipboard.writeText(totalText.innerText);
-  copiedMsg.style.display='block';
-  setTimeout(()=>copiedMsg.style.display='none',1500);
+const totalCostEl = document.getElementById('totalCostText');
+
+totalCostEl.addEventListener('click', () => {
+    const iskText = totalCostEl.innerText; // store original ISK
+    navigator.clipboard.writeText(iskText); // copy to clipboard
+    totalCostEl.innerText = 'Copied';       // replace with "Copied"
+    
+    setTimeout(() => {
+        totalCostEl.innerText = iskText;    // revert after 1.5s
+    }, 1500);
 });
+
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
