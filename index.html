@@ -274,16 +274,18 @@ textarea#message:focus {
   </div>
 
   <div class="contracts-wrapper">
-    <div id="leftContainer" class="total-cost-container"></div>
-    <div id="summaryContainer">
-      <ul id="summaryList"></ul>
-      <div id="summaryTotal"></div>
-    </div>
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-      <div id="copiedMessage">Copied!</div>
-    </div>
+  <div id="leftContainer" class="total-cost-container"></div>
+
+  <div id="summaryContainer" class="summary-container">
+    <!-- JS will populate this -->
   </div>
+
+  <div id="totalCostContainer" class="total-cost-container">
+    <div id="totalCostText">0 ISK</div>
+    <div id="copiedMessage">Copied!</div>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -389,16 +391,25 @@ function showContent(){
       total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
-  const list=document.getElementById('summaryList');
-  list.innerHTML='';
-  summary.forEach(i=>{
-    const li=document.createElement('li');
-    li.className=i.unrecognized?'unrecognized':'';
-    li.innerHTML=`<span>${i.name}</span><span>${i.unrecognized?i.val:formatNumber(i.val)+' ISK'}</span>`;
-    list.appendChild(li);
-  });
-  document.getElementById('summaryContainer').style.display='flex';
-  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
+ const summaryContainer = document.getElementById('summaryContainer');
+summaryContainer.innerHTML = ''; // clear old summary
+
+summary.forEach(item => {
+  summaryContainer.innerHTML += `
+    <div class="summary-row">
+      <span>${item.name}</span>
+      <span>${item.unrecognized ? item.val : formatNumber(item.val) + ' ISK'}</span>
+    </div>`;
+});
+
+summaryContainer.innerHTML += `
+  <div class="summary-total">
+    <span>Total</span>
+    <span>${formatNumber(total)} ISK</span>
+  </div>`;
+
+summaryContainer.style.display = 'flex';
+
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   animateCount(document.getElementById('totalCostText'), 0, total);
