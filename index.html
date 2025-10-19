@@ -67,17 +67,16 @@ canvas#starfield {
   10%, 30%, 50%, 70%, 90% { color: rgba(255,255,255,0.1); }
 }
 
-/* Soft glow */
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 10px rgba(255,255,255,0.3); color: rgba(255,255,255,1); }
-  50% { text-shadow: 0 0 20px rgba(255,255,255,0.6); }
+@keyframes flickerQuick {
+  0%, 50%, 100% { color: rgba(255,255,255,0.1); }  /* dim state */
+  25%, 75% { color: rgba(255,255,255,1); }          /* bright flash */
 }
 
-/* Final dim + quick flicker */
-@keyframes flickerQuick {
-  0%, 50%, 100% { color: rgba(255,255,255,0.1); }
-  25%, 75% { color: rgba(255,255,255,1); }
+@keyframes softGlow {
+  0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
+  50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
 }
+
 /* Main inventory box */
 .main-container {
   width: 650px; max-width: 90%;
@@ -439,13 +438,18 @@ window.addEventListener('load', () => {
       }, 300);
     }, 300);
 
-    // Step 4: Both flash dim + quick flicker simultaneously
-    setTimeout(() => {
-      ore.style.animation = 'flickerQuick 0.7s linear forwards, softGlow 6s infinite';
-      stellar.style.animation = 'flickerQuick 0.7s linear forwards, softGlow 6s infinite';
-    }, 1500); // adjust timing for nice effect
-  }, 450); // initial dim duration
-});
+// Step 4: Both flash dim + quick flicker simultaneously
+setTimeout(() => {
+  ore.style.animation = 'flickerQuick 0.6s linear forwards';
+  stellar.style.animation = 'flickerQuick 0.6s linear forwards';
+
+  // After the 0.25s flicker, start steady soft glow
+  setTimeout(() => {
+    ore.style.animation = 'softGlow 6s infinite';
+    stellar.style.animation = 'softGlow 6s infinite';
+  }, 600); // matches the flicker duration
+}, 1500); // adjust for when you want the final flicker to occur
+
 </script>
 
 </body>
