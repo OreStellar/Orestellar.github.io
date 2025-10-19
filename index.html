@@ -86,28 +86,29 @@ canvas#starfield {
   box-shadow: 0 0 20px #ffffff40;
 }
 
-textarea#message {
-  width: 100%;
+/* Center the textarea container */
+.main-container textarea#message {
+  display: block;
+  margin: 0 auto;       /* horizontally center the textarea itself */
+  width: 90%;           /* adjust as needed */
   font-size: 18px;
   padding: 15px;
   border-radius: 10px;
   resize: vertical;
-  background-color: #111;           /* dark background */
-  color: #ffffff !important;        /* force text to white */
+  background-color: #111;
+  color: #ffffff !important;
   border: 1px solid #333;
-  text-align: center;               /* center text */
+  text-align: left;     /* align text to the left */
   font-family: 'Share Tech Mono', monospace;
   box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20;
   transition: all 0.2s ease-in-out;
 }
 
-/* Placeholder text (all major browsers) */
-textarea#message::placeholder { color: #ffffff !important; opacity: 0.6; }
-textarea#message::-webkit-input-placeholder { color: #ffffff !important; }
-textarea#message:-ms-input-placeholder { color: #ffffff !important; }
-textarea#message::-ms-input-placeholder { color: #ffffff !important; }
-textarea#message::-moz-placeholder { color: #ffffff !important; opacity: 0.6; }
-textarea#message:-moz-placeholder { color: #ffffff !important; opacity: 0.6; }
+/* Placeholder styling */
+.main-container textarea#message::placeholder {
+  color: #ffffff !important;
+  opacity: 0.6;
+}
 
 textarea#message:focus {
   outline: none;
