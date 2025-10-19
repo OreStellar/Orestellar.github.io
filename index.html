@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron -->
+<!-- Google Font: Orbitron for sleek sci-fi -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -44,8 +44,10 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-transform: capitalize;
+  text-transform: capitalize; /* ensures OreStellar casing */
 }
+
+/* Scanline overlay */
 #logoText::before {
   content: attr(data-text);
   position: absolute; top: 0; left: 0;
@@ -125,30 +127,28 @@ textarea#message {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
 }
-
 .total-cost-container {
   width: 630px; height: 418px;
   background-size: contain; background-position: center; background-repeat: no-repeat;
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
-  cursor: pointer;
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); cursor:pointer; }
 
 #totalCostText {
   position: absolute;
   top: calc(50% + 18px);
   left: 50%;
   transform: translate(calc(-50% + 15px), -50%);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  user-select: none;
 }
 
+/* Summary container */
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -170,17 +170,26 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-.glow-red {
-  animation: glowRed 1s infinite alternate;
+/* Unrecognized ore red glow */
+.unrecognized {
+  color: red;
+  font-weight: bold;
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff5555;
+  animation: redGlow 1.5s infinite alternate;
 }
-@keyframes glowRed {
-  0% { text-shadow: 0 0 5px red; }
-  100% { text-shadow: 0 0 20px red; }
+@keyframes redGlow {
+  0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff5555; }
+  100% { text-shadow: 0 0 15px #ff0000, 0 0 25px #ff5555; }
 }
 
-/* Info button */
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
-.info-button button { background: white; color: black; border-radius: 50%; }
+/* Copied feedback */
+#copiedMessage {
+  display:none;
+  color: yellow;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -200,12 +209,15 @@ textarea#message {
 
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
+
     <div id="summaryContainer">
       <ul id="summaryList"></ul>
       <div id="summaryTotal"></div>
     </div>
+
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
+      <div id="copiedMessage">Copied!</div>
     </div>
   </div>
 </div>
@@ -229,7 +241,6 @@ function createStars() {
   for (let i = 0; i < clusterCount; i++) {
     clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
-
   const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
@@ -243,7 +254,6 @@ function createStars() {
       x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
     }
-
     stars.push({
       x, y,
       z: Math.random() * canvas.width,
@@ -288,7 +298,7 @@ async function loadPrices() {
     const cols = lines[i].split(',');
     const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()]=price; // lowercase key for smarter matching
+    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -311,61 +321,61 @@ function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
-  const unknowns = [];
+  const lowerPriceList = {};
+  for(let key in priceList) lowerPriceList[key.toLowerCase()] = priceList[key];
 
   while((match = regex.exec(t)) !== null){
-    const name = match[1].trim();
+    const nameRaw = match[1].trim();
+    const name = nameRaw.toLowerCase();
     const qty = parseInt(match[2]);
-    const price = priceList[name.toLowerCase()];
-    if(price) {
-      summary.push({name, qty, val: qty*price});
-      total += qty*price;
+    if(lowerPriceList[name]) {
+      summary.push({name:nameRaw, qty, val: qty*lowerPriceList[name]});
+      total += qty*lowerPriceList[name];
     } else {
-      summary.push({name, qty, val: 0, unknown:true});
-      unknowns.push(name);
+      summary.push({name:nameRaw, qty, val: 0});
     }
   }
 
-  // Populate summary
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span class="${i.unknown ? 'glow-red' : ''}">${i.name}</span><span>${i.unknown ? '??' : formatNumber(i.val)} ISK</span>`;
+    if(i.val === 0){
+      li.innerHTML = `<span class="unrecognized">${i.name}</span><span>?? ISK</span>`;
+    } else {
+      li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    }
     list.appendChild(li);
   });
+
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
 
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
-  // Show contracts
   document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
+  const rightContainer = document.getElementById('totalCostContainer');
+  rightContainer.style.display='block';
 
-  // Hide main container
   document.querySelector('.main-container').style.display='none';
 
-  // Animate right contract total
-  const totalEl = document.getElementById('totalCostText');
-  totalEl.dataset.value = total;
-  totalEl.innerText = formatNumber(total) + " ISK";
+  animateCount(document.getElementById('totalCostText'),0,total);
 }
 
-// Event listeners
+// === Event listeners ===
 document.getElementById('submitButton').addEventListener('click', showContent);
+
+// Copy on click
+document.getElementById('totalCostContainer').addEventListener('click', ()=>{
+  const totalText = document.getElementById('totalCostText').innerText;
+  navigator.clipboard.writeText(totalText);
+  const copiedMsg = document.getElementById('copiedMessage');
+  copiedMsg.style.display = 'block';
+  setTimeout(()=>copiedMsg.style.display='none', 1500);
+});
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-
-// === Copy total cost when right contract clicked ===
-const totalEl = document.getElementById('totalCostText');
-totalEl.addEventListener('click', ()=>{
-  navigator.clipboard.writeText(totalEl.dataset.value || totalEl.innerText);
-  const original = totalEl.innerText;
-  totalEl.innerText = "Copied!";
-  setTimeout(()=>{ totalEl.innerText = formatNumber(totalEl.dataset.value) + " ISK"; },1500);
-});
 </script>
 
 </body>
