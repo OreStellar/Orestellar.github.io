@@ -60,35 +60,37 @@ canvas#starfield {
   transform: skewX(-8deg);
   transform-origin: center;
 
-  /* Dimmed white glow (25% less intense) */
-  text-shadow:
-    0 0 3.75px #fff,
-    0 0 7.5px #fff,
-    0 0 15px #fff,
-    0 0 22.5px #fff;
+  /* Start off invisible */
+  opacity: 0;
+  text-shadow: 0 0 0 #fff;
 
-  /* Soft white flicker animation with lower frequency */
-  animation: whiteFlicker 8s infinite;
+  /* Flicker animation before fully glowing */
+  animation: lightSwitch 3s forwards, whiteFlicker 8s infinite 3s;
 }
 
+/* Initial flicker on page load */
+@keyframes lightSwitch {
+  0% { opacity: 0; text-shadow: 0 0 0 #fff; }
+  10% { opacity: 1; text-shadow: 0 0 2px #fff, 0 0 4px #fff; }
+  20% { opacity: 0; text-shadow: 0 0 0 #fff; }
+  30% { opacity: 1; text-shadow: 0 0 3px #fff, 0 0 6px #fff; }
+  40% { opacity: 0.5; text-shadow: 0 0 1px #fff, 0 0 2px #fff; }
+  50% { opacity: 1; text-shadow: 0 0 4px #fff, 0 0 8px #fff; }
+  60%, 100% { opacity: 1; text-shadow: 0 0 3.75px #fff, 0 0 7.5px #fff, 0 0 15px #fff, 0 0 22.5px #fff; }
+}
+
+/* Subsequent soft flicker */
 @keyframes whiteFlicker {
   0%, 24%, 26%, 60%, 65%, 100% {
-    text-shadow:
-      0 0 1.25px #fff,
-      0 0 4px #fff,
-      0 0 7px #fff,
-      0 0 10.5px #fff;
+    text-shadow: 0 0 3.75px #fff, 0 0 7.5px #fff, 0 0 15px #fff, 0 0 22.5px #fff;
     opacity: 1;
   }
   25%, 61%, 64% {
-    text-shadow:
-      0 0 1.5px #fff,
-      0 0 3px #fff,
-      0 0 6px #fff,
-      0 0 9px #fff;
-    opacity: 0.85; /* slightly dim */
+    text-shadow: 0 0 1.5px #fff, 0 0 3px #fff, 0 0 6px #fff, 0 0 9px #fff;
+    opacity: 0.85;
   }
 }
+
 
 /* Main inventory box */
 .main-container {
