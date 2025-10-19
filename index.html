@@ -275,26 +275,26 @@ createStars();
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const now = Date.now();
-  for(let s of stars){
+  for (let s of stars) {
     s.z -= s.speed;
     if(s.z<=0) s.z = canvas.width;
-    let shimmer = 0.6+0.4*Math.sin(time*0.001+s.phase);
 
-    // Twinkle effect
-    if(now > s.twinkleTime) {
-      shimmer = 1;
-      s.twinkleTime = now + 7000 + Math.random()*8000; // next twinkle
+    // Only 20% of stars twinkle visibly
+    let shimmer = 1;
+    if (Math.random() < 0.2) {
+        shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
     }
 
     ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fillStyle = s.color;
     ctx.globalAlpha = shimmer;
     ctx.shadowBlur = s.size*4;
     ctx.shadowColor = s.color;
     ctx.fill();
-  }
-  ctx.globalAlpha = 1;
+}
+ctx.globalAlpha = 1;
+
   requestAnimationFrame(drawStars);
 }
 drawStars();
