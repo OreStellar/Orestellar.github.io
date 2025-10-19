@@ -276,7 +276,7 @@ function drawStars(time=0) {
   for (let s of stars) {
     s.z -= s.speed;
     if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.002 + s.phase);
+    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fillStyle = s.color;
@@ -306,7 +306,7 @@ function flickerLogo() {
     0 0 ${size4}px rgba(255,255,255,${intensity*0.4})
   `;
 }
-setInterval(flickerLogo, 50 + Math.random()*100);
+setInterval(flickerLogo, 50 + Math.random()*250);
 
 // === App logic ===
 let priceList = {};
