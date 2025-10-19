@@ -343,14 +343,16 @@ totalCostText.addEventListener('click',()=>{
 const header=document.getElementById('myHeader');
 const logo=document.getElementById('logoText');
 const logoRect=logo.getBoundingClientRect();
-const lCanvas=document.createElement('canvas');
-lCanvas.width=window.innerWidth;
-lCanvas.height=window.innerHeight;
-lCanvas.style.position='fixed';
-lCanvas.style.top=0;
-lCanvas.style.left=0;
-lCanvas.style.zIndex=10;
+const lCanvas = document.createElement('canvas');
+lCanvas.width = window.innerWidth;
+lCanvas.height = window.innerHeight;
+lCanvas.style.position = 'fixed';
+lCanvas.style.top = 0;
+lCanvas.style.left = 0;
+lCanvas.style.zIndex = 10;
+lCanvas.style.pointerEvents = 'none'; // <-- THIS MAKES EVERYTHING CLICKABLE
 document.body.appendChild(lCanvas);
+
 const lctx=lCanvas.getContext('2d');
 
 header.addEventListener('click',()=>{
