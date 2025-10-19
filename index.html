@@ -29,7 +29,7 @@ textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; 
 #summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
 #summaryContainer li span:last-child { color:#00ff00; min-width:120px; text-align:right; }
 #summaryTotal { text-align:right; color:#00ff00; font-weight:bold; margin-top:5px; }
-#copiedMessage { display:none; color:#00ff00; font-weight:bold; position:absolute; font-size:16px; pointer-events:none; }
+#copiedMessage { display:none; color:#00ff00; font-weight:bold; position:absolute; font-size:16px; pointer-events:none; top:50%; left:50%; transform:translate(-50%,-50%); }
 
 /* Starfield */
 </style>
@@ -105,7 +105,7 @@ function drawStars(time=0){
 drawStars(0);
 window.addEventListener("resize",()=>{ resizeCanvas(); createStars(); });
 
-// === Prices and Summary ===
+// === Prices & Summary ===
 let priceList={};
 async function loadPrices(){
   const response=await fetch('data/prices.csv');
@@ -150,7 +150,7 @@ function showContent(){
 }
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-// === Copied Message ===
+// Copied message blueprint
 const totalText=document.getElementById('totalCostText');
 const copiedMsg=document.getElementById('copiedMessage');
 totalText.addEventListener('click',()=>{
@@ -159,7 +159,7 @@ totalText.addEventListener('click',()=>{
   setTimeout(()=>copiedMsg.style.display='none',1500);
 });
 
-// === Logo Explosion ===
+// Logo explosion with extended duration
 const logo=document.getElementById('logoText');
 logo.addEventListener('click',()=>{
   const rect=logo.getBoundingClientRect();
@@ -174,15 +174,14 @@ logo.addEventListener('click',()=>{
   const pieceWidth=rect.width/cols, pieceHeight=rect.height/rows;
   for(let i=0;i<cols;i++){
     for(let j=0;j<rows;j++){
-      pieces.push({x:rect.left+i*pieceWidth+pieceWidth/2, y:rect.top+j*pieceHeight+pieceHeight/2, vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8, w:pieceWidth, h:pieceHeight, color:colors[Math.floor(Math.random()*colors.length)]});
+      pieces.push({x:rect.left+i*pieceWidth+pieceWidth/2, y:rect.top+j*pieceHeight+pieceHeight/2, vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4, w:pieceWidth, h:pieceHeight, color:colors[Math.floor(Math.random()*colors.length)]});
     }
   }
   logo.style.visibility='hidden';
-  let burstRadius=0, burstSpeed=4, rotation=0;
-  function animate(t){
+  let burstRadius=0, burstSpeed=2, rotation=0; // slower speed for longer animation
+  function animate(){
     ctx2.clearRect(0,0,canvas.width,canvas.height);
-    burstRadius+=burstSpeed; rotation+=0.02; if(burstSpeed<40) burstSpeed+=0.5;
-    // burst light
+    burstRadius+=burstSpeed; rotation+=0.01; if(burstSpeed<20) burstSpeed+=0.2;
     const grad=ctx2.createRadialGradient(rect.left+rect.width/2,rect.top+rect.height/2,0,rect.left+rect.width/2,rect.top+rect.height/2,burstRadius);
     grad.addColorStop(0,'rgba(255,255,255,1)');
     grad.addColorStop(0.3,'rgba(173,216,255,0.6)');
@@ -191,7 +190,6 @@ logo.addEventListener('click',()=>{
     ctx2.beginPath();
     ctx2.arc(rect.left+rect.width/2,rect.top+rect.height/2,burstRadius,0,Math.PI*2);
     ctx2.fill();
-    // pieces
     pieces.forEach(p=>{
       p.x+=p.vx; p.y+=p.vy;
       ctx2.save();
@@ -206,7 +204,7 @@ logo.addEventListener('click',()=>{
   animate();
 });
 
-// Click header refresh
+// Header refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
 </body>
