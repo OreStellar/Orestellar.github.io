@@ -180,14 +180,29 @@ textarea#message {
   box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
 }
 #copiedMessage {
-  display:none;
-  color: yellow;
-  position: fixed;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
+  display: none;
+  color: #ffffff;
+  font-size: 36px; /* much bigger */
   font-weight: bold;
-  font-size: 18px;
+  position: fixed;
+  top: 40%;  /* slightly above center */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 10px #fff, 0 0 20px #aaa; /* neon glow */
+  background: rgba(0,0,0,0.6); /* subtle overlay */
+  padding: 20px 40px;
+  border-radius: 15px;
+  z-index: 10000; /* above everything */
+  animation: popFade 1.5s forwards;
 }
+
+@keyframes popFade {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
 
 /* Contracts and summary */
 .contracts-wrapper {
@@ -439,10 +454,14 @@ document.getElementById('submitButton').addEventListener('click', showContent);
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
   const txt = document.getElementById('popupTotalPrice').innerText;
   navigator.clipboard.writeText(txt);
-  document.getElementById('copiedMessage').style.display='block';
-  setTimeout(()=>document.getElementById('copiedMessage').style.display='none',1500);
-  document.getElementById('totalPriceModal').style.display='none';
+  
+  const copiedMsg = document.getElementById('copiedMessage');
+  copiedMsg.style.display = 'block';
+  copiedMsg.style.animation = 'none'; // reset animation
+  copiedMsg.offsetHeight; // trigger reflow
+  copiedMsg.style.animation = ''; // start animation
 });
+
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
