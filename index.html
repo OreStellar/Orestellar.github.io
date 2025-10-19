@@ -148,7 +148,9 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
 
     for(let i=0;i<pieceCount;i++){
         const p=document.createElement('div');
-        const size=Math.random()*8+4;
+        // Smaller size for main piece
+        let size = Math.random()*8+4;
+        if(i===0) size = 4; // small piece for flying past
         p.style.width=size+'px';
         p.style.height=size+'px';
         p.style.background='white';
@@ -159,9 +161,9 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.zIndex=10;
         document.body.appendChild(p);
 
-        // One main piece comes straight at viewer
+        // velocities
         let vz = 0;
-        if(i===0) vz = 12;  // super fast toward viewer
+        if(i===0) vz = 10;  // fast but small piece
         else vz = Math.random()*2+1;  // others scatter
 
         pieces.push({
@@ -181,7 +183,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         pieces.forEach(p=>{
             p.x += p.vx;
             p.y += p.vy;
-            p.scale += p.vz*0.05;
+            p.scale += p.vz*0.03; // slower scale to appear passing by
             p.angle += p.angularVelocity;
             p.el.style.left = p.x - (p.scale*4) + 'px';
             p.el.style.top = p.y - (p.scale*4) + 'px';
@@ -195,6 +197,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
 
     setTimeout(()=>location.reload(),4000);
 });
+
 
 
 </script>
