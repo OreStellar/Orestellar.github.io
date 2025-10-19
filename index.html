@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron -->
+<!-- Google Font: Orbitron for sleek sci-fi -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -17,7 +17,7 @@ html, body {
   color: white;
 }
 
-canvas#starfield {
+canvas#starfield, canvas#logoCanvas {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0; pointer-events: none;
@@ -34,7 +34,7 @@ canvas#starfield {
   cursor: pointer;
 }
 
-/* Logo with scanline and shatter */
+/* Logo with scanline */
 #logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
@@ -44,12 +44,7 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  cursor: pointer;
-  text-transform: capitalize; /* OreStellar */
-}
-#logoText span {
-  display: inline-block;
-  position: relative;
+  text-transform: capitalize; /* ensures OreStellar casing */
 }
 
 /* Scanline overlay */
@@ -132,25 +127,23 @@ textarea#message {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
 }
-
 .total-cost-container {
   width: 630px; height: 418px;
   background-size: contain; background-position: center; background-repeat: no-repeat;
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
-  cursor: pointer;
 }
-
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
-  top: calc(50% + 23px); /* 5px lower */
-  left: calc(50% + 10px); /* 10px right */
+  top: calc(50% + 23px); /* lowered 5px */
+  left: calc(50% + 10px); /* moved over 10px */
   font-size: 16px;
   font-weight: bold;
   color: #00ff00;
+  cursor: pointer;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
@@ -172,30 +165,30 @@ textarea#message {
 }
 #summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li span:last-child { min-width: 120px; text-align: right; }
+#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
+#summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
 #copiedMessage {
-  display:none;
-  position: absolute;
-  top: calc(50% + 23px);
-  left: calc(50% + 10px);
-  font-weight: bold;
-  font-size: 16px;
   color: #00ff00;
+  font-weight: bold;
+  font-size: 18px;
+  position: absolute;
+  display: none;
+  pointer-events: none;
 }
 
 /* Info button */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 .info-button button { background: white; color: black; border-radius: 50%; }
-
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
+<canvas id="logoCanvas"></canvas>
 
 <header id="myHeader">
-  <h1 id="logoText" data-text="OreStellar"></h1>
+  <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
 </header>
 
 <div class="container-wrapper">
@@ -220,24 +213,24 @@ textarea#message {
 
 <script>
 // === Starfield ===
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
+const starCanvas = document.getElementById("starfield");
+const starCtx = starCanvas.getContext("2d");
 let stars = [];
 const clusterCount = 12;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function resizeStarCanvas() {
+  starCanvas.width = window.innerWidth;
+  starCanvas.height = window.innerHeight;
 }
-resizeCanvas();
+resizeStarCanvas();
+window.addEventListener('resize', resizeStarCanvas);
 
 function createStars() {
   stars = [];
   const clusterCenters = [];
   for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+    clusterCenters.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight });
   }
-
   const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
@@ -248,13 +241,12 @@ function createStars() {
       x = c.x + radius * Math.cos(angle);
       y = c.y + radius * Math.sin(angle);
     } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
+      x = Math.random() * window.innerWidth;
+      y = Math.random() * window.innerHeight;
     }
-
     stars.push({
       x, y,
-      z: Math.random() * canvas.width,
+      z: Math.random() * window.innerWidth,
       size: Math.random() * 1.5 + 0.2,
       color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
       speed: Math.random() * 0.2 + 0.05,
@@ -265,48 +257,25 @@ function createStars() {
 createStars();
 
 function drawStars(time=0) {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
   for (let s of stars) {
     s.z -= s.speed;
-    if (s.z <= 0) s.z = canvas.width;
+    if (s.z <= 0) s.z = window.innerWidth;
     const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = shimmer;
-    ctx.shadowBlur = s.size*4;
-    ctx.shadowColor = s.color;
-    ctx.fill();
+    starCtx.beginPath();
+    starCtx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    starCtx.fillStyle = s.color;
+    starCtx.globalAlpha = shimmer;
+    starCtx.shadowBlur = s.size*4;
+    starCtx.shadowColor = s.color;
+    starCtx.fill();
   }
-  ctx.globalAlpha = 1;
+  starCtx.globalAlpha = 1;
   requestAnimationFrame(drawStars);
 }
 drawStars(0);
-window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
 
-// === Logo shatter ===
-const logoText = document.getElementById('logoText');
-logoText.innerHTML = logoText.getAttribute('data-text').split('').map(l=>`<span class="letter">${l}</span>`).join('');
-logoText.addEventListener('click', ()=>{
-  const letters = document.querySelectorAll('#logoText span');
-  letters.forEach(l => {
-    const angle = Math.random() * Math.PI*2;
-    const speed = 200 + Math.random()*100;
-    const rotate = (Math.random()-0.5)*720;
-
-    l.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-    l.style.transform = `translate(${Math.cos(angle)*speed}px,${Math.sin(angle)*speed}px) rotate(${rotate}deg)`;
-
-    setTimeout(()=>{
-      const slowAngle = Math.random()*Math.PI*2;
-      const slowSpeed = 100 + Math.random()*100;
-      l.style.transition = 'transform 2s ease-out, opacity 2s ease-out';
-      l.style.transform = `translate(${Math.cos(angle)*speed + Math.cos(slowAngle)*slowSpeed}px,${Math.sin(angle)*speed + Math.sin(slowAngle)*slowSpeed}px) rotate(${rotate}deg)`;
-    }, 300);
-  });
-});
-
-// === Price loading & submit ===
+// === App logic ===
 let priceList = {};
 async function loadPrices() {
   const response = await fetch('data/prices.csv');
@@ -316,79 +285,148 @@ async function loadPrices() {
   const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
   for (let i=1;i<lines.length;i++){
     const cols = lines[i].split(',');
-    const ore = cols[0].trim().toLowerCase();
+    const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore]=price;
+    if(!isNaN(price)) priceList[ore.toLowerCase()]=price; // lowercase for recognition
   }
   document.getElementById('submitButton').disabled=false;
 }
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
+
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    el.innerText = current.toLocaleString() + " ISK";
+    el.innerText = formatNumber(Math.floor(progress*(end-start)+start)) + " ISK";
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
-document.getElementById('submitButton').addEventListener('click', ()=>{
+// === Show content ===
+function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
 
   while((match = regex.exec(t)) !== null){
-    const name = match[1].trim();
-    const qty = parseInt(match[2]);
-    const key = name.toLowerCase();
-    const price = priceList[key];
-    summary.push({
-      name, qty,
-      val: price ? qty*price : 0,
-      unknown: !price
-    });
-    if(price) total += qty*price;
+    const name = match[1].trim(), qty = parseInt(match[2]);
+    const lowerName = name.toLowerCase();
+    if(priceList[lowerName]) {
+      summary.push({name, qty, val: qty*priceList[lowerName], recognized:true});
+      total += qty*priceList[lowerName];
+    } else {
+      summary.push({name, qty, val: 0, recognized:false});
+    }
   }
 
+  // Populate summary
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span style="color:${i.unknown?'#ff5555':'#00ff00'}">${i.unknown?'Unknown':formatNumber(i.val)+' ISK'}</span>`;
+    li.innerHTML = `<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff4444'}">${i.recognized?formatNumber(i.val)+' ISK':'Unrecognized'}</span>`;
     list.appendChild(li);
   });
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.style.display='flex';
 
-  document.getElementById('summaryContainer').style.display='flex';
-  document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
+  // Show contracts
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
 
-  animateCount(document.getElementById('totalCostText'),0,total);
-});
+  // Animate totals
+  const totalCostText = document.getElementById('totalCostText');
+  totalCostText.innerText = formatNumber(total) + " ISK";
+}
 
-// === Total ISK copied functionality ===
-const totalContainer = document.getElementById('totalCostContainer');
-const totalText = document.getElementById('totalCostText');
+// === Copy functionality ===
+const totalCostText = document.getElementById('totalCostText');
 const copiedMsg = document.getElementById('copiedMessage');
 
-totalContainer.addEventListener('click', ()=>{
-  const originalText = totalText.innerText;
-  totalText.style.visibility='hidden';
+totalCostText.addEventListener('click', ()=>{
+  navigator.clipboard.writeText(totalCostText.innerText);
   copiedMsg.style.display='block';
-  navigator.clipboard.writeText(originalText);
+  totalCostText.style.visibility='hidden';
   setTimeout(()=>{
-    totalText.style.visibility='visible';
     copiedMsg.style.display='none';
-  },2000);
+    totalCostText.style.visibility='visible';
+  },1500);
 });
 
-</script>
+document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
+// === Logo Shatter ===
+const logo = document.getElementById('logoText');
+const logoCanvas = document.getElementById('logoCanvas');
+const logoCtx = logoCanvas.getContext('2d');
+let pieces = [];
+
+function resizeLogoCanvas(){
+  logoCanvas.width = window.innerWidth;
+  logoCanvas.height = window.innerHeight;
+}
+resizeLogoCanvas();
+window.addEventListener('resize', resizeLogoCanvas);
+
+function shatterLogo(){
+  const rect = logo.getBoundingClientRect();
+  const fontSize = parseInt(window.getComputedStyle(logo).fontSize);
+
+  const off = document.createElement('canvas');
+  off.width = rect.width;
+  off.height = rect.height;
+  const offCtx = off.getContext('2d');
+  offCtx.font = `${fontSize}px Orbitron`;
+  offCtx.fillStyle = 'white';
+  offCtx.fillText(logo.textContent, 0, fontSize);
+
+  const imgData = offCtx.getImageData(0,0,off.width, off.height);
+  const grid = 5;
+  pieces = [];
+  for(let y=0; y<off.height; y+=grid){
+    for(let x=0; x<off.width; x+=grid){
+      const idx = (y*off.width + x)*4;
+      const alpha = imgData.data[idx+3];
+      if(alpha>0){
+        pieces.push({
+          x: rect.left + x,
+          y: rect.top + y,
+          vx: (Math.random()-0.5)*8,
+          vy: (Math.random()-1.5)*8,
+          size: grid,
+          color: `rgba(${imgData.data[idx]},${imgData.data[idx+1]},${imgData.data[idx+2]},${alpha/255})`
+        });
+      }
+    }
+  }
+
+  logo.style.visibility='hidden';
+  animatePieces();
+}
+
+function animatePieces(){
+  logoCtx.clearRect(0,0,logoCanvas.width,logoCanvas.height);
+  let stillMoving=false;
+  pieces.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.95;
+    p.vy *= 0.95;
+    logoCtx.fillStyle = p.color;
+    logoCtx.fillRect(p.x,p.y,p.size,p.size);
+    if(Math.abs(p.vx)>0.1 || Math.abs(p.vy)>0.1) stillMoving=true;
+  });
+  if(stillMoving) requestAnimationFrame(animatePieces);
+  else setTimeout(()=>{logo.style.visibility='visible'; logoCtx.clearRect(0,0,logoCanvas.width,logoCanvas.height);},1000);
+}
+
+logo.addEventListener('click', shatterLogo);
+</script>
 </body>
 </html>
