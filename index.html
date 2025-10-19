@@ -44,7 +44,7 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-transform: capitalize; /* ensures OreStellar casing */
+  text-transform: capitalize;
 }
 
 /* Scanline overlay */
@@ -136,8 +136,8 @@ textarea#message {
   max-width: 90%;
   padding: 20px;
   background: radial-gradient(circle at 50% 50%, #001100, #000000);
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff inset;
   text-align: center;
   color: white;
 }
@@ -150,23 +150,18 @@ textarea#message {
   text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
-/* Popup total price styling */
 #popupTotalPrice {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: white; /* default text white for anything outside spans */
-  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
 #popupTotalPrice .number,
 #popupTotalPrice .isk {
-  color: #00ff00; /* bright green */
+  color: #00ff00;
   text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
 }
 
-
-/* Copy button */
 #totalPriceModal button {
   background: white;
   color: black;
@@ -175,35 +170,19 @@ textarea#message {
   padding: 10px 20px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 10px #fff;
+  box-shadow: 0 0 10px white;
   transition: all 0.3s ease;
 }
 #totalPriceModal button:hover {
-  box-shadow: 0 0 20px #fff, 0 0 40px #fff inset;
+  box-shadow: 0 0 20px white, 0 0 40px white inset;
 }
 
-/* Copied message */
 #copiedMessage {
-  display: none;
-  color: white;
-  font-size: 36px;
+  display:none;
+  color: yellow;
   font-weight: bold;
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-shadow: 0 0 10px #fff, 0 0 20px #aaa;
-  background: rgba(0,0,0,0.6);
-  padding: 20px 40px;
-  border-radius: 15px;
-  z-index: 10000;
-  animation: popFade 1.5s forwards;
-}
-@keyframes popFade {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  font-size: 18px;
+  margin-top: 10px;
 }
 
 /* Contracts and summary */
@@ -222,7 +201,7 @@ textarea#message {
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
-  top: calc(50% + 25px);
+  top: calc(50% + 18px);
   left: 50%;
   transform: translate(calc(-50% + 15px), -50%);
   font-size: 16px;
@@ -249,13 +228,19 @@ textarea#message {
 }
 #summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
+#summaryContainer li span:last-child { min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-/* Info button */
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
-.info-button button { background: white; color: black; border-radius: 50%; }
+.unrecognized {
+  color: red;
+  font-weight: bold;
+  animation: glowRed 1s infinite alternate;
+}
 
+@keyframes glowRed {
+  0% { text-shadow: 0 0 5px #ff0000; }
+  100% { text-shadow: 0 0 15px #ff5555; }
+}
 </style>
 </head>
 <body>
@@ -270,10 +255,8 @@ textarea#message {
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-center">
     <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice">
-  <span class="number">0</span> <span class="isk">ISK</span>
-</p>
-    <button id="closeTotalModal">copy</button>
+    <p id="popupTotalPrice"><span class="number">0</span> <span class="isk">ISK</span></p>
+    <button id="closeTotalModal">Copy</button>
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
@@ -291,12 +274,9 @@ textarea#message {
       <ul id="summaryList"></ul>
       <div id="summaryTotal"></div>
     </div>
-<div id="totalCostContainer" class="total-cost-container">
-  <div id="totalCostText">
-    <span class="number">0</span> <span class="isk">ISK</span>
-  </div>
-</div>
-
+    <div id="totalCostContainer" class="total-cost-container">
+      <div id="totalCostText">0 ISK</div>
+    </div>
   </div>
 </div>
 
@@ -385,34 +365,40 @@ async function loadPrices() {
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
-
-// Animate totals
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   const numberSpan = el.querySelector(".number");
   const iskSpan = el.querySelector(".isk");
-
+  
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    numberSpan.innerText = Math.floor(progress*(end-start)+start).toLocaleString();
-    iskSpan.innerText = "ISK"; // ensure ISK stays green
+    const current = Math.floor(progress*(end-start)+start);
+    numberSpan.innerText = current.toLocaleString();
+    iskSpan.innerText = "ISK";
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
-
 
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
 
+  const priceLowerMap = {};
+  for (const [k,v] of Object.entries(priceList)) priceLowerMap[k.toLowerCase()] = v;
+
   while((match = regex.exec(t)) !== null){
-    const name = match[1].trim(), qty = parseInt(match[2]);
-    if(priceList[name]) {
-      summary.push({name, qty, val: qty*priceList[name]});
-      total += qty*priceList[name];
+    const name = match[1].trim();
+    const qty = parseInt(match[2]);
+    const oreLower = name.toLowerCase();
+    
+    if(priceLowerMap[oreLower]) {
+      summary.push({name, qty, val: qty*priceLowerMap[oreLower], recognized: true});
+      total += qty*priceLowerMap[oreLower];
+    } else {
+      summary.push({name, qty, val: 0, recognized: false});
     }
   }
 
@@ -421,12 +407,16 @@ function showContent(){
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    if(i.recognized) {
+      li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    } else {
+      li.innerHTML = `<span class="unrecognized">${i.name}</span><span class="unrecognized">Unrecognized</span>`;
+    }
     list.appendChild(li);
   });
+
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
-
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   // Show contracts
@@ -441,30 +431,21 @@ function showContent(){
   animateCount(document.getElementById('popupTotalPrice'),0,total);
 
   // Show total ISK popup
-  document.getElementById('totalPriceModal').style.display = 'block';
+  const popup = document.getElementById('totalPriceModal');
+  popup.style.display = 'block';
 }
 
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-document.getElementById('closeTotalModal').addEventListener('click', () => {
+document.getElementById('closeTotalModal').addEventListener('click',()=>{
   const txt = document.getElementById('popupTotalPrice').innerText;
   navigator.clipboard.writeText(txt);
-
-  const copied = document.getElementById('copiedMessage');
-  copied.style.display = 'block';
-  copied.style.top = 'calc(50% - 100px)'; // move above popup
-  copied.style.color = 'lime'; // bright color
-  copied.style.fontSize = '20px';
-  copied.style.fontWeight = 'bold';
-
-  // Hide popup
-  document.getElementById('totalPriceModal').style.display = 'none';
-
-  // Hide message after 1.5s
-  setTimeout(() => { copied.style.display = 'none'; }, 1500);
+  const msg = document.getElementById('copiedMessage');
+  msg.style.display='block';
+  setTimeout(()=>{ msg.style.display='none'; },1500);
+  document.getElementById('totalPriceModal').style.display='none';
 });
-
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
