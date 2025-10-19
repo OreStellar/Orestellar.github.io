@@ -155,37 +155,43 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.position='fixed';
         p.style.left=(rect.left+rect.width/2)+'px';
         p.style.top=(rect.top+rect.height/2)+'px';
-        p.style.borderRadius='50%'; // spherical pieces
+        p.style.borderRadius='50%';
         p.style.zIndex=10;
         document.body.appendChild(p);
         pieces.push({
             el:p,
-            vx:(Math.random()-0.5)*6,       // horizontal spread
-            vy:(Math.random()-0.2)*1,       // slower vertical fall
-            gravity:0.02,                    // slower falling
-            angle: Math.random()*360,        // initial rotation
-            angularVelocity:(Math.random()-0.5)*0.5 // rotation speed
+            x:rect.left+rect.width/2,
+            y:rect.top+rect.height/2,
+            vx:(Math.random()-0.5)*4,
+            vy:(Math.random()-0.5)*4,
+            vz: Math.random()*6+2,  // velocity towards viewer
+            scale:1,
+            angularVelocity:(Math.random()-0.5)*0.5,
+            angle: Math.random()*360
         });
     }
 
-    // Animate pieces
     function animate(){
         pieces.forEach(p=>{
-            const e=p.el;
-            p.vy += p.gravity;
-            e.style.left = (parseFloat(e.style.left)+p.vx)+'px';
-            e.style.top = (parseFloat(e.style.top)+p.vy)+'px';
+            // move in x/y
+            p.x += p.vx;
+            p.y += p.vy;
+            // move toward viewer
+            p.scale += p.vz*0.05;
+            // apply transform
             p.angle += p.angularVelocity;
-            e.style.transform = `rotate(${p.angle}deg)`;
+            p.el.style.left = p.x - (p.scale*4) + 'px';
+            p.el.style.top = p.y - (p.scale*4) + 'px';
+            p.el.style.width = p.scale*8 + 'px';
+            p.el.style.height = p.scale*8 + 'px';
+            p.el.style.transform = `rotate(${p.angle}deg)`;
         });
         requestAnimationFrame(animate);
     }
     animate();
 
-    // Refresh page 4 seconds after click
-    setTimeout(()=>location.reload(), 4000);
+    setTimeout(()=>location.reload(),4000);
 });
-
 
 </script>
 </body>
