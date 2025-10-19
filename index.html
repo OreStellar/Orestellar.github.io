@@ -200,15 +200,18 @@ textarea#message:focus {
   align-items: flex-end;
   justify-content: flex-start;
   font-family: 'Orbitron', sans-serif;
-  color: #00ffcc;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(0, 255, 204, 0.3);
-  border-radius: 8px;
-  padding: 10px 20px;
+  color: #00ffaa; /* Match the total ISK green */
+  background: rgba(0, 10, 0, 0.75); /* Darker, less transparent for readability */
+  border: 1px solid rgba(0, 255, 170, 0.5);
+  border-radius: 10px;
+  padding: 12px 24px;
   width: fit-content;
   min-width: 280px;
-  max-width: 400px;
-  text-shadow: 0 0 6px #00ffcc;
+  max-width: 420px;
+  max-height: 400px;
+  overflow-y: auto;
+  text-shadow: 0 0 8px #00ffaa; /* Subtle glow for clarity, not hover */
+  box-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
 }
 
 .summary-row {
@@ -216,29 +219,34 @@ textarea#message:focus {
   justify-content: space-between;
   width: 100%;
   gap: 20px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  font-size: 15px;
 }
 
 .summary-row span:first-child {
   flex: 1;
   text-align: left;
+  color: #ccffdd; /* Slightly dimmer for text contrast */
 }
 
 .summary-row span:last-child {
-  flex: 0 0 120px;
+  flex: 0 0 130px;
   text-align: right;
+  color: #00ffaa;
 }
 
 .summary-total {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  border-top: 1px solid rgba(0, 255, 204, 0.3);
+  border-top: 1px solid rgba(0, 255, 170, 0.4);
   padding-top: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
   font-weight: bold;
   color: #00ffaa;
+  text-shadow: 0 0 8px #00ffaa;
 }
+
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 @keyframes unifiedGlow {
