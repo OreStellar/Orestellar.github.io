@@ -24,28 +24,17 @@ canvas#starfield {
   z-index: 0; pointer-events: none;
 }
 /* Center logo relative to main container */
-#myHeader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 0;
-  margin-bottom: 30px; /* adjust spacing between logo and main box */
-}
 
-#logoText {
-  margin: 0;
-  text-align: center;
-}
 /* Header */
 #myHeader {
-  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -120%);
   text-align: center;
-  position: relative;
+  width: 100%;
   z-index: 3;
   background: transparent;
-  padding: 40px 0;
-  cursor: pointer;
 }
 
 /* Logo */
