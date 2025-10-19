@@ -158,7 +158,12 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.borderRadius='2px';
         p.style.zIndex=10;
         document.body.appendChild(p);
-        pieces.push({el:p,vx:(Math.random()-0.5)*2,vy:(Math.random()-1)*2,gravity:0.1});
+        pieces.push({
+            el:p,
+            vx:(Math.random()-0.5)*6,   // wider horizontal spread
+            vy:(Math.random()-0.2)*1,   // slower and less vertical drop
+            gravity:0.02                 // slower falling
+        });
     }
 
     let frames=0;
@@ -174,6 +179,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         else location.reload();
     });
 });
+
 </script>
 </body>
 </html>
