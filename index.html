@@ -61,18 +61,15 @@ canvas#starfield {
   text-transform: capitalize;
   display: inline-block;
 
-  /* Lean effect */
-  transform: skew(-15deg, 0deg) rotate(-2deg);
+  /* Lean effect + lift up 20px */
+  transform: skew(-15deg, 0deg) rotate(-2deg) translateY(-20px);
 
   /* Reduce glow by 30% */
   text-shadow: 
     0 0 3.5px #fff,      /* was 5px */
     0 0 7px #fff,         /* was 10px */
-    0 0 14px #ff99ff44,   /* was 20px (approx 30% down) */
-    0 0 21px #ff99ff23;   /* was 30px (approx 30% down) */
-
-  /* Lift logo 20px */
-  margin-bottom: -20px; /* lifts it up relative to container below */
+    0 0 14px #ff99ff44,   /* was 20px */
+    0 0 21px #ff99ff23;   /* was 30px */
 
   transition: transform 0.3s ease;
 }
