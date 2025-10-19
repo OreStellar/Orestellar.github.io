@@ -275,7 +275,7 @@ textarea#message {
       <div id="summaryTotal"></div>
     </div>
     <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
+      <div id="totalCostText"><span class="number">0</span> <span class="isk">ISK</span></div>
     </div>
   </div>
 </div>
@@ -366,20 +366,21 @@ loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el, start, end, duration=2000) {
-  let startTime = null;
-  const numberSpan = el.querySelector(".number");
-  const iskSpan = el.querySelector(".isk");
-  
-  function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    numberSpan.innerText = current.toLocaleString();
-    iskSpan.innerText = "ISK";
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
+    let startTime = null;
+    const numberSpan = el.querySelector(".number");
+    const iskSpan = el.querySelector(".isk");
+
+    function step(t) {
+        if (!startTime) startTime = t;
+        let progress = Math.min((t - startTime)/duration, 1);
+        const current = Math.floor(progress * (end - start) + start);
+        numberSpan.innerText = current.toLocaleString();
+        iskSpan.innerText = "ISK";
+        if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
 }
+
 
 function showContent(){
   const t = document.getElementById('message').value;
@@ -454,16 +455,17 @@ const totalModal = document.getElementById('totalPriceModal');
 const totalContent = totalModal.querySelector('.w3-modal-content');
 const copiedMessage = document.getElementById('copiedMessage');
 
+// Copy button click
 document.getElementById('closeTotalModal').addEventListener('click', (e) => {
-    e.stopPropagation(); // prevent triggering the outside click
+    e.stopPropagation(); // Prevent triggering outside click
     const txt = document.getElementById('popupTotalPrice').innerText;
     navigator.clipboard.writeText(txt);
 
-    // Show copied message temporarily
+    // Show copied message
     copiedMessage.style.display = 'block';
     setTimeout(() => copiedMessage.style.display = 'none', 1500);
 
-    // Close popup after showing message
+    // Close popup after showing
     totalModal.style.display = 'none';
 });
 
@@ -473,6 +475,7 @@ totalModal.addEventListener('click', (e) => {
         totalModal.style.display = 'none';
     }
 });
+
 </script>
 
 </body>
