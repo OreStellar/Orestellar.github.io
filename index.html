@@ -33,29 +33,7 @@ header img {
   pointer-events: auto;
   cursor: pointer;
   opacity: 0.85; /* semi-transparent */
-  filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #ffffff);
-  animation: neonPulse 2s infinite alternate;
-  transition: all 0.3s ease;
 }
-
-header img:hover {
-  opacity: 1;
-  filter: drop-shadow(0 0 10px #ffffff) drop-shadow(0 0 20px #ffffff);
-}
-
-/* Subtle pulsing neon effect */
-@keyframes neonPulse {
-  0% {
-    filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #ffffff);
-  }
-  50% {
-    filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
-  }
-  100% {
-    filter: drop-shadow(0 0 6px #ffffff) drop-shadow(0 0 12px #ffffff);
-  }
-}
-
 
 /* Containers */
 .container-wrapper {
