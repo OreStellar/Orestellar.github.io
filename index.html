@@ -5,186 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron for sleek sci-fi -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
-  font-family: monospace;
-  color: white;
-}
+html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
+canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
-canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
+#myHeader { width:100%; text-align:center; position:relative; z-index:3; background:transparent; padding:40px 0; cursor:pointer; }
+#logoText { font-family:'Orbitron', sans-serif; font-weight:700; font-size:5rem; color:#fff; letter-spacing:2px; position:relative; display:inline-block; overflow:hidden; text-transform:capitalize; }
+#logoText::before { content: attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%); background-size:100% 4px; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation: scanline 2s linear infinite; }
+@keyframes scanline { 0% { background-position: 0 0; } 100% { background-position:0 100%; } }
 
-/* Header */
-#myHeader {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  z-index: 3;
-  background: transparent;
-  padding: 40px 0;
-  cursor: pointer;
-}
+.container-wrapper { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:20px; z-index:2; }
+.main-container { width:650px; max-width:90%; padding:25px; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color: rgba(20,20,20,0.85); border-radius:15px; box-shadow:0 0 20px #ffffff40; }
+textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; resize:vertical; }
+.quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
+@keyframes glowPulse { 0%,100% { text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1; } 50% { text-shadow:0 0 15px #fff,0 0 20px #aaa; } }
+#submitButton { background-color:#fff; color:black; border:none; border-radius:8px; padding:15px 30px; font-weight:bold; cursor:pointer; box-shadow:0 0 15px 3px white; transition:all 0.3s ease; margin-top:15px; }
+#submitButton:hover { box-shadow:0 0 25px 5px #2fff1c; }
 
-/* Logo with scanline */
-#logoText {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 5rem;
-  color: #fff;
-  letter-spacing: 2px;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  text-transform: capitalize; /* ensures OreStellar casing */
-}
+.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:10px; flex-wrap:wrap; width:100%; }
+.total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; cursor:pointer; }
+#leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
+#totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#totalCostText { position:absolute; top:calc(50% + 23px); left:calc(50% + 10px); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
+#copiedMessage { display:none; color:#00ff00; font-weight:bold; font-size:18px; position:absolute; top:50%; left:50%; transform:translate(calc(-50% + 10px), calc(-50% + 23px)); pointer-events:none; }
 
-/* Scanline overlay */
-#logoText::before {
-  content: attr(data-text);
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: scanline 2s linear infinite;
-}
-@keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
-}
+#summaryContainer { display:none; flex-direction:column; align-items:center; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; color:white; font-family:monospace; max-height:418px; min-width:280px; max-width:400px; overflow-y:auto; }
+#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
+#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
+#summaryContainer li span:last-child { color:#00ff00; min-width:120px; text-align:right; }
+#summaryContainer li.unrecognized span:last-child { color:red; text-shadow:0 0 5px red,0 0 10px red; }
 
-/* Container wrapper */
-.container-wrapper {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  z-index: 2;
-}
-
-/* Main inventory box */
-.main-container {
-  width: 650px;
-  max-width: 90%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(20,20,20,0.85);
-  border-radius: 15px;
-  box-shadow: 0 0 20px #ffffff40;
-}
-
-textarea#message {
-  width: 100%;
-  font-size: 18px;
-  padding: 12px;
-  border-radius: 8px;
-  resize: vertical;
-}
-
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
-
-/* Submit button */
-#submitButton {
-  background-color: #fff; color: black;
-  border: none; border-radius: 8px;
-  padding: 15px 30px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
-  transition: all 0.3s ease;
-  margin-top: 15px;
-}
-#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
-
-/* Contracts and summary */
-.contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
-}
-.total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
-  cursor: pointer;
-}
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText {
-  position: absolute;
-  top: calc(50% + 23px); /* 5px lower */
-  left: calc(50% + 10px); /* 10px right */
-  font-size: 16px; 
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-}
-
-/* Summary container */
-#summaryContainer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(20,20,20,0.9);
-  border: 1px solid #00ff00;
-  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
-  border-radius: 10px;
-  padding: 10px 15px;
-  color: white;
-  font-family: monospace;
-  max-height: 418px;
-  min-width: 280px;
-  max-width: 400px;
-  overflow-y: auto;
-}
-#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
-#summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
-#summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
-
-/* Copied message (green, above totalCostText) */
-#copiedMessage {
-  display: none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(calc(-50% + 10px), calc(-50% + 23px)); /* matches totalCostText */
-  pointer-events: none;
-}
-
-/* Info button */
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
-.info-button button { background: white; color: black; border-radius: 50%; }
+@keyframes neonGlow { 0% { box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; } 100% { box-shadow:0 0 20px #00ff00,0 0 40px #00ff00 inset; } }
+.info-button { position:fixed; bottom:20px; right:20px; font-size:28px; z-index:1000; }
+.info-button button { background:white; color:black; border-radius:50%; }
 </style>
 </head>
 <body>
@@ -220,150 +75,69 @@ textarea#message {
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
-const clusterCount = 12;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas();
-
-function createStars() {
-  stars = [];
-  const clusterCenters = [];
-  for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
-  }
-
-  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
-  for (let i = 0; i < totalStars; i++) {
-    let x, y;
-    if (Math.random() < 0.6) {
-      const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
-      const radius = Math.random() * 120;
-      const angle = Math.random() * Math.PI * 2;
-      x = c.x + radius * Math.cos(angle);
-      y = c.y + radius * Math.sin(angle);
-    } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
-    }
-
-    stars.push({
-      x, y,
-      z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.2,
-      color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.2 + 0.05,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
+function createStars(){
+  stars=[]; const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200);
+  for(let i=0;i<totalStars;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, z:Math.random()*canvas.width, size:Math.random()*1.5+0.2, color:["#fff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)], speed:Math.random()*0.2+0.05, phase:Math.random()*Math.PI*2}); }
 }
 createStars();
-
-function drawStars(time=0) {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for (let s of stars) {
-    s.z -= s.speed;
-    if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = shimmer;
-    ctx.shadowBlur = s.size*4;
-    ctx.shadowColor = s.color;
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(drawStars);
-}
-drawStars(0);
-window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
+function drawStars(time=0){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){ s.z-=s.speed; if(s.z<=0)s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill(); } ctx.globalAlpha=1; requestAnimationFrame(drawStars); }
+drawStars();
+window.addEventListener("resize",()=>{ resizeCanvas(); createStars(); });
 
 // === App logic ===
-let priceList = {};
-async function loadPrices() {
-  const response = await fetch('data/prices.csv');
-  const text = await response.text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  const headers = lines[0].split(',');
-  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for (let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',');
-    const ore = cols[0].trim();
-    const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore]=price;
-  }
-  document.getElementById('submitButton').disabled=false;
-}
+let priceList={};
+async function loadPrices(){ const r=await fetch('data/prices.csv'); const t=await r.text(); const lines=t.split('\n').filter(l=>l.trim()); const headers=lines[0].split(','); const idx=headers.findIndex(h=>h.toLowerCase().includes('150%')); for(let i=1;i<lines.length;i++){ const cols=lines[i].split(','); const ore=cols[0].trim().toLowerCase(); const price=parseFloat(cols[idx]); if(!isNaN(price)) priceList[ore]=price; } document.getElementById('submitButton').disabled=false; }
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
 
-function animateCount(el, start, end, duration=2000) {
-  let startTime = null;
-  const numberSpan = el.querySelector(".number");
-  const iskSpan = el.querySelector(".isk");
-  function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    if(numberSpan) numberSpan.innerText = current.toLocaleString();
-    if(iskSpan) iskSpan.innerText = "ISK";
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
 function showContent(){
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total = 0, summary = [];
-
-  while((match = regex.exec(t)) !== null){
-    const name = match[1].trim(), qty = parseInt(match[2]);
-    if(priceList[name]) {
-      summary.push({name, qty, val: qty*priceList[name]});
-      total += qty*priceList[name];
-    }
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
+  while((match=regex.exec(t))!==null){
+    const name=match[1].trim(), qty=parseInt(match[2]);
+    const key=name.toLowerCase();
+    if(priceList[key]){
+      summary.push({name, qty, val:qty*priceList[key], recognized:true});
+      total+=qty*priceList[key];
+    } else { summary.push({name, qty, val:0, recognized:false}); }
   }
 
-  // Populate summary
-  const list = document.getElementById('summaryList');
-  list.innerHTML = '';
+  const list=document.getElementById('summaryList');
+  list.innerHTML='';
   summary.forEach(i=>{
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    const li=document.createElement('li');
+    li.className=i.recognized?'':'unrecognized';
+    li.innerHTML=`<span>${i.name}</span><span>${i.recognized?formatNumber(i.val)+' ISK':'Unrecognized'}</span>`;
     list.appendChild(li);
   });
-
-  const summaryContainer = document.getElementById('summaryContainer');
+  const summaryContainer=document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
-  document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
 
   document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
+  const totalCostContainer=document.getElementById('totalCostContainer');
+  totalCostContainer.style.display='block';
+  const totalCostText=document.getElementById('totalCostText');
+  totalCostText.innerText=`${formatNumber(total)} ISK`;
   document.querySelector('.main-container').style.display='none';
-
-  // Animate total cost
-  const totalCostText = document.getElementById('totalCostText');
-  totalCostText.innerText = `${formatNumber(total)} ISK`;
 }
 
-// === Copied message functionality (restored) ===
-const totalCostText = document.getElementById('totalCostText');
-const copiedMsg = document.getElementById('copiedMessage');
-
-totalCostText.addEventListener('click', ()=>{
+// === Copied message ===
+const totalCostText=document.getElementById('totalCostText');
+const copiedMsg=document.getElementById('copiedMessage');
+totalCostText.addEventListener('click',()=>{
   navigator.clipboard.writeText(totalCostText.innerText);
   copiedMsg.style.display='block';
   setTimeout(()=>copiedMsg.style.display='none',1500);
 });
 
-// Event listeners
-document.getElementById('submitButton').addEventListener('click', showContent);
+// === Header click refresh ===
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+document.getElementById('submitButton').addEventListener('click', showContent);
 </script>
 
 </body>
