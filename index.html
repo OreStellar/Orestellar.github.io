@@ -29,8 +29,8 @@ textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; 
 .total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
 #leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText { position:absolute; top:calc(50% + 18px); left:50%; transform:translate(calc(-50% + 15px), -50%); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
-#copiedMessage { display:none; color:#00ff00; position:absolute; font-weight:bold; font-size:16px; top:50%; left:50%; transform:translate(-50%,-50%); }
+#totalCostText { position:absolute; top:calc(50% + 23px); left:calc(50% + 10px); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
+#copiedMessage { display:none; color:#00ff00; position:absolute; font-weight:bold; font-size:16px; top:calc(50% + 23px); left:calc(50% + 10px); }
 
 /* Summary container */
 #summaryContainer { display:none; flex-direction:column; align-items:center; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; color:white; font-family:monospace; max-height:418px; min-width:280px; max-width:400px; overflow-y:auto; }
@@ -52,7 +52,7 @@ textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; 
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8"></textarea>
+    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
     <button id="submitButton" disabled>Submit</button>
   </div>
 
@@ -80,20 +80,75 @@ function drawStars(time=0){ctx.clearRect(0,0,canvas.width,canvas.height); for(le
 drawStars(0);
 window.addEventListener("resize",()=>{resizeCanvas();createStars();});
 
-// === Logo crack/fall ===
+// === Price List and Submit Button ===
+let priceList={};
+async function loadPrices(){
+  const response=await fetch('data/prices.csv'); 
+  const text=await response.text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',');
+  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for(let i=1;i<lines.length;i++){
+    const cols=lines[i].split(',');
+    const ore=cols[0].trim();
+    const price=parseFloat(cols[idx]);
+    if(!isNaN(price)) priceList[ore]=price;
+  }
+  document.getElementById('submitButton').disabled=false;
+}
+loadPrices();
+
+function formatNumber(n){ return n.toLocaleString(); }
+
+function showContent(){
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
+  while((match=regex.exec(t))!==null){
+    const name=match[1].trim(), qty=parseInt(match[2]);
+    if(priceList[name]){ summary.push({name,qty,val:qty*priceList[name]}); total+=qty*priceList[name]; }
+    else summary.push({name, qty, val:0, unrecognized:true});
+  }
+
+  const list=document.getElementById('summaryList');
+  list.innerHTML='';
+  summary.forEach(i=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span>${i.name}</span><span style="color:${i.unrecognized?'red':'#00ff00'}">${formatNumber(i.val)} ISK</span>`;
+    list.appendChild(li);
+  });
+  document.getElementById('summaryContainer').style.display='flex';
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
+
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
+  document.querySelector('.main-container').style.display='none';
+
+  document.getElementById('totalCostText').innerText=`${formatNumber(total)} ISK`;
+}
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+// === Copied Message on Contract ===
+const totalText=document.getElementById('totalCostText');
+const copiedMsg=document.getElementById('copiedMessage');
+totalText.addEventListener('click',()=>{
+  navigator.clipboard.writeText(totalText.innerText);
+  copiedMsg.style.display='block';
+  setTimeout(()=>copiedMsg.style.display='none',1500);
+});
+
+// === Logo Crack & Fall ===
 document.getElementById('myHeader').addEventListener('click', ()=>{
     const logo=document.getElementById('logoText');
     const rect=logo.getBoundingClientRect();
     const pieces=[];
-    const pieceCount=50;
+    const pieceCount=80;
 
-    // Hide logo
     logo.style.visibility='hidden';
 
-    // Create pieces
     for(let i=0;i<pieceCount;i++){
         const p=document.createElement('div');
-        const size=Math.random()*10+5;
+        const size=Math.random()*8+4;
         p.style.width=size+'px';
         p.style.height=size+'px';
         p.style.background='white';
@@ -103,10 +158,9 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.borderRadius='2px';
         p.style.zIndex=10;
         document.body.appendChild(p);
-        pieces.push({el:p,vx:(Math.random()-0.5)*6,vy:(Math.random()-1)*6,gravity:0.3});
+        pieces.push({el:p,vx:(Math.random()-0.5)*2,vy:(Math.random()-1)*2,gravity:0.1});
     }
 
-    // Animate pieces
     let frames=0;
     const anim=requestAnimationFrame(function animate(){
         frames++;
@@ -116,7 +170,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
             e.style.left=(parseFloat(e.style.left)+p.vx)+'px';
             e.style.top=(parseFloat(e.style.top)+p.vy)+'px';
         });
-        if(frames<180) requestAnimationFrame(animate); // ~3s
+        if(frames<300) requestAnimationFrame(animate);
         else location.reload();
     });
 });
