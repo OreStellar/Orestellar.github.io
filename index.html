@@ -234,73 +234,87 @@ textarea#message:focus {
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
-let twinkleTimer = 0;
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resizeCanvas();
+const clusterCount = 12;
+let brightStarTimer = 0; // for occasional bright star
+let brightStars = []; // array of current bright stars
 
 function createStars() {
-  stars = [];
-  const colors = ["#ffffff", "#ff99aa", "#99ccff", "#ffffff"];
-  const clusterCount = 12;
-  const clusterCenters = [];
-  for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height });
-  }
-  const totalStars = Math.floor(window.innerWidth*window.innerHeight/900);
-  for (let i = 0; i < totalStars; i++) {
-    let x, y;
-    if (Math.random() < 0.6) {
-      const c = clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
-      const radius = Math.random()*120;
-      const angle = Math.random()*Math.PI*2;
-      x = c.x + radius*Math.cos(angle);
-      y = c.y + radius*Math.sin(angle);
-    } else {
-      x = Math.random()*canvas.width;
-      y = Math.random()*canvas.height;
+    stars = [];
+    const clusterCenters = [];
+    for (let i = 0; i < clusterCount; i++) {
+        clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
     }
-stars.push({
-    x, y,
-    z: Math.random() * canvas.width,
-    size: Math.random() * 1.5 + 0.2,
-    color: ["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],
-    speed: Math.random() * 0.2 + 0.05,
-    phase: Math.random() * Math.PI * 2,
-    twinkle: Math.random() < 0.05 // only 20% of stars twinkle
-});
+    const totalStars = Math.floor(window.innerWidth * window.innerHeight / 800); // more stars
+    for (let i = 0; i < totalStars; i++) {
+        let x, y;
+        if (Math.random() < 0.6) {
+            const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
+            const radius = Math.random() * 120;
+            const angle = Math.random() * Math.PI * 2;
+            x = c.x + radius * Math.cos(angle);
+            y = c.y + radius * Math.sin(angle);
+        } else {
+            x = Math.random() * canvas.width;
+            y = Math.random() * canvas.height;
+        }
 
-  }
+        stars.push({
+            x, y,
+            z: Math.random() * canvas.width,
+            size: Math.random() * 1.5 + 0.2,
+            color: ["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],
+            speed: Math.random() * 0.2 + 0.05,
+            phase: Math.random() * Math.PI * 2,
+            twinkle: Math.random() < 0.1, // 10% of stars twinkle
+            baseAlpha: 0.8 + Math.random() * 0.2
+        });
+    }
 }
-createStars();
 
 function drawStars(time=0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const now = Date.now();
-for (let s of stars) {
-    s.z -= s.speed;
-    if (s.z <= 0) s.z = canvas.width;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // base alpha
-    let shimmer = 1;
-
-    // twinkle only if twinkle flag is true
-    if (s.twinkle) {
-        shimmer = 0.6 + 0.4 * Math.sin(time * 0.001 + s.phase);
+    // Occasionally select bright stars
+    brightStarTimer -= 16; // approx ms/frame
+    if(brightStarTimer <= 0){
+        brightStarTimer = 7000 + Math.random() * 8000; // 7-15s
+        brightStars = [];
+        for(let i=0; i<2; i++){ // 1-2 stars
+            brightStars.push(stars[Math.floor(Math.random()*stars.length)]);
+        }
+        brightStars.forEach(s => s.brightEnd = time + 2000 + Math.random()*1000); // shine 2-3s
     }
 
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = shimmer;
-    ctx.shadowBlur = s.size * 4;
-    ctx.shadowColor = s.color;
-    ctx.fill();
-}
-ctx.globalAlpha = 1;
+    for(let s of stars){
+        s.z -= s.speed;
+        if(s.z<=0) s.z = canvas.width;
 
+        // Base shimmer
+        let shimmer = s.baseAlpha;
 
-  requestAnimationFrame(drawStars);
+        // Twinkle for twinkling stars
+        if(s.twinkle){
+            shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
+        }
+
+        // Occasional bright star override
+        if(s.brightEnd && time < s.brightEnd){
+            shimmer = 1.5; // very bright
+        }
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = Math.min(shimmer,1);
+        ctx.shadowBlur = s.size*4;
+        ctx.shadowColor = s.color;
+        ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawStars);
 }
+
 drawStars();
 window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
