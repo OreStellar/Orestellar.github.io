@@ -1,49 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>OreStellar</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OreStellar</title>
 
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  <!-- Google Font: Orbitron for sleek sci-fi -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
-<style>
-  #logoText {
-  font-family: 'Monospace', sans-serif; /* or any font you like */
-  font-size: 4rem; /* adjust size */
-  color: rgba(255,255,255,0.85); /* semi-transparent white */
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow:
-    0 0 5px rgba(255,255,255,0.7),
-    0 0 10px rgba(255,255,255,0.5),
-    0 0 20px rgba(255,255,255,0.4);
-  animation: neonPulse 2s infinite alternate;
-  cursor: default;
-}
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; overflow: hidden;
+      background: black;
+      font-family: monospace;
+      color: white;
+    }
 
-@keyframes neonPulse {
-  0% {
-    text-shadow:
-      0 0 5px rgba(255,255,255,0.7),
-      0 0 10px rgba(255,255,255,0.5),
-      0 0 20px rgba(255,255,255,0.4);
-  }
-  50% {
-    text-shadow:
-      0 0 8px rgba(255,255,255,0.85),
-      0 0 15px rgba(255,255,255,0.6),
-      0 0 25px rgba(255,255,255,0.5);
-  }
-  100% {
-    text-shadow:
-      0 0 5px rgba(255,255,255,0.7),
-      0 0 10px rgba(255,255,255,0.5),
-      0 0 20px rgba(255,255,255,0.4);
-  }
-}
+    canvas#starfield {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+
+    /* Header */
+    #myHeader {
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      background: transparent;
+      padding: 40px 0;
+    }
+
+    #logoText {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 5rem;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 5px #ffffff,
+        0 0 10px #ffffff,
+        0 0 20px #ffffff,
+        0 0 30px #ffffff,
+        0 0 40px #ffffff;
+      animation: neonPulse 2s infinite alternate;
+    }
+
+    @keyframes neonPulse {
+      0% {
+        text-shadow:
+          0 0 5px #ffffff,
+          0 0 10px #ffffff,
+          0 0 20px #ffffff,
+          0 0 30px #ffffff,
+          0 0 40px #ffffff;
+      }
+      50% {
+        text-shadow:
+          0 0 8px #ffffff,
+          0 0 15px #ffffff,
+          0 0 25px #ffffff,
+          0 0 35px #ffffff,
+          0 0 45px #ffffff;
+      }
+      100% {
+        text-shadow:
+          0 0 5px #ffffff,
+          0 0 10px #ffffff,
+          0 0 20px #ffffff,
+          0 0 30px #ffffff,
+          0 0 40px #ffffff;
+      }
+    }
 
 html, body {
   margin: 0; padding: 0;
