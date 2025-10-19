@@ -376,6 +376,7 @@ function showContent(){
   document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
+  animateCount(document.getElementById('totalCostText'), 0, total);
   document.querySelector('.main-container').style.display='none';
 }
 
