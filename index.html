@@ -38,7 +38,7 @@ canvas#starfield {
   z-index: 2;
 }
 
-/* Header / Logo */
+/* Header/logo */
 #myHeader {
   display: flex;
   justify-content: center;
@@ -46,12 +46,13 @@ canvas#starfield {
   flex-direction: column;
   text-align: center;
   width: 100%;
-  max-width: 650px; /* matches main-container */
-  margin-bottom: 20px;
-  cursor: pointer;
+  max-width: 650px;
+  margin-bottom: 30px;
+  position: relative;
   z-index: 2;
 }
 
+/* Logo: leaning, lifted, slightly straightened */
 #logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
@@ -60,24 +61,21 @@ canvas#starfield {
   letter-spacing: 2px;
   text-transform: capitalize;
   display: inline-block;
-
-  /* Lean effect + lift up 20px */
-  transform: skew(-15deg, 0deg) rotate(-2deg) translateY(-20px);
-
-  /* Reduce glow by 30% */
+  transform: skew(-12deg, 0deg) rotate(-1deg) translateY(-30px); /* lifted 10px more */
   text-shadow: 
-    0 0 3.5px #fff,      /* was 5px */
-    0 0 7px #fff,         /* was 10px */
-    0 0 14px #ff99ff44,   /* was 20px */
-    0 0 21px #ff99ff23;   /* was 30px */
-
+    0 0 3.5px #fff,
+    0 0 7px #fff,
+    0 0 14px #ff99ff44,
+    0 0 21px #ff99ff23;
   transition: transform 0.3s ease;
+}
+#logoText:hover {
+  transform: skew(-12deg, 0deg) rotate(-2deg) translateY(-30px) scale(1.03);
 }
 
 /* Main inventory box */
 .main-container {
-  width: 100%;
-  max-width: 650px;
+  width: 650px; max-width: 90%;
   padding: 25px;
   display: flex;
   flex-direction: column;
@@ -90,8 +88,7 @@ canvas#starfield {
 
 /* Quote text */
 .quote-text {
-  font-style: italic;
-  font-weight: bold;
+  font-style: italic; font-weight: bold;
   font-size: 21px;
   animation: glowPulse 3s infinite;
 }
@@ -110,15 +107,15 @@ canvas#starfield {
   border-radius: 10px;
   resize: vertical;
   background-color: #111;
-  color: #fff !important;
+  color: #ffffff !important;
   border: 1px solid #333;
-  font-family: 'Share Tech Mono', monospace;
   text-align: left;
+  font-family: 'Share Tech Mono', monospace;
   box-shadow: inset 0 0 10px #222;
   transition: all 0.2s ease-in-out;
 }
 .main-container textarea#message::placeholder {
-  color: #fff !important;
+  color: #ffffff !important;
   opacity: 0.6;
 }
 textarea#message:focus {
@@ -207,19 +204,24 @@ textarea#message:focus {
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
 #summaryContainer li.unrecognized span:last-child { color: red; animation: glowPulse 2s infinite; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
-#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
+#copiedMessage {
+  display: none;
+  color: #00ff00;
+  font-weight: bold;
+  position: absolute;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
 
-<div class="container-wrapper">
-  <!-- Logo now inside wrapper -->
-  <header id="myHeader">
-    <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
-  </header>
+<header id="myHeader">
+  <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
+</header>
 
+<div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
     <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
@@ -244,37 +246,65 @@ textarea#message:focus {
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
-const clusterCount = 20;
+const clusterCount = 12;
+let twinkleStar = null;
+
 function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resizeCanvas();
+
 function createStars() {
   stars = [];
   const clusterCenters = [];
   for (let i = 0; i < clusterCount; i++) {
     clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
-  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 600);
+  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
-    if (Math.random() < 0.7) {
+    if (Math.random() < 0.6) {
       const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
       const radius = Math.random() * 120;
       const angle = Math.random() * Math.PI * 2;
       x = c.x + radius * Math.cos(angle);
       y = c.y + radius * Math.sin(angle);
-    } else { x = Math.random() * canvas.width; y = Math.random() * canvas.height; }
-    stars.push({ x, y, z: Math.random() * canvas.width, size: Math.random() * 1.5 + 0.2,
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
+    }
+    stars.push({
+      x, y,
+      z: Math.random() * canvas.width,
+      size: Math.random() * 1.5 + 0.2,
       color: ["#ffffff", "#ff99cc", "#99ccff", "#ffffff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.2 + 0.05, phase: Math.random() * Math.PI * 2 });
+      speed: Math.random() * 0.2 + 0.05,
+      phase: Math.random() * Math.PI * 2
+    });
   }
 }
 createStars();
+
+// Schedule random twinkle
+function scheduleTwinkle() {
+  const interval = 7000 + Math.random() * 8000;
+  setTimeout(() => {
+    twinkleStar = stars[Math.floor(Math.random() * stars.length)];
+    setTimeout(() => { twinkleStar = null; scheduleTwinkle(); }, 500);
+  }, interval);
+}
+scheduleTwinkle();
+
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   for(let s of stars){
     s.z -= s.speed;
     if(s.z<=0) s.z = canvas.width;
-    const shimmer = 0.6+0.4*Math.sin(time*0.001+s.phase);
+    let shimmer = 0.6+0.4*Math.sin(time*0.001+s.phase);
+    if(s === twinkleStar){
+      shimmer = 1.0;
+      s.size = Math.min(s.size * 2, 3);
+    } else {
+      s.size = Math.random() * 1.5 + 0.2;
+    }
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle = s.color;
@@ -364,11 +394,12 @@ totalCostEl.addEventListener('click', () => {
 });
 
 // Submit button
-document.getElementById('submitButton').addEventListener('click', () => { showContent(); });
+document.getElementById('submitButton').addEventListener('click', () => {
+    showContent();
+});
 
 // Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
-
 </body>
 </html>
