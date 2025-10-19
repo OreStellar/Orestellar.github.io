@@ -212,7 +212,7 @@ resizeCanvas();
 
 function createStars() {
   stars = [];
-  const numStars = Math.floor(window.innerWidth * window.innerHeight / 2500); 
+  const numStars = Math.floor(window.innerWidth * window.innerHeight / 1500); 
   // dynamic density based on screen size (approx 700–1000 stars)
   for (let i = 0; i < numStars; i++) {
     stars.push({
@@ -230,7 +230,7 @@ function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let s of stars) {
-    s.z -= 0.3; // slower forward movement
+    s.z -= 0.15; // slower forward movement
     if (s.z <= 0) s.z = canvas.width;
 
     const k = 128 / s.z;
