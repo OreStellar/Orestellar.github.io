@@ -321,6 +321,7 @@ function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
+  
   const lowerPriceList = {};
   for(let key in priceList) lowerPriceList[key.toLowerCase()] = priceList[key];
 
@@ -350,17 +351,15 @@ function showContent(){
 
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
-
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   document.getElementById('leftContainer').style.display='block';
-  const rightContainer = document.getElementById('totalCostContainer');
-  rightContainer.style.display='block';
-
+  document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
 
   animateCount(document.getElementById('totalCostText'),0,total);
 }
+
 
 // === Event listeners ===
 document.getElementById('submitButton').addEventListener('click', showContent);
