@@ -140,50 +140,51 @@ totalText.addEventListener('click',()=>{
 document.getElementById('myHeader').addEventListener('click', ()=>{
     const logo = document.getElementById('logoText');
     const rect = logo.getBoundingClientRect();
+    const letters = logo.textContent.split('');
     const droplets = [];
-    const totalDroplets = 80; // more droplets
+    const totalDropletsPerLetter = 5; // more for denser water under each letter
     logo.style.visibility = 'hidden';
 
-    for(let i=0;i<totalDroplets;i++){
-        const d = document.createElement('div');
-        const size = Math.random()*5 + 3;
-        d.style.width = size + 'px';
-        d.style.height = size + 'px';
-        d.style.background = 'rgba(173,216,230,0.8)'; // light blue water
-        d.style.borderRadius = '50%';
-        d.style.position = 'fixed';
-        d.style.left = rect.left + rect.width/2 + 'px';
-        d.style.top = rect.top + rect.height/2 + 'px';
-        d.style.zIndex = 10;
-        document.body.appendChild(d);
+    letters.forEach((letter, i)=>{
+        const letterWidth = rect.width / letters.length;
+        const letterX = rect.left + i*letterWidth + letterWidth/2;
+        const letterY = rect.top + rect.height;
 
-        // slower initial spread
-        const angle = Math.random()*Math.PI*2;
-        const speed = Math.random()*2 + 0.5; // slower droplets
-        droplets.push({
-            el: d,
-            x: rect.left + rect.width/2,
-            y: rect.top + rect.height/2,
-            vx: Math.cos(angle)*speed,
-            vy: Math.sin(angle)*speed,
-            gravity: 0.02, // slower downward drift
-            scale: 1,
-            angle: Math.random()*360,
-            angularVelocity: (Math.random()-0.5)*0.1
-        });
-    }
+        for(let j=0;j<totalDropletsPerLetter;j++){
+            const d = document.createElement('div');
+            const size = Math.random()*5 + 3;
+            d.style.width = size + 'px';
+            d.style.height = size + 'px';
+            d.style.background = 'rgba(173,216,230,0.8)'; // water color
+            d.style.borderRadius = '50%';
+            d.style.position = 'fixed';
+            d.style.left = letterX + (Math.random()*letterWidth/2 - letterWidth/4) + 'px'; // slight horizontal variation
+            d.style.top = letterY + 'px';
+            d.style.zIndex = 10;
+            document.body.appendChild(d);
+
+            droplets.push({
+                el: d,
+                x: parseFloat(d.style.left),
+                y: parseFloat(d.style.top),
+                vy: Math.random()*1 + 0.5, // gentle downward drift
+                gravity: 0.02,
+                scale: 1,
+                angle: Math.random()*360,
+                angularVelocity: (Math.random()-0.5)*0.1
+            });
+        }
+    });
 
     function animate(){
         droplets.forEach(d=>{
-            d.x += d.vx;
             d.y += d.vy;
             d.vy += d.gravity;
             d.angle += d.angularVelocity;
-            d.el.style.left = d.x - d.scale*3 + 'px';
             d.el.style.top = d.y - d.scale*3 + 'px';
+            d.el.style.transform = `rotate(${d.angle}deg)`;
             d.el.style.width = d.scale*6 + 'px';
             d.el.style.height = d.scale*6 + 'px';
-            d.el.style.transform = `rotate(${d.angle}deg)`;
         });
         requestAnimationFrame(animate);
     }
@@ -192,7 +193,6 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     // refresh after 1.75 seconds
     setTimeout(()=>location.reload(),1750);
 });
-
 
 </script>
 </body>
