@@ -116,12 +116,12 @@ textarea#message:focus {
   50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
 }
 
-/* === Submit Button (pure neon white, ambient pulse) === */
+/* === Submit Button (subtle white neon) === */
 #submitButton {
-  margin-top: 10px; /* lowered */
+  margin-top: 10px;
   background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
   color: #fff;
-  border: 2px solid #fff;
+  border: 2px solid #ccc;
   border-radius: 10px;
   padding: 15px 35px;
   font-weight: bold;
@@ -129,39 +129,39 @@ textarea#message:focus {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  text-shadow: 0 0 6px #fff, 0 0 12px #fff;
-  box-shadow: 0 0 15px #ffffffaa, 0 0 30px #ffffff33 inset;
-  animation: ambientGlow 3s infinite ease-in-out alternate;
+  text-shadow: 0 0 3px #fff;
+  box-shadow: 0 0 6px #ffffff55, 0 0 12px #ffffff22 inset;
+  animation: ambientGlow 4s infinite ease-in-out alternate;
   transition: all 0.3s ease;
 }
 
-/* Idle ambient glow (soft breathing effect) */
+/* Subtle breathing glow */
 @keyframes ambientGlow {
   0% {
-    box-shadow: 0 0 10px #ffffff88, 0 0 20px #ffffff22 inset;
+    box-shadow: 0 0 4px #ffffff33, 0 0 10px #ffffff11 inset;
   }
   100% {
-    box-shadow: 0 0 25px #fff, 0 0 50px #fff inset;
+    box-shadow: 0 0 10px #ffffff66, 0 0 18px #ffffff33 inset;
   }
 }
 
-/* Futuristic hover — bright white pulse */
+/* Hover — brighter but still elegant */
 #submitButton:hover {
   color: #000;
-  background: linear-gradient(145deg, #fefefe, #d0d0d0);
+  background: linear-gradient(145deg, #eaeaea, #cfcfcf);
   border-color: #fff;
-  transform: translateY(-3px) scale(1.06);
-  animation: hoverPulse 1.2s infinite alternate;
-  box-shadow: 0 0 25px #fff, 0 0 60px #fff inset;
+  transform: translateY(-2px) scale(1.05);
+  animation: hoverPulse 1.4s infinite alternate;
+  box-shadow: 0 0 15px #ffffffcc, 0 0 25px #ffffff66 inset;
 }
 
-/* Hover pulse animation */
+/* Hover pulse — slower, minimal */
 @keyframes hoverPulse {
   0% {
-    box-shadow: 0 0 15px #fff, 0 0 30px #fff inset;
+    box-shadow: 0 0 8px #ffffff88, 0 0 18px #ffffff44 inset;
   }
   100% {
-    box-shadow: 0 0 35px #fff, 0 0 80px #fff inset;
+    box-shadow: 0 0 15px #ffffffcc, 0 0 30px #ffffff66 inset;
   }
 }
 
