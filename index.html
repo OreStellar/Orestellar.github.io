@@ -34,7 +34,7 @@ canvas#starfield {
   cursor: pointer;
 }
 
-/* Scanline logo */
+/* Logo with scanline */
 #logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
@@ -45,25 +45,24 @@ canvas#starfield {
   display: inline-block;
   overflow: hidden;
 }
-#logoText::after {
+
+/* Scanline overlay */
+#logoText::before {
   content: attr(data-text);
-  position: absolute;
-  top: 0; left: 0;
+  position: absolute; top: 0; left: 0;
   width: 100%; height: 100%;
-  color: #ffffff22;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255,255,255,0.1) 3px
-  );
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+  background-size: 100% 4px;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: scan 2s linear infinite;
+  animation: scanline 2s linear infinite;
 }
-@keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
 
-/* Container wrapper centered full screen */
+/* Container wrapper */
 .container-wrapper {
   position: fixed;
   top: 0; left: 0;
@@ -104,7 +103,6 @@ textarea#message {
   font-size: 21px;
   animation: glowPulse 3s infinite;
 }
-
 @keyframes glowPulse {
   0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
   50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
@@ -123,26 +121,64 @@ textarea#message {
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Total ISK popup */
+/* Total ISK popup - upgraded style */
 #totalPriceModal {
   display: none;
-  position: fixed; 
+  position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999;
 }
 #totalPriceModal .w3-modal-content {
+  border-radius: 15px;
+  width: 350px;
+  max-width: 90%;
+  padding: 20px;
+  background: radial-gradient(circle at 50% 50%, #001100, #000000);
   border: 2px solid #00ff00;
-  box-shadow: 0 0 12px #00ff00, 0 0 25px #00ff00 inset;
-  border-radius: 10px;
-  width: 300px;
-  background: rgba(0,0,0,0.95);
-  padding: 15px;
+  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
+  text-align: center;
+  animation: neonGlow 2s infinite alternate;
 }
-#popupTotalPrice { font-size: 28px; color: #00ff00; font-weight: bold; }
-#copiedMessage { display:none; color: yellow; position: fixed; top:50%; left:50%; transform:translate(-50%,-50%); }
+#totalPriceModal h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  color: #00ff00;
+  margin-bottom: 15px;
+  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+}
+#popupTotalPrice {
+  font-size: 32px;
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  margin-bottom: 15px;
+}
+#totalPriceModal button {
+  background: #00ff00;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ff00;
+  transition: all 0.3s ease;
+}
+#totalPriceModal button:hover {
+  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
+}
+#copiedMessage {
+  display:none;
+  color: yellow;
+  position: fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-weight: bold;
+  font-size: 18px;
+}
 
-/* Summary and contracts */
+/* Contracts and summary */
 .contracts-wrapper {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
@@ -156,8 +192,13 @@ textarea#message {
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText { position: absolute; top: calc(50% + 18px); left: 50%; transform: translate(-50%, -50%); font-size: 13px; font-weight: bold; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-
+#totalCostText {
+  position: absolute; top: calc(50% + 18px); left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px; font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -179,9 +220,15 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
+@keyframes neonGlow {
+  0% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
+  100% { box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset; }
+}
+
 /* Info button */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 .info-button button { background: white; color: black; border-radius: 50%; }
+
 </style>
 </head>
 <body>
@@ -240,6 +287,7 @@ function createStars() {
   for (let i = 0; i < clusterCount; i++) {
     clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
+
   const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
@@ -253,6 +301,7 @@ function createStars() {
       x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
     }
+
     stars.push({
       x, y,
       z: Math.random() * canvas.width,
@@ -270,7 +319,7 @@ function drawStars(time=0) {
   for (let s of stars) {
     s.z -= s.speed;
     if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.002 + s.phase);
+    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase); // slower shimmer
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fillStyle = s.color;
@@ -328,6 +377,7 @@ function showContent(){
     }
   }
 
+  // Populate summary
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   summary.forEach(i=>{
@@ -339,17 +389,25 @@ function showContent(){
   summaryContainer.style.display='flex';
 
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
+
+  // Show contracts
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
+
+  // Hide main container
   document.querySelector('.main-container').style.display='none';
+
+  // Animate totals
   animateCount(document.getElementById('totalCostText'),0,total);
   animateCount(document.getElementById('popupTotalPrice'),0,total);
 
+  // Show total ISK popup above contracts
   const popup = document.getElementById('totalPriceModal');
   popup.style.display = 'block';
   popup.style.zIndex = 9999;
 }
 
+// Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
   const txt = document.getElementById('popupTotalPrice').innerText;
@@ -359,10 +417,8 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
   document.getElementById('totalPriceModal').style.display='none';
 });
 
-// Refresh page when logo clicked
-document.getElementById('myHeader').addEventListener('click', ()=>{
-  window.location.reload();
-});
+// Click logo to refresh
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
 
 </body>
