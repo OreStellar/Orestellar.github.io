@@ -64,18 +64,18 @@ canvas#starfield {
   opacity: 0.1;
   text-shadow: 0 0 1px #fff;
 
-  /* Initial rapid flicker 3x, then soft flicker */
-  animation: rapidFlicker 0.9s forwards, softFlicker 6s infinite 0.9s;
+  /* Rapid left-to-right flicker for 0.4s, then soft flicker */
+  animation: rapidShimmer 0.4s forwards, softFlicker 6s infinite 0.4s;
 }
 
-/* Rapid flicker 3x on page load */
-@keyframes rapidFlicker {
-  0%   { opacity: 0.1; text-shadow: 0 0 1px #fff; }
-  10%  { opacity: 1; text-shadow: 0 0 6px #fff, 0 0 12px #fff; }
-  20%  { opacity: 0.1; text-shadow: 0 0 1px #fff; }
-  30%  { opacity: 1; text-shadow: 0 0 6px #fff, 0 0 12px #fff; }
-  40%  { opacity: 0.1; text-shadow: 0 0 1px #fff; }
-  50%  { opacity: 1; text-shadow: 0 0 6px #fff, 0 0 12px #fff; }
+/* Rapid left-to-right shimmer */
+@keyframes rapidShimmer {
+  0%   { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
+  16%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
+  33%  { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
+  50%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
+  66%  { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
+  83%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
   100% { opacity: 1; text-shadow: 0 0 4.5px #fff, 0 0 9px #fff, 0 0 12px #fff, 0 0 18px #fff; }
 }
 
@@ -90,7 +90,6 @@ canvas#starfield {
     text-shadow: 0 0 2.5px #fff, 0 0 5px #fff, 0 0 8px #fff, 0 0 12px #fff;
   }
 }
-
 
 
 /* Main inventory box */
