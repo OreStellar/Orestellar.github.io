@@ -139,42 +139,39 @@ totalText.addEventListener('click',()=>{
 
 // === Logo Crack & Fall with rotation/wobble and delayed refresh ===
 document.getElementById('myHeader').addEventListener('click', ()=>{
-    const logo=document.getElementById('logoText');
-    const rect=logo.getBoundingClientRect();
-    const pieces=[];
-    const pieceCount=80;
+    const logo = document.getElementById('logoText');
+    const rect = logo.getBoundingClientRect();
+    const pieces = [];
+    const totalPieces = 40; // fewer chunks
+    logo.style.visibility = 'hidden';
 
-    logo.style.visibility='hidden';
-
-    for(let i=0;i<pieceCount;i++){
-        const p=document.createElement('div');
-        // Smaller size for main piece
-        let size = Math.random()*8+4;
-        if(i===0) size = 4; // small piece for flying past
-        p.style.width=size+'px';
-        p.style.height=size+'px';
-        p.style.background='white';
-        p.style.position='fixed';
-        p.style.left=(rect.left+rect.width/2)+'px';
-        p.style.top=(rect.top+rect.height/2)+'px';
-        p.style.borderRadius='50%';
-        p.style.zIndex=10;
+    for(let i=0;i<totalPieces;i++){
+        const p = document.createElement('div');
+        let size = Math.random()*6 + 3; // smaller blobs
+        if(i===0) size = 4; // fast main piece
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.background = 'white';
+        p.style.position = 'fixed';
+        p.style.left = rect.left + rect.width/2 + 'px';
+        p.style.top = rect.top + rect.height/2 + 'px';
+        p.style.borderRadius = '50%';
+        p.style.zIndex = 10;
         document.body.appendChild(p);
 
-        // velocities
         let vz = 0;
-        if(i===0) vz = 10;  // fast but small piece
-        else vz = Math.random()*2+1;  // others scatter
+        if(i===0) vz = 12; // main piece flies past viewer
+        else vz = Math.random()*1 + 0.5; // slower outward floating
 
         pieces.push({
-            el:p,
-            x:rect.left+rect.width/2,
-            y:rect.top+rect.height/2,
-            vx:(Math.random()-0.5)*4,
-            vy:(Math.random()-0.5)*4,
+            el: p,
+            x: rect.left + rect.width/2,
+            y: rect.top + rect.height/2,
+            vx: (Math.random()-0.5)*2, // slower horizontal
+            vy: (Math.random()-0.5)*2, // slower vertical
             vz: vz,
-            scale:1,
-            angularVelocity:(Math.random()-0.5)*0.5,
+            scale: 1,
+            angularVelocity: (Math.random()-0.5)*0.3,
             angle: Math.random()*360
         });
     }
@@ -183,7 +180,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         pieces.forEach(p=>{
             p.x += p.vx;
             p.y += p.vy;
-            p.scale += p.vz*0.03; // slower scale to appear passing by
+            p.scale += p.vz*0.02; // scale slower for floating effect
             p.angle += p.angularVelocity;
             p.el.style.left = p.x - (p.scale*4) + 'px';
             p.el.style.top = p.y - (p.scale*4) + 'px';
@@ -195,8 +192,9 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     }
     animate();
 
-    setTimeout(()=>location.reload(),4000);
+    setTimeout(()=>location.reload(),4000); // refresh after 4 seconds
 });
+
 
 
 
