@@ -17,6 +17,12 @@ html, body {
   color: white;
 }
 
+/* Neon-white general text */
+body, textarea, h1, h2, h3, #summaryContainer, #summaryContainer li span:last-child {
+    color: white;
+    text-shadow: 0 0 5px #fff, 0 0 15px #fff, 0 0 25px #fff;
+}
+
 /* Starfield canvas */
 canvas#starfield {
   position: fixed; top: 0; left: 0;
@@ -100,7 +106,7 @@ canvas#starfield {
   border: 1px solid #333;
   text-align: left;     /* align text to the left */
   font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20;
+  box-shadow: inset 0 0 10px #222, 0 0 4px #ffffff20;
   transition: all 0.2s ease-in-out;
 }
 
@@ -109,15 +115,11 @@ canvas#starfield {
   color: #ffffff !important;
   opacity: 0.6;
 }
-
 textarea#message:focus {
   outline: none;
-  box-shadow: inset 0 0 12px #555, 0 0 15px #00ffff80;
-  border-color: #00ffff;
+  box-shadow: inset 0 0 12px #555, 0 0 15px #ffffff80;
+  border-color: #ffffff;
 }
-
-
-
 
 .quote-text {
   font-style: italic; font-weight: bold;
@@ -125,14 +127,14 @@ textarea#message:focus {
   animation: glowPulse 3s infinite;
 }
 @keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
+  0%,100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
+  50% { text-shadow: 0 0 15px #fff, 0 0 20px #fff; }
 }
 
 /* Submit button */
 #submitButton {
-  background: linear-gradient(145deg, #222222, #444444); /* metallic dark gradient */
-  color: #fff; /* white text */
+  background: linear-gradient(145deg, #222222, #444444);
+  color: #fff;
   border: 2px solid #fff; 
   border-radius: 6px;
   padding: 15px 30px;
@@ -141,10 +143,9 @@ textarea#message:focus {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 12px #fff, 0 0 25px #fff inset; /* subtle white neon glow */
+  box-shadow: 0 0 12px #fff, 0 0 25px #fff inset;
   transition: all 0.3s ease;
 }
-
 #submitButton::before {
   content: '';
   position: absolute;
@@ -154,18 +155,15 @@ textarea#message:focus {
   height: 200%;
   background: rgba(255, 255, 255, 0.15);
   transform: rotate(45deg) translateX(-100%);
-  transition: transform 0.6s ease 0.6s; /* scanner delay */
+  transition: transform 0.6s ease 0.6s;
 }
-
 #submitButton:hover::before {
   transform: rotate(45deg) translateX(200%);
 }
-
 #submitButton:hover {
-  box-shadow: 0 0 20px #fff, 0 0 40px #fff inset; /* stronger neon on hover */
+  box-shadow: 0 0 20px #fff, 0 0 40px #fff inset;
   background: linear-gradient(145deg, #333333, #555555);
 }
-
 
 /* Contracts and summary */
 .contracts-wrapper {
@@ -225,7 +223,12 @@ textarea#message:focus {
   pointer-events: none;
 }
 
-/* Starfield */
+/* Neon white box shadows */
+.main-container, #summaryContainer, .total-cost-container {
+    box-shadow: 0 0 20px #fff, 0 0 40px #fff inset;
+    border: 1px solid #fff;
+}
+
 </style>
 </head>
 <body>
@@ -388,29 +391,21 @@ function showContent(){
 
 // Copied functionality
 const totalCostEl = document.getElementById('totalCostText');
-
 totalCostEl.addEventListener('click', () => {
-    const iskText = totalCostEl.innerText; // store original ISK
-    navigator.clipboard.writeText(iskText); // copy to clipboard
-    totalCostEl.innerText = 'Copied';       // replace with "Copied"
-    
-    setTimeout(() => {
-        totalCostEl.innerText = iskText;    // revert after 1.5s
-    }, 1500);
+    const iskText = totalCostEl.innerText;
+    navigator.clipboard.writeText(iskText);
+    totalCostEl.innerText = 'Copied';
+    setTimeout(() => { totalCostEl.innerText = iskText; }, 1500);
 });
-
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click', () => {
-    // Disable button immediately to prevent double clicks
     const btn = document.getElementById('submitButton');
     btn.disabled = true;
-
-    // Wait 1 second before showing the content
     setTimeout(() => {
         showContent();
-        btn.disabled = false; // Re-enable if you want
-    }, 1000); // 1000ms = 1 second
+        btn.disabled = false;
+    }, 1000);
 });
 
 // Refresh on logo click
