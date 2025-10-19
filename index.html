@@ -222,8 +222,8 @@ textarea#message:focus {
 <div class="container-wrapper">
   <header id="myHeader">
     <h1 id="logoText">
-  <span class="logo-part" id="stellar">Stellar</span>
   <span class="logo-part" id="ore">Ore</span>
+  <span class="logo-part" id="stellar">Stellar</span>
 </h1>
   </header>
 
@@ -421,24 +421,27 @@ document.getElementById('submitButton').addEventListener('click',showContent);
 
 // Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-  window.addEventListener('load', () => {
-  const stellar = document.getElementById('stellar');
-  const ore = document.getElementById('ore');
 
-  // Stellar flicker first
-  stellar.style.animation = 'flickerRapid 0.3s linear forwards';
+  
+ window.addEventListener('load', () => {
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
+
+  // Ore flicker first
+  ore.style.animation = 'flickerRapid 0.3s linear forwards';
   setTimeout(() => {
-    stellar.style.animation = 'softGlow 6s infinite';
+    ore.style.animation = 'softGlow 6s infinite';
   }, 300);
 
-  // Ore flicker after 0.3s delay
+  // Stellar flicker after Ore
   setTimeout(() => {
-    ore.style.animation = 'flickerRapid 0.3s linear forwards';
+    stellar.style.animation = 'flickerRapid 0.3s linear forwards';
     setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite';
+      stellar.style.animation = 'softGlow 6s infinite';
     }, 300);
   }, 300);
 });
+
 
 </script>
 
