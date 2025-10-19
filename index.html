@@ -364,12 +364,17 @@ document.getElementById('myHeader').addEventListener('click',()=>location.reload
 const totalCostContainer = document.getElementById('totalCostContainer');
 const copiedMsg = document.getElementById('copiedMessage');
 totalCostContainer.addEventListener('click', ()=>{
-  const totalText = document.getElementById('totalCostText').innerText;
-  navigator.clipboard.writeText(totalText);
-  document.getElementById('totalCostText').innerText = "Copied";
-  copiedMsg.style.display='block';
-  setTimeout(()=>copiedMsg.style.display='none',1500);
+  const totalTextEl = document.getElementById('totalCostText');
+  const totalNumber = totalTextEl.innerText; // store current ISK number
+  navigator.clipboard.writeText(totalNumber);  // copy the number
+  totalTextEl.innerText = "Copied";           // replace with 'Copied'
+  copiedMsg.style.display='block';            // show green copied message
+  setTimeout(()=>{
+    copiedMsg.style.display='none';
+    totalTextEl.innerText = totalNumber;      // restore original number
+  },1500);
 });
+
 </script>
 
 </body>
