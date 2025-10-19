@@ -4,155 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
-html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
-  font-family: monospace;
-  color: white;
-}
-
-/* Starfield */
-canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
-
-/* Header */
-#myHeader {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  z-index: 3;
-  background: transparent;
-  padding: 40px 0;
-  cursor: pointer;
-}
+html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
+canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
 /* Logo */
-#logoText {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 5rem;
-  color: #fff;
-  letter-spacing: 2px;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  text-transform: capitalize;
-}
-
-/* Scanline overlay */
-#logoText::before {
-  content: attr(data-text);
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: scanline 2s linear infinite;
-}
+#myHeader { width:100%; text-align:center; position:relative; z-index:3; background:transparent; padding:40px 0; cursor:pointer; }
+#logoText { font-family:'Orbitron', sans-serif; font-weight:700; font-size:5rem; color:#fff; letter-spacing:2px; position:relative; display:inline-block; overflow:hidden; text-transform:capitalize; }
+#logoText::before { content:attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%); background-size:100% 4px; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:scanline 2s linear infinite; }
 @keyframes scanline { 0%{background-position:0 0;} 100%{background-position:0 100%;} }
 
-/* Containers */
-.container-wrapper {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  gap: 20px; padding: 20px; z-index: 2;
-}
-
-.main-container {
-  width: 650px; max-width: 90%;
-  padding: 25px; display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  background-color: rgba(20,20,20,0.85);
-  border-radius: 15px;
-  box-shadow: 0 0 20px #ffffff40;
-}
-
-textarea#message {
-  width: 100%; font-size: 18px;
-  padding: 12px; border-radius: 8px; resize: vertical;
-}
-
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100%{ text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;}
-  50%{ text-shadow:0 0 15px #fff,0 0 20px #aaa;}
-}
-
-/* Submit button */
-#submitButton {
-  background-color: #fff; color: black;
-  border: none; border-radius: 8px;
-  padding: 15px 30px; font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
-  transition: all 0.3s ease; margin-top: 15px;
-}
+/* Container */
+.container-wrapper { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:20px; z-index:2; }
+.main-container { width:650px; max-width:90%; padding:25px; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.85); border-radius:15px; box-shadow:0 0 20px #ffffff40; }
+textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; resize:vertical; }
+.quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
+@keyframes glowPulse { 0%,100%{text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;} 50%{text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
+#submitButton { background-color:#fff;color:black;border:none;border-radius:8px;padding:15px 30px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px 3px white;transition:all 0.3s ease;margin-top:15px; }
 #submitButton:hover { box-shadow:0 0 25px 5px #2fff1c; }
 
 /* Contracts */
-.contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
-}
-
-.total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.5); display: none;
-}
-
+.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:10px; flex-wrap:wrap; width:100%; }
+.total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
 #leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText {
-  position: absolute;
-  top: calc(50% + 18px); left: 50%;
-  transform: translate(calc(-50% + 15px), -50%);
-  font-size: 16px; font-weight: bold;
-  color: #00ff00;
-  text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;
-  cursor:pointer;
-}
+#totalCostText { position:absolute; top:calc(50% + 18px); left:50%; transform:translate(calc(-50% + 15px), -50%); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
+#copiedMessage { display:none; color:#00ff00; position:absolute; font-weight:bold; font-size:16px; top:50%; left:50%; transform:translate(-50%,-50%); }
 
 /* Summary container */
-#summaryContainer {
-  display: none;
-  flex-direction: column; align-items: center;
-  background-color: rgba(20,20,20,0.9);
-  border:1px solid #00ff00;
-  box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset;
-  border-radius:10px; padding:10px 15px;
-  color:white; font-family: monospace;
-  max-height:418px; min-width:280px; max-width:400px; overflow-y:auto;
-}
+#summaryContainer { display:none; flex-direction:column; align-items:center; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; color:white; font-family:monospace; max-height:418px; min-width:280px; max-width:400px; overflow-y:auto; }
 #summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
 #summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
 #summaryContainer li span:last-child { color:#00ff00; min-width:120px; text-align:right; }
 #summaryTotal { text-align:right; color:#00ff00; font-weight:bold; margin-top:5px; }
 
-/* Copied message */
-#copiedMessage {
-  display:none; color: #00ff00;
-  position:absolute; font-weight:bold; font-size:16px;
-}
-
-/* Scanline animation keyframes etc omitted for brevity, same as above */
 </style>
 </head>
 <body>
@@ -166,7 +52,7 @@ textarea#message {
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
+    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8"></textarea>
     <button id="submitButton" disabled>Submit</button>
   </div>
 
@@ -185,149 +71,55 @@ textarea#message {
 
 <script>
 // === Starfield ===
-const canvas=document.getElementById("starfield");
-const ctx=canvas.getContext("2d");
-let stars=[],clusterCount=12;
+const canvas=document.getElementById("starfield"), ctx=canvas.getContext("2d"); let stars=[], clusterCount=12;
 function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resizeCanvas();
-function createStars(){
-  stars=[]; const clusterCenters=[];
-  for(let i=0;i<clusterCount;i++){clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});}
-  const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200);
-  for(let i=0;i<totalStars;i++){
-    let x,y;
-    if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const radius=Math.random()*120; const angle=Math.random()*Math.PI*2; x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);}
-    else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
-    stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2});
-  }
-}
+function createStars(){ stars=[]; const clusterCenters=[]; for(let i=0;i<clusterCount;i++){clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});} const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200); for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const radius=Math.random()*120; const angle=Math.random()*Math.PI*2; x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);} else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;} stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2});}}
 createStars();
-function drawStars(time=0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let s of stars){
-    s.z-=s.speed;if(s.z<=0)s.z=canvas.width;
-    const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase);
-    ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;ctx.globalAlpha=shimmer;
-    ctx.shadowBlur=s.size*4;ctx.shadowColor=s.color;ctx.fill();
-  }
-  ctx.globalAlpha=1;
-  requestAnimationFrame(drawStars);
-}
+function drawStars(time=0){ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){s.z-=s.speed;if(s.z<=0)s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill();} ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
 drawStars(0);
 window.addEventListener("resize",()=>{resizeCanvas();createStars();});
 
-// === Prices ===
-let priceList={};
-async function loadPrices(){
-  const response=await fetch('data/prices.csv');
-  const text=await response.text();
-  const lines=text.split('\n').filter(l=>l.trim());
-  const headers=lines[0].split(',');
-  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    const ore=cols[0].trim();
-    const price=parseFloat(cols[idx]);
-    if(!isNaN(price))priceList[ore]=price;
-  }
-  document.getElementById('submitButton').disabled=false;
-}
-loadPrices();
-function formatNumber(n){return n.toLocaleString();}
+// === Logo crack/fall ===
+document.getElementById('myHeader').addEventListener('click', ()=>{
+    const logo=document.getElementById('logoText');
+    const rect=logo.getBoundingClientRect();
+    const pieces=[];
+    const pieceCount=50;
 
-// === Submit inventory ===
-function animateCount(el,start,end,duration=2000){
-  const numberSpan={innerText:''}; // placeholder
-  let startTime=null;
-  function step(t){
-    if(!startTime)startTime=t;
-    let progress=Math.min((t-startTime)/duration,1);
-    const current=Math.floor(progress*(end-start)+start);
-    el.innerText=current.toLocaleString()+" ISK";
-    if(progress<1)requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+    // Hide logo
+    logo.style.visibility='hidden';
 
-function showContent(){
-  const t=document.getElementById('message').value;
-  const regex=/([\w\s]+?)\s+(\d+)/g;
-  let match,total=0,summary=[];
-  while((match=regex.exec(t))!==null){
-    const name=match[1].trim(),qty=parseInt(match[2]);
-    const keyMatch=Object.keys(priceList).find(k=>k.toLowerCase()===name.toLowerCase());
-    if(keyMatch){summary.push({name,qty,val:qty*priceList[keyMatch]});total+=qty*priceList[keyMatch];}
-    else{summary.push({name,qty,val:0,unrecognized:true});}
-  }
-  const list=document.getElementById('summaryList');list.innerHTML='';
-  summary.forEach(i=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<span>${i.name}</span><span style="color:${i.unrecognized?'red':'#00ff00'}">${formatNumber(i.val)} ISK</span>`;
-    list.appendChild(li);
-  });
-  const summaryContainer=document.getElementById('summaryContainer');summaryContainer.style.display='flex';
-  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
-  document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
-  document.querySelector('.main-container').style.display='none';
-  document.getElementById('totalCostText').innerText=formatNumber(total)+' ISK';
-}
+    // Create pieces
+    for(let i=0;i<pieceCount;i++){
+        const p=document.createElement('div');
+        const size=Math.random()*10+5;
+        p.style.width=size+'px';
+        p.style.height=size+'px';
+        p.style.background='white';
+        p.style.position='fixed';
+        p.style.left=(rect.left+rect.width/2)+'px';
+        p.style.top=(rect.top+rect.height/2)+'px';
+        p.style.borderRadius='2px';
+        p.style.zIndex=10;
+        document.body.appendChild(p);
+        pieces.push({el:p,vx:(Math.random()-0.5)*6,vy:(Math.random()-1)*6,gravity:0.3});
+    }
 
-document.getElementById('submitButton').addEventListener('click',showContent);
-
-// === Copy total ISK ===
-const totalCostText=document.getElementById('totalCostText');
-const copiedMsg=document.getElementById('copiedMessage');
-totalCostText.addEventListener('click',()=>{
-  navigator.clipboard.writeText(totalCostText.innerText);
-  copiedMsg.style.display='block';
-  setTimeout(()=>copiedMsg.style.display='none',1500);
-});
-
-// === Logo explosion supernova ===
-document.getElementById('myHeader').addEventListener('click',()=>{
-  const logo=document.getElementById('logoText');
-  const rect=logo.getBoundingClientRect();
-  const overlay=document.createElement('canvas');
-  overlay.style.position='fixed';
-  overlay.style.top='0'; overlay.style.left='0';
-  overlay.width=window.innerWidth; overlay.height=window.innerHeight;
-  overlay.style.zIndex='9999';
-  document.body.appendChild(overlay);
-  const octx=overlay.getContext('2d');
-  const pieces=[];
-  const pieceCount=100;
-  for(let i=0;i<pieceCount;i++){
-    pieces.push({x:rect.left+rect.width/2,y:rect.top+rect.height/2,
-      vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,
-      size:Math.random()*10+5,color:'#fff'});
-  }
-  let burstRadius=0; let burstMax=Math.max(window.innerWidth,window.innerHeight);
-  let frame=0;
-  function animateExplosion(){
-    frame++;
-    octx.clearRect(0,0,overlay.width,overlay.height);
-    burstRadius+=10+frame*0.3; // accelerates
-    octx.beginPath();
-    octx.arc(rect.left+rect.width/2,rect.top+rect.height/2,burstRadius,0,Math.PI*2);
-    octx.fillStyle='rgba(180,200,255,0.3)';
-    octx.fill();
-    pieces.forEach(p=>{
-      p.x+=p.vx; p.y+=p.vy;
-      p.vy+=0.1; // gravity effect
-      octx.fillStyle=p.color;
-      octx.beginPath();
-      octx.arc(p.x,p.y,p.size,0,Math.PI*2);
-      octx.fill();
+    // Animate pieces
+    let frames=0;
+    const anim=requestAnimationFrame(function animate(){
+        frames++;
+        pieces.forEach(p=>{
+            const e=p.el;
+            p.vy+=p.gravity;
+            e.style.left=(parseFloat(e.style.left)+p.vx)+'px';
+            e.style.top=(parseFloat(e.style.top)+p.vy)+'px';
+        });
+        if(frames<180) requestAnimationFrame(animate); // ~3s
+        else location.reload();
     });
-    if(burstRadius<burstMax){requestAnimationFrame(animateExplosion);}
-    else{location.reload();}
-  }
-  logo.style.visibility='hidden';
-  animateExplosion();
 });
 </script>
-
 </body>
 </html>
