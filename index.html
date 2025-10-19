@@ -139,21 +139,30 @@ textarea#message {
   box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
   text-align: center;
   animation: neonGlow 2s infinite alternate;
+  color: white; /* default text white */
 }
+
 #totalPriceModal h2 {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  color: #00ff00;
+  color: white;
   margin-bottom: 15px;
-  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
+
 #popupTotalPrice {
   font-size: 32px;
-  color: #00ff00;
   font-weight: bold;
-  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
   margin-bottom: 15px;
+  color: white; /* default white */
 }
+
+#popupTotalPrice .number,
+#popupTotalPrice .isk {
+  color: #00ff00; /* only number and ISK green */
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
+
 #totalPriceModal button {
   background: #00ff00;
   color: black;
@@ -243,11 +252,12 @@ textarea#message {
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-center">
     <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice"></p>
+    <p id="popupTotalPrice"><span class="number">0</span> <span class="isk">ISK</span></p>
     <button id="closeTotalModal">copy</button>
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
+
 
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
