@@ -55,42 +55,51 @@ canvas#starfield {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
-  color: #fff;
   letter-spacing: 2px;
   transform: skewX(-8deg);
   transform-origin: center;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  cursor: pointer;
+}
 
-  /* Start dim */
+/* Shared flicker/glow styles */
+.logo-part {
   opacity: 0.1;
-  text-shadow: 0 0 1px #fff;
-
-  /* Rapid left-to-right flicker for 0.4s, then soft flicker */
-  animation: rapidShimmer 0.4s forwards, softFlicker 6s infinite 0.4s;
+  color: #fff;
 }
 
-/* Rapid left-to-right shimmer */
-@keyframes rapidShimmer {
-  0%   { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
-  16%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
-  33%  { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
-  50%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
-  66%  { opacity: 0.1; text-shadow: -5px 0 1px #fff, 0 0 1px #fff, 5px 0 1px #fff; }
-  83%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
-  100% { opacity: 1; text-shadow: 0 0 4.5px #fff, 0 0 9px #fff, 0 0 12px #fff, 0 0 18px #fff; }
+/* Stellar flicker first */
+#stellar {
+  animation: flickerOn 0.3s forwards, softGlow 6s infinite 0.3s;
 }
 
-/* Ongoing soft flicker after turning on */
-@keyframes softFlicker {
+/* Ore flicker after 0.2s delay */
+#ore {
+  animation: flickerOn 0.3s forwards 0.2s, softGlow 6s infinite 0.5s;
+}
+
+/* Rapid flicker */
+@keyframes flickerOn {
+  0%   { opacity: 0.1; text-shadow: 0 0 1px #fff; }
+  25%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
+  50%  { opacity: 0.2; text-shadow: -2px 0 3px #fff, 0 0 6px #fff, 2px 0 3px #fff; }
+  75%  { opacity: 1; text-shadow: -3px 0 6px #fff, 0 0 12px #fff, 3px 0 6px #fff; }
+  100% { opacity: 1; text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px #fff, 0 0 16px #fff; }
+}
+
+/* Ongoing soft glow */
+@keyframes softGlow {
   0%, 25%, 50%, 75%, 100% {
     opacity: 1;
-    text-shadow: 0 0 4.5px #fff, 0 0 9px #fff, 0 0 12px #fff, 0 0 18px #fff;
+    text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px #fff, 0 0 16px #fff;
   }
   12%, 37%, 62%, 87% {
     opacity: 0.85;
     text-shadow: 0 0 2.5px #fff, 0 0 5px #fff, 0 0 8px #fff, 0 0 12px #fff;
   }
 }
-
 
 /* Main inventory box */
 .main-container {
