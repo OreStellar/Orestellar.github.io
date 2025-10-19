@@ -199,10 +199,11 @@ header img {
 </div>
 
 <script>
-// === Restored Starfield ===
+// === Starfield with full-screen coverage, slower motion, and higher density ===
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -211,13 +212,15 @@ resizeCanvas();
 
 function createStars() {
   stars = [];
-  for (let i = 0; i < 250; i++) {
+  const numStars = Math.floor(window.innerWidth * window.innerHeight / 2500); 
+  // dynamic density based on screen size (approx 700–1000 stars)
+  for (let i = 0; i < numStars; i++) {
     stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
+      x: Math.random() * canvas.width - canvas.width / 2,
+      y: Math.random() * canvas.height - canvas.height / 2,
       z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.5,
-      color: ["#ffffff", "#ffffcc", "#ffcccc"][Math.floor(Math.random()*3)]
+      color: ["#ffffff", "#ffffcc", "#ffcccc"][Math.floor(Math.random() * 3)],
+      size: Math.random() * 1.4 + 0.4
     });
   }
 }
@@ -225,22 +228,34 @@ createStars();
 
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   for (let s of stars) {
-    s.z -= 0.8;
+    s.z -= 0.3; // slower forward movement
     if (s.z <= 0) s.z = canvas.width;
-    let k = 128 / s.z;
-    let px = s.x * k + canvas.width / 2;
-    let py = s.y * k + canvas.height / 2;
+
+    const k = 128 / s.z;
+    const px = s.x * k + canvas.width / 2;
+    const py = s.y * k + canvas.height / 2;
+
     if (px < 0 || px >= canvas.width || py < 0 || py >= canvas.height) continue;
+
     ctx.beginPath();
     ctx.arc(px, py, s.size, 0, Math.PI * 2);
     ctx.fillStyle = s.color;
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 10;
     ctx.shadowColor = s.color;
     ctx.fill();
   }
+
   requestAnimationFrame(drawStars);
 }
+
+drawStars();
+window.addEventListener("resize", () => {
+  resizeCanvas();
+  createStars();
+});
+
 drawStars();
 window.addEventListener("resize", resizeCanvas);
 
