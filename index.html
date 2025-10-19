@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron for sleek sci-fi -->
+<!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -46,8 +46,6 @@ canvas#starfield {
   overflow: hidden;
   text-transform: capitalize;
 }
-
-/* Scanline overlay */
 #logoText::before {
   content: attr(data-text);
   position: absolute; top: 0; left: 0;
@@ -122,92 +120,33 @@ textarea#message {
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Total ISK popup */
-#totalPriceModal {
-  display: none;
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-}
-#totalPriceModal .w3-modal-content {
-  border-radius: 15px;
-  width: 350px;
-  max-width: 90%;
-  padding: 20px;
-  background: radial-gradient(circle at 50% 50%, #001100, #000000);
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff inset;
-  text-align: center;
-  color: white;
-}
-
-#totalPriceModal h2 {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 15px;
-  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
-}
-
-#popupTotalPrice {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-#popupTotalPrice .number,
-#popupTotalPrice .isk {
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-}
-
-#totalPriceModal button {
-  background: white;
-  color: black;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 10px white;
-  transition: all 0.3s ease;
-}
-#totalPriceModal button:hover {
-  box-shadow: 0 0 20px white, 0 0 40px white inset;
-}
-
-#copiedMessage {
-  display:none;
-  color: yellow;
-  font-weight: bold;
-  font-size: 18px;
-  margin-top: 10px;
-}
-
 /* Contracts and summary */
 .contracts-wrapper {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
 }
+
 .total-cost-container {
   width: 630px; height: 418px;
   background-size: contain; background-position: center; background-repeat: no-repeat;
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
+  cursor: pointer;
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+
 #totalCostText {
   position: absolute;
   top: calc(50% + 18px);
   left: 50%;
   transform: translate(calc(-50% + 15px), -50%);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+  user-select: none;
 }
 
 #summaryContainer {
@@ -228,19 +167,20 @@ textarea#message {
 }
 #summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li span:last-child { min-width: 120px; text-align: right; }
+#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-.unrecognized {
-  color: red;
-  font-weight: bold;
+.glow-red {
   animation: glowRed 1s infinite alternate;
 }
-
 @keyframes glowRed {
-  0% { text-shadow: 0 0 5px #ff0000; }
-  100% { text-shadow: 0 0 15px #ff5555; }
+  0% { text-shadow: 0 0 5px red; }
+  100% { text-shadow: 0 0 20px red; }
 }
+
+/* Info button */
+.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
+.info-button button { background: white; color: black; border-radius: 50%; }
 </style>
 </head>
 <body>
@@ -250,16 +190,6 @@ textarea#message {
 <header id="myHeader">
   <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
 </header>
-
-<!-- Total ISK Popup -->
-<div id="totalPriceModal" class="w3-modal">
-  <div class="w3-modal-content w3-center">
-    <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice"><span class="number">0</span> <span class="isk">ISK</span></p>
-    <button id="closeTotalModal">Copy</button>
-    <div id="copiedMessage">Copied!</div>
-  </div>
-</div>
 
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
@@ -275,7 +205,7 @@ textarea#message {
       <div id="summaryTotal"></div>
     </div>
     <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText"><span class="number">0</span> <span class="isk">ISK</span></div>
+      <div id="totalCostText">0 ISK</div>
     </div>
   </div>
 </div>
@@ -358,48 +288,41 @@ async function loadPrices() {
     const cols = lines[i].split(',');
     const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore]=price;
+    if(!isNaN(price)) priceList[ore.toLowerCase()]=price; // lowercase key for smarter matching
   }
   document.getElementById('submitButton').disabled=false;
 }
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
+
 function animateCount(el, start, end, duration=2000) {
-    let startTime = null;
-    const numberSpan = el.querySelector(".number");
-    const iskSpan = el.querySelector(".isk");
-
-    function step(t) {
-        if (!startTime) startTime = t;
-        let progress = Math.min((t - startTime)/duration, 1);
-        const current = Math.floor(progress * (end - start) + start);
-        numberSpan.innerText = current.toLocaleString();
-        iskSpan.innerText = "ISK";
-        if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+  let startTime = null;
+  function step(t){
+    if(!startTime) startTime = t;
+    let progress = Math.min((t-startTime)/duration,1);
+    el.innerText = formatNumber(Math.floor(progress*(end-start)+start)) + " ISK";
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
-
 
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
-
-  const priceLowerMap = {};
-  for (const [k,v] of Object.entries(priceList)) priceLowerMap[k.toLowerCase()] = v;
+  const unknowns = [];
 
   while((match = regex.exec(t)) !== null){
     const name = match[1].trim();
     const qty = parseInt(match[2]);
-    const oreLower = name.toLowerCase();
-    
-    if(priceLowerMap[oreLower]) {
-      summary.push({name, qty, val: qty*priceLowerMap[oreLower], recognized: true});
-      total += qty*priceLowerMap[oreLower];
+    const price = priceList[name.toLowerCase()];
+    if(price) {
+      summary.push({name, qty, val: qty*price});
+      total += qty*price;
     } else {
-      summary.push({name, qty, val: 0, recognized: false});
+      summary.push({name, qty, val: 0, unknown:true});
+      unknowns.push(name);
     }
   }
 
@@ -408,16 +331,12 @@ function showContent(){
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    if(i.recognized) {
-      li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
-    } else {
-      li.innerHTML = `<span class="unrecognized">${i.name}</span><span class="unrecognized">Unrecognized</span>`;
-    }
+    li.innerHTML = `<span class="${i.unknown ? 'glow-red' : ''}">${i.name}</span><span>${i.unknown ? '??' : formatNumber(i.val)} ISK</span>`;
     list.appendChild(li);
   });
-
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
+
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   // Show contracts
@@ -427,54 +346,26 @@ function showContent(){
   // Hide main container
   document.querySelector('.main-container').style.display='none';
 
-  // Animate totals
-  animateCount(document.getElementById('totalCostText'),0,total);
-  animateCount(document.getElementById('popupTotalPrice'),0,total);
-
-  // Show total ISK popup
-  const popup = document.getElementById('totalPriceModal');
-  popup.style.display = 'block';
+  // Animate right contract total
+  const totalEl = document.getElementById('totalCostText');
+  totalEl.dataset.value = total;
+  totalEl.innerText = formatNumber(total) + " ISK";
 }
 
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-document.getElementById('closeTotalModal').addEventListener('click',()=>{
-  const txt = document.getElementById('popupTotalPrice').innerText;
-  navigator.clipboard.writeText(txt);
-  const msg = document.getElementById('copiedMessage');
-  msg.style.display='block';
-  setTimeout(()=>{ msg.style.display='none'; },1500);
-  document.getElementById('totalPriceModal').style.display='none';
-});
-
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-const totalModal = document.getElementById('totalPriceModal');
-const totalContent = totalModal.querySelector('.w3-modal-content');
-const copiedMessage = document.getElementById('copiedMessage');
-
-// Copy button
-document.getElementById('closeTotalModal').addEventListener('click', (e) => {
-    e.stopPropagation(); // stop bubbling so outside click doesn't trigger
-    const txt = document.getElementById('popupTotalPrice').innerText;
-    navigator.clipboard.writeText(txt);
-
-    copiedMessage.style.display = 'block';
-    setTimeout(() => copiedMessage.style.display = 'none', 1500);
-
-    totalModal.style.display = 'none'; // close after copying
+// === Copy total cost when right contract clicked ===
+const totalEl = document.getElementById('totalCostText');
+totalEl.addEventListener('click', ()=>{
+  navigator.clipboard.writeText(totalEl.dataset.value || totalEl.innerText);
+  const original = totalEl.innerText;
+  totalEl.innerText = "Copied!";
+  setTimeout(()=>{ totalEl.innerText = formatNumber(totalEl.dataset.value) + " ISK"; },1500);
 });
-
-// Close modal on outside click
-document.addEventListener('click', (e) => {
-    if (totalModal.style.display === 'block' && !totalContent.contains(e.target) && e.target.id !== 'closeTotalModal') {
-        totalModal.style.display = 'none';
-    }
-});
-
-    
 </script>
 
 </body>
