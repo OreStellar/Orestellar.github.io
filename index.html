@@ -169,21 +169,6 @@ header img {
   <hr>
 </header>
 
-<div class="info-button">
-  <button id="infoButton" class="w3-button w3-theme">i</button>
-</div>
-
-<div id="infoModal" class="w3-modal">
-  <div class="w3-modal-content">
-    <span id="closeModal" class="w3-button w3-display-topright">&times;</span>
-    <header class="w3-container w3-theme modal-header"><h2>Welcome to OreStellar's appraisal calculator!</h2></header>
-    <div class="w3-container">
-      <p>If you have any questions, message Morgan Auren in-game.</p>
-      <p>Only asteroid ores are supported. Contracts must be High-Security (0.5+).</p>
-    </div>
-  </div>
-</div>
-
 <!-- Total ISK Modal -->
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-center">
@@ -211,12 +196,10 @@ header img {
       <div id="totalCostText">0 ISK</div>
     </div>
   </div>
-
-  <div id="unrecognizedItemsContainer" style="display:none; color:red; text-shadow:0 0 10px red;"></div>
 </div>
 
 <script>
-// === Starfield ===
+// === Restored Starfield ===
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
@@ -228,13 +211,13 @@ resizeCanvas();
 
 function createStars() {
   stars = [];
-  for (let i = 0; i < 400; i++) {
+  for (let i = 0; i < 250; i++) {
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.2,
-      color: ["#fff7e6", "#ffeedd", "#ffccaa", "#ffd1b3"][Math.floor(Math.random()*4)]
+      size: Math.random() * 1.5 + 0.5,
+      color: ["#ffffff", "#ffffcc", "#ffcccc"][Math.floor(Math.random()*3)]
     });
   }
 }
@@ -243,18 +226,17 @@ createStars();
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let s of stars) {
-    s.z -= 0.5; // slower movement
+    s.z -= 0.8;
     if (s.z <= 0) s.z = canvas.width;
     let k = 128 / s.z;
     let px = s.x * k + canvas.width / 2;
     let py = s.y * k + canvas.height / 2;
     if (px < 0 || px >= canvas.width || py < 0 || py >= canvas.height) continue;
-    let glow = ctx.createRadialGradient(px, py, 0, px, py, s.size*6);
-    glow.addColorStop(0, s.color);
-    glow.addColorStop(1, "transparent");
-    ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.arc(px, py, s.size*3, 0, Math.PI*2);
+    ctx.arc(px, py, s.size, 0, Math.PI * 2);
+    ctx.fillStyle = s.color;
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = s.color;
     ctx.fill();
   }
   requestAnimationFrame(drawStars);
@@ -296,11 +278,9 @@ function showContent(){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
-  let invalid=[];
   while((match=regex.exec(t))!==null){
     const name=match[1].trim(), qty=parseInt(match[2]);
     if(priceList[name]) summary.push({name,qty,val:qty*priceList[name]}), total+=qty*priceList[name];
-    else invalid.push(name);
   }
   const list=document.getElementById('summaryList');
   list.innerHTML='';
@@ -317,13 +297,9 @@ function showContent(){
   animateCount(document.getElementById('totalCostText'),0,total);
   animateCount(document.getElementById('popupTotalPrice'),0,total);
   document.getElementById('totalPriceModal').style.display='block';
-  const un=document.getElementById('unrecognizedItemsContainer');
-  un.style.display=invalid.length?'block':'none';
-  un.innerText=invalid.length?'Unrecognized: '+invalid.join(', '):'';
 }
 
 document.getElementById('submitButton').addEventListener('click',showContent);
-
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
   const txt=document.getElementById('popupTotalPrice').innerText;
   navigator.clipboard.writeText(txt);
@@ -331,7 +307,6 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
   setTimeout(()=>document.getElementById('copiedMessage').style.display='none',1500);
   document.getElementById('totalPriceModal').style.display='none';
 });
-
 document.querySelector('#myHeader img').addEventListener('click',()=>{
   document.getElementById('message').value='';
   document.querySelector('.main-container').style.display='flex';
