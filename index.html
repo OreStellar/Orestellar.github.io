@@ -235,6 +235,32 @@ textarea#message:focus {
   position: absolute;
   pointer-events: none;
 }
+  /* Center the header/logo relative to the main container */
+.container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers both the header and main container */
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#myHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  max-width: var(--main-container-width, 600px); /* match your main container width */
+  margin-bottom: 30px;
+}
+
+.main-container {
+  width: 100%;
+  max-width: var(--main-container-width, 600px);
+  margin: 0 auto;
+}
+
 </style>
 </head>
 <body>
