@@ -44,6 +44,7 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  text-transform: capitalize; /* ensures OreStellar casing */
 }
 
 /* Scanline overlay */
@@ -370,7 +371,6 @@ function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   const numberSpan = el.querySelector(".number");
-  const iskSpan = el.querySelector(".isk");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
@@ -435,6 +435,15 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+
+// === Close modal on outside click ===
+const totalModal = document.getElementById('totalPriceModal');
+const totalContent = totalModal.querySelector('.w3-modal-content');
+totalModal.addEventListener('click', (e) => {
+  if (!totalContent.contains(e.target)) {
+    totalModal.style.display = 'none';
+  }
+});
 </script>
 
 </body>
