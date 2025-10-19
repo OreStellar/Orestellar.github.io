@@ -151,14 +151,15 @@ textarea#message {
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: calc(50% + 15px);   /* moved down 5px */
+  left: calc(50% + 25px); /* moved right 10px */
   transform: translate(-50%, -50%);
-  font-size: 16px; /* larger size */
+  font-size: 16px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
+
 
 /* Summary */
 #summaryContainer {
