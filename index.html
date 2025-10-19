@@ -44,7 +44,7 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-transform: capitalize;
+  text-transform: capitalize; /* ensures OreStellar casing */
 }
 
 /* Scanline overlay */
@@ -133,19 +133,18 @@ textarea#message {
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
+  cursor: pointer;
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
   top: calc(50% + 23px); /* lowered 5px */
-  left: 50%;
-  transform: translate(calc(-50% + 10px), -50%); /* over 10px */
+  left: calc(50% + 10px); /* moved 10px right */
   font-size: 16px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  cursor: pointer;
 }
 
 #summaryContainer {
@@ -169,29 +168,14 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-/* Info button */
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
-.info-button button { background: white; color: black; border-radius: 50%; }
-
-/* Unrecognized item style */
-.unrecognized { color: red; font-weight: bold; animation: pulseRed 1s infinite alternate; }
-@keyframes pulseRed {
-  0% { text-shadow: 0 0 2px red; }
-  100% { text-shadow: 0 0 12px red; }
-}
-
-/* Copied message */
 #copiedMessage {
-  display: none;
-  position: absolute;
+  display:none;
+  color: #00ff00;
   font-weight: bold;
-  font-size: 16px;
-  color: green;
-  pointer-events: none;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  font-size: 18px;
+  position: absolute;
 }
+
 </style>
 </head>
 <body>
@@ -201,7 +185,7 @@ textarea#message {
 <header id="myHeader">
   <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
 </header>
-  
+
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
@@ -241,7 +225,6 @@ function createStars() {
   for (let i = 0; i < clusterCount; i++) {
     clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
-
   const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
@@ -255,13 +238,12 @@ function createStars() {
       x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
     }
-
     stars.push({
       x, y,
       z: Math.random() * canvas.width,
       size: Math.random() * 1.5 + 0.2,
       color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.05 + 0.02,
+      speed: Math.random() * 0.2 + 0.05,
       phase: Math.random() * Math.PI * 2
     });
   }
@@ -288,7 +270,7 @@ function drawStars(time=0) {
 drawStars(0);
 window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
 
-// === App logic ===
+// === Price loading ===
 let priceList = {};
 async function loadPrices() {
   const response = await fetch('data/prices.csv');
@@ -298,9 +280,9 @@ async function loadPrices() {
   const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
   for (let i=1;i<lines.length;i++){
     const cols = lines[i].split(',');
-    const ore = cols[0].trim();
+    const ore = cols[0].trim().toLowerCase();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
+    if(!isNaN(price)) priceList[ore]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -308,109 +290,121 @@ loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
 
+// Animate numbers
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
+  const numberSpan = el.querySelector(".number");
+  const iskSpan = el.querySelector(".isk");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    el.innerText = formatNumber(Math.floor(progress*(end-start)+start)) + " ISK";
+    const current = Math.floor(progress*(end-start)+start);
+    if(numberSpan) numberSpan.innerText = current.toLocaleString();
+    if(iskSpan) iskSpan.innerText = "ISK";
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
+// === Submit logic ===
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
-  const list = document.getElementById('summaryList');
-  list.innerHTML = '';
 
   while((match = regex.exec(t)) !== null){
-    const name = match[1].trim();
-    const qty = parseInt(match[2]);
-    if(priceList[name.toLowerCase()]) {
-      const val = qty * priceList[name.toLowerCase()];
-      summary.push({name, qty, val});
-      total += val;
-      const li = document.createElement('li');
-      li.innerHTML = `<span>${name}</span><span>${formatNumber(val)} ISK</span>`;
-      list.appendChild(li);
-    } else {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="unrecognized">${name}</span><span>${qty}</span>`;
-      list.appendChild(li);
-    }
+    const name = match[1].trim().toLowerCase(), qty = parseInt(match[2]);
+    let val = 0;
+    if(priceList[name]) val = qty*priceList[name];
+    summary.push({name, qty, val, recognized: !!priceList[name]});
+    total += val;
   }
 
-  document.getElementById('summaryContainer').style.display='flex';
+  // Populate summary
+  const list = document.getElementById('summaryList');
+  list.innerHTML = '';
+  summary.forEach(i=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`;
+    list.appendChild(li);
+  });
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.style.display='flex';
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
+
+  // Show contracts
   document.getElementById('leftContainer').style.display='block';
-  const totalCostContainer = document.getElementById('totalCostContainer');
-  totalCostContainer.style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
+
+  // Hide inventory box
   document.querySelector('.main-container').style.display='none';
 
+  // Set total cost text
   const totalCostText = document.getElementById('totalCostText');
-  totalCostText.innerText = formatNumber(total) + " ISK";
+  totalCostText.innerText = `${formatNumber(total)} ISK`;
 
   // Copy on click
-  totalCostText.onclick = () => {
-    navigator.clipboard.writeText(total.toString());
-    const msg = document.getElementById('copiedMessage');
-    msg.style.display='block';
-    setTimeout(()=>msg.style.display='none',1500);
+  const totalContainer = document.getElementById('totalCostContainer');
+  const copiedMessage = document.getElementById('copiedMessage');
+  totalContainer.onclick = ()=>{
+    navigator.clipboard.writeText(totalCostText.innerText);
+    totalCostText.style.display='none';
+    copiedMessage.style.display='block';
+    setTimeout(()=>{
+      copiedMessage.style.display='none';
+      totalCostText.style.display='block';
+    },1500);
   };
 }
 
-// Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-// === Logo shatter animation ===
-document.getElementById('myHeader').addEventListener('click', () => {
-  const logo = document.getElementById('logoText');
-  const rect = logo.getBoundingClientRect();
-  const pieces = [];
-  const rows = 6;
-  const cols = 12;
-  const pieceWidth = rect.width / cols;
-  const pieceHeight = rect.height / rows;
-  logo.style.visibility='hidden';
+// === Logo shatter on click ===
+const logo = document.getElementById('logoText');
+logo.addEventListener('click', () => {
+    const rect = logo.getBoundingClientRect();
+    const pieces = [];
+    const totalPieces = 40;
 
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const div = document.createElement('div');
-      div.style.position='fixed';
-      div.style.left = rect.left + c*pieceWidth + 'px';
-      div.style.top = rect.top + r*pieceHeight + 'px';
-      div.style.width = pieceWidth + 'px';
-      div.style.height = pieceHeight + 'px';
-      div.style.backgroundColor='white';
-      div.style.color='white';
-      div.style.overflow='hidden';
-      div.style.display='flex';
-      div.style.alignItems='center';
-      div.style.justifyContent='center';
-      div.style.fontFamily = "'Orbitron', sans-serif";
-      div.style.fontWeight='700';
-      div.innerText = logo.textContent[c + r*cols] || '';
-      document.body.appendChild(div);
-      pieces.push(div);
+    for (let i = 0; i < totalPieces; i++) {
+        const piece = document.createElement('div');
+        const size = Math.random() * 12 + 6;
+        piece.style.width = piece.style.height = size + 'px';
+        piece.style.borderRadius = '50%';
+        piece.style.background = '#fff';
+        piece.style.position = 'fixed';
+        piece.style.left = rect.left + Math.random() * rect.width + 'px';
+        piece.style.top = rect.top + Math.random() * rect.height + 'px';
+        piece.style.zIndex = 10000;
+        document.body.appendChild(piece);
+        pieces.push({
+            el: piece,
+            vx: (Math.random() - 0.5) * 2,
+            vy: Math.random() * -2 - 1,
+            gravity: 0.05 + Math.random() * 0.05
+        });
     }
-  }
 
-  // Animate pieces
-  pieces.forEach(p=>{
-    const dx = (Math.random()-0.5)*200;
-    const dy = (Math.random()-0.5)*200 + 50;
-    const rotate = (Math.random()-0.5)*720;
-    p.animate([
-      {transform:'translate(0,0) rotate(0deg)'},
-      {transform:`translate(${dx}px, ${dy}px) rotate(${rotate}deg)`}
-    ], {duration:1200, easing:'ease-out', fill:'forwards'});
-  });
-
-  setTimeout(()=>location.reload(),1800); // refresh after pieces settle
+    let frame = 0;
+    const anim = setInterval(() => {
+        frame++;
+        pieces.forEach(p => {
+            p.vy += p.gravity;
+            const left = parseFloat(p.el.style.left) + p.vx;
+            const top = parseFloat(p.el.style.top) + p.vy;
+            p.el.style.left = left + 'px';
+            p.el.style.top = top + 'px';
+        });
+        if (frame > 150) { // slower fall
+            clearInterval(anim);
+            pieces.forEach(p => document.body.removeChild(p.el));
+            location.reload();
+        }
+    }, 16);
 });
+
+// Refresh page on header click (optional)
+document.getElementById('myHeader').addEventListener('dblclick',()=>location.reload());
 </script>
 
 </body>
