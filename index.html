@@ -158,13 +158,19 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.borderRadius='50%';
         p.style.zIndex=10;
         document.body.appendChild(p);
+
+        // One main piece comes straight at viewer
+        let vz = 0;
+        if(i===0) vz = 12;  // super fast toward viewer
+        else vz = Math.random()*2+1;  // others scatter
+
         pieces.push({
             el:p,
             x:rect.left+rect.width/2,
             y:rect.top+rect.height/2,
             vx:(Math.random()-0.5)*4,
             vy:(Math.random()-0.5)*4,
-            vz: Math.random()*6+2,  // velocity towards viewer
+            vz: vz,
             scale:1,
             angularVelocity:(Math.random()-0.5)*0.5,
             angle: Math.random()*360
@@ -173,12 +179,9 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
 
     function animate(){
         pieces.forEach(p=>{
-            // move in x/y
             p.x += p.vx;
             p.y += p.vy;
-            // move toward viewer
             p.scale += p.vz*0.05;
-            // apply transform
             p.angle += p.angularVelocity;
             p.el.style.left = p.x - (p.scale*4) + 'px';
             p.el.style.top = p.y - (p.scale*4) + 'px';
@@ -192,6 +195,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
 
     setTimeout(()=>location.reload(),4000);
 });
+
 
 </script>
 </body>
