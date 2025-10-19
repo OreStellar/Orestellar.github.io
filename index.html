@@ -34,6 +34,7 @@ canvas#starfield {
   gap: 20px;
   padding: 20px;
   z-index: 2;
+  position: relative;
 }
 
 /* Header / Logo */
@@ -45,7 +46,7 @@ canvas#starfield {
   text-align: center;
   width: 100%;
   max-width: 650px;
-  margin-bottom: 40px; /* Raised 10px above previous */
+  margin-bottom: 40px;
   cursor: pointer;
   z-index: 2;
 }
@@ -56,7 +57,7 @@ canvas#starfield {
   font-size: 5rem;
   color: #fff;
   letter-spacing: 2px;
-  transform: skewX(-8deg); /* Lean slightly without bolding */
+  transform: skewX(-8deg) translateY(-10px);
   transform-origin: center;
 }
 
@@ -68,7 +69,7 @@ canvas#starfield {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(20,20,20,0.92); /* Less transparent */
+  background-color: rgba(20,20,20,0.92);
   border-radius: 15px;
   box-shadow: 0 0 20px #ffffff40;
 }
@@ -82,7 +83,7 @@ canvas#starfield {
   padding: 15px;
   border-radius: 10px;
   resize: vertical;
-  background-color: rgba(17,17,17,0.97); /* less transparent */
+  background-color: rgba(17,17,17,0.97);
   color: #ffffff;
   border: 1px solid #333;
   text-align: left;
@@ -90,12 +91,7 @@ canvas#starfield {
   box-shadow: inset 0 0 10px #222;
   transition: all 0.2s ease-in-out;
 }
-
-.main-container textarea#message::placeholder {
-  color: #ffffff;
-  opacity: 0.6;
-}
-
+.main-container textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
 textarea#message:focus {
   outline: none;
   border-color: #fff;
@@ -132,12 +128,10 @@ textarea#message:focus {
   animation: ambientGlow 3.5s ease-in-out infinite alternate;
   transition: all 0.35s ease;
 }
-
 @keyframes ambientGlow {
   0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
   100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
 }
-
 #submitButton:hover {
   color: #000;
   background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
@@ -230,21 +224,27 @@ textarea#message:focus {
 </div>
 
 <script>
-// === Starfield ===
+// Canvas resize
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
-let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
+
+// Stars
+let stars = [], brightStars = [], brightStarTimer = 0;
 const clusterCount = 12;
-let brightStarTimer = 0; // for occasional bright star
-let brightStars = []; // array of current bright stars
 
 function createStars() {
     stars = [];
     const clusterCenters = [];
-    for (let i = 0; i < clusterCount; i++) {
+    for (let i = 0; i < clusterCount; i++)
         clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
-    }
-    const totalStars = Math.floor(window.innerWidth * window.innerHeight / 800); // more stars
+    const totalStars = Math.floor(window.innerWidth * window.innerHeight / 800);
     for (let i = 0; i < totalStars; i++) {
         let x, y;
         if (Math.random() < 0.6) {
@@ -257,69 +257,48 @@ function createStars() {
             x = Math.random() * canvas.width;
             y = Math.random() * canvas.height;
         }
-
         stars.push({
             x, y,
-            z: Math.random() * canvas.width,
-            size: Math.random() * 1.5 + 0.2,
+            size: Math.random()*1.5+0.2,
             color: ["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],
-            speed: Math.random() * 0.2 + 0.05,
-            phase: Math.random() * Math.PI * 2,
-            twinkle: Math.random() < 0.1, // 10% of stars twinkle
-            baseAlpha: 0.8 + Math.random() * 0.2
+            speed: Math.random()*0.2+0.05,
+            phase: Math.random()*Math.PI*2,
+            twinkle: Math.random()<0.1,
+            baseAlpha: 0.8 + Math.random()*0.2
         });
     }
 }
+createStars();
 
 function drawStars(time=0){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Occasionally select bright stars
-    brightStarTimer -= 16; // approx ms/frame
+    brightStarTimer -= 16;
     if(brightStarTimer <= 0){
-        brightStarTimer = 7000 + Math.random() * 8000; // 7-15s
+        brightStarTimer = 7000 + Math.random()*8000;
         brightStars = [];
-        for(let i=0; i<2; i++){
-            brightStars.push(stars[Math.floor(Math.random()*stars.length)]);
-        }
-        brightStars.forEach(s => s.brightEnd = time + 2000 + Math.random()*1000); // 2-3s shine
+        for(let i=0;i<2;i++) brightStars.push(stars[Math.floor(Math.random()*stars.length)]);
+        brightStars.forEach(s => s.brightEnd = time + 2000 + Math.random()*1000);
     }
 
     for(let s of stars){
-        s.z -= s.speed;
-        if(s.z<=0) s.z = canvas.width;
-
-        // Base shimmer
         let shimmer = s.baseAlpha;
-
-        // Twinkle
-        if(s.twinkle){
-            shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
-        }
-
-        // Occasional bright stars
-        if(s.brightEnd && time < s.brightEnd){
-            shimmer = 1; // max 1, not more
-        }
-
+        if(s.twinkle) shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
+        if(s.brightEnd && time < s.brightEnd) shimmer = 1;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
         ctx.fillStyle = s.color;
-        ctx.globalAlpha = shimmer; // now always 0-1
+        ctx.globalAlpha = shimmer;
         ctx.shadowBlur = s.size*4;
         ctx.shadowColor = s.color;
         ctx.fill();
     }
-
     ctx.globalAlpha = 1;
     requestAnimationFrame(drawStars);
 }
-
-
 drawStars();
-window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-// === Prices ===
+// === Prices & Submit ===
 let priceList = {};
 async function loadPrices() {
   const response = await fetch('data/prices.csv');
@@ -344,58 +323,51 @@ function animateCount(el,start,end,duration=2000){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
     const current = Math.floor(progress*(end-start)+start);
-    el.innerText = current.toLocaleString() + ' ISK';
+    el.innerText = current.toLocaleString()+' ISK';
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
-// === Submit handler ===
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total = 0, summary = [];
-  while((match = regex.exec(t))!==null){
-    const name = match[1].trim();
-    const qty = parseInt(match[2]);
+  let match, total=0, summary=[];
+  while((match=regex.exec(t))!==null){
+    const name = match[1].trim(), qty=parseInt(match[2]);
     const lookupName = name.toLowerCase();
-    if(priceList[lookupName]) {
-      summary.push({ name, qty, val: qty * priceList[lookupName] });
-      total += qty * priceList[lookupName];
-    } else {
-      summary.push({ name, qty, val: 'Unrecognized', unrecognized: true });
-    }
+    if(priceList[lookupName]){
+      summary.push({name,qty,val:qty*priceList[lookupName]});
+      total += qty*priceList[lookupName];
+    } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
   const list = document.getElementById('summaryList');
-  list.innerHTML = '';
+  list.innerHTML='';
   summary.forEach(i=>{
-    const li = document.createElement('li');
-    li.className = i.unrecognized?'unrecognized':'';
-    li.innerHTML = `<span>${i.name}</span><span>${i.unrecognized?i.val:formatNumber(i.val)+' ISK'}</span>`;
+    const li=document.createElement('li');
+    li.className=i.unrecognized?'unrecognized':'';
+    li.innerHTML=`<span>${i.name}</span><span>${i.unrecognized?i.val:formatNumber(i.val)+' ISK'}</span>`;
     list.appendChild(li);
   });
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.style.display='flex';
+  document.getElementById('summaryContainer').style.display='flex';
   document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
-
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
-
   animateCount(document.getElementById('totalCostText'),0,total);
 }
 
 // Copied functionality
-const totalCostEl = document.getElementById('totalCostText');
-totalCostEl.addEventListener('click', () => {
-    const iskText = totalCostEl.innerText;
-    navigator.clipboard.writeText(iskText);
-    totalCostEl.innerText = 'Copied';
-    setTimeout(() => { totalCostEl.innerText = iskText; }, 1500);
+const totalCostEl=document.getElementById('totalCostText');
+totalCostEl.addEventListener('click',()=>{
+  const iskText=totalCostEl.innerText;
+  navigator.clipboard.writeText(iskText);
+  totalCostEl.innerText='Copied';
+  setTimeout(()=>{totalCostEl.innerText=iskText;},1500);
 });
 
 // Submit button
-document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('submitButton').addEventListener('click',showContent);
 
 // Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
