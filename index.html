@@ -455,27 +455,29 @@ const totalModal = document.getElementById('totalPriceModal');
 const totalContent = totalModal.querySelector('.w3-modal-content');
 const copiedMessage = document.getElementById('copiedMessage');
 
-// Copy button click
+// Copy button
 document.getElementById('closeTotalModal').addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent triggering outside click
+    e.stopPropagation(); // stop bubbling so outside click doesn't trigger
     const txt = document.getElementById('popupTotalPrice').innerText;
     navigator.clipboard.writeText(txt);
 
-    // Show copied message
     copiedMessage.style.display = 'block';
     setTimeout(() => copiedMessage.style.display = 'none', 1500);
 
-    // Close popup after showing
-    totalModal.style.display = 'none';
-});
+    totalModal.style.display = 'none'; // close after copying
 
-// Close popup if click outside content
-totalModal.addEventListener('click', (e) => {
-    if (!totalContent.contains(e.target)) {
+// Show copied message
+    copiedMessage.style.display = 'block';
+    setTimeout(() => copiedMessage.style.display = 'none', 1500);
+ }); 
+// Close modal on outside click
+document.addEventListener('click', (e) => {
+    if (totalModal.style.display === 'block' && !totalContent.contains(e.target) && e.target.id !== 'closeTotalModal') {
         totalModal.style.display = 'none';
     }
 });
 
+    
 </script>
 
 </body>
