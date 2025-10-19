@@ -17,12 +17,6 @@ html, body {
   color: white;
 }
 
-/* Neon-white general text */
-body, textarea, h1, h2, h3, #summaryContainer, #summaryContainer li span:last-child {
-    color: white;
-    text-shadow: 0 0 5px #fff, 0 0 15px #fff, 0 0 25px #fff;
-}
-
 /* Starfield canvas */
 canvas#starfield {
   position: fixed; top: 0; left: 0;
@@ -53,17 +47,6 @@ canvas#starfield {
   overflow: hidden;
   text-transform: capitalize;
 }
-#logoText::before {
-  content: attr(data-text);
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: scanline 2s linear infinite;
-}
-@keyframes scanline { 0% { background-position:0 0;} 100%{background-position:0 100%;} }
 
 /* Container */
 .container-wrapper {
@@ -95,8 +78,8 @@ canvas#starfield {
 /* Center the textarea container */
 .main-container textarea#message {
   display: block;
-  margin: 0 auto;       /* horizontally center the textarea itself */
-  width: 90%;           /* adjust as needed */
+  margin: 0 auto;
+  width: 90%;
   font-size: 18px;
   padding: 15px;
   border-radius: 10px;
@@ -104,9 +87,9 @@ canvas#starfield {
   background-color: #111;
   color: #ffffff !important;
   border: 1px solid #333;
-  text-align: left;     /* align text to the left */
+  text-align: left;
   font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 10px #222, 0 0 4px #ffffff20;
+  box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20;
   transition: all 0.2s ease-in-out;
 }
 
@@ -117,18 +100,19 @@ canvas#starfield {
 }
 textarea#message:focus {
   outline: none;
-  box-shadow: inset 0 0 12px #555, 0 0 15px #ffffff80;
-  border-color: #ffffff;
+  box-shadow: inset 0 0 12px #555, 0 0 15px #00ffff80;
+  border-color: #00ffff;
 }
 
+/* Quote text */
 .quote-text {
   font-style: italic; font-weight: bold;
   font-size: 21px;
   animation: glowPulse 3s infinite;
 }
 @keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #fff; }
+  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
+  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
 }
 
 /* Submit button */
@@ -180,7 +164,7 @@ textarea#message:focus {
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 
-/* Total ISK on contract */
+/* Total ISK on contract with preserved calc measurements */
 #totalCostText {
   position: absolute;
   top: calc(50% + 10px);
@@ -222,13 +206,6 @@ textarea#message:focus {
   position: absolute;
   pointer-events: none;
 }
-
-/* Neon white box shadows */
-.main-container, #summaryContainer, .total-cost-container {
-    box-shadow: 0 0 20px #fff, 0 0 40px #fff inset;
-    border: 1px solid #fff;
-}
-
 </style>
 </head>
 <body>
@@ -242,7 +219,7 @@ textarea#message:focus {
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
+    <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
     <button id="submitButton" disabled>Submit</button>
   </div>
 
@@ -365,7 +342,6 @@ function showContent(){
       summary.push({name, qty, val: 'Unrecognized', unrecognized:true});
     }
   }
-  // Populate summary
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   summary.forEach(i=>{
@@ -378,14 +354,10 @@ function showContent(){
   summaryContainer.style.display='flex';
   document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
 
-  // Show contracts
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
-
-  // Hide main container
   document.querySelector('.main-container').style.display='none';
 
-  // Animate totals
   animateCount(document.getElementById('totalCostText'),0,total);
 }
 
