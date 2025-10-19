@@ -60,6 +60,23 @@ canvas#starfield {
   letter-spacing: 2px;
   text-transform: capitalize;
   display: inline-block;
+
+  /* Lean effect */
+  transform: skew(-15deg, 0deg) rotate(-2deg);
+
+  /* Neon glow */
+  text-shadow: 
+    0 0 5px #fff, 
+    0 0 10px #fff,
+    0 0 20px #ff99ff55, 
+    0 0 30px #ff99ff33;
+
+  transition: transform 0.3s ease;
+}
+
+/* Optional hover tilt for subtle animation */
+#logoText:hover {
+  transform: skew(-15deg, 0deg) rotate(-4deg) scale(1.03);
 }
 
 /* Main inventory box */
