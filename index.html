@@ -373,15 +373,15 @@ function explodeLogo(el){
   document.body.appendChild(logoCanvas);
   const lctx = logoCanvas.getContext('2d');
 
+  // Logo pieces
   const pieces = [];
-  const text = el.innerText;
-  const pieceCount = 60;
+  const pieceCount = 80;
   for(let i=0;i<pieceCount;i++){
     pieces.push({
       x: rect.left + rect.width/2,
       y: rect.top + rect.height/2,
-      vx: (Math.random()-0.5)*8,
-      vy: (Math.random()-0.5)*8,
+      vx: (Math.random()-0.5)*10,
+      vy: (Math.random()-0.5)*10,
       size: Math.random()*12+6,
       color:'#fff'
     });
@@ -389,47 +389,60 @@ function explodeLogo(el){
 
   el.style.visibility='hidden';
 
+  // Supernova sphere
   let frame = 0;
+  let sphereRadius = 0;
+  let sphereSpeed = 0.5; // starting growth speed
+  let rotation = 0;
+
   function animate(){
     frame++;
-    lctx.fillStyle = 'rgba(0,0,0,0.15)';
+    lctx.fillStyle = 'rgba(0,0,0,0.15)'; // slight screen fade for motion trail
     lctx.fillRect(0,0,logoCanvas.width,logoCanvas.height);
 
-    // light burst
-    const maxRadius = Math.min(window.innerWidth, window.innerHeight);
-    const radius = Math.min(frame*8, maxRadius);
-    const grad = lctx.createRadialGradient(rect.left + rect.width/2, rect.top + rect.height/2, 0,
-                                           rect.left + rect.width/2, rect.top + rect.height/2, radius);
+    // --- central rotating supernova sphere ---
+    sphereSpeed *= 1.05; // accelerate
+    sphereRadius += sphereSpeed;
+    rotation += 0.02; // slow spin
+    const grad = lctx.createRadialGradient(
+      rect.left + rect.width/2, rect.top + rect.height/2, 0,
+      rect.left + rect.width/2, rect.top + rect.height/2, sphereRadius
+    );
     grad.addColorStop(0,'rgba(255,255,255,1)');
-    grad.addColorStop(0.2,'rgba(180,220,255,0.7)');
+    grad.addColorStop(0.3,'rgba(150,200,255,0.7)'); // bluish corona
+    grad.addColorStop(0.7,'rgba(80,150,255,0.3)');
     grad.addColorStop(1,'rgba(0,0,0,0)');
+    lctx.save();
+    lctx.translate(rect.left + rect.width/2, rect.top + rect.height/2);
+    lctx.rotate(rotation);
     lctx.fillStyle = grad;
     lctx.beginPath();
-    lctx.arc(rect.left + rect.width/2, rect.top + rect.height/2, radius, 0, Math.PI*2);
+    lctx.arc(0, 0, sphereRadius, 0, Math.PI*2);
     lctx.fill();
+    lctx.restore();
 
-    // pieces
+    // --- logo pieces ---
     pieces.forEach(p=>{
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.15; // gravity
+      p.vy += 0.15; // gravity effect
       lctx.fillStyle = p.color;
       lctx.beginPath();
-      lctx.arc(p.x, p.y, p.size,0,Math.PI*2);
+      lctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
       lctx.fill();
     });
 
-    if(frame<30){ // ~0.5s slow start
+    // End condition: sphere radius exceeds screen diagonal
+    if(sphereRadius < Math.sqrt(window.innerWidth**2 + window.innerHeight**2)){
       requestAnimationFrame(animate);
-    } else if(frame<100){ // scatter
-      requestAnimationFrame(animate);
-    } else { // end
+    } else {
       document.body.removeChild(logoCanvas);
       location.reload();
     }
   }
   animate();
 }
+
 </script>
 
 </body>
