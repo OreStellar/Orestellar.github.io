@@ -3,143 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OreStellar Text Effects Showcase</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-<style>
-body {
-  background: black;
-  color: white;
-  font-family: 'Orbitron', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 40px;
-  padding-top: 50px;
-}
-
-h1 {
-  font-size: 4rem;
-  margin: 20px 0;
-}
-
-/* Neon Glow */
-@keyframes neonGlow {
-  0%, 100% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
-  50% { text-shadow: 0 0 15px #0f0, 0 0 30px #0f0; }
-}
-.neon { color:#0f0; animation: neonGlow 1.5s infinite alternate; }
-
-/* Scanline */
-#scanlineLogo {
-  position: relative;
-  color: #fff;
-  overflow: hidden;
-}
-#scanlineLogo::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: scanline 2s linear infinite;
-}
-@keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
-}
-
-/* Wave */
-@keyframes wave {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.wave span {
-  display: inline-block;
-  animation: wave 1.2s infinite;
-}
-.wave span:nth-child(2){ animation-delay:0.1s; }
-.wave span:nth-child(3){ animation-delay:0.2s; }
-.wave span:nth-child(4){ animation-delay:0.3s; }
-.wave span:nth-child(5){ animation-delay:0.4s; }
-.wave span:nth-child(6){ animation-delay:0.5s; }
-.wave span:nth-child(7){ animation-delay:0.6s; }
-.wave span:nth-child(8){ animation-delay:0.7s; }
-
-/* Glitch */
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px,2px); }
-  40% { transform: translate(2px,-2px); }
-  60% { transform: translate(-1px,1px); }
-  80% { transform: translate(1px,-1px); }
-  100% { transform: translate(0); }
-}
-.glitch {
-  color: #f0f;
-  position: relative;
-  animation: glitch 1s infinite;
-}
-
-/* Typewriter */
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-.typewriter {
-  overflow: hidden;
-  border-right: 3px solid #0ff;
-  white-space: nowrap;
-  display: inline-block;
-  animation: typewriter 3s steps(20) forwards;
-}
-
-/* Flicker */
-@keyframes flicker {
-  0%,100% { opacity:1; text-shadow: 0 0 5px #fff,0 0 10px #aaa; }
-  50% { opacity:0.5; text-shadow: 0 0 20px #0ff,0 0 40px #0ff; }
-}
-.flicker { animation: flicker 1.5s infinite; color:#0ff; }
-
-/* Gradient shift */
-.gradient-text {
-  background: linear-gradient(90deg, #f00, #0f0, #00f, #ff0, #f0f);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradientShift 4s linear infinite;
-}
-@keyframes gradientShift {
-  0%{ background-position:0 0; }
-  100%{ background-position:100% 0; }
-}
-</style>
-</head>
-<body>
-
-<h1 class="neon">OreStellar - Neon Glow</h1>
-<h1 id="scanlineLogo" data-text="OreStellar">OreStellar</h1>
-
-<h1 class="wave">
-  <span>O</span><span>r</span><span>e</span><span>S</span><span>t</span><span>e</span><span>l</span><span>l</span><span>a</span><span>r</span>
-</h1>
-
-<h1 class="glitch">OreStellar</h1>
-<h1 class="typewriter">OreStellar</h1>
-<h1 class="flicker">OreStellar</h1>
-<h1 class="gradient-text">OreStellar</h1>
-
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
 <!-- Google Font: Orbitron for sleek sci-fi -->
@@ -259,18 +122,6 @@ textarea#message {
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Copied message styling */
-#copiedMessage {
-  display:none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 /* Contracts and summary */
 .contracts-wrapper {
   display: flex; justify-content: center; align-items: flex-start;
@@ -282,23 +133,37 @@ textarea#message {
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
-  cursor: pointer; /* makes right contract clickable */
+  cursor: pointer; /* indicate clickable */
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+
+/* Total ISK on Contract 2 */
 #totalCostText {
   position: absolute;
-  top: calc(50% + 20px);   /* moved down 5px */
-  left: calc(50% + 27px); /* moved right 10px */
-  transform: translate(-50%, -50%);
-  font-size: 16px;
+  top: calc(50% + 5px); /* move down 5px */
+  left: 50%; 
+  transform: translate(calc(-50% + 10px), -50%); /* move right 10px */
+  font-size: 16px; 
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
+/* Copied message inside Contract 2 */
+#copiedMessage {
+  display: none;
+  position: absolute;
+  top: calc(50% + 5px); /* match total ISK vertical */
+  left: 50%;
+  transform: translate(calc(-50% + 10px), -50%); /* match total ISK horizontal */
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 16px;
+  pointer-events: none;
+}
 
-/* Summary */
+/* Summary container */
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -343,13 +208,15 @@ textarea#message {
 
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
+    
     <div id="summaryContainer">
       <ul id="summaryList"></ul>
       <div id="summaryTotal"></div>
     </div>
+
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
-      <div id="copiedMessage">COPIED</div>
+      <div id="copiedMessage">Copied!</div>
     </div>
   </div>
 </div>
@@ -439,8 +306,10 @@ async function loadPrices() {
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
+
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
+  const numberSpan = el.querySelector(".number");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
@@ -457,13 +326,14 @@ function showContent(){
   const unrecognized = [];
 
   while((match = regex.exec(t)) !== null){
-    const name = match[1].trim(), qty = parseInt(match[2]);
-    const price = priceList[name.toLowerCase()];
-    if(price) {
-      summary.push({name, qty, val: qty*price});
-      total += qty*price;
+    const name = match[1].trim();
+    const qty = parseInt(match[2]);
+    if(priceList[name.toLowerCase()] !== undefined) {
+      summary.push({name, qty, val: qty*priceList[name.toLowerCase()]});
+      total += qty*priceList[name.toLowerCase()];
     } else {
       unrecognized.push(name);
+      summary.push({name, qty, val: 0, unrecognized: true});
     }
   }
 
@@ -472,18 +342,12 @@ function showContent(){
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    li.innerHTML = `<span>${i.name}</span><span style="color:${i.unrecognized?'red':'#00ff00'}">${i.unrecognized?i.qty+'?':formatNumber(i.val)+' ISK'}</span>`;
     list.appendChild(li);
   });
-  // unrecognized items in red
-  unrecognized.forEach(name=>{
-    const li = document.createElement('li');
-    li.innerHTML = `<span style="color:red;">${name} (unrecognized)</span><span style="color:red;">-</span>`;
-    li.classList.add('glowRed');
-    list.appendChild(li);
-  });
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.style.display='flex';
 
-  document.getElementById('summaryContainer').style.display='flex';
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   // Show contracts
@@ -493,32 +357,26 @@ function showContent(){
   // Hide main container
   document.querySelector('.main-container').style.display='none';
 
-  // Animate total cost
-  animateCount(document.getElementById('totalCostText'),0,total);
+  // Animate total on Contract 2
+  const totalCostText = document.getElementById('totalCostText');
+  totalCostText.innerText = formatNumber(total) + " ISK";
 }
 
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-// === Copy total cost to clipboard on right contract click ===
-const rightContract = document.getElementById('totalCostContainer');
-const totalText = document.getElementById('totalCostText');
-const copiedMsg = document.getElementById('copiedMessage');
+// Copy to clipboard on Contract 2 click
+const totalCostText = document.getElementById("totalCostText");
+const copiedMessage = document.getElementById("copiedMessage");
 
-rightContract.addEventListener('click',()=>{
-  const iskValue = totalText.innerText;
-  navigator.clipboard.writeText(iskValue);
-
-  // Replace total cost text with COPIED
-  totalText.style.visibility='hidden';
-  copiedMsg.style.display='block';
-
-  setTimeout(()=>{
-    totalText.style.visibility='visible';
-    copiedMsg.style.display='none';
-  }, 1500);
+totalCostText.addEventListener("click", () => {
+  navigator.clipboard.writeText(totalCostText.innerText);
+  copiedMessage.style.display = "block";
+  setTimeout(()=>{ copiedMessage.style.display = "none"; },1500);
 });
+
+// Click logo to refresh
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
 
 </body>
