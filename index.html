@@ -131,17 +131,18 @@ textarea#message:focus {
 
 /* Submit button */
 #submitButton {
-  background-color: #000; /* dark base for neon glow */
-  color: white;
-  border: 2px solid white;
-  border-radius: 8px;
+  background: linear-gradient(145deg, #222222, #444444); /* metallic dark gradient */
+  color: #fff; /* white text */
+  border: 2px solid #fff; 
+  border-radius: 6px;
   padding: 15px 30px;
   font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 0 12px #fff, 0 0 25px #fff inset; /* subtle white neon glow */
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px 3px #ffffff80;
 }
 
 #submitButton::before {
@@ -151,9 +152,9 @@ textarea#message:focus {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   transform: rotate(45deg) translateX(-100%);
-  transition: transform 0.6s ease;
+  transition: transform 0.6s ease 0.6s; /* scanner delay */
 }
 
 #submitButton:hover::before {
@@ -161,7 +162,8 @@ textarea#message:focus {
 }
 
 #submitButton:hover {
-  box-shadow: 0 0 25px 5px white;
+  box-shadow: 0 0 20px #fff, 0 0 40px #fff inset; /* stronger neon on hover */
+  background: linear-gradient(145deg, #333333, #555555);
 }
 
 
