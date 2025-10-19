@@ -186,7 +186,7 @@ textarea#message:focus {
 #totalCostText {
   position: absolute;
   top: calc(50% + 10px);
-  left: calc(50% + -35px);
+  left: calc(50% + -42px);
   font-size: 16px;
   font-weight: bold;
   color: #00ff00;
@@ -275,7 +275,7 @@ function createStars() {
   stars=[];
   const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
-  const totalStars=Math.floor(window.innerWidth*window.innerHeight/800);
+  const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
     let x,y;
     if(Math.random()<0.6){
@@ -381,13 +381,18 @@ function showContent(){
 }
 
 // Copied functionality
-const totalCostEl=document.getElementById('totalCostText');
-totalCostEl.addEventListener('click',()=>{
-  const iskText=totalCostEl.innerText;
-  navigator.clipboard.writeText(iskText);
-  totalCostEl.innerText='Copied';
-  setTimeout(()=>{totalCostEl.innerText=iskText;},1500);
+const totalCostEl = document.getElementById('totalCostText');
+totalCostEl.addEventListener('click', () => {
+  // Extract only digits and commas (remove " ISK")
+  const numericText = totalCostEl.innerText.replace(/\s*ISK\s*/i, '');
+  navigator.clipboard.writeText(numericText);
+  
+  // Optional feedback
+  const originalText = totalCostEl.innerText;
+  totalCostEl.innerText = 'Copied';
+  setTimeout(() => { totalCostEl.innerText = originalText; }, 1500);
 });
+
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
