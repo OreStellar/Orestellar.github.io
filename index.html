@@ -422,29 +422,32 @@ document.getElementById('submitButton').addEventListener('click',showContent);
 // Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-  
 window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
 
-  // Wait 2 seconds before starting flicker
+  // Step 1: Wait 2s dim
   setTimeout(() => {
-    // Ore flicker
+    // Step 2: Rapid flicker
     ore.style.animation = 'flickerRapid 0.3s linear forwards';
     setTimeout(() => {
       ore.style.animation = 'softGlow 6s infinite';
     }, 300);
 
-    // Stellar flicker after Ore
     setTimeout(() => {
       stellar.style.animation = 'flickerRapid 0.3s linear forwards';
       setTimeout(() => {
         stellar.style.animation = 'softGlow 6s infinite';
       }, 300);
     }, 300);
-  }, 600); // 2-second dim delay
-});
 
+    // Step 4: Final slow flicker after soft glow begins
+    setTimeout(() => {
+      ore.style.animation = 'flickerSlow 0.5s linear forwards, softGlow 6s infinite';
+      stellar.style.animation = 'flickerSlow 0.5s linear forwards, softGlow 6s infinite';
+    }, 1000); // 1 second after both are soft glowing
+  }, 450); // initial dim
+});
 
 </script>
 
