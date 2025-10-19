@@ -28,11 +28,10 @@ header { flex-shrink: 0; background: transparent; position: relative; z-index: 3
 
 /* Header logo - white neon, no green glow */
 header img {
-  width: 360px; /* slightly larger */
+  width: 360px;
   height: auto;
-  pointer-events: auto;
-  cursor: pointer;
-  opacity: 0.85; /* semi-transparent */
+  opacity: 0.85;
+  mix-blend-mode: screen; /* black disappears on black background */
 }
 
 /* Containers */
