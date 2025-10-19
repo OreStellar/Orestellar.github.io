@@ -392,19 +392,25 @@ function explodeLogo(el){
 
   const duration = 2500; 
   const startTime = performance.now();
-  const lightMax = 120;
+  const maxRadius = Math.sqrt(window.innerWidth**2 + window.innerHeight**2);
 
   function animateExplosion(now){
     const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
+    let progress = Math.min(elapsed / duration, 1);
+
+    // Exponential growth for faster burst
+    let burstRadius = maxRadius * Math.pow(progress, 1.5);
 
     ctxExp.clearRect(0,0,explosionCanvas.width,explosionCanvas.height);
 
-    // Light burst
-    const lightRadius = progress * lightMax;
+    // Darken background
+    ctxExp.fillStyle = `rgba(0,0,0,${progress*0.8})`;
+    ctxExp.fillRect(0,0,explosionCanvas.width,explosionCanvas.height);
+
+    // Central light burst
     const gradient = ctxExp.createRadialGradient(
       rect.left+rect.width/2, rect.top+rect.height/2, 0,
-      rect.left+rect.width/2, rect.top+rect.height/2, lightRadius
+      rect.left+rect.width/2, rect.top+rect.height/2, burstRadius
     );
     gradient.addColorStop(0,'rgba(255,255,255,1)');
     gradient.addColorStop(0.2,'rgba(255,200,150,0.6)');
@@ -412,14 +418,14 @@ function explodeLogo(el){
     gradient.addColorStop(1,'rgba(0,0,0,0)');
     ctxExp.fillStyle=gradient;
     ctxExp.beginPath();
-    ctxExp.arc(rect.left+rect.width/2, rect.top+rect.height/2, lightRadius,0,Math.PI*2);
+    ctxExp.arc(rect.left+rect.width/2, rect.top+rect.height/2, burstRadius,0,Math.PI*2);
     ctxExp.fill();
 
     // Pieces
     logoPieces.forEach(p=>{
       p.x += p.dx*0.5; 
       p.y += p.dy*0.5;
-      p.dy += 0.05;
+      p.dy += 0.05; // gravity
       p.alpha -= 0.005;
       if(p.alpha<0) p.alpha=0;
       ctxExp.fillStyle = p.color;
@@ -438,6 +444,7 @@ function explodeLogo(el){
   }
   requestAnimationFrame(animateExplosion);
 }
+
 </script>
 
 </body>
