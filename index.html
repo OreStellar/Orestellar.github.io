@@ -195,22 +195,20 @@ textarea#message:focus {
 }
 
 .summary-container {
-  display: flex;
+  display: none; /* HIDE by default until submit */
   flex-direction: column;
   align-items: flex-end;
   justify-content: flex-start;
   font-family: 'Orbitron', sans-serif;
-  color: #00ffaa; /* Match the total ISK green */
-  background: rgba(0, 10, 0, 0.75); /* Darker, less transparent for readability */
+  color: #00ffaa; /* match total ISK */
+  background: rgba(0, 10, 0, 0.75); /* darker for readability */
   border: 1px solid rgba(0, 255, 170, 0.5);
   border-radius: 10px;
   padding: 12px 24px;
   width: fit-content;
   min-width: 280px;
   max-width: 420px;
-  max-height: 400px;
-  overflow-y: auto;
-  text-shadow: 0 0 8px #00ffaa; /* Subtle glow for clarity, not hover */
+  text-shadow: 0 0 8px #00ffaa; /* neon glow effect */
   box-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
 }
 
@@ -221,18 +219,21 @@ textarea#message:focus {
   gap: 20px;
   margin-bottom: 8px;
   font-size: 15px;
+  color: #00ffaa; /* match total ISK green */
+  text-shadow: 0 0 6px #00ffaa;
 }
 
 .summary-row span:first-child {
   flex: 1;
   text-align: left;
-  color: #ccffdd; /* Slightly dimmer for text contrast */
+  color: #ccffdd; /* optional: slightly lighter label for readability */
 }
 
 .summary-row span:last-child {
   flex: 0 0 130px;
   text-align: right;
   color: #00ffaa;
+  text-shadow: 0 0 6px #00ffaa; /* neon glow for ISK values */
 }
 
 .summary-total {
@@ -245,6 +246,17 @@ textarea#message:focus {
   font-weight: bold;
   color: #00ffaa;
   text-shadow: 0 0 8px #00ffaa;
+}
+
+.summary-total span:first-child {
+  text-align: left;
+  flex: 1;
+  color: #ccffdd;
+}
+
+.summary-total span:last-child {
+  text-align: right;
+  flex: 0 0 130px;
 }
 
 
@@ -399,7 +411,7 @@ function showContent(){
       total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
- const summaryContainer = document.getElementById('summaryContainer');
+const summaryContainer = document.getElementById('summaryContainer');
 summaryContainer.innerHTML = ''; // clear old summary
 
 summary.forEach(item => {
@@ -416,7 +428,9 @@ summaryContainer.innerHTML += `
     <span>${formatNumber(total)} ISK</span>
   </div>`;
 
+// SHOW container only now
 summaryContainer.style.display = 'flex';
+
 
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
