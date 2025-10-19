@@ -270,35 +270,48 @@ function createStars() {
 }
 createStars();
 
+let lastBrightTime = 0;
+let nextBrightInterval = 7000 + Math.random()*8000; // 7-15s
+
 function drawStars(time=0){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Timer for occasional bright stars
-    brightStarTimer -= 16;
-    if(brightStarTimer <= 0){
-        brightStarTimer = 7000 + Math.random()*8000; // 7-15s
+    // Handle bright stars
+    if(time - lastBrightTime > nextBrightInterval){
+        lastBrightTime = time;
+        nextBrightInterval = 7000 + Math.random()*8000;
+
+        // Pick 1–2 stars randomly
         brightStars = [];
         for(let i=0;i<2;i++){
             const star = stars[Math.floor(Math.random()*stars.length)];
-            star.brightEnd = time + 2000 + Math.random()*1000; // 2-3s shine
+            star.brightStart = time;
+            star.brightEnd = time + 2000 + Math.random()*1000; // shine 2-3s
             brightStars.push(star);
         }
     }
 
     for(let s of stars){
-        let shimmer = s.baseAlpha;
+        s.z -= s.speed;
+        if(s.z <= 0) s.z = canvas.width;
 
-        // Twinkle for normal stars
-        if(s.twinkle) shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
+        let alpha = s.baseAlpha;
 
-        // Override if star is currently bright
-        if(s.brightEnd && time < s.brightEnd) shimmer = 1;
+        // Twinkle
+        if(s.twinkle){
+            alpha = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
+        }
+
+        // Bright star override
+        if(s.brightEnd && time >= s.brightStart && time < s.brightEnd){
+            alpha = 1;
+        }
 
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
         ctx.fillStyle = s.color;
-        ctx.globalAlpha = shimmer;
-        ctx.shadowBlur = s.size*4;
+        ctx.globalAlpha = alpha;
+        ctx.shadowBlur = s.brightEnd && time < s.brightEnd ? s.size*8 : s.size*4; // extra glow
         ctx.shadowColor = s.color;
         ctx.fill();
     }
@@ -306,6 +319,7 @@ function drawStars(time=0){
     ctx.globalAlpha = 1;
     requestAnimationFrame(drawStars);
 }
+
 
 drawStars();
 
