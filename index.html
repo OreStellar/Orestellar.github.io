@@ -89,7 +89,7 @@ canvas#starfield {
   border: 1px solid #333;
   text-align: left;
   font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 10px #222, 0 0 4px #00ffff20;
+  box-shadow: inset 0 0 10px #222; /* removed neon glow */
   transition: all 0.2s ease-in-out;
 }
 
@@ -100,7 +100,7 @@ canvas#starfield {
 }
 textarea#message:focus {
   outline: none;
-  box-shadow: inset 0 0 12px #555, 0 0 15px #00ffff80;
+  box-shadow: inset 0 0 12px #555; /* removed neon glow */
   border-color: #00ffff;
 }
 
@@ -370,14 +370,9 @@ totalCostEl.addEventListener('click', () => {
     setTimeout(() => { totalCostEl.innerText = iskText; }, 1500);
 });
 
-// Submit button
+// Submit button: removed delay
 document.getElementById('submitButton').addEventListener('click', () => {
-    const btn = document.getElementById('submitButton');
-    btn.disabled = true;
-    setTimeout(() => {
-        showContent();
-        btn.disabled = false;
-    }, 1000);
+    showContent();
 });
 
 // Refresh on logo click
