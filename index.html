@@ -450,13 +450,28 @@ document.getElementById('closeTotalModal').addEventListener('click',()=>{
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-// Close modal on outside click
 const totalModal = document.getElementById('totalPriceModal');
 const totalContent = totalModal.querySelector('.w3-modal-content');
-totalModal.addEventListener('click', (e) => {
-  if (!totalContent.contains(e.target)) {
+const copiedMessage = document.getElementById('copiedMessage');
+
+document.getElementById('closeTotalModal').addEventListener('click', (e) => {
+    e.stopPropagation(); // prevent triggering the outside click
+    const txt = document.getElementById('popupTotalPrice').innerText;
+    navigator.clipboard.writeText(txt);
+
+    // Show copied message temporarily
+    copiedMessage.style.display = 'block';
+    setTimeout(() => copiedMessage.style.display = 'none', 1500);
+
+    // Close popup after showing message
     totalModal.style.display = 'none';
-  }
+});
+
+// Close popup if click outside content
+totalModal.addEventListener('click', (e) => {
+    if (!totalContent.contains(e.target)) {
+        totalModal.style.display = 'none';
+    }
 });
 </script>
 
