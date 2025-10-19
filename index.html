@@ -28,13 +28,15 @@ canvas#starfield {
 .container-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center; /* centers header + main container */
+  align-items: center;
   justify-content: center;
   min-height: 100vh;
   gap: 20px;
+  padding: 20px;
+  z-index: 2;
 }
 
-/* Header/logo */
+/* Header / Logo */
 #myHeader {
   display: flex;
   justify-content: center;
@@ -43,25 +45,21 @@ canvas#starfield {
   text-align: center;
   width: 100%;
   max-width: 650px;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Raised 10px above previous */
   cursor: pointer;
+  z-index: 2;
 }
 
-/* Logo: leaning and lifted */
 #logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
   color: #fff;
   letter-spacing: 2px;
-  transform: skew(-15deg) translateY(-10px);
-  text-shadow: 0 0 3px #fff, 0 0 7px #fff, 0 0 12px #ff99ff44, 0 0 18px #ff99ff23;
-  display: inline-block;
+  transform: skewX(-8deg); /* Lean slightly without bolding */
+  transform-origin: center;
 }
-#logoText span {
-  display: inline-block;
-  transform: skewX(15deg); /* counter-skew the text to straighten */
-}
+
 /* Main inventory box */
 .main-container {
   width: 650px; max-width: 90%;
@@ -70,12 +68,12 @@ canvas#starfield {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(20,20,20,0.918);
+  background-color: rgba(20,20,20,0.92); /* Less transparent */
   border-radius: 15px;
   box-shadow: 0 0 20px #ffffff40;
 }
 
-/* Center the textarea container */
+/* Textarea */
 .main-container textarea#message {
   display: block;
   margin: 0 auto;
@@ -84,8 +82,8 @@ canvas#starfield {
   padding: 15px;
   border-radius: 10px;
   resize: vertical;
-  background-color: rgba(30,30,30,0.95); /* slightly lighter and more opaque */
-  color: #ffffff !important;
+  background-color: rgba(17,17,17,0.92); /* less transparent */
+  color: #ffffff;
   border: 1px solid #333;
   text-align: left;
   font-family: 'Share Tech Mono', monospace;
@@ -93,11 +91,11 @@ canvas#starfield {
   transition: all 0.2s ease-in-out;
 }
 
-/* Placeholder styling */
 .main-container textarea#message::placeholder {
-  color: #ffffff !important;
+  color: #ffffff;
   opacity: 0.6;
 }
+
 textarea#message:focus {
   outline: none;
   border-color: #fff;
@@ -134,10 +132,12 @@ textarea#message:focus {
   animation: ambientGlow 3.5s ease-in-out infinite alternate;
   transition: all 0.35s ease;
 }
+
 @keyframes ambientGlow {
   0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
   100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
 }
+
 #submitButton:hover {
   color: #000;
   background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
@@ -165,6 +165,7 @@ textarea#message:focus {
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+
 #totalCostText {
   position: absolute;
   top: calc(50% + 10px);
@@ -175,6 +176,7 @@ textarea#message:focus {
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
   cursor: pointer;
 }
+
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -195,8 +197,8 @@ textarea#message:focus {
 #summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
 #summaryContainer li.unrecognized span:last-child { color: red; animation: glowPulse 2s infinite; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
-#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 
+#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -205,7 +207,7 @@ textarea#message:focus {
 
 <div class="container-wrapper">
   <header id="myHeader">
-    <h1 id="logoText"><span>OreStellar</span></h1>
+    <h1 id="logoText">OreStellar</h1>
   </header>
 
   <div class="main-container w3-card w3-container w3-center">
@@ -232,71 +234,58 @@ textarea#message:focus {
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let stars = [];
-const clusterCount = 12;
-let twinkleStar = null;
-let twinkleAlpha = 1;
-
+let twinkleTimer = 0;
 function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resizeCanvas();
 
 function createStars() {
   stars = [];
+  const colors = ["#ffffff", "#ff99aa", "#99ccff", "#ffffff"];
+  const clusterCount = 12;
   const clusterCenters = [];
   for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+    clusterCenters.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height });
   }
-  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
+  const totalStars = Math.floor(window.innerWidth*window.innerHeight/1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
     if (Math.random() < 0.6) {
-      const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
-      const radius = Math.random() * 120;
-      const angle = Math.random() * Math.PI * 2;
-      x = c.x + radius * Math.cos(angle);
-      y = c.y + radius * Math.sin(angle);
+      const c = clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
+      const radius = Math.random()*120;
+      const angle = Math.random()*Math.PI*2;
+      x = c.x + radius*Math.cos(angle);
+      y = c.y + radius*Math.sin(angle);
     } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
+      x = Math.random()*canvas.width;
+      y = Math.random()*canvas.height;
     }
     stars.push({
       x, y,
-      z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.2,
-      color: ["#ffffff","#ff99aa","#99ccff","#ffeeff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.2 + 0.05,
-      phase: Math.random() * Math.PI * 2
+      z: Math.random()*canvas.width,
+      size: Math.random()*1.5+0.2,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      speed: Math.random()*0.2+0.05,
+      phase: Math.random()*Math.PI*2,
+      twinkleTime: Date.now() + Math.random()*8000+7000
     });
   }
 }
 createStars();
 
-// One star twinkle
-function scheduleTwinkle() {
-  const interval = 7000 + Math.random() * 8000;
-  setTimeout(() => {
-    twinkleStar = stars[Math.floor(Math.random() * stars.length)];
-    let step = 0;
-    const fadeSteps = 30;
-    const twinkleInterval = setInterval(() => {
-      twinkleAlpha = 0.6 + 0.4 * Math.sin(Math.PI * step / fadeSteps);
-      step++;
-      if(step > fadeSteps) {
-        clearInterval(twinkleInterval);
-        twinkleStar = null;
-      }
-    },16);
-    scheduleTwinkle();
-  }, interval);
-}
-scheduleTwinkle();
-
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  const now = Date.now();
   for(let s of stars){
     s.z -= s.speed;
     if(s.z<=0) s.z = canvas.width;
-    let shimmer = 0.6 + 0.4*Math.sin(time*0.001+s.phase);
-    if(s === twinkleStar) shimmer = twinkleAlpha;
+    let shimmer = 0.6+0.4*Math.sin(time*0.001+s.phase);
+
+    // Twinkle effect
+    if(now > s.twinkleTime) {
+      shimmer = 1;
+      s.twinkleTime = now + 7000 + Math.random()*8000; // next twinkle
+    }
+
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle = s.color;
@@ -308,7 +297,7 @@ function drawStars(time=0){
   ctx.globalAlpha = 1;
   requestAnimationFrame(drawStars);
 }
-drawStars(0);
+drawStars();
 window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
 // === Prices ===
@@ -348,7 +337,8 @@ function showContent(){
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
   while((match = regex.exec(t))!==null){
-    const name = match[1].trim(), qty=parseInt(match[2]);
+    const name = match[1].trim();
+    const qty = parseInt(match[2]);
     const lookupName = name.toLowerCase();
     if(priceList[lookupName]) {
       summary.push({ name, qty, val: qty * priceList[lookupName] });
@@ -386,10 +376,11 @@ totalCostEl.addEventListener('click', () => {
 });
 
 // Submit button
-document.getElementById('submitButton').addEventListener('click', () => { showContent(); });
+document.getElementById('submitButton').addEventListener('click', showContent);
 
 // Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
+
 </body>
 </html>
