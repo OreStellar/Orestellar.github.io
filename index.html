@@ -137,7 +137,7 @@ totalText.addEventListener('click',()=>{
   setTimeout(()=>copiedMsg.style.display='none',1500);
 });
 
-// === Logo Crack & Fall with rotation/wobble ===
+// === Logo Crack & Fall with rotation/wobble and delayed refresh ===
 document.getElementById('myHeader').addEventListener('click', ()=>{
     const logo=document.getElementById('logoText');
     const rect=logo.getBoundingClientRect();
@@ -155,33 +155,35 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
         p.style.position='fixed';
         p.style.left=(rect.left+rect.width/2)+'px';
         p.style.top=(rect.top+rect.height/2)+'px';
-        p.style.borderRadius='50%'; // make pieces spherical
+        p.style.borderRadius='50%'; // spherical pieces
         p.style.zIndex=10;
         document.body.appendChild(p);
         pieces.push({
             el:p,
             vx:(Math.random()-0.5)*6,       // horizontal spread
-            vy:(Math.random()-0.2)*1,       // vertical drop slower
-            gravity:0.02,                    // slower fall
+            vy:(Math.random()-0.2)*1,       // slower vertical fall
+            gravity:0.02,                    // slower falling
             angle: Math.random()*360,        // initial rotation
             angularVelocity:(Math.random()-0.5)*0.5 // rotation speed
         });
     }
 
-    let frames=0;
-    const anim=requestAnimationFrame(function animate(){
-        frames++;
+    // Animate pieces
+    function animate(){
         pieces.forEach(p=>{
             const e=p.el;
-            p.vy+=p.gravity;
-            e.style.left=(parseFloat(e.style.left)+p.vx)+'px';
-            e.style.top=(parseFloat(e.style.top)+p.vy)+'px';
+            p.vy += p.gravity;
+            e.style.left = (parseFloat(e.style.left)+p.vx)+'px';
+            e.style.top = (parseFloat(e.style.top)+p.vy)+'px';
             p.angle += p.angularVelocity;
             e.style.transform = `rotate(${p.angle}deg)`;
         });
-        if(frames<300) requestAnimationFrame(animate);
-        else location.reload();
-    });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Refresh page 4 seconds after click
+    setTimeout(()=>location.reload(), 4000);
 });
 
 
