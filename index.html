@@ -333,7 +333,7 @@ async function loadPrices() {
     const cols = lines[i].split(',');
     const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore]=price;
+    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -359,12 +359,14 @@ function showContent(){
   let match, total = 0, summary = [];
   while((match = regex.exec(t))!==null){
     const name = match[1].trim(), qty=parseInt(match[2]);
-    if(priceList[name]) {
-      summary.push({name, qty, val: qty*priceList[name]});
-      total += qty*priceList[name];
-    } else {
-      summary.push({name, qty, val: 'Unrecognized', unrecognized:true});
-    }
+const lookupName = name.toLowerCase();
+if (priceList[lookupName]) {
+  summary.push({ name, qty, val: qty * priceList[lookupName] });
+  total += qty * priceList[lookupName];
+} else {
+  summary.push({ name, qty, val: 'Unrecognized', unrecognized: true });
+}
+
   }
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
