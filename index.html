@@ -5,178 +5,181 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
+<!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
+  margin:0; padding:0;
+  height:100%; overflow:hidden;
+  background:black;
   font-family: monospace;
-  color: white;
+  color:white;
 }
 
 canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  pointer-events:none;
 }
 
-/* Header / Logo */
+/* Header */
 #myHeader {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  z-index: 3;
+  width:100%; text-align:center;
+  position: relative; z-index:3;
   background: transparent;
-  padding: 40px 0;
-  cursor: pointer;
+  padding:40px 0;
+  cursor:pointer;
 }
+
+/* Logo with scanline */
 #logoText {
   font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 5rem;
-  color: #fff;
-  letter-spacing: 2px;
+  font-weight:700;
+  font-size:5rem;
+  color:#fff;
+  letter-spacing:2px;
   position: relative;
-  display: inline-block;
-  overflow: hidden;
+  display:inline-block;
+  overflow:hidden;
   text-transform: capitalize;
 }
 
-/* Scanline overlay */
 #logoText::before {
   content: attr(data-text);
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
+  position: absolute; top:0; left:0;
+  width:100%; height:100%;
   background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background-size:100% 4px;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
   animation: scanline 2s linear infinite;
 }
 @keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
+  0% { background-position:0 0; }
+  100% { background-position:0 100%; }
 }
 
-/* Containers */
+/* Container wrapper */
 .container-wrapper {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  z-index: 2;
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  gap:20px;
+  padding:20px;
+  z-index:2;
 }
 
+/* Main container */
 .main-container {
-  width: 650px; max-width: 90%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width:650px; max-width:90%;
+  padding:25px;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
   background-color: rgba(20,20,20,0.85);
-  border-radius: 15px;
-  box-shadow: 0 0 20px #ffffff40;
+  border-radius:15px;
+  box-shadow:0 0 20px #ffffff40;
 }
 
 textarea#message {
-  width: 100%;
-  font-size: 18px;
-  padding: 12px;
-  border-radius: 8px;
-  resize: vertical;
+  width:100%; font-size:18px; padding:12px;
+  border-radius:8px; resize:vertical;
 }
 
 .quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
+  font-style:italic; font-weight:bold;
+  font-size:21px;
   animation: glowPulse 3s infinite;
 }
 @keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
+  0%,100% { text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1; }
+  50% { text-shadow:0 0 15px #fff,0 0 20px #aaa; }
 }
 
+/* Submit button */
 #submitButton {
-  background-color: #fff; color: black;
-  border: none; border-radius: 8px;
-  padding: 15px 30px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
+  background-color:#fff; color:black;
+  border:none; border-radius:8px;
+  padding:15px 30px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 15px 3px white;
   transition: all 0.3s ease;
-  margin-top: 15px;
+  margin-top:15px;
 }
-#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
+#submitButton:hover { box-shadow:0 0 25px 5px #2fff1c; }
 
 /* Contracts */
 .contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
+  display:flex; justify-content:center; align-items:flex-start;
+  gap:10px; flex-wrap:wrap; width:100%;
 }
 .total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
+  width:630px; height:418px;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  position:relative;
+  border-radius:15px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.5);
+  display:none;
 }
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
+#totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+
+/* Total cost text on right contract */
 #totalCostText {
-  position: absolute;
-  top: calc(50% + 23px);
-  left: calc(50% + 10px);
-  font-size: 16px;
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  cursor: pointer;
+  position:absolute;
+  top:calc(50% + 23px); /* lowered 5px */
+  left:50%;
+  transform:translate(calc(-50% + 10px), -50%); /* over 10px */
+  font-size:16px;
+  font-weight:bold;
+  color:#00ff00;
+  text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;
+  cursor:pointer;
 }
 
-/* Summary */
+/* Summary container */
 #summaryContainer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(20,20,20,0.9);
-  border: 1px solid #00ff00;
-  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
-  border-radius: 10px;
-  padding: 10px 15px;
-  color: white;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  background-color:rgba(20,20,20,0.9);
+  border:1px solid #00ff00;
+  box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset;
+  border-radius:10px;
+  padding:10px 15px;
+  color:white;
   font-family: monospace;
-  max-height: 418px;
-  min-width: 280px;
-  max-width: 400px;
-  overflow-y: auto;
+  max-height:418px;
+  min-width:280px;
+  max-width:400px;
+  overflow-y:auto;
 }
-#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
-#summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li.unrecognized span:last-child { color: red; animation: glowRed 1s infinite alternate; }
-@keyframes glowRed { 0% { text-shadow:0 0 5px #ff0000 } 100% { text-shadow:0 0 15px #ff4444; } }
-#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
-#summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
+#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
+#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
+#summaryContainer li.unrecognized span:first-child { color:red; animation: glowRed 1s infinite alternate; }
+@keyframes glowRed { 0% { text-shadow:0 0 2px red; } 100% { text-shadow:0 0 12px red; } }
+#summaryContainer li span:last-child { color:#00ff00; min-width:120px; text-align:right; }
+#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; margin-top:5px; }
 
 /* Copied message */
 #copiedMessage {
   display:none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-  pointer-events: none;
-  text-align: center;
+  color:#00ff00;
+  font-weight:bold;
+  font-size:18px;
+  position:absolute;
+  pointer-events:none;
 }
 
-/* Stars */
+/* Info button */
+.info-button { position: fixed; bottom:20px; right:20px; font-size:28px; z-index:1000; }
+.info-button button { background:white; color:black; border-radius:50%; }
+
 </style>
 </head>
 <body>
@@ -211,81 +214,79 @@ textarea#message {
 // === Starfield ===
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
-let stars = [];
-const clusterCount = 12;
+let stars=[];
+const clusterCount=12;
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
 }
 resizeCanvas();
 
 function createStars() {
-  stars = [];
-  const clusterCenters = [];
-  for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+  stars=[];
+  const clusterCenters=[];
+  for(let i=0;i<clusterCount;i++){
+    clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   }
-
-  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
-  for (let i = 0; i < totalStars; i++) {
-    let x, y;
-    if (Math.random() < 0.6) {
-      const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
-      const radius = Math.random() * 120;
-      const angle = Math.random() * Math.PI * 2;
-      x = c.x + radius * Math.cos(angle);
-      y = c.y + radius * Math.sin(angle);
+  const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200);
+  for(let i=0;i<totalStars;i++){
+    let x,y;
+    if(Math.random()<0.6){
+      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
+      const radius=Math.random()*120;
+      const angle=Math.random()*Math.PI*2;
+      x=c.x+radius*Math.cos(angle);
+      y=c.y+radius*Math.sin(angle);
     } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
+      x=Math.random()*canvas.width;
+      y=Math.random()*canvas.height;
     }
-
     stars.push({
-      x, y,
-      z: Math.random() * canvas.width,
-      size: Math.random() * 1.5 + 0.2,
-      color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
-      speed: Math.random() * 0.2 + 0.05,
-      phase: Math.random() * Math.PI * 2
+      x,y,
+      z:Math.random()*canvas.width,
+      size:Math.random()*1.5+0.2,
+      color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],
+      speed:Math.random()*0.2+0.05,
+      phase:Math.random()*Math.PI*2
     });
   }
 }
 createStars();
 
-function drawStars(time=0) {
+function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  for (let s of stars) {
-    s.z -= s.speed;
-    if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
+  for(let s of stars){
+    s.z-=s.speed;
+    if(s.z<=0)s.z=canvas.width;
+    const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase);
     ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = shimmer;
-    ctx.shadowBlur = s.size*4;
-    ctx.shadowColor = s.color;
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color;
+    ctx.globalAlpha=shimmer;
+    ctx.shadowBlur=s.size*4;
+    ctx.shadowColor=s.color;
     ctx.fill();
   }
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=1;
   requestAnimationFrame(drawStars);
 }
 drawStars(0);
-window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
+window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-// === Price list & submit ===
-let priceList = {};
-async function loadPrices() {
-  const response = await fetch('data/prices.csv');
-  const text = await response.text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  const headers = lines[0].split(',');
-  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for (let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',');
-    const ore = cols[0].trim();
-    const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()] = price; // lowercase keys
+// === Prices and summary ===
+let priceList={};
+async function loadPrices(){
+  const response=await fetch('data/prices.csv');
+  const text=await response.text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',');
+  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for(let i=1;i<lines.length;i++){
+    const cols=lines[i].split(',');
+    const ore=cols[0].trim();
+    const price=parseFloat(cols[idx]);
+    if(!isNaN(price))priceList[ore]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -293,161 +294,148 @@ loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
 
-function animateCount(el, start, end, duration=2000) {
-  let startTime = null;
-  function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    el.innerText = current.toLocaleString();
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
 function showContent(){
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total = 0, summary = [];
-
-  while((match = regex.exec(t)) !== null){
-    const name = match[1].trim(), qty = parseInt(match[2]);
-    const key = name.toLowerCase();
-    if(priceList[key]) {
-      summary.push({name, qty, val: qty*priceList[key], recognized:true});
-      total += qty*priceList[key];
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
+  while((match=regex.exec(t))!==null){
+    const name=match[1].trim(),qty=parseInt(match[2]);
+    const price=priceList[name] || priceList[name.toLowerCase()];
+    if(price){
+      summary.push({name,qty,val:qty*price});
+      total+=qty*price;
     } else {
-      summary.push({name, qty, val: 0, recognized:false});
+      summary.push({name,qty,val:0,un:true});
     }
   }
 
-  const list = document.getElementById('summaryList');
-  list.innerHTML = '';
+  // Populate summary
+  const list=document.getElementById('summaryList');
+  list.innerHTML='';
   summary.forEach(i=>{
-    const li = document.createElement('li');
-    if(i.recognized){
-      li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
-    } else {
-      li.classList.add('unrecognized');
-      li.innerHTML = `<span>${i.name}</span><span>Unknown</span>`;
-    }
+    const li=document.createElement('li');
+    if(i.un){ li.classList.add('unrecognized'); li.innerHTML=`<span>${i.name}</span><span>?</span>`; }
+    else li.innerHTML=`<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
     list.appendChild(li);
   });
-  document.getElementById('summaryContainer').style.display='flex';
+  const summaryContainer=document.getElementById('summaryContainer');
+  summaryContainer.style.display='flex';
+  document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
 
-  const totalText = document.getElementById('totalCostText');
-  totalText.innerText = `${formatNumber(total)} ISK`;
+  // Show contracts
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
-
   document.querySelector('.main-container').style.display='none';
+
+  document.getElementById('totalCostText').innerText=`${formatNumber(total)} ISK`;
 }
 
-// Copy ISK to clipboard
-const totalText = document.getElementById('totalCostText');
-const copiedMsg = document.getElementById('copiedMessage');
-totalText.addEventListener('click', ()=>{
-  navigator.clipboard.writeText(totalText.innerText);
-  copiedMsg.style.display='block';
-  setTimeout(()=>copiedMsg.style.display='none',1500);
+// Copy total ISK when clicked
+const totalCostText=document.getElementById('totalCostText');
+const copiedMessage=document.getElementById('copiedMessage');
+totalCostText.addEventListener('click',()=>{
+  navigator.clipboard.writeText(totalCostText.innerText);
+  copiedMessage.style.display='block';
+  setTimeout(()=>copiedMessage.style.display='none',1500);
 });
 
-// Submit
-document.getElementById('submitButton').addEventListener('click', showContent);
+// === Logo explosion ===
+const header=document.getElementById('myHeader');
+const logo=document.getElementById('logoText');
+const logoRect=logo.getBoundingClientRect();
+const lCanvas=document.createElement('canvas');
+lCanvas.width=window.innerWidth;
+lCanvas.height=window.innerHeight;
+lCanvas.style.position='fixed';
+lCanvas.style.top=0;
+lCanvas.style.left=0;
+lCanvas.style.zIndex=10;
+document.body.appendChild(lCanvas);
+const lctx=lCanvas.getContext('2d');
 
-// === Logo supernova ===
-const logo = document.getElementById('logoText');
-logo.addEventListener('click', ()=>{
-  explodeLogo(logo);
+header.addEventListener('click',()=>{
+  explodeLogo();
 });
 
-function explodeLogo(el){
-  const rect = el.getBoundingClientRect();
-  const logoCanvas = document.createElement('canvas');
-  logoCanvas.width = window.innerWidth;
-  logoCanvas.height = window.innerHeight;
-  logoCanvas.style.position='fixed';
-  logoCanvas.style.top='0';
-  logoCanvas.style.left='0';
-  logoCanvas.style.zIndex='9999';
-  document.body.appendChild(logoCanvas);
-  const lctx = logoCanvas.getContext('2d');
-
-  // Logo pieces
-  const pieces = [];
-  const pieceCount = 80;
-  for(let i=0;i<pieceCount;i++){
+function explodeLogo(){
+  const pieces=[];
+  const colors=['#fff','#fff','#f0f0f0','#e0e0ff','#c0c0ff'];
+  for(let i=0;i<120;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=Math.random()*6+2;
     pieces.push({
-      x: rect.left + rect.width/2,
-      y: rect.top + rect.height/2,
-      vx: (Math.random()-0.5)*10,
-      vy: (Math.random()-0.5)*10,
-      size: Math.random()*12+6,
-      color:'#ffffff',
-      glow:'#99ccff'
+      x:logoRect.left+logoRect.width/2,
+      y:logoRect.top+logoRect.height/2,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed,
+      size:Math.random()*8+4,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rotation:Math.random()*Math.PI*2,
+      glow:'#ffffff'
     });
   }
 
-  el.style.visibility='hidden';
+  const sphere={x:logoRect.left+logoRect.width/2,y:logoRect.top+logoRect.height/2,radius:10,maxRadius:window.innerWidth*1.2,speed:0.5};
 
-  // Supernova sphere
-  let frame = 0;
-  let sphereRadius = 0;
-  let sphereSpeed = 0.5; // starting growth speed
-  let rotation = 0;
+  function animate(time){
+    lctx.clearRect(0,0,lCanvas.width,lCanvas.height);
 
-  function animate(){
-    frame++;
-    // Darken screen slightly but not too much
-    lctx.fillStyle = 'rgba(0,0,0,0.05)';
-    lctx.fillRect(0,0,logoCanvas.width,logoCanvas.height);
+    // debris
+    pieces.forEach(p=>{
+      p.x+=p.vx*0.2;
+      p.y+=p.vy*0.2;
+      p.vx*=0.99;
+      p.vy*=0.99;
+      lctx.save();
+      lctx.translate(p.x,p.y);
+      lctx.rotate(p.rotation);
+      lctx.fillStyle=p.color;
+      lctx.shadowColor=p.glow;
+      lctx.shadowBlur=12;
+      lctx.beginPath();
+      lctx.arc(0,0,p.size,0,Math.PI*2);
+      lctx.fill();
+      lctx.restore();
+    });
 
-    // --- central rotating supernova sphere ---
-    sphereSpeed *= 1.05; // accelerate
-    sphereRadius += sphereSpeed;
-    rotation += 0.02; // slow spin
-    const grad = lctx.createRadialGradient(
-      rect.left + rect.width/2, rect.top + rect.height/2, 0,
-      rect.left + rect.width/2, rect.top + rect.height/2, sphereRadius
-    );
-    grad.addColorStop(0,'rgba(255,255,255,1)');
-    grad.addColorStop(0.2,'rgba(150,200,255,0.8)'); // bluish corona
-    grad.addColorStop(0.5,'rgba(80,150,255,0.4)');
-    grad.addColorStop(1,'rgba(0,0,0,0)');
+    // central sphere
     lctx.save();
-    lctx.translate(rect.left + rect.width/2, rect.top + rect.height/2);
-    lctx.rotate(rotation);
-    lctx.fillStyle = grad;
+    lctx.translate(sphere.x,sphere.y);
+    lctx.rotate(time*0.0005);
     lctx.beginPath();
-    lctx.arc(0, 0, sphereRadius, 0, Math.PI*2);
+    lctx.arc(0,0,sphere.radius,0,Math.PI*2);
+    const grad=lctx.createRadialGradient(0,0,sphere.radius*0.1,0,0,sphere.radius);
+    grad.addColorStop(0,'white');
+    grad.addColorStop(1,'blue');
+    lctx.fillStyle=grad;
+    lctx.shadowColor='white';
+    lctx.shadowBlur=30;
     lctx.fill();
     lctx.restore();
 
-    // --- logo pieces ---
-    pieces.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.15; // gravity
-      lctx.fillStyle = p.color;
-      lctx.shadowColor = p.glow;
-      lctx.shadowBlur = 12;
-      lctx.beginPath();
-      lctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-      lctx.fill();
-    });
+    sphere.radius+=sphere.speed;
+    sphere.speed*=1.08; // accelerate
 
-    // End condition: sphere radius exceeds screen diagonal
-    if(sphereRadius < Math.sqrt(window.innerWidth**2 + window.innerHeight**2)){
+    if(sphere.radius<window.innerWidth){
       requestAnimationFrame(animate);
     } else {
-      document.body.removeChild(logoCanvas);
-      location.reload();
+      // fade out and refresh
+      let fade=0;
+      function fadeOut(){
+        lctx.fillStyle=`rgba(0,0,0,${fade})`;
+        lctx.fillRect(0,0,lCanvas.width,lCanvas.height);
+        fade+=0.05;
+        if(fade<1) requestAnimationFrame(fadeOut);
+        else location.reload();
+      }
+      fadeOut();
     }
   }
-  animate();
+
+  animate(0);
+  logo.style.visibility='hidden';
 }
 
 </script>
-
 </body>
 </html>
