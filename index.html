@@ -155,16 +155,16 @@ textarea#message {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 15px;
+  color: white; /* default text white for anything outside spans */
+  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
-#popupTotalPrice .number {
-  color: #00ff00; /* number green */
-  text-shadow: 0 0 10px #00ff00;
-}
+#popupTotalPrice .number,
 #popupTotalPrice .isk {
-  color: white; /* ISK white */
-  text-shadow: 0 0 5px #fff;
+  color: #00ff00; /* bright green */
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
 }
+
 
 /* Copy button */
 #totalPriceModal button {
@@ -270,7 +270,9 @@ textarea#message {
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-center">
     <h2>Total Contract Value</h2>
-    <p id="popupTotalPrice"><span class="number">0</span> <span class="isk">ISK</span></p>
+    <p id="popupTotalPrice">
+  <span class="number">0</span> <span class="isk">ISK</span>
+</p>
     <button id="closeTotalModal">copy</button>
     <div id="copiedMessage">Copied!</div>
   </div>
@@ -289,9 +291,12 @@ textarea#message {
       <ul id="summaryList"></ul>
       <div id="summaryTotal"></div>
     </div>
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-    </div>
+<div id="totalCostContainer" class="total-cost-container">
+  <div id="totalCostText">
+    <span class="number">0</span> <span class="isk">ISK</span>
+  </div>
+</div>
+
   </div>
 </div>
 
@@ -386,17 +391,17 @@ function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   const numberSpan = el.querySelector(".number");
   const iskSpan = el.querySelector(".isk");
-  
+
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    numberSpan.innerText = current.toLocaleString();
-    iskSpan.innerText = "ISK";
+    numberSpan.innerText = Math.floor(progress*(end-start)+start).toLocaleString();
+    iskSpan.innerText = "ISK"; // ensure ISK stays green
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
+
 
 function showContent(){
   const t = document.getElementById('message').value;
@@ -442,20 +447,24 @@ function showContent(){
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
 
-document.getElementById('closeTotalModal').addEventListener('click',()=>{
+document.getElementById('closeTotalModal').addEventListener('click', () => {
   const txt = document.getElementById('popupTotalPrice').innerText;
   navigator.clipboard.writeText(txt);
 
-  // Show "Copied!" message
-  const copiedMsg = document.getElementById('copiedMessage');
-  copiedMsg.style.display = 'block';
-  copiedMsg.style.animation = 'none'; // reset animation
-  copiedMsg.offsetHeight; // trigger reflow
-  copiedMsg.style.animation = ''; // start animation
+  const copied = document.getElementById('copiedMessage');
+  copied.style.display = 'block';
+  copied.style.top = 'calc(50% - 100px)'; // move above popup
+  copied.style.color = 'lime'; // bright color
+  copied.style.fontSize = '20px';
+  copied.style.fontWeight = 'bold';
 
-  // Close popup
-  document.getElementById('totalPriceModal').style.display='none';
+  // Hide popup
+  document.getElementById('totalPriceModal').style.display = 'none';
+
+  // Hide message after 1.5s
+  setTimeout(() => { copied.style.display = 'none'; }, 1500);
 });
+
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
