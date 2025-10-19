@@ -143,9 +143,12 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     const letters = logo.textContent.split('');
     const droplets = [];
     const steam = [];
-    logo.style.visibility = 'hidden';
+    
+    const totalDropletsPerLetter = 5; // same as before
+    const steamFactor = 2; // double the steam
 
-    const totalDropletsPerLetter = 5;
+    // keep logo visible for 0.8 seconds
+    setTimeout(()=>{ logo.style.visibility = 'hidden'; }, 800);
 
     letters.forEach((letter, i)=>{
         const letterWidth = rect.width / letters.length;
@@ -178,32 +181,34 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     });
 
     function animate(){
-        droplets.forEach((d,i)=>{
+        droplets.forEach((d)=>{
             d.y += d.vy;
             d.vy += d.gravity;
             d.angle += d.angularVelocity;
             d.el.style.top = d.y + 'px';
             d.el.style.transform = `rotate(${d.angle}deg)`;
 
-            // occasionally spawn steam from droplet
-            if(Math.random()<0.03){
-                const s = document.createElement('div');
-                s.style.width = '2px';
-                s.style.height = '8px';
-                s.style.background = 'rgba(255,255,255,0.5)';
-                s.style.position = 'fixed';
-                s.style.left = d.x + 'px';
-                s.style.top = d.y + 'px';
-                s.style.borderRadius = '50%';
-                s.style.zIndex = 11;
-                document.body.appendChild(s);
-                steam.push({
-                    el: s,
-                    x: d.x,
-                    y: d.y,
-                    vy: -(Math.random()*1 + 0.5),
-                    alpha: 0.5
-                });
+            // spawn more steam
+            for(let sFactor=0;sFactor<steamFactor;sFactor++){
+                if(Math.random()<0.03){
+                    const s = document.createElement('div');
+                    s.style.width = '2px';
+                    s.style.height = '8px';
+                    s.style.background = 'rgba(255,255,255,0.5)';
+                    s.style.position = 'fixed';
+                    s.style.left = d.x + 'px';
+                    s.style.top = d.y + 'px';
+                    s.style.borderRadius = '50%';
+                    s.style.zIndex = 11;
+                    document.body.appendChild(s);
+                    steam.push({
+                        el: s,
+                        x: d.x,
+                        y: d.y,
+                        vy: -(Math.random()*1 + 0.5),
+                        alpha: 0.5
+                    });
+                }
             }
         });
 
