@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -23,18 +22,14 @@ canvas#starfield {
   z-index: 0; pointer-events: none;
 }
 
-/* Header */
+/* Header & Logo */
 #myHeader {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  z-index: 3;
-  background: transparent;
-  padding: 40px 0;
+  width: 100%; text-align: center;
+  position: relative; z-index: 3;
+  background: transparent; padding: 40px 0;
   cursor: pointer;
 }
 
-/* Logo with scanline */
 #logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
@@ -44,9 +39,10 @@ canvas#starfield {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-transform: capitalize; /* ensures OreStellar casing */
+  text-transform: capitalize;
 }
 
+/* Scanline overlay */
 #logoText::before {
   content: attr(data-text);
   position: absolute; top: 0; left: 0;
@@ -62,39 +58,29 @@ canvas#starfield {
   100% { background-position: 0 100%; }
 }
 
-/* Container wrapper */
+/* Containers */
 .container-wrapper {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  gap: 20px; padding: 20px;
   z-index: 2;
 }
 
-/* Main inventory box */
 .main-container {
-  width: 650px;
-  max-width: 90%;
+  width: 650px; max-width: 90%;
   padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
   background-color: rgba(20,20,20,0.85);
   border-radius: 15px;
   box-shadow: 0 0 20px #ffffff40;
 }
 
 textarea#message {
-  width: 100%;
-  font-size: 18px;
-  padding: 12px;
-  border-radius: 8px;
+  width: 100%; font-size: 18px;
+  padding: 12px; border-radius: 8px;
   resize: vertical;
 }
 
@@ -112,54 +98,49 @@ textarea#message {
 #submitButton {
   background-color: #fff; color: black;
   border: none; border-radius: 8px;
-  padding: 15px 30px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
-  transition: all 0.3s ease;
-  margin-top: 15px;
+  padding: 15px 30px; font-weight: bold;
+  cursor: pointer; box-shadow: 0 0 15px 3px white;
+  transition: all 0.3s ease; margin-top: 15px;
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Contracts and summary */
+/* Contracts & summary */
 .contracts-wrapper {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
 }
+
 .total-cost-container {
   width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
+  background-size: contain; background-position: center;
+  background-repeat: no-repeat;
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); cursor: pointer; }
+#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+
 #totalCostText {
   position: absolute;
   top: calc(50% + 23px); /* lowered 5px */
-  left: calc(50% + 10px); /* moved 10px right */
-  font-size: 16px; 
+  left: 50%;
+  transform: translate(calc(-50% + 10px), -50%); /* moved right 10px */
+  font-size: 16px;
   font-weight: bold;
   color: #00ff00;
+  cursor: pointer;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
-/* Summary container */
 #summaryContainer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
+  display: none; flex-direction: column; align-items: center;
   background-color: rgba(20,20,20,0.9);
   border: 1px solid #00ff00;
   box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
-  border-radius: 10px;
-  padding: 10px 15px;
-  color: white;
-  font-family: monospace;
-  max-height: 418px;
-  min-width: 280px;
-  max-width: 400px;
+  border-radius: 10px; padding: 10px 15px;
+  color: white; font-family: monospace;
+  max-height: 418px; min-width: 280px; max-width: 400px;
   overflow-y: auto;
 }
 #summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
@@ -167,20 +148,12 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-/* Copied message on Contract 2 */
 #copiedMessage {
-  display: none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  display:none; color: #00ff00; font-weight: bold; font-size: 18px;
+  position: absolute; pointer-events: none;
 }
 
-.info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
-.info-button button { background: white; color: black; border-radius: 50%; }
-
+/* Starfield */
 </style>
 </head>
 <body>
@@ -194,7 +167,7 @@ textarea#message {
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" class="w3-input w3-border w3-round full-width-textarea" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
+    <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
     <button id="submitButton" disabled>Submit</button>
   </div>
 
@@ -289,7 +262,7 @@ async function loadPrices() {
     const cols = lines[i].split(',');
     const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()] = price; // lowercase keys
+    if(!isNaN(price)) priceList[ore.toLowerCase()] = price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -303,62 +276,62 @@ function animateCount(el, start, end, duration=2000) {
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    numberSpan.innerText = current.toLocaleString();
+    numberSpan.innerText = formatNumber(Math.floor(progress*(end-start)+start)) + " ISK";
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
-// === Show inventory and summary ===
+// === Show inventory content ===
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, total = 0, summary = [];
-
   while((match = regex.exec(t)) !== null){
     const name = match[1].trim(), qty = parseInt(match[2]);
-    const price = priceList[name.toLowerCase()];
-    if(price) {
-      summary.push({name, qty, val: qty*price});
-      total += qty*price;
+    if(priceList[name.toLowerCase()]) {
+      summary.push({name, qty, val: qty*priceList[name.toLowerCase()]});
+      total += qty*priceList[name.toLowerCase()];
     } else {
-      summary.push({name, qty, val: 'unrecognized', unrec:true});
+      summary.push({name, qty, val: 0, unknown:true});
     }
   }
 
+  // Populate summary
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span style="color:${i.unrec?'red':'#00ff00'}">${i.unrec?'??':formatNumber(i.val)} ISK</span>`;
+    li.innerHTML = `<span style="color:${i.unknown?'#ff5555':'#fff'}">${i.name}</span><span style="color:${i.unknown?'#ff5555':'#00ff00'}">${i.unknown?'?':formatNumber(i.val)} ISK</span>`;
     list.appendChild(li);
   });
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
+
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
+  // Show contracts
   document.getElementById('leftContainer').style.display='block';
-  const totalContainer = document.getElementById('totalCostContainer');
-  totalContainer.style.display='block';
-
-  const totalText = document.getElementById('totalCostText');
-  totalText.innerText = formatNumber(total) + " ISK";
-
-  // Copy on click
-  totalContainer.onclick = ()=>{
-    navigator.clipboard.writeText(totalText.innerText);
-    const copied = document.getElementById('copiedMessage');
-    copied.style.display='block';
-    totalText.style.display='none';
-    setTimeout(()=>{
-      copied.style.display='none';
-      totalText.style.display='block';
-    },2000);
-  };
+  const totalCost = document.getElementById('totalCostContainer');
+  totalCost.style.display='block';
+  document.getElementById('totalCostText').innerText = formatNumber(total) + " ISK";
 }
 
-// === Logo shatter ===
+// Event listeners
+document.getElementById('submitButton').addEventListener('click', showContent);
+
+// === Copy total ISK when clicked ===
+const totalCostText = document.getElementById('totalCostText');
+const copiedMessage = document.getElementById('copiedMessage');
+totalCostText.addEventListener('click', ()=>{
+  navigator.clipboard.writeText(totalCostText.innerText);
+  copiedMessage.style.display='block';
+  copiedMessage.style.top = totalCostText.offsetTop + "px";
+  copiedMessage.style.left = totalCostText.offsetLeft + "px";
+  setTimeout(()=>{ copiedMessage.style.display='none'; },1500);
+});
+
+// === Logo shatter on click ===
 function shatterLogo(callback) {
   const logo = document.getElementById('logoText');
   const rect = logo.getBoundingClientRect();
@@ -383,7 +356,7 @@ function shatterLogo(callback) {
       piece.style.clip = `rect(${y}px,${x+pieceSize}px,${y+pieceSize}px,${x}px)`;
       piece.style.pointerEvents = 'none';
       document.body.appendChild(piece);
-      pieces.push({el: piece, vx: (Math.random()-0.5)*2, vy: -Math.random()*5-2, rotation: 0, vr: (Math.random()-0.5)*0.3});
+      pieces.push({el: piece, vx: (Math.random()-0.5)*4, vy: -Math.random()*7-3, rotation: 0, vr: (Math.random()-0.5)*0.5});
     }
   }
 
@@ -391,7 +364,7 @@ function shatterLogo(callback) {
   function animate() {
     time += 0.016;
     pieces.forEach(p => {
-      p.vy += 0.1;
+      p.vy += 0.15; // gravity
       const left = parseFloat(p.el.style.left) + p.vx;
       const top = parseFloat(p.el.style.top) + p.vy;
       p.el.style.left = left + 'px';
@@ -407,17 +380,12 @@ function shatterLogo(callback) {
     }
   }
 
-  setTimeout(() => requestAnimationFrame(animate), 500);
+  setTimeout(() => requestAnimationFrame(animate), 500); // half-second delay before shatter
 }
 
-// === Submit triggers shatter then show content ===
-document.getElementById('submitButton').addEventListener('click', () => {
-  shatterLogo(showContent);
+document.getElementById('myHeader').addEventListener('click', () => {
+  shatterLogo(() => location.reload());
 });
-
-// Click header refresh
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-
 </script>
 
 </body>
