@@ -51,25 +51,30 @@ canvas#starfield {
   z-index: 2;
 }
 
-#logoText span {
+#logoText {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
-  letter-spacing: 2px;
+  letter-spacing: 0; /* no space between Ore and Stellar */
+  display: flex;
+  justify-content: center;
+}
+
+.logo-part {
   display: inline-block;
   transform: skewX(-8deg);
   color: rgba(255,255,255,0.1); /* initial dim */
 }
 
-/* Rapid flicker */
+/* Flicker animations */
 @keyframes flickerRapid {
-  0%, 20%, 40%, 60%, 80%, 100% { color: rgba(255,255,255,1); }
-  10%, 30%, 50%, 70%, 90% { color: rgba(255,255,255,0.1); }
+  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); }
+  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); }
 }
 
 @keyframes flickerQuick {
-  0%, 50%, 100% { color: rgba(255,255,255,0.1); }  /* dim state */
-  25%, 75% { color: rgba(255,255,255,1); }          /* bright flash */
+  0%,50%,100% { color: rgba(255,255,255,0.1); }
+  25%,75% { color: rgba(255,255,255,1); }
 }
 
 @keyframes softGlow {
@@ -209,6 +214,7 @@ textarea#message:focus {
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
+
 </style>
 </head>
 <body>
@@ -218,9 +224,9 @@ textarea#message:focus {
 <div class="container-wrapper">
   <header id="myHeader">
     <h1 id="logoText">
-  <span class="logo-part" id="ore">Ore</span>
-  <span class="logo-part" id="stellar">Stellar</span>
-</h1>
+      <span class="logo-part" id="ore">Ore</span>
+      <span class="logo-part" id="stellar">Stellar</span>
+    </h1>
   </header>
 
   <div class="main-container w3-card w3-container w3-center">
@@ -243,119 +249,77 @@ textarea#message:focus {
 </div>
 
 <script>
-// Canvas resize
+// ===== STARFIELD =====
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
+function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
-
-// Stars
-let stars = [], brightStars = [], brightStarTimer = 0;
-const clusterCount = 12;
+let stars=[], brightStars=[], brightStarTimer=0;
+const clusterCount=12;
 
 function createStars() {
-    stars = [];
-    const clusterCenters = [];
-    for (let i = 0; i < clusterCount; i++)
-        clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
-    const totalStars = Math.floor(window.innerWidth * window.innerHeight / 800);
-    for (let i = 0; i < totalStars; i++) {
-        let x, y;
-        if (Math.random() < 0.6) {
-            const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
-            const radius = Math.random() * 120;
-            const angle = Math.random() * Math.PI * 2;
-            x = c.x + radius * Math.cos(angle);
-            y = c.y + radius * Math.sin(angle);
-        } else {
-            x = Math.random() * canvas.width;
-            y = Math.random() * canvas.height;
-        }
-        stars.push({
-            x, y,
-            size: Math.random()*1.5+0.2,
-            color: ["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],
-            speed: Math.random()*0.2+0.05,
-            phase: Math.random()*Math.PI*2,
-            twinkle: Math.random()<0.35,
-            baseAlpha: 0.8 + Math.random()*0.2
-        });
-    }
+  stars=[];
+  const clusterCenters=[];
+  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+  const totalStars=Math.floor(window.innerWidth*window.innerHeight/800);
+  for(let i=0;i<totalStars;i++){
+    let x,y;
+    if(Math.random()<0.6){
+      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
+      const radius=Math.random()*120;
+      const angle=Math.random()*Math.PI*2;
+      x=c.x+radius*Math.cos(angle);
+      y=c.y+radius*Math.sin(angle);
+    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
+    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
+  }
 }
 createStars();
-let lastBrightTime = 0;
-let nextBrightInterval = 7000 + Math.random() * 8000; // 7-15s
 
-function drawStars(time = 0) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+let lastBrightTime=0;
+let nextBrightInterval=7000+Math.random()*8000;
 
-    // Check if it's time for a bright star
-    if (time - lastBrightTime > nextBrightInterval) {
-        lastBrightTime = time;
-        nextBrightInterval = 7000 + Math.random() * 8000;
-
-        // Pick 1–2 stars to shine
-        for (let i = 0; i < 2; i++) {
-            const s = stars[Math.floor(Math.random() * stars.length)];
-            s.isBright = true;
-            s.brightStart = time;
-            s.brightEnd = time + 2000 + Math.random() * 1000; // 2-3s shine
-        }
+function drawStars(time=0){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(time-lastBrightTime>nextBrightInterval){
+    lastBrightTime=time;
+    nextBrightInterval=7000+Math.random()*8000;
+    for(let i=0;i<2;i++){
+      const s=stars[Math.floor(Math.random()*stars.length)];
+      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
     }
-
-    for (let s of stars) {
-        s.z -= s.speed;
-        if (s.z <= 0) s.z = canvas.width;
-
-        // Base alpha
-        let alpha = s.baseAlpha || 0.8;
-
-        // Twinkle normally
-        if (s.twinkle) {
-            alpha = 0.6 + 0.4 * Math.sin(time * 0.002 + s.phase);
-        }
-
-        // Override with bright star if active
-        if (s.isBright && time >= s.brightStart && time < s.brightEnd) {
-            alpha = 1;
-        } else {
-            s.isBright = false; // reset after shine
-        }
-
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fillStyle = s.color;
-        ctx.globalAlpha = alpha;
-        ctx.shadowBlur = alpha === 1 ? s.size * 8 : s.size * 4; // brighter shadow for bright stars
-        ctx.shadowColor = s.color;
-        ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(drawStars);
+  }
+  for(let s of stars){
+    let alpha=s.baseAlpha;
+    if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
+    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
+    else s.isBright=false;
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color;
+    ctx.globalAlpha=alpha;
+    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
+    ctx.shadowColor=s.color;
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(drawStars);
 }
-
-
-
 drawStars();
 
-// === Prices & Submit ===
-let priceList = {};
-async function loadPrices() {
-  const response = await fetch('data/prices.csv');
-  const text = await response.text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  const headers = lines[0].split(',');
-  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for (let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',');
-    const ore = cols[0].trim();
-    const price = parseFloat(cols[idx]);
+// ===== PRICES & SUBMIT =====
+let priceList={};
+async function loadPrices(){
+  const response=await fetch('data/prices.csv');
+  const text=await response.text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',');
+  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for(let i=1;i<lines.length;i++){
+    const cols=lines[i].split(',');
+    const ore=cols[0].trim();
+    const price=parseFloat(cols[idx]);
     if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
   }
   document.getElementById('submitButton').disabled=false;
@@ -364,30 +328,30 @@ loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
-  let startTime = null;
+  let startTime=null;
   function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    const current = Math.floor(progress*(end-start)+start);
-    el.innerText = current.toLocaleString()+' ISK';
+    if(!startTime) startTime=t;
+    let progress=Math.min((t-startTime)/duration,1);
+    const current=Math.floor(progress*(end-start)+start);
+    el.innerText=current.toLocaleString()+' ISK';
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
 function showContent(){
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, total=0, summary=[];
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match,total=0,summary=[];
   while((match=regex.exec(t))!==null){
-    const name = match[1].trim(), qty=parseInt(match[2]);
-    const lookupName = name.toLowerCase();
+    const name=match[1].trim(),qty=parseInt(match[2]);
+    const lookupName=name.toLowerCase();
     if(priceList[lookupName]){
       summary.push({name,qty,val:qty*priceList[lookupName]});
-      total += qty*priceList[lookupName];
+      total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
-  const list = document.getElementById('summaryList');
+  const list=document.getElementById('summaryList');
   list.innerHTML='';
   summary.forEach(i=>{
     const li=document.createElement('li');
@@ -400,7 +364,6 @@ function showContent(){
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
-  animateCount(document.getElementById('totalCostText'),0,total);
 }
 
 // Copied functionality
@@ -414,43 +377,37 @@ totalCostEl.addEventListener('click',()=>{
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
-
-// Refresh on logo click
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-window.addEventListener('load', () => {
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
+// ===== LOGO ANIMATION =====
+window.addEventListener('load',()=>{
+  const ore=document.getElementById('ore');
+  const stellar=document.getElementById('stellar');
 
   // Step 1: Initial dim for 2s
-  setTimeout(() => {
-    // Step 2: Ore rapid flicker
-    ore.style.animation = 'flickerRapid 0.3s linear forwards';
-    setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite'; // maintain soft glow
-    }, 300);
+  setTimeout(()=>{
+    // Step 2: Stellar flicker first 0.3s
+    stellar.style.animation='flickerRapid 0.3s linear forwards';
+    setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
 
-    // Step 3: Stellar rapid flicker after Ore
-    setTimeout(() => {
-      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
-      setTimeout(() => {
-        stellar.style.animation = 'softGlow 6s infinite'; // maintain soft glow
-      }, 300);
-    }, 300);
+    // Step 3: Ore flicker after Stellar 0.3s
+    setTimeout(()=>{
+      ore.style.animation='flickerRapid 0.3s linear forwards';
+      setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
+    },300);
 
-// Step 4: Both flash dim + quick flicker simultaneously
-setTimeout(() => {
-  ore.style.animation = 'flickerQuick 0.6s linear forwards';
-  stellar.style.animation = 'flickerQuick 0.6s linear forwards';
+    // Step 4: Both flash dim + quick flicker 0.25s
+    setTimeout(()=>{
+      ore.style.animation='flickerQuick 0.25s linear forwards';
+      stellar.style.animation='flickerQuick 0.25s linear forwards';
+      setTimeout(()=>{
+        ore.style.animation='softGlow 6s infinite';
+        stellar.style.animation='softGlow 6s infinite';
+      },250);
+    },1500);
 
-  // After the 0.25s flicker, start steady soft glow
-  setTimeout(() => {
-    ore.style.animation = 'softGlow 6s infinite';
-    stellar.style.animation = 'softGlow 6s infinite';
-  }, 600); // matches the flicker duration
-}, 1500); // adjust for when you want the final flicker to occur
-
+  },2000);
+});
 </script>
-
 </body>
 </html>
