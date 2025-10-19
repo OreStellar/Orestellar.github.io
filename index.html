@@ -363,12 +363,14 @@ async function loadPrices() {
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
-function animateCount(el,start,end,duration=2000){
+function animateCount(el, start, end, duration=2000) {
   let startTime = null;
+  const numberSpan = el.querySelector(".number");
+  const iskSpan = el.querySelector(".isk");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    el.innerText = formatNumber(Math.floor(progress*(end-start)+start))+" ISK";
+    numberSpan.innerText = formatNumber(Math.floor(progress*(end-start)+start));
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
