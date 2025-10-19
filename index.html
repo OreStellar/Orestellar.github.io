@@ -465,11 +465,8 @@ document.getElementById('closeTotalModal').addEventListener('click', (e) => {
     setTimeout(() => copiedMessage.style.display = 'none', 1500);
 
     totalModal.style.display = 'none'; // close after copying
+});
 
-// Show copied message
-    copiedMessage.style.display = 'block';
-    setTimeout(() => copiedMessage.style.display = 'none', 1500);
- }); 
 // Close modal on outside click
 document.addEventListener('click', (e) => {
     if (totalModal.style.display === 'block' && !totalContent.contains(e.target) && e.target.id !== 'closeTotalModal') {
