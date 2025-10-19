@@ -17,7 +17,7 @@ html, body {
   color: white;
 }
 
-canvas#starfield, canvas#logoCanvas {
+canvas#starfield {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0; pointer-events: none;
@@ -133,20 +133,21 @@ textarea#message {
   position: relative; border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
+  cursor: pointer;
 }
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
   position: absolute;
-  top: calc(50% + 23px); /* lowered 5px */
-  left: calc(50% + 10px); /* moved over 10px */
-  font-size: 16px;
+  top: calc(50% + 23px); /* 5px lower */
+  left: calc(50% + 10px); /* 10px right */
+  font-size: 16px; 
   font-weight: bold;
   color: #00ff00;
-  cursor: pointer;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
+/* Summary container */
 #summaryContainer {
   display: none;
   flex-direction: column;
@@ -168,12 +169,16 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
+/* Copied message (green, above totalCostText) */
 #copiedMessage {
+  display: none;
   color: #00ff00;
   font-weight: bold;
   font-size: 18px;
   position: absolute;
-  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(calc(-50% + 10px), calc(-50% + 23px)); /* matches totalCostText */
   pointer-events: none;
 }
 
@@ -185,7 +190,6 @@ textarea#message {
 <body>
 
 <canvas id="starfield"></canvas>
-<canvas id="logoCanvas"></canvas>
 
 <header id="myHeader">
   <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
@@ -213,24 +217,24 @@ textarea#message {
 
 <script>
 // === Starfield ===
-const starCanvas = document.getElementById("starfield");
-const starCtx = starCanvas.getContext("2d");
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
 let stars = [];
 const clusterCount = 12;
 
-function resizeStarCanvas() {
-  starCanvas.width = window.innerWidth;
-  starCanvas.height = window.innerHeight;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-resizeStarCanvas();
-window.addEventListener('resize', resizeStarCanvas);
+resizeCanvas();
 
 function createStars() {
   stars = [];
   const clusterCenters = [];
   for (let i = 0; i < clusterCount; i++) {
-    clusterCenters.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight });
+    clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
+
   const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
   for (let i = 0; i < totalStars; i++) {
     let x, y;
@@ -241,12 +245,13 @@ function createStars() {
       x = c.x + radius * Math.cos(angle);
       y = c.y + radius * Math.sin(angle);
     } else {
-      x = Math.random() * window.innerWidth;
-      y = Math.random() * window.innerHeight;
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
     }
+
     stars.push({
       x, y,
-      z: Math.random() * window.innerWidth,
+      z: Math.random() * canvas.width,
       size: Math.random() * 1.5 + 0.2,
       color: ["#ffffff", "#ff99aa", "#ffcccc", "#99ccff"][Math.floor(Math.random()*4)],
       speed: Math.random() * 0.2 + 0.05,
@@ -257,23 +262,24 @@ function createStars() {
 createStars();
 
 function drawStars(time=0) {
-  starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   for (let s of stars) {
     s.z -= s.speed;
-    if (s.z <= 0) s.z = window.innerWidth;
+    if (s.z <= 0) s.z = canvas.width;
     const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
-    starCtx.beginPath();
-    starCtx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    starCtx.fillStyle = s.color;
-    starCtx.globalAlpha = shimmer;
-    starCtx.shadowBlur = s.size*4;
-    starCtx.shadowColor = s.color;
-    starCtx.fill();
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    ctx.fillStyle = s.color;
+    ctx.globalAlpha = shimmer;
+    ctx.shadowBlur = s.size*4;
+    ctx.shadowColor = s.color;
+    ctx.fill();
   }
-  starCtx.globalAlpha = 1;
+  ctx.globalAlpha = 1;
   requestAnimationFrame(drawStars);
 }
 drawStars(0);
+window.addEventListener("resize", () => { resizeCanvas(); createStars(); });
 
 // === App logic ===
 let priceList = {};
@@ -287,7 +293,7 @@ async function loadPrices() {
     const cols = lines[i].split(',');
     const ore = cols[0].trim();
     const price = parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()]=price; // lowercase for recognition
+    if(!isNaN(price)) priceList[ore]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
@@ -297,16 +303,19 @@ function formatNumber(n){ return n.toLocaleString(); }
 
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
+  const numberSpan = el.querySelector(".number");
+  const iskSpan = el.querySelector(".isk");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    el.innerText = formatNumber(Math.floor(progress*(end-start)+start)) + " ISK";
+    const current = Math.floor(progress*(end-start)+start);
+    if(numberSpan) numberSpan.innerText = current.toLocaleString();
+    if(iskSpan) iskSpan.innerText = "ISK";
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
-// === Show content ===
 function showContent(){
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
@@ -314,12 +323,9 @@ function showContent(){
 
   while((match = regex.exec(t)) !== null){
     const name = match[1].trim(), qty = parseInt(match[2]);
-    const lowerName = name.toLowerCase();
-    if(priceList[lowerName]) {
-      summary.push({name, qty, val: qty*priceList[lowerName], recognized:true});
-      total += qty*priceList[lowerName];
-    } else {
-      summary.push({name, qty, val: 0, recognized:false});
+    if(priceList[name]) {
+      summary.push({name, qty, val: qty*priceList[name]});
+      total += qty*priceList[name];
     }
   }
 
@@ -328,105 +334,37 @@ function showContent(){
   list.innerHTML = '';
   summary.forEach(i=>{
     const li = document.createElement('li');
-    li.innerHTML = `<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff4444'}">${i.recognized?formatNumber(i.val)+' ISK':'Unrecognized'}</span>`;
+    li.innerHTML = `<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
     list.appendChild(li);
   });
+
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
+  document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
-  // Show contracts
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
 
-  // Animate totals
+  // Animate total cost
   const totalCostText = document.getElementById('totalCostText');
-  totalCostText.innerText = formatNumber(total) + " ISK";
+  totalCostText.innerText = `${formatNumber(total)} ISK`;
 }
 
-// === Copy functionality ===
+// === Copied message functionality (restored) ===
 const totalCostText = document.getElementById('totalCostText');
 const copiedMsg = document.getElementById('copiedMessage');
 
 totalCostText.addEventListener('click', ()=>{
   navigator.clipboard.writeText(totalCostText.innerText);
   copiedMsg.style.display='block';
-  totalCostText.style.visibility='hidden';
-  setTimeout(()=>{
-    copiedMsg.style.display='none';
-    totalCostText.style.visibility='visible';
-  },1500);
+  setTimeout(()=>copiedMsg.style.display='none',1500);
 });
 
+// Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
-document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
-
-// === Logo Shatter ===
-const logo = document.getElementById('logoText');
-const logoCanvas = document.getElementById('logoCanvas');
-const logoCtx = logoCanvas.getContext('2d');
-let pieces = [];
-
-function resizeLogoCanvas(){
-  logoCanvas.width = window.innerWidth;
-  logoCanvas.height = window.innerHeight;
-}
-resizeLogoCanvas();
-window.addEventListener('resize', resizeLogoCanvas);
-
-function shatterLogo(){
-  const rect = logo.getBoundingClientRect();
-  const fontSize = parseInt(window.getComputedStyle(logo).fontSize);
-
-  const off = document.createElement('canvas');
-  off.width = rect.width;
-  off.height = rect.height;
-  const offCtx = off.getContext('2d');
-  offCtx.font = `${fontSize}px Orbitron`;
-  offCtx.fillStyle = 'white';
-  offCtx.fillText(logo.textContent, 0, fontSize);
-
-  const imgData = offCtx.getImageData(0,0,off.width, off.height);
-  const grid = 5;
-  pieces = [];
-  for(let y=0; y<off.height; y+=grid){
-    for(let x=0; x<off.width; x+=grid){
-      const idx = (y*off.width + x)*4;
-      const alpha = imgData.data[idx+3];
-      if(alpha>0){
-        pieces.push({
-          x: rect.left + x,
-          y: rect.top + y,
-          vx: (Math.random()-0.5)*8,
-          vy: (Math.random()-1.5)*8,
-          size: grid,
-          color: `rgba(${imgData.data[idx]},${imgData.data[idx+1]},${imgData.data[idx+2]},${alpha/255})`
-        });
-      }
-    }
-  }
-
-  logo.style.visibility='hidden';
-  animatePieces();
-}
-
-function animatePieces(){
-  logoCtx.clearRect(0,0,logoCanvas.width,logoCanvas.height);
-  let stillMoving=false;
-  pieces.forEach(p=>{
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vx *= 0.95;
-    p.vy *= 0.95;
-    logoCtx.fillStyle = p.color;
-    logoCtx.fillRect(p.x,p.y,p.size,p.size);
-    if(Math.abs(p.vx)>0.1 || Math.abs(p.vy)>0.1) stillMoving=true;
-  });
-  if(stillMoving) requestAnimationFrame(animatePieces);
-  else setTimeout(()=>{logo.style.visibility='visible'; logoCtx.clearRect(0,0,logoCanvas.width,logoCanvas.height);},1000);
-}
-
-logo.addEventListener('click', shatterLogo);
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
+
 </body>
 </html>
