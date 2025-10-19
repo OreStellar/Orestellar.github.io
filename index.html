@@ -122,7 +122,7 @@ textarea#message {
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Total ISK popup - upgraded style */
+/* Total ISK popup - clean style */
 #totalPriceModal {
   display: none;
   position: fixed;
@@ -135,12 +135,11 @@ textarea#message {
   width: 350px;
   max-width: 90%;
   padding: 20px;
-  background: radial-gradient(circle at 50% 50%, #001100, #000000);
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
+  background: radial-gradient(circle at 50% 50%, #111111, #000000);
+  border: 2px solid #fff;
+  box-shadow: 0 0 15px #fff;
   text-align: center;
-  animation: neonGlow 2s infinite alternate;
-  color: white; /* default text white */
+  color: white;
 }
 
 #totalPriceModal h2 {
@@ -151,17 +150,19 @@ textarea#message {
   text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
+/* Popup total ISK styling */
 #popupTotalPrice {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: white; /* default white */
+  color: white;
+  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
 #popupTotalPrice .number,
 #popupTotalPrice .isk {
-  color: #00ff00; /* only number and ISK green */
-  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  color: white;
+  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
 #totalPriceModal button {
@@ -206,8 +207,8 @@ textarea#message {
   position: absolute;
   top: calc(50% + 18px);
   left: 50%;
-  transform: translate(calc(-50% + 15px), -50%); /* shift 15px right */
-  font-size: 16px; /* larger size */
+  transform: translate(calc(-50% + 15px), -50%);
+  font-size: 16px;
   font-weight: bold;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
@@ -234,11 +235,6 @@ textarea#message {
 #summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
 #summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
 
-@keyframes neonGlow {
-  0% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset; }
-  100% { box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset; }
-}
-
 /* Info button */
 .info-button { position: fixed; bottom: 20px; right: 20px; font-size: 28px; z-index: 1000; }
 .info-button button { background: white; color: black; border-radius: 50%; }
@@ -253,7 +249,7 @@ textarea#message {
   <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
 </header>
 
-<!-- Total ISK Modal -->
+<!-- Total ISK Popup -->
 <div id="totalPriceModal" class="w3-modal">
   <div class="w3-modal-content w3-center">
     <h2>Total Contract Value</h2>
@@ -262,8 +258,7 @@ textarea#message {
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
-
-
+  
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
@@ -334,7 +329,7 @@ function drawStars(time=0) {
   for (let s of stars) {
     s.z -= s.speed;
     if (s.z <= 0) s.z = canvas.width;
-    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase); // slower shimmer
+    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fillStyle = s.color;
@@ -368,13 +363,30 @@ async function loadPrices() {
 loadPrices();
 
 function formatNumber(n){ return n.toLocaleString(); }
+
+// Animate totals
 function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   const numberSpan = el.querySelector(".number");
+  const iskSpan = el.querySelector(".isk");
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
-    numberSpan.innerText = formatNumber(Math.floor(progress*(end-start)+start));
+    const current = Math.floor(progress*(end-start)+start);
+    numberSpan.innerText = current.toLocaleString();
+    iskSpan.innerText = "ISK";
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Animate right-hand total above second contract
+function animateRightHandTotal(el, start, end, duration=2000){
+  let startTime = null;
+  function step(t){
+    if(!startTime) startTime = t;
+    let progress = Math.min((t-startTime)/duration,1);
+    el.innerText = `${Math.floor(progress*(end-start)+start).toLocaleString()} ISK`;
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -403,7 +415,6 @@ function showContent(){
   });
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
-
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   // Show contracts
@@ -414,7 +425,7 @@ function showContent(){
   document.querySelector('.main-container').style.display='none';
 
   // Animate totals
-  animateCount(document.getElementById('totalCostText'),0,total);
+  animateRightHandTotal(document.getElementById('totalCostText'),0,total);
   animateCount(document.getElementById('popupTotalPrice'),0,total);
 
   // Show total ISK popup above contracts
