@@ -279,10 +279,10 @@ function drawStars(time=0){
     if(brightStarTimer <= 0){
         brightStarTimer = 7000 + Math.random() * 8000; // 7-15s
         brightStars = [];
-        for(let i=0; i<2; i++){ // 1-2 stars
+        for(let i=0; i<2; i++){
             brightStars.push(stars[Math.floor(Math.random()*stars.length)]);
         }
-        brightStars.forEach(s => s.brightEnd = time + 2000 + Math.random()*1000); // shine 2-3s
+        brightStars.forEach(s => s.brightEnd = time + 2000 + Math.random()*1000); // 2-3s shine
     }
 
     for(let s of stars){
@@ -292,20 +292,20 @@ function drawStars(time=0){
         // Base shimmer
         let shimmer = s.baseAlpha;
 
-        // Twinkle for twinkling stars
+        // Twinkle
         if(s.twinkle){
             shimmer = 0.6 + 0.4 * Math.sin(time*0.001 + s.phase);
         }
 
-        // Occasional bright star override
+        // Occasional bright stars
         if(s.brightEnd && time < s.brightEnd){
-            shimmer = 1.5; // very bright
+            shimmer = 1; // max 1, not more
         }
 
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
         ctx.fillStyle = s.color;
-        ctx.globalAlpha = Math.min(shimmer,1);
+        ctx.globalAlpha = shimmer; // now always 0-1
         ctx.shadowBlur = s.size*4;
         ctx.shadowColor = s.color;
         ctx.fill();
@@ -314,6 +314,7 @@ function drawStars(time=0){
     ctx.globalAlpha = 1;
     requestAnimationFrame(drawStars);
 }
+
 
 drawStars();
 window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
