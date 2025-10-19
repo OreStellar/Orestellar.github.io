@@ -208,12 +208,12 @@ function resizeCanvas() {
 }
 resizeCanvas();
 
-// Generate stars with clusters
+// Generate stars with clusters spread across screen
 function createStars() {
   stars = [];
   const clusterCenters = [];
 
-  // Generate random cluster centers
+  // Generate random cluster centers across full screen
   for (let i = 0; i < clusterCount; i++) {
     clusterCenters.push({
       x: Math.random() * canvas.width,
@@ -239,8 +239,8 @@ function createStars() {
     }
 
     stars.push({
-      x: x - canvas.width/2,
-      y: y - canvas.height/2,
+      x: x,
+      y: y,
       z: Math.random() * canvas.width,
       size: Math.random() * 1.5 + 0.2,
       color: ["#ffffff", "#ffffcc", "#ffcccc", "#ccccff"][Math.floor(Math.random()*4)],
@@ -251,7 +251,7 @@ function createStars() {
 }
 createStars();
 
-// Draw stars with shimmering effect
+// Draw stars with shimmer
 function drawStars(time=0) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -260,8 +260,8 @@ function drawStars(time=0) {
     if (s.z <= 0) s.z = canvas.width;
 
     const k = 128 / s.z;
-    const px = s.x * k + canvas.width / 2;
-    const py = s.y * k + canvas.height / 2;
+    const px = s.x; // use absolute x, not centered
+    const py = s.y; // use absolute y
 
     if (px < 0 || px >= canvas.width || py < 0 || py >= canvas.height) continue;
 
