@@ -422,14 +422,14 @@ function explodeLogo(el){
 
   function animate(now){
     const elapsed = now - startTime;
-    let progress = Math.min(elapsed / duration, 1);
+    const progress = Math.min(elapsed / duration, 1);
 
-    // Central hot white/blue burst
-    const burstRadius = maxRadius * Math.pow(progress, 1.8);
-    ctx.clearRect(0,0,explosionCanvas.width,explosionCanvas.height);
-    ctx.fillStyle = `rgba(0,0,0,${progress*0.8})`;
+    // Darken background
+    ctx.fillStyle = `rgba(0,0,0,${progress*0.7})`;
     ctx.fillRect(0,0,explosionCanvas.width,explosionCanvas.height);
 
+    // Hot burst
+    const burstRadius = maxRadius * Math.pow(progress, 1.8);
     const gradient = ctx.createRadialGradient(
       rect.left+rect.width/2, rect.top+rect.height/2, 0,
       rect.left+rect.width/2, rect.top+rect.height/2, burstRadius
@@ -447,10 +447,9 @@ function explodeLogo(el){
     pieces.forEach(p=>{
       p.x += p.dx*0.5;
       p.y += p.dy*0.5;
-      p.dy += 0.08; // gravity
+      p.dy += 0.05; // gravity
       p.rotation += p.dRotation;
-      p.alpha -= 0.008;
-      if(p.alpha<0) p.alpha = 0;
+      if(progress > 0.2) p.alpha -= 0.004; // fade slower
 
       ctx.save();
       ctx.translate(p.x,p.y);
@@ -469,12 +468,11 @@ function explodeLogo(el){
 
       ctx.restore();
     });
-    ctx.globalAlpha = 1;
 
-    if(progress < 1) requestAnimationFrame(animate);
-    else {
-      document.body.removeChild(explosionCanvas);
-      location.reload();
+    if(progress < 1){
+      requestAnimationFrame(animate);
+    } else {
+      setTimeout(()=>{ location.reload(); }, 300); // slight delay to ensure animation finishes
     }
   }
   requestAnimationFrame(animate);
