@@ -51,41 +51,33 @@ canvas#starfield {
   z-index: 2;
 }
 
-#logoText {
+#logoText span {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
   letter-spacing: 2px;
+  display: inline-block;
   transform: skewX(-8deg);
-  display: flex;
-  gap: 5px;
-  justify-content: center;
-  cursor: pointer;
-}
-
-/* Dim initial state */
-.logo-part {
-  color: rgba(255,255,255,0.1); /* very dim */
-  transform: skewX(-8deg);
+  color: rgba(255,255,255,0.1); /* initial dim */
 }
 
 /* Rapid flicker */
 @keyframes flickerRapid {
-  0%, 33%, 66%, 100% { color: rgba(255,255,255,0.1); }
-  16%, 50%, 83% { color: rgba(255,255,255,1); }
+  0%, 20%, 40%, 60%, 80%, 100% { color: rgba(255,255,255,1); }
+  10%, 30%, 50%, 70%, 90% { color: rgba(255,255,255,0.1); }
 }
 
-/* Soft ongoing glow after flicker */
+/* Soft glow */
 @keyframes softGlow {
-  0%, 100% { text-shadow: 0 0 5px #fff; color: #fff; }
-  50% { text-shadow: 0 0 15px #fff; color: #fff; }
-}
-@keyframes flickerSlow {
-  0%, 100% { color: rgba(255,255,255,0.8); }
-  50% { color: rgba(255,255,255,1); }
+  0%,100% { text-shadow: 0 0 10px rgba(255,255,255,0.3); color: rgba(255,255,255,1); }
+  50% { text-shadow: 0 0 20px rgba(255,255,255,0.6); }
 }
 
-
+/* Final dim + quick flicker */
+@keyframes flickerQuick {
+  0%, 50%, 100% { color: rgba(255,255,255,0.1); }
+  25%, 75% { color: rgba(255,255,255,1); }
+}
 /* Main inventory box */
 .main-container {
   width: 650px; max-width: 90%;
@@ -431,29 +423,29 @@ window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
 
-  // Step 1: Wait 2s dim
+  // Step 1: Initial dim for 2s
   setTimeout(() => {
-    // Step 2: Rapid flicker
+    // Step 2: Ore rapid flicker
     ore.style.animation = 'flickerRapid 0.3s linear forwards';
     setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite';
+      ore.style.animation = 'softGlow 6s infinite'; // maintain soft glow
     }, 300);
 
+    // Step 3: Stellar rapid flicker after Ore
     setTimeout(() => {
       stellar.style.animation = 'flickerRapid 0.3s linear forwards';
       setTimeout(() => {
-        stellar.style.animation = 'softGlow 6s infinite';
+        stellar.style.animation = 'softGlow 6s infinite'; // maintain soft glow
       }, 300);
     }, 300);
 
-    // Step 4: Final slow flicker after soft glow begins
+    // Step 4: Both flash dim + quick flicker simultaneously
     setTimeout(() => {
-      ore.style.animation = 'flickerSlow 0.5s linear forwards, softGlow 6s infinite';
-      stellar.style.animation = 'flickerSlow 0.5s linear forwards, softGlow 6s infinite';
-    }, 1000); // 1 second after both are soft glowing
-  }, 450); // initial dim
+      ore.style.animation = 'flickerQuick 0.4s linear forwards, softGlow 6s infinite';
+      stellar.style.animation = 'flickerQuick 0.4s linear forwards, softGlow 6s infinite';
+    }, 1500); // adjust timing for nice effect
+  }, 450); // initial dim duration
 });
-
 </script>
 
 </body>
