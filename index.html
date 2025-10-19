@@ -61,8 +61,8 @@ canvas#starfield {
   text-transform: capitalize;
   display: inline-block;
 
-  /* Lean effect */
-  transform: skew(-15deg, 0deg) rotate(-2deg);
+  /* Lean/skew effect without rotation */
+  transform: skewX(-15deg);
 
   /* Neon glow */
   text-shadow: 
@@ -74,10 +74,11 @@ canvas#starfield {
   transition: transform 0.3s ease;
 }
 
-/* Optional hover tilt for subtle animation */
+/* Optional hover: subtle movement for futurism */
 #logoText:hover {
-  transform: skew(-15deg, 0deg) rotate(-4deg) scale(1.03);
+  transform: skewX(-15deg) scale(1.03);
 }
+
 
 /* Main inventory box */
 .main-container {
