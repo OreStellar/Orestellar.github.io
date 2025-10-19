@@ -131,16 +131,44 @@ textarea#message:focus {
 
 /* Submit button */
 #submitButton {
-  background-color: #fff; color: black;
-  border: none; border-radius: 8px;
-  padding: 15px 30px;
+  position: relative;
+  overflow: hidden;
+  background-color: #000; /* black base */
+  color: #fff; /* white text */
   font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 35px;
   cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
-  transition: all 0.3s ease;
-  margin-top: 15px;
+  text-shadow: 0 0 5px #fff, 0 0 15px #fff;
+  box-shadow: 0 0 10px #fff, 0 0 20px #fff inset;
+  transition: all 0.3s ease-in-out;
 }
-#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
+
+/* Scanner gradient effect */
+#submitButton::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+  animation: rotateGradient 3s linear infinite;
+  pointer-events: none; /* so it doesn’t block clicks */
+}
+
+@keyframes rotateGradient {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Press feedback animation */
+#submitButton:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 10px #fff inset;
+}
 
 /* Contracts and summary */
 .contracts-wrapper {
