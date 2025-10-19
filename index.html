@@ -380,32 +380,35 @@ document.getElementById('submitButton').addEventListener('click',showContent);
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
 // ===== LOGO ANIMATION =====
-window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore');
-  const stellar=document.getElementById('stellar');
+window.addEventListener('load', () => {
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
 
   // Step 1: Initial dim for 2s
-  setTimeout(()=>{
-    // Step 2: Stellar flicker first 0.3s
-    stellar.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
+  setTimeout(() => {
+    // Step 2: Ore rapid flicker 0.3s
+    ore.style.animation = 'flickerRapid 0.3s linear forwards';
+    setTimeout(() => {
+      ore.style.animation = 'softGlow 6s infinite';
+    }, 300);
 
-    // Step 3: Ore flicker after Stellar 0.3s
-    setTimeout(()=>{
-      ore.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-    },300);
+    // Step 3: Stellar rapid flicker 0.3s after Ore
+    setTimeout(() => {
+      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
+      setTimeout(() => {
+        stellar.style.animation = 'softGlow 6s infinite';
+      }, 300);
+    }, 400); // small gap after Ore finishes
 
     // Step 4: Both flash dim + quick flicker 0.25s
-    setTimeout(()=>{
-      ore.style.animation='flickerQuick 0.25s linear forwards';
-      stellar.style.animation='flickerQuick 0.25s linear forwards';
-      setTimeout(()=>{
-        ore.style.animation='softGlow 6s infinite';
-        stellar.style.animation='softGlow 6s infinite';
-      },250);
-    },1500);
-
+    setTimeout(() => {
+      ore.style.animation = 'flickerQuick 0.25s linear forwards';
+      stellar.style.animation = 'flickerQuick 0.25s linear forwards';
+      setTimeout(() => {
+        ore.style.animation = 'softGlow 6s infinite';
+        stellar.style.animation = 'softGlow 6s infinite';
+      }, 250);
+    }, 1600); // after both have soft glow
   },500);
 });
 </script>
