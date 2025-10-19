@@ -200,52 +200,55 @@ logo.addEventListener('click', ()=>{
   let burstSpeed = 3;
   let rotation = 0;
 
-  function animate(){
-    ctx2.clearRect(0,0,canvas.width,canvas.height);
+function animate(){
+  ctx2.clearRect(0,0,canvas.width,canvas.height);
 
-    // Radial burst light
-    burstRadius += burstSpeed;
-    rotation += 0.005;
-    if(burstSpeed < 20) burstSpeed += 0.1;
-    const grad = ctx2.createRadialGradient(
-      rect.left+rect.width/2, rect.top+rect.height/2, 0,
-      rect.left+rect.width/2, rect.top+rect.height/2, burstRadius
-    );
-    grad.addColorStop(0,'rgba(255,255,255,1)');
-    grad.addColorStop(0.3,'rgba(173,216,255,0.6)');
-    grad.addColorStop(1,'rgba(0,0,0,0)');
-    ctx2.fillStyle = grad;
-    ctx2.beginPath();
-    ctx2.arc(rect.left+rect.width/2, rect.top+rect.height/2, burstRadius,0,Math.PI*2);
-    ctx2.fill();
+  // Radial burst light
+  burstRadius += burstSpeed * 0.8; // slower expansion for longer duration
+  rotation += 0.004; // slightly slower rotation
+  if(burstSpeed < 18) burstSpeed += 0.05; // slower acceleration
 
-    // Update and draw pieces
-    pieces.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
+  const grad = ctx2.createRadialGradient(
+    rect.left+rect.width/2, rect.top+rect.height/2, 0,
+    rect.left+rect.width/2, rect.top+rect.height/2, burstRadius
+  );
+  grad.addColorStop(0,'rgba(255,255,255,1)');
+  grad.addColorStop(0.3,'rgba(173,216,255,0.6)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx2.fillStyle = grad;
+  ctx2.beginPath();
+  ctx2.arc(rect.left+rect.width/2, rect.top+rect.height/2, burstRadius,0,Math.PI*2);
+  ctx2.fill();
 
-      // Slow down gradually
-      p.vx *= 0.99;
-      p.vy *= 0.99;
+  // Update and draw pieces
+  pieces.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
 
-      // Bounce off edges lightly
-      if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-      if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    // Slow down more gradually
+    p.vx *= 0.995; // smaller decay
+    p.vy *= 0.995;
 
-      ctx2.save();
-      ctx2.translate(p.x, p.y);
-      ctx2.rotate(rotation);
-      ctx2.fillStyle = p.color;
-      ctx2.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-      ctx2.restore();
-    });
+    // Bounce off edges lightly
+    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-    if(burstRadius < window.innerWidth*1.5 || pieces.some(p=>Math.abs(p.vx)>0.1 || Math.abs(p.vy)>0.1)){
-      requestAnimationFrame(animate);
-    } else {
-      location.reload();
-    }
+    ctx2.save();
+    ctx2.translate(p.x, p.y);
+    ctx2.rotate(rotation);
+    ctx2.fillStyle = p.color;
+    ctx2.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx2.restore();
+  });
+
+  // Keep animating longer
+  if(burstRadius < window.innerWidth*1.5 || pieces.some(p=>Math.abs(p.vx)>0.1 || Math.abs(p.vy)>0.1)){
+    requestAnimationFrame(animate);
+  } else {
+    location.reload();
   }
+}
+
 
   animate();
 });
