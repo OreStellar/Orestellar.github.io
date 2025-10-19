@@ -52,34 +52,37 @@ canvas#starfield {
 }
 
 #logoText {
+  display: inline-block;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
-  letter-spacing: 0; /* no space between Ore and Stellar */
-  display: flex;
-  justify-content: center;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.1); /* dim initially */
+  transform: skewX(-8deg);
+  text-shadow: none; /* remove extra glowing box */
 }
 
-.logo-part {
+#logoText span {
   display: inline-block;
   transform: skewX(-8deg);
-  color: rgba(255,255,255,0.1); /* initial dim */
+  color: rgba(255,255,255,0.1);
+  text-shadow: none; /* text-only glow applied via animation */
 }
 
-/* Flicker animations */
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); }
-  25%,75% { color: rgba(255,255,255,1); }
-}
-
+/* Use animations only for text glow */
 @keyframes softGlow {
   0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
   50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
+}
+
+@keyframes flickerRapid {
+  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
+  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
+}
+
+@keyframes flickerQuick {
+  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
+  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
 }
 
 /* Main inventory box */
