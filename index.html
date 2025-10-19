@@ -414,14 +414,15 @@ window.addEventListener('load', () => {
       }, 300);
     }, 400); // small gap after Ore finishes
 
-    // Step 4: Both flash dim + quick flicker 0.25s
+    // Step 4: Both flash dim + single quick flicker 0.25s
     setTimeout(() => {
-      ore.style.animation = 'flickerQuick 0.4s linear forwards';
-      stellar.style.animation = 'flickerQuick 0.4s linear forwards';
+      ore.style.animation = 'flickerQuick 0.3s linear forwards';
+      stellar.style.animation = 'flickerQuick 0.3s linear forwards';
+      // After the 0.25s single flicker, revert to soft glow
       setTimeout(() => {
         ore.style.animation = 'softGlow 6s infinite';
         stellar.style.animation = 'softGlow 6s infinite';
-      }, 400);
+      }, 300);
     }, 1100); // after both have soft glow
   },500);
 });
