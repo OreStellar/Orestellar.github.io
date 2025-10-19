@@ -4,183 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
-html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
-  font-family: monospace;
-  color: white;
-}
-
-canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
-
-/* Header */
-#myHeader {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  z-index: 3;
-  background: transparent;
-  padding: 40px 0;
-  cursor: pointer;
-}
-
-/* Logo with scanline */
-#logoText {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 5rem;
-  color: #fff;
-  letter-spacing: 2px;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  text-transform: capitalize;
-}
-
-/* Scanline overlay */
-#logoText::before {
-  content: attr(data-text);
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
-  background-size: 100% 4px;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: scanline 2s linear infinite;
-}
-@keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
-}
-
-/* Container wrapper */
-.container-wrapper {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  z-index: 2;
-}
-
-/* Main inventory box */
-.main-container {
-  width: 650px;
-  max-width: 90%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(20,20,20,0.85);
-  border-radius: 15px;
-  box-shadow: 0 0 20px #ffffff40;
-}
-
-textarea#message {
-  width: 100%;
-  font-size: 18px;
-  padding: 12px;
-  border-radius: 8px;
-  resize: vertical;
-}
-
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
-
-/* Submit button */
-#submitButton {
-  background-color: #fff; color: black;
-  border: none; border-radius: 8px;
-  padding: 15px 30px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px 3px white;
-  transition: all 0.3s ease;
-  margin-top: 15px;
-}
-#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
-
-/* Contracts and summary */
-.contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
-}
-.total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
-  cursor: pointer;
-}
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText {
-  position: absolute;
-  top: calc(50% + 23px);
-  left: calc(50% + 10px);
-  font-size: 16px;
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-}
-#copiedMessage {
-  display:none;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 18px;
-  position: absolute;
-}
-
-/* Summary container */
-#summaryContainer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(20,20,20,0.9);
-  border: 1px solid #00ff00;
-  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
-  border-radius: 10px;
-  padding: 10px 15px;
-  color: white;
-  font-family: monospace;
-  max-height: 418px;
-  min-width: 280px;
-  max-width: 400px;
-  overflow-y: auto;
-}
-#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
-#summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
-#summaryContainer li span:last-child { color: #00ff00; min-width: 120px; text-align: right; }
-#summaryTotal { text-align: right; color: #00ff00; font-weight: bold; margin-top: 5px; }
-
+html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
+canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+#myHeader { width:100%; text-align:center; position:relative; z-index:3; background:transparent; padding:40px 0; cursor:pointer; }
+#logoText { font-family:'Orbitron', sans-serif; font-weight:700; font-size:5rem; color:#fff; letter-spacing:2px; position:relative; display:inline-block; overflow:hidden; text-transform:capitalize; }
+#logoText::before { content:attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%); background-size:100% 4px; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:scanline 2s linear infinite; }
+@keyframes scanline { 0% { background-position:0 0; } 100% { background-position:0 100%; } }
+.container-wrapper { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:20px; z-index:2; }
+.main-container { width:650px; max-width:90%; padding:25px; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.85); border-radius:15px; box-shadow:0 0 20px #ffffff40; }
+textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; resize:vertical; }
+.quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
+@keyframes glowPulse { 0%,100%{ text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1; } 50%{ text-shadow:0 0 15px #fff,0 0 20px #aaa; } }
+#submitButton { background-color:#fff;color:black; border:none;border-radius:8px;padding:15px 30px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px 3px white;transition:all 0.3s ease;margin-top:15px; }
+#submitButton:hover { box-shadow:0 0 25px 5px #2fff1c; }
+.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:10px; flex-wrap:wrap; width:100%; }
+.total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; cursor:pointer; }
+#leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
+#totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#totalCostText { position:absolute; top:calc(50% + 23px); left:50%; transform:translate(calc(-50% + 10px), -50%); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
+#summaryContainer { display:none; flex-direction:column; align-items:center; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; color:white; font-family:monospace; max-height:418px; min-width:280px; max-width:400px; overflow-y:auto; }
+#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
+#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
+#summaryContainer li span:last-child { min-width:120px; text-align:right; }
+#summaryContainer li.unrecognized span:last-child { color:red; animation:glowRed 1.2s infinite alternate; }
+@keyframes glowRed { 0% { text-shadow:0 0 5px red; } 100% { text-shadow:0 0 15px red; } }
+#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; margin-top:5px; }
+#copiedMessage { display:none; color:#00ff00; position:absolute; font-weight:bold; font-size:18px; }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
-
 <header id="myHeader">
   <h1 id="logoText" data-text="OreStellar">OreStellar</h1>
 </header>
@@ -207,106 +63,159 @@ textarea#message {
 
 <script>
 // === Starfield ===
-const canvas=document.getElementById("starfield");
-const ctx=canvas.getContext("2d");
-let stars=[];
-const clusterCount=12;
-function resizeCanvas(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+let stars=[], clusterCount=12;
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas();
-
-function createStars(){stars=[]; const clusterCenters=[]; for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height}); const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200); for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const r=Math.random()*120; const a=Math.random()*Math.PI*2; x=c.x+r*Math.cos(a); y=c.y+r*Math.sin(a);} else {x=Math.random()*canvas.width; y=Math.random()*canvas.height;} stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.05+0.02,phase:Math.random()*Math.PI*2});}}
+function createStars(){
+  stars=[];
+  const clusterCenters=[];
+  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height});
+  const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200);
+  for(let i=0;i<totalStars;i++){
+    let x,y;
+    if(Math.random()<0.6){
+      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
+      const radius=Math.random()*120;
+      const angle=Math.random()*Math.PI*2;
+      x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
+    }else{x=Math.random()*canvas.width; y=Math.random()*canvas.height;}
+    stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.05+0.02,phase:Math.random()*Math.PI*2});
+  }
+}
 createStars();
-
-function drawStars(time=0){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){ s.z-=s.speed; if(s.z<=0) s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur = s.size*4; ctx.shadowColor = s.color; ctx.fill(); } ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
+function drawStars(time=0){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let s of stars){
+    s.z-=s.speed;
+    if(s.z<=0) s.z=canvas.width;
+    const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase);
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color; ctx.globalAlpha=shimmer;
+    ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill();
+  }
+  ctx.globalAlpha=1; requestAnimationFrame(drawStars);
+}
 drawStars(0);
 window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-// === Prices & Inventory ===
+// === Price & Summary ===
 let priceList={};
-async function loadPrices(){ const res=await fetch('data/prices.csv'); const text=await res.text(); const lines=text.split('\n').filter(l=>l.trim()); const headers=lines[0].split(','); const idx=headers.findIndex(h=>h.toLowerCase().includes('150%')); for(let i=1;i<lines.length;i++){ const cols=lines[i].split(','); const ore=cols[0].trim().toLowerCase(); const price=parseFloat(cols[idx]); if(!isNaN(price)) priceList[ore]=price;} document.getElementById('submitButton').disabled=false;}
+async function loadPrices(){
+  const response=await fetch('data/prices.csv');
+  const text=await response.text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',');
+  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+  for(let i=1;i<lines.length;i++){
+    const cols=lines[i].split(',');
+    const ore=cols[0].trim();
+    const price=parseFloat(cols[idx]);
+    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
+  }
+  document.getElementById('submitButton').disabled=false;
+}
 loadPrices();
 function formatNumber(n){return n.toLocaleString();}
+function animateCount(el,start,end,duration=2000){
+  let startTime=null; const numberSpan=el.querySelector(".number"); const iskSpan=el.querySelector(".isk");
+  function step(t){ if(!startTime) startTime=t; let progress=Math.min((t-startTime)/duration,1); const current=Math.floor(progress*(end-start)+start); if(numberSpan) numberSpan.innerText=current.toLocaleString(); if(iskSpan) iskSpan.innerText="ISK"; if(progress<1) requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
 
-function showContent(){ 
+// === Submit & Summary ===
+function showContent(){
   const t=document.getElementById('message').value;
-  const regex=/([\w\s]+?)\s+(\d+)/g; 
+  const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
-  while((match=regex.exec(t))!==null){ 
-    const name=match[1].trim().toLowerCase(),qty=parseInt(match[2]);
-    let val=0; if(priceList[name]) val=qty*priceList[name];
-    summary.push({name,qty,val,recognized:!!priceList[name]}); 
-    total+=val;
+  while((match=regex.exec(t))!==null){
+    const name=match[1].trim(), qty=parseInt(match[2]);
+    const price=priceList[name.toLowerCase()];
+    if(price){
+      summary.push({name, qty, val:qty*price}); total+=qty*price;
+    } else { summary.push({name, qty, val:0, unrecognized:true}); }
   }
-  const list=document.getElementById('summaryList'); list.innerHTML=''; 
-  summary.forEach(i=>{ const li=document.createElement('li'); li.innerHTML=`<span>${i.name}</span><span style="color:${i.recognized?'#00ff00':'#ff0000'}">${formatNumber(i.val)} ISK</span>`; list.appendChild(li); });
-  document.getElementById('summaryContainer').style.display='flex';
+  const list=document.getElementById('summaryList'); list.innerHTML='';
+  summary.forEach(i=>{
+    const li=document.createElement('li');
+    li.className=i.unrecognized?'unrecognized':'';
+    li.innerHTML=`<span>${i.name}</span><span>${formatNumber(i.val)} ISK</span>`;
+    list.appendChild(li);
+  });
+  const summaryContainer=document.getElementById('summaryContainer'); summaryContainer.style.display='flex';
   document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
   document.getElementById('leftContainer').style.display='block';
-  const totalContainer=document.getElementById('totalCostContainer');
-  const totalCostText=document.getElementById('totalCostText');
-  const copiedMessage=document.getElementById('copiedMessage');
-  totalContainer.style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
-  totalCostText.innerText=`${formatNumber(total)} ISK`;
-  totalContainer.onclick=()=>{
-    navigator.clipboard.writeText(totalCostText.innerText);
-    totalCostText.style.display='none';
-    copiedMessage.style.display='block';
-    setTimeout(()=>{copiedMessage.style.display='none'; totalCostText.style.display='block';},1500);
-  };
+  document.getElementById('totalCostText').innerText=formatNumber(total)+' ISK';
 }
-document.getElementById('submitButton').addEventListener('click',showContent);
+document.getElementById('submitButton').addEventListener('click', showContent);
 
-// === Supernova logo explosion ===
-const logo=document.getElementById('logoText');
-logo.addEventListener('click',()=>{ 
-  const rect=logo.getBoundingClientRect();
-  const particles=[];
-  const count=80;
-  const colors=['#fff','#ff99aa','#99ccff','#ffcc66','#ffff99'];
-  for(let i=0;i<count;i++){
-    const angle=Math.random()*2*Math.PI;
-    const speed=Math.random()*8+4;
-    particles.push({
-      x:rect.left+rect.width/2,
-      y:rect.top+rect.height/2,
-      vx:Math.cos(angle)*speed,
-      vy:Math.sin(angle)*speed,
-      size:Math.random()*6+3,
-      color:colors[Math.floor(Math.random()*colors.length)]
-    });
-  }
-
-  // Central flash
-  let flashAlpha=1;
-  function animateParticles(){ 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawStars();
-    // Flash
-    if(flashAlpha>0){
-      ctx.beginPath();
-      ctx.arc(rect.left+rect.width/2, rect.top+rect.height/2, 50,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${flashAlpha})`;
-      ctx.fill();
-      flashAlpha-=0.05;
-    }
-
-    let alive=false;
-    for(let p of particles){
-      p.x+=p.vx; p.y+=p.vy;
-      p.vx*=0.99; p.vy*=0.99; // slow down gradually
-      p.size*=0.96;
-      if(p.size>0.5){ alive=true; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();}
-    }
-
-    if(alive || flashAlpha>0) requestAnimationFrame(animateParticles);
-    else location.reload();
-  }
-
-  logo.style.visibility='hidden';
-  animateParticles();
+// === Copy ISK ===
+const totalCostContainer=document.getElementById('totalCostContainer');
+const copiedMessage=document.getElementById('copiedMessage');
+totalCostContainer.addEventListener('click',()=>{
+  const isk=totalCostContainer.querySelector('#totalCostText').innerText;
+  navigator.clipboard.writeText(isk);
+  copiedMessage.style.display='block';
+  setTimeout(()=>copiedMessage.style.display='none',1500);
 });
 
+// === Logo supernova ===
+const logo=document.getElementById('logoText');
+logo.addEventListener('click',()=>{ explodeLogo(logo); });
+
+function explodeLogo(el){
+  const rect=el.getBoundingClientRect();
+  const logoPieces=[];
+  const pieceCount=60; // more pieces
+  for(let i=0;i<pieceCount;i++){
+    logoPieces.push({
+      x:rect.left+rect.width/2, y:rect.top+rect.height/2,
+      radius:Math.random()*8+4,
+      dx:(Math.random()-0.5)*15, dy:(Math.random()-0.5)*15,
+      color:`hsl(${Math.random()*360},80%,70%)`,
+      alpha:1
+    });
+  }
+  el.style.visibility='hidden';
+  const explosionCanvas=document.createElement('canvas');
+  explosionCanvas.style.position='fixed'; explosionCanvas.style.top='0'; explosionCanvas.style.left='0'; explosionCanvas.style.pointerEvents='none'; explosionCanvas.width=window.innerWidth; explosionCanvas.height=window.innerHeight; explosionCanvas.style.zIndex=9999;
+  document.body.appendChild(explosionCanvas);
+  const ctxExp=explosionCanvas.getContext('2d');
+  let lightRadius=0, lightMax=100;
+  let animationTime=0;
+  function animateExplosion(){
+    ctxExp.clearRect(0,0,explosionCanvas.width,explosionCanvas.height);
+    // light burst
+    lightRadius+=4; const alpha=1-lightRadius/lightMax; 
+    const gradient=ctxExp.createRadialGradient(rect.left+rect.width/2, rect.top+rect.height/2,0, rect.left+rect.width/2, rect.top+rect.height/2, lightRadius);
+    gradient.addColorStop(0,'rgba(255,255,255,1)');
+    gradient.addColorStop(0.2,'rgba(255,200,150,0.6)');
+    gradient.addColorStop(0.5,'rgba(255,100,50,0.3)');
+    gradient.addColorStop(1,'rgba(0,0,0,0)');
+    ctxExp.fillStyle=gradient; ctxExp.beginPath();
+    ctxExp.arc(rect.left+rect.width/2, rect.top+rect.height/2, lightRadius,0,Math.PI*2); ctxExp.fill();
+    // pieces
+    logoPieces.forEach(p=>{
+      p.x+=p.dx; p.y+=p.dy; p.dy+=0.2; // gravity-like
+      p.alpha-=0.005;
+      if(p.alpha<0) p.alpha=0;
+      ctxExp.fillStyle=p.color; ctxExp.globalAlpha=p.alpha;
+      ctxExp.beginPath(); ctxExp.arc(p.x,p.y,p.radius,0,Math.PI*2); ctxExp.fill();
+    });
+    ctxExp.globalAlpha=1;
+    animationTime++;
+    if(animationTime<100){ requestAnimationFrame(animateExplosion); }
+    else{ document.body.removeChild(explosionCanvas); location.reload(); }
+  }
+  animateExplosion();
+}
+
+// === Logo refresh on click ===
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 </script>
 </body>
 </html>
