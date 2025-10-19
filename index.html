@@ -142,13 +142,15 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     const rect = logo.getBoundingClientRect();
     const letters = logo.textContent.split('');
     const droplets = [];
-    const totalDropletsPerLetter = 5; // more for denser water under each letter
+    const steam = [];
     logo.style.visibility = 'hidden';
+
+    const totalDropletsPerLetter = 5;
 
     letters.forEach((letter, i)=>{
         const letterWidth = rect.width / letters.length;
         const letterX = rect.left + i*letterWidth + letterWidth/2;
-        const letterY = rect.top + rect.height;
+        const letterY = rect.top;
 
         for(let j=0;j<totalDropletsPerLetter;j++){
             const d = document.createElement('div');
@@ -158,7 +160,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
             d.style.background = 'rgba(173,216,230,0.8)'; // water color
             d.style.borderRadius = '50%';
             d.style.position = 'fixed';
-            d.style.left = letterX + (Math.random()*letterWidth/2 - letterWidth/4) + 'px'; // slight horizontal variation
+            d.style.left = letterX + (Math.random()*letterWidth/2 - letterWidth/4) + 'px';
             d.style.top = letterY + 'px';
             d.style.zIndex = 10;
             document.body.appendChild(d);
@@ -167,9 +169,8 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
                 el: d,
                 x: parseFloat(d.style.left),
                 y: parseFloat(d.style.top),
-                vy: Math.random()*1 + 0.5, // gentle downward drift
-                gravity: 0.02,
-                scale: 1,
+                vy: Math.random()*1 + 0.5,
+                gravity: 0.03,
                 angle: Math.random()*360,
                 angularVelocity: (Math.random()-0.5)*0.1
             });
@@ -177,20 +178,52 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     });
 
     function animate(){
-        droplets.forEach(d=>{
+        droplets.forEach((d,i)=>{
             d.y += d.vy;
             d.vy += d.gravity;
             d.angle += d.angularVelocity;
-            d.el.style.top = d.y - d.scale*3 + 'px';
+            d.el.style.top = d.y + 'px';
             d.el.style.transform = `rotate(${d.angle}deg)`;
-            d.el.style.width = d.scale*6 + 'px';
-            d.el.style.height = d.scale*6 + 'px';
+
+            // occasionally spawn steam from droplet
+            if(Math.random()<0.03){
+                const s = document.createElement('div');
+                s.style.width = '2px';
+                s.style.height = '8px';
+                s.style.background = 'rgba(255,255,255,0.5)';
+                s.style.position = 'fixed';
+                s.style.left = d.x + 'px';
+                s.style.top = d.y + 'px';
+                s.style.borderRadius = '50%';
+                s.style.zIndex = 11;
+                document.body.appendChild(s);
+                steam.push({
+                    el: s,
+                    x: d.x,
+                    y: d.y,
+                    vy: -(Math.random()*1 + 0.5),
+                    alpha: 0.5
+                });
+            }
         });
+
+        steam.forEach((s,idx)=>{
+            s.y += s.vy;
+            s.alpha -= 0.02;
+            if(s.alpha <= 0){
+                s.el.remove();
+                steam.splice(idx,1);
+            } else {
+                s.el.style.top = s.y + 'px';
+                s.el.style.opacity = s.alpha;
+            }
+        });
+
         requestAnimationFrame(animate);
     }
+
     animate();
 
-    // refresh after 1.75 seconds
     setTimeout(()=>location.reload(),1750);
 });
 
