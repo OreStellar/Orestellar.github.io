@@ -202,12 +202,16 @@ textarea#message {
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText {
-  position: absolute; top: calc(50% + 18px); left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 13px; font-weight: bold;
+  position: absolute;
+  top: calc(50% + 18px);
+  left: 50%;
+  transform: translate(calc(-50% + 15px), -50%); /* shift 15px right */
+  font-size: 16px; /* larger size */
+  font-weight: bold;
   color: #00ff00;
-  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
+
 #summaryContainer {
   display: none;
   flex-direction: column;
