@@ -57,8 +57,37 @@ canvas#starfield {
   font-size: 5rem;
   color: #fff;
   letter-spacing: 2px;
-  transform: skewX(-8deg) translateY(-10px);
+  transform: skewX(-8deg);
   transform-origin: center;
+
+  /* White neon glow */
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 30px #fff;
+
+  /* Soft white flicker animation */
+  animation: whiteFlicker 4s infinite;
+}
+
+@keyframes whiteFlicker {
+  0%, 19%, 21%, 50%, 55%, 100% {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #fff;
+    opacity: 1;
+  }
+  20%, 51%, 54% {
+    text-shadow:
+      0 0 2px #fff,
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #fff;
+    opacity: 0.85; /* slightly dim */
+  }
 }
 
 /* Main inventory box */
