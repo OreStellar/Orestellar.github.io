@@ -6,39 +6,170 @@
 <title>OreStellar</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <style>
-html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
-canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+html, body {
+  margin: 0; padding: 0;
+  height: 100%; overflow: hidden;
+  background: black;
+  font-family: monospace;
+  color: white;
+}
+
+canvas#starfield {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+
+/* Header */
+#myHeader {
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+  background: transparent;
+  padding: 40px 0;
+  cursor: pointer;
+}
 
 /* Logo */
-#myHeader { width:100%; text-align:center; position:relative; z-index:3; background:transparent; padding:40px 0; cursor:pointer; }
-#logoText { font-family:'Orbitron', sans-serif; font-weight:700; font-size:5rem; color:#fff; letter-spacing:2px; position:relative; display:inline-block; overflow:hidden; text-transform:capitalize; }
-#logoText::before { content:attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%); background-size:100% 4px; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:scanline 2s linear infinite; }
-@keyframes scanline { 0%{background-position:0 0;} 100%{background-position:0 100%;} }
+#logoText {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 5rem;
+  color: #fff;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+#logoText.cracked {
+  background: repeating-linear-gradient(
+    45deg,
+    white,
+    white 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-/* Container */
-.container-wrapper { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:20px; z-index:2; }
-.main-container { width:650px; max-width:90%; padding:25px; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.85); border-radius:15px; box-shadow:0 0 20px #ffffff40; }
-textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; resize:vertical; }
-.quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
-@keyframes glowPulse { 0%,100%{text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;} 50%{text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
-#submitButton { background-color:#fff;color:black;border:none;border-radius:8px;padding:15px 30px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px 3px white;transition:all 0.3s ease;margin-top:15px; }
-#submitButton:hover { box-shadow:0 0 25px 5px #2fff1c; }
+/* Container wrapper */
+.container-wrapper {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  z-index: 2;
+}
 
-/* Contracts */
-.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:10px; flex-wrap:wrap; width:100%; }
-.total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
-#leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-#totalCostText { position:absolute; top:calc(50% + 23px); left:calc(50% + 10px); font-size:16px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
-#copiedMessage { display:none; color:#00ff00; position:absolute; font-weight:bold; font-size:16px; top:calc(50% + 23px); left:calc(50% + 10px); }
+/* Main inventory box */
+.main-container {
+  width: 650px;
+  max-width: 90%;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(20,20,20,0.85);
+  border-radius: 15px;
+  box-shadow: 0 0 20px #ffffff40;
+}
 
-/* Summary container */
-#summaryContainer { display:none; flex-direction:column; align-items:center; background-color:rgba(20,20,20,0.9); border:1px solid #00ff00; box-shadow:0 0 10px #00ff00,0 0 20px #00ff00 inset; border-radius:10px; padding:10px 15px; color:white; font-family:monospace; max-height:418px; min-width:280px; max-width:400px; overflow-y:auto; }
-#summaryContainer ul { list-style:none; margin:0; padding:0; width:100%; }
-#summaryContainer li { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:15px; }
-#summaryContainer li span:last-child { color:#00ff00; min-width:120px; text-align:right; }
-#summaryTotal { text-align:right; color:#00ff00; font-weight:bold; margin-top:5px; }
+textarea#message {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px;
+  border-radius: 8px;
+  resize: vertical;
+}
 
+.quote-text {
+  font-style: italic; font-weight: bold;
+  font-size: 21px;
+  animation: glowPulse 3s infinite;
+}
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
+  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
+}
+
+/* Submit button */
+#submitButton {
+  background-color: #fff; color: black;
+  border: none; border-radius: 8px;
+  padding: 15px 30px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px 3px white;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+#submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
+
+/* Contracts and summary */
+.contracts-wrapper {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: 10px; flex-wrap: wrap; width: 100%;
+}
+.total-cost-container {
+  width: 630px; height: 418px;
+  background-size: contain; background-position: center; background-repeat: no-repeat;
+  position: relative; border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
+#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#totalCostText {
+  position: absolute;
+  top: calc(50% + 23px);
+  left: calc(50% + 10px);
+  font-size: 16px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+  cursor: pointer;
+}
+
+/* Summary */
+#summaryContainer {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(20,20,20,0.9);
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00 inset;
+  border-radius: 10px;
+  padding: 10px 15px;
+  color: white;
+  font-family: monospace;
+  max-height: 418px;
+  min-width: 280px;
+  max-width: 400px;
+  overflow-y: auto;
+}
+#summaryContainer ul { list-style: none; margin: 0; padding: 0; width: 100%; }
+#summaryContainer li { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(0,255,0,0.15); font-size: 15px; }
+#summaryContainer li.unrecognized span:last-child { color: red; text-shadow: 0 0 5px red, 0 0 10px #aa0000; }
+
+/* Copied message */
+#copiedMessage {
+  display:none;
+  position: absolute;
+  font-weight: bold;
+  font-size: 16px;
+  color: #00ff00;
+}
+
+/* Starfield */
 </style>
 </head>
 <body>
@@ -64,182 +195,135 @@ textarea#message { width:100%; font-size:18px; padding:12px; border-radius:8px; 
     </div>
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
-      <div id="copiedMessage">Copied!</div>
+      <div id="copiedMessage">Copied</div>
     </div>
   </div>
 </div>
 
 <script>
 // === Starfield ===
-const canvas=document.getElementById("starfield"), ctx=canvas.getContext("2d"); let stars=[], clusterCount=12;
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+let stars = [];
+const clusterCount = 12;
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resizeCanvas();
-function createStars(){ stars=[]; const clusterCenters=[]; for(let i=0;i<clusterCount;i++){clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});} const totalStars=Math.floor(window.innerWidth*window.innerHeight/1200); for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){ const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const radius=Math.random()*120; const angle=Math.random()*Math.PI*2; x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);} else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;} stars.push({x,y,z:Math.random()*canvas.width,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2});}}
+
+function createStars() {
+  stars = [];
+  const clusterCenters = [];
+  for (let i = 0; i < clusterCount; i++) clusterCenters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+  const totalStars = Math.floor(window.innerWidth * window.innerHeight / 1200);
+  for (let i = 0; i < totalStars; i++) {
+    let x, y;
+    if (Math.random() < 0.6) {
+      const c = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
+      const radius = Math.random() * 120;
+      const angle = Math.random() * Math.PI * 2;
+      x = c.x + radius * Math.cos(angle);
+      y = c.y + radius * Math.sin(angle);
+    } else { x = Math.random() * canvas.width; y = Math.random() * canvas.height; }
+    stars.push({ x, y, z: Math.random() * canvas.width, size: Math.random() * 1.5 + 0.2, color: ["#ffffff","#ff99aa","#ffcccc","#99ccff"][Math.floor(Math.random()*4)], speed: Math.random()*0.2+0.05, phase: Math.random()*Math.PI*2 });
+  }
+}
 createStars();
-function drawStars(time=0){ctx.clearRect(0,0,canvas.width,canvas.height); for(let s of stars){s.z-=s.speed;if(s.z<=0)s.z=canvas.width; const shimmer=0.6+0.4*Math.sin(time*0.001+s.phase); ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=s.color; ctx.globalAlpha=shimmer; ctx.shadowBlur=s.size*4; ctx.shadowColor=s.color; ctx.fill();} ctx.globalAlpha=1; requestAnimationFrame(drawStars);}
+
+function drawStars(time=0) {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for (let s of stars) {
+    s.z -= s.speed; if (s.z<=0) s.z=canvas.width;
+    const shimmer = 0.6 + 0.4 * Math.sin(time*0.001+s.phase);
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle = s.color; ctx.globalAlpha = shimmer;
+    ctx.shadowBlur = s.size*4; ctx.shadowColor = s.color;
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(drawStars);
+}
 drawStars(0);
 window.addEventListener("resize",()=>{resizeCanvas();createStars();});
 
-// === Price List and Submit Button ===
-let priceList={};
-async function loadPrices(){
-  const response=await fetch('data/prices.csv'); 
-  const text=await response.text();
-  const lines=text.split('\n').filter(l=>l.trim());
-  const headers=lines[0].split(',');
-  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
+// === Prices & summary ===
+let priceList = {};
+async function loadPrices() {
+  const response = await fetch('data/prices.csv');
+  const text = await response.text();
+  const lines = text.split('\n').filter(l=>l.trim());
+  const headers = lines[0].split(',');
+  const idx = headers.findIndex(h=>h.toLowerCase().includes('150%'));
   for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    const ore=cols[0].trim();
-    const price=parseFloat(cols[idx]);
+    const cols = lines[i].split(',');
+    const ore = cols[0].trim();
+    const price = parseFloat(cols[idx]);
     if(!isNaN(price)) priceList[ore]=price;
   }
   document.getElementById('submitButton').disabled=false;
 }
 loadPrices();
 
-function formatNumber(n){ return n.toLocaleString(); }
+function formatNumber(n){return n.toLocaleString();}
+function animateCount(el,start,end,duration=2000){
+  let startTime=null;
+  const numberSpan = el.querySelector(".number") || el;
+  function step(t){
+    if(!startTime) startTime=t;
+    let progress=Math.min((t-startTime)/duration,1);
+    const current=Math.floor(progress*(end-start)+start);
+    numberSpan.innerText=current.toLocaleString();
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 
 function showContent(){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
   while((match=regex.exec(t))!==null){
-    const name=match[1].trim(), qty=parseInt(match[2]);
-    if(priceList[name]){ summary.push({name,qty,val:qty*priceList[name]}); total+=qty*priceList[name]; }
-    else summary.push({name, qty, val:0, unrecognized:true});
+    const name=match[1].trim(),qty=parseInt(match[2]);
+    if(priceList[name]) summary.push({name,qty,val:qty*priceList[name]}),total+=qty*priceList[name];
+    else summary.push({name,qty,val:0,unrecognized:true});
   }
 
   const list=document.getElementById('summaryList');
   list.innerHTML='';
   summary.forEach(i=>{
     const li=document.createElement('li');
-    li.innerHTML=`<span>${i.name}</span><span style="color:${i.unrecognized?'red':'#00ff00'}">${formatNumber(i.val)} ISK</span>`;
+    li.innerHTML=`<span>${i.name}</span><span>${i.unrecognized ? '' : formatNumber(i.val)+' ISK'}</span>`;
+    if(i.unrecognized) li.classList.add('unrecognized');
     list.appendChild(li);
   });
-  document.getElementById('summaryContainer').style.display='flex';
+  const summaryContainer=document.getElementById('summaryContainer');
+  summaryContainer.style.display='flex';
   document.getElementById('summaryTotal').innerText=`Total: ${formatNumber(total)} ISK`;
-
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
 
-  document.getElementById('totalCostText').innerText=`${formatNumber(total)} ISK`;
+  // Animate total
+  const totalEl=document.getElementById('totalCostText');
+  totalEl.innerText=`${formatNumber(total)} ISK`;
 }
-document.getElementById('submitButton').addEventListener('click', showContent);
 
-// === Copied Message on Contract ===
-const totalText=document.getElementById('totalCostText');
-const copiedMsg=document.getElementById('copiedMessage');
-totalText.addEventListener('click',()=>{
-  navigator.clipboard.writeText(totalText.innerText);
-  copiedMsg.style.display='block';
-  setTimeout(()=>copiedMsg.style.display='none',1500);
+// Copy to clipboard on click
+document.getElementById('totalCostText').addEventListener('click',()=>{
+  const text=document.getElementById('totalCostText').innerText;
+  navigator.clipboard.writeText(text);
+  const copied=document.getElementById('copiedMessage');
+  copied.style.display='block';
+  setTimeout(()=>{copied.style.display='none';},1500);
 });
 
-document.getElementById('myHeader').addEventListener('click', ()=>{
-    const logo = document.getElementById('logoText');
-    const rect = logo.getBoundingClientRect();
-    const letters = logo.textContent.split('');
-    const droplets = [];
-    const steam = [];
-    
-    const totalDropletsPerLetter = 5; // same as before
-    const steamFactor = 2; // double the steam
+// Submit button
+document.getElementById('submitButton').addEventListener('click',showContent);
 
-    // keep logo visible for 0.8 seconds
-    setTimeout(()=>{ logo.style.visibility = 'hidden'; }, 2000);
-
-    letters.forEach((letter, i)=>{
-        const letterWidth = rect.width / letters.length;
-        const letterX = rect.left + i*letterWidth + letterWidth/2;
-        const letterY = rect.top;
-
-        for(let j=0;j<totalDropletsPerLetter;j++){
-            const d = document.createElement('div');
-            const size = Math.random()*5 + 3;
-            d.style.width = size + 'px';
-            d.style.height = size*1.5 + 'px'; // slightly stretched
-            d.style.background = 'rgba(0,0,0,0.6)'; // black transparent
-            d.style.borderRadius = '50%';
-            d.style.position = 'fixed';
-            d.style.left = letterX + (Math.random()*letterWidth/2 - letterWidth/4) + 'px';
-            d.style.top = letterY + 'px';
-            d.style.zIndex = 10;
-            document.body.appendChild(d);
-
-            droplets.push({
-                el: d,
-                x: parseFloat(d.style.left),
-                y: parseFloat(d.style.top),
-                vy: Math.random()*1 + 0.5,
-                gravity: 0.03,
-                angle: Math.random()*360,
-                angularVelocity: (Math.random()-0.5)*0.1
-            });
-        }
-    });
-
-    function animate(){
-        let logoStretch = 1;
-        droplets.forEach((d)=>{
-            d.y += d.vy;
-            d.vy += d.gravity;
-            d.angle += d.angularVelocity;
-            d.el.style.top = d.y + 'px';
-            d.el.style.transform = `rotate(${d.angle}deg)`;
-
-            // Stretch logo as droplets pass over
-            const logoRect = logo.getBoundingClientRect();
-            if(d.y >= logoRect.top && d.y <= logoRect.bottom){
-                logoStretch = 1 + 0.2*Math.sin(Date.now()*0.01);
-                logo.style.transform = `scaleY(${logoStretch})`;
-            }
-
-            // spawn more steam
-            for(let sFactor=0;sFactor<steamFactor;sFactor++){
-                if(Math.random()<0.03){
-                    const s = document.createElement('div');
-                    s.style.width = '2px';
-                    s.style.height = '8px';
-                    s.style.background = 'rgba(255,255,255,0.5)';
-                    s.style.position = 'fixed';
-                    s.style.left = d.x + 'px';
-                    s.style.top = d.y + 'px';
-                    s.style.borderRadius = '50%';
-                    s.style.zIndex = 11;
-                    document.body.appendChild(s);
-                    steam.push({
-                        el: s,
-                        x: d.x,
-                        y: d.y,
-                        vy: -(Math.random()*1 + 0.5),
-                        alpha: 0.5
-                    });
-                }
-            }
-        });
-
-        steam.forEach((s,idx)=>{
-            s.y += s.vy;
-            s.alpha -= 0.02;
-            if(s.alpha <= 0){
-                s.el.remove();
-                steam.splice(idx,1);
-            } else {
-                s.el.style.top = s.y + 'px';
-                s.el.style.opacity = s.alpha;
-            }
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    setTimeout(()=>location.reload(),2000);
+// Logo click: crack halfway, disappear, refresh
+const logo=document.getElementById('logoText');
+logo.addEventListener('click',()=>{
+  setTimeout(()=>{logo.classList.add('cracked');},800);
+  setTimeout(()=>{logo.style.visibility='hidden'; location.reload();},1600);
 });
-
 
 </script>
 </body>
