@@ -402,12 +402,12 @@ window.addEventListener('load', () => {
 
     // Step 4: Both flash dim + quick flicker 0.25s
     setTimeout(() => {
-      ore.style.animation = 'flickerQuick 0.25s linear forwards';
-      stellar.style.animation = 'flickerQuick 0.25s linear forwards';
+      ore.style.animation = 'flickerQuick 0.7s linear forwards';
+      stellar.style.animation = 'flickerQuick 0.7s linear forwards';
       setTimeout(() => {
         ore.style.animation = 'softGlow 6s infinite';
         stellar.style.animation = 'softGlow 6s infinite';
-      }, 250);
+      }, 700);
     }, 1600); // after both have soft glow
   },500);
 });
