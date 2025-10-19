@@ -159,8 +159,8 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
             const d = document.createElement('div');
             const size = Math.random()*5 + 3;
             d.style.width = size + 'px';
-            d.style.height = size + 'px';
-            d.style.background = 'rgba(173,216,230,0.8)'; // water color
+            d.style.height = size*1.5 + 'px'; // slightly stretched
+            d.style.background = 'rgba(0,0,0,0.6)'; // black transparent
             d.style.borderRadius = '50%';
             d.style.position = 'fixed';
             d.style.left = letterX + (Math.random()*letterWidth/2 - letterWidth/4) + 'px';
@@ -181,12 +181,20 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
     });
 
     function animate(){
+        let logoStretch = 1;
         droplets.forEach((d)=>{
             d.y += d.vy;
             d.vy += d.gravity;
             d.angle += d.angularVelocity;
             d.el.style.top = d.y + 'px';
             d.el.style.transform = `rotate(${d.angle}deg)`;
+
+            // Stretch logo as droplets pass over
+            const logoRect = logo.getBoundingClientRect();
+            if(d.y >= logoRect.top && d.y <= logoRect.bottom){
+                logoStretch = 1 + 0.2*Math.sin(Date.now()*0.01);
+                logo.style.transform = `scaleY(${logoStretch})`;
+            }
 
             // spawn more steam
             for(let sFactor=0;sFactor<steamFactor;sFactor++){
@@ -231,6 +239,7 @@ document.getElementById('myHeader').addEventListener('click', ()=>{
 
     setTimeout(()=>location.reload(),1750);
 });
+
 
 </script>
 </body>
