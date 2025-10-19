@@ -122,7 +122,7 @@ textarea#message {
 }
 #submitButton:hover { box-shadow: 0 0 25px 5px #2fff1c; }
 
-/* Total ISK popup - clean style */
+/* Total ISK popup */
 #totalPriceModal {
   display: none;
   position: fixed;
@@ -135,9 +135,9 @@ textarea#message {
   width: 350px;
   max-width: 90%;
   padding: 20px;
-  background: radial-gradient(circle at 50% 50%, #111111, #000000);
-  border: 2px solid #fff;
-  box-shadow: 0 0 15px #fff;
+  background: radial-gradient(circle at 50% 50%, #001100, #000000);
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
   text-align: center;
   color: white;
 }
@@ -150,59 +150,61 @@ textarea#message {
   text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
-/* Popup total ISK styling */
+/* Popup total price styling */
 #popupTotalPrice {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: white;
-  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
 }
 
-#popupTotalPrice .number,
+#popupTotalPrice .number {
+  color: #00ff00; /* number green */
+  text-shadow: 0 0 10px #00ff00;
+}
 #popupTotalPrice .isk {
-  color: white;
-  text-shadow: 0 0 5px #fff, 0 0 10px #aaa;
+  color: white; /* ISK white */
+  text-shadow: 0 0 5px #fff;
 }
 
+/* Copy button */
 #totalPriceModal button {
-  background: #00ff00;
+  background: white;
   color: black;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 10px #00ff00;
+  box-shadow: 0 0 10px #fff;
   transition: all 0.3s ease;
 }
 #totalPriceModal button:hover {
-  box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 inset;
-}
-#copiedMessage {
-  display: none;
-  color: #ffffff;
-  font-size: 36px; /* much bigger */
-  font-weight: bold;
-  position: fixed;
-  top: 40%;  /* slightly above center */
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-shadow: 0 0 10px #fff, 0 0 20px #aaa; /* neon glow */
-  background: rgba(0,0,0,0.6); /* subtle overlay */
-  padding: 20px 40px;
-  border-radius: 15px;
-  z-index: 10000; /* above everything */
-  animation: popFade 1.5s forwards;
+  box-shadow: 0 0 20px #fff, 0 0 40px #fff inset;
 }
 
+/* Copied message */
+#copiedMessage {
+  display: none;
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 10px #fff, 0 0 20px #aaa;
+  background: rgba(0,0,0,0.6);
+  padding: 20px 40px;
+  border-radius: 15px;
+  z-index: 10000;
+  animation: popFade 1.5s forwards;
+}
 @keyframes popFade {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
   20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
   80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }
-
 
 /* Contracts and summary */
 .contracts-wrapper {
@@ -273,7 +275,7 @@ textarea#message {
     <div id="copiedMessage">Copied!</div>
   </div>
 </div>
-  
+
 <div class="container-wrapper">
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
@@ -384,24 +386,13 @@ function animateCount(el, start, end, duration=2000) {
   let startTime = null;
   const numberSpan = el.querySelector(".number");
   const iskSpan = el.querySelector(".isk");
+  
   function step(t){
     if(!startTime) startTime = t;
     let progress = Math.min((t-startTime)/duration,1);
     const current = Math.floor(progress*(end-start)+start);
     numberSpan.innerText = current.toLocaleString();
     iskSpan.innerText = "ISK";
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// Animate right-hand total above second contract
-function animateRightHandTotal(el, start, end, duration=2000){
-  let startTime = null;
-  function step(t){
-    if(!startTime) startTime = t;
-    let progress = Math.min((t-startTime)/duration,1);
-    el.innerText = `${Math.floor(progress*(end-start)+start).toLocaleString()} ISK`;
     if(progress<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -430,6 +421,7 @@ function showContent(){
   });
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display='flex';
+
   document.getElementById('summaryTotal').innerText = `Total: ${formatNumber(total)} ISK`;
 
   // Show contracts
@@ -440,33 +432,35 @@ function showContent(){
   document.querySelector('.main-container').style.display='none';
 
   // Animate totals
-  animateRightHandTotal(document.getElementById('totalCostText'),0,total);
+  animateCount(document.getElementById('totalCostText'),0,total);
   animateCount(document.getElementById('popupTotalPrice'),0,total);
 
-  // Show total ISK popup above contracts
-  const popup = document.getElementById('totalPriceModal');
-  popup.style.display = 'block';
-  popup.style.zIndex = 9999;
+  // Show total ISK popup
+  document.getElementById('totalPriceModal').style.display = 'block';
 }
 
 // Event listeners
 document.getElementById('submitButton').addEventListener('click', showContent);
+
 document.getElementById('closeTotalModal').addEventListener('click',()=>{
   const txt = document.getElementById('popupTotalPrice').innerText;
   navigator.clipboard.writeText(txt);
-  
+
+  // Show "Copied!" message
   const copiedMsg = document.getElementById('copiedMessage');
   copiedMsg.style.display = 'block';
   copiedMsg.style.animation = 'none'; // reset animation
   copiedMsg.offsetHeight; // trigger reflow
   copiedMsg.style.animation = ''; // start animation
-});
 
+  // Close popup
+  document.getElementById('totalPriceModal').style.display='none';
+});
 
 // Click logo to refresh
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-// === Close modal on outside click ===
+// Close modal on outside click
 const totalModal = document.getElementById('totalPriceModal');
 const totalContent = totalModal.querySelector('.w3-modal-content');
 totalModal.addEventListener('click', (e) => {
