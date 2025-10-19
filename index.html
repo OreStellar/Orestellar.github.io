@@ -383,7 +383,8 @@ function explodeLogo(el){
       vx: (Math.random()-0.5)*10,
       vy: (Math.random()-0.5)*10,
       size: Math.random()*12+6,
-      color:'#fff'
+      color:'#ffffff',
+      glow:'#99ccff'
     });
   }
 
@@ -397,7 +398,8 @@ function explodeLogo(el){
 
   function animate(){
     frame++;
-    lctx.fillStyle = 'rgba(0,0,0,0.15)'; // slight screen fade for motion trail
+    // Darken screen slightly but not too much
+    lctx.fillStyle = 'rgba(0,0,0,0.05)';
     lctx.fillRect(0,0,logoCanvas.width,logoCanvas.height);
 
     // --- central rotating supernova sphere ---
@@ -409,8 +411,8 @@ function explodeLogo(el){
       rect.left + rect.width/2, rect.top + rect.height/2, sphereRadius
     );
     grad.addColorStop(0,'rgba(255,255,255,1)');
-    grad.addColorStop(0.3,'rgba(150,200,255,0.7)'); // bluish corona
-    grad.addColorStop(0.7,'rgba(80,150,255,0.3)');
+    grad.addColorStop(0.2,'rgba(150,200,255,0.8)'); // bluish corona
+    grad.addColorStop(0.5,'rgba(80,150,255,0.4)');
     grad.addColorStop(1,'rgba(0,0,0,0)');
     lctx.save();
     lctx.translate(rect.left + rect.width/2, rect.top + rect.height/2);
@@ -425,8 +427,10 @@ function explodeLogo(el){
     pieces.forEach(p=>{
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.15; // gravity effect
+      p.vy += 0.15; // gravity
       lctx.fillStyle = p.color;
+      lctx.shadowColor = p.glow;
+      lctx.shadowBlur = 12;
       lctx.beginPath();
       lctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
       lctx.fill();
