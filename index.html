@@ -238,6 +238,7 @@ function showContent(prefillText){
 
 // === SHARE BUTTON ===
 const shareBtn = document.getElementById('shareButton');
+
 shareBtn.style.display = 'inline-block';
 shareBtn.onclick = async () => {
     const invText = document.getElementById('message').value.trim();
@@ -248,13 +249,14 @@ shareBtn.onclick = async () => {
     // Copy to clipboard
     await navigator.clipboard.writeText(shortUrl);
 
-    // Change button text dynamically
+    // Temporarily change button text
+    const originalText = shareBtn.innerText;
     shareBtn.innerText = "Copied";
+
     setTimeout(() => {
         shareBtn.innerText = "Shared";
     }, 2000);
 };
-
 
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
