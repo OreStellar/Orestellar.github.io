@@ -163,6 +163,45 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
   font-size: 13px;
   margin-left: 4px;
 }
+/* === SORTABLE COLUMN HEADERS (NEON ARROWS) === */
+.summary-table th {
+  position: relative;
+  transition: color 0.25s, text-shadow 0.3s;
+  user-select: none;
+  cursor: pointer;
+}
+
+.summary-table th:hover {
+  color: #00ffaa;
+  text-shadow: 0 0 8px #00ffaa;
+}
+
+.summary-table th.sorted {
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc, 0 0 25px #00ffcc;
+}
+
+/* Neon arrows — only visible when sorted */
+.summary-table th::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #00ffcc;
+  text-shadow: 0 0 8px #00ffcc, 0 0 15px #00ffcc;
+  font-size: 12px;
+}
+
+.summary-table th.sorted-asc::after {
+  content: "▲";
+  opacity: 1;
+}
+
+.summary-table th.sorted-desc::after {
+  content: "▼";
+  opacity: 1;
+}
 
 </style>
 </head>
@@ -332,6 +371,53 @@ window.addEventListener('load',()=>{
 });
 
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+  document.addEventListener('DOMContentLoaded', () => {
+  const table = document.querySelector('.summary-table');
+  if (!table) return;
+
+  const headers = table.querySelectorAll('th');
+  let sortDirection = 1;
+  let activeColumn = null;
+
+  headers.forEach((header, index) => {
+    header.addEventListener('click', () => {
+      const rows = Array.from(table.querySelectorAll('tbody tr'))
+        .filter(r => !r.classList.contains('summary-total')); // keep total row at bottom
+
+      // Remove old sort states
+      headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc', 'sorted'));
+
+      // Toggle direction or reset
+      if (activeColumn === index) {
+        sortDirection *= -1;
+      } else {
+        sortDirection = 1;
+        activeColumn = index;
+      }
+
+      // Determine sorting type
+      const isNumeric = index > 0; // everything except "Name"
+      rows.sort((a, b) => {
+        const aText = a.children[index].innerText.replace(/[^\d.-]/g, '');
+        const bText = b.children[index].innerText.replace(/[^\d.-]/g, '');
+        if (isNumeric) {
+          return (parseFloat(aText) - parseFloat(bText)) * sortDirection;
+        } else {
+          return aText.localeCompare(bText) * sortDirection;
+        }
+      });
+
+      // Apply glow + arrow
+      header.classList.add('sorted');
+      header.classList.add(sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
+
+      // Rebuild table
+      const tbody = table.querySelector('tbody');
+      rows.forEach(r => tbody.insertBefore(r, tbody.querySelector('.summary-total')));
+    });
+  });
+});
 </script>
+  
 </body>
 </html>
