@@ -271,7 +271,122 @@ function makeCopyable(el){
 
 /* ================= SHOW SUMMARY & BUILD TABLE ================= */
 async function showContent(prefillText){
-  // ensure prices loaded
+ function showContent(prefillText) {
+  const t = prefillText || document.getElementById('message').value;
+  const regex = /([\w\s]+?)\s+(\d+)/g;
+  let match, summary = [], total = 0;
+
+  while ((match = regex.exec(t)) !== null) {
+    const nameRaw = match[1].trim();
+    const name = nameRaw.toLowerCase().replace(/\s+/g, ' ');
+    const qty = parseInt(match[2]);
+    const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
+    if (priceList[name] !== undefined) {
+      summary.push({ name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name], unrecognized: false });
+      total += qty * priceList[name];
+    } else {
+      summary.push({ name: displayName, price: '?', qty: qty, val: 'Unrecognized', unrecognized: true });
+    }
+  }
+
+  const summaryContainer = document.getElementById('summaryContainer');
+  let tableHTML = `
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th data-key="name">Name</th>
+        <th data-key="price">Price</th>
+        <th data-key="qty">Quantity</th>
+        <th data-key="total">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
+
+  summary.forEach(item => {
+    tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
+      <td>${item.name}</td>
+      <td>${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+      <td>${formatNumber(item.qty)}</td>
+      <td>${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+    </tr>`;
+  });
+
+  tableHTML += `
+    </tbody>
+    <tfoot>
+      <tr class="summary-total">
+        <td colspan="3" style="text-align:right;">Total</td>
+        <td id="summaryTotal">${formatNumber(total)}</td>
+      </tr>
+    </tfoot>
+  </table>`;
+
+  summaryContainer.innerHTML = tableHTML;
+  summaryContainer.style.display = 'flex';
+
+  // Copy total ISK
+  function makeCopyable(el) {
+    if (!el) return;
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', async () => {
+      const numericValue = el.innerText.replace(/[^0-9]/g, '');
+      if (!numericValue) return;
+      await navigator.clipboard.writeText(numericValue);
+      const originalText = el.innerText;
+      el.innerText = 'Copied';
+      setTimeout(() => { el.innerText = originalText; }, 1500);
+    });
+  }
+  makeCopyable(document.getElementById('summaryTotal'));
+  makeCopyable(document.getElementById('totalCostText'));
+
+  // SORTING
+  const table = summaryContainer.querySelector('.summary-table');
+  const headers = table.querySelectorAll('thead th');
+  let sortDirection = 1;
+  let activeColumn = null;
+
+  headers.forEach((header, index) => {
+    header.addEventListener('click', () => {
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      // Remove old sort states
+      headers.forEach(h => h.classList.remove('sorted', 'sorted-asc', 'sorted-desc'));
+
+      // Toggle direction or reset
+      if (activeColumn === index) sortDirection *= -1;
+      else { sortDirection = 1; activeColumn = index; }
+
+      // Determine sorting type
+      const key = header.dataset.key;
+      rows.sort((a, b) => {
+        const isUnrecA = a.classList.contains('unrecognized');
+        const isUnrecB = b.classList.contains('unrecognized');
+
+        // Unrecognized rows always go to bottom
+        if (isUnrecA && !isUnrecB) return 1;
+        if (!isUnrecA && isUnrecB) return -1;
+        if (isUnrecA && isUnrecB) return 0;
+
+        const aText = a.children[index].innerText.replace(/[^\d.-]/g, '');
+        const bText = b.children[index].innerText.replace(/[^\d.-]/g, '');
+
+        if (key === 'name') return a.children[index].innerText.localeCompare(b.children[index].innerText) * sortDirection;
+        return (parseFloat(aText) - parseFloat(bText)) * sortDirection;
+      });
+
+      // Apply sorted arrow
+      header.classList.add('sorted');
+      header.classList.add(sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
+
+      // Rebuild tbody
+      rows.forEach(r => tbody.appendChild(r));
+    });
+  });
+}
+
   if(Object.keys(priceList).length===0) await fetchPrices();
 
   const t = prefillText || document.getElementById('message').value || '';
