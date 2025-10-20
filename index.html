@@ -197,69 +197,48 @@ textarea#message:focus {
 .summary-container {
   display: none;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
   justify-content: flex-start;
   font-family: 'Orbitron', sans-serif;
   color: #00ff00;
   background: rgba(0, 10, 0, 0.85);
   border: 1px solid rgba(0, 255, 0, 0.5);
   border-radius: 12px;
-  padding: 16px 28px;
+  padding: 14px 20px;
   width: auto;
-  min-width: 320px;
+  min-width: 300px;
   max-width: 100%;
-  text-shadow: 0 0 8px #00ff00;
+  text-shadow: 0 0 6px #00ff00;
   box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
-  overflow-x: auto;
-  white-space: nowrap;
   backdrop-filter: blur(6px);
+  max-height: 420px;          /* scroll limit */
+  overflow-y: auto;           /* vertical scroll when tall */
+  overflow-x: hidden;         /* prevent horizontal scroll */
+  scrollbar-width: thin;
+  scrollbar-color: #00ff00 transparent;
+}
+
+/* Scrollbar aesthetic for WebKit browsers */
+.summary-container::-webkit-scrollbar {
+  width: 6px;
+}
+.summary-container::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+  border-radius: 4px;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 18px;
-  margin-bottom: 10px;
-  font-size: 16px;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 14px;          /* smaller text size */
+  line-height: 1.4;
   padding-bottom: 4px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.08);
-}
+  border-bottom: 1px solid rgba(0,
 
-.summary-row span:first-child {
-  flex: 1 1 auto;
-  text-align: left;
-  color: #00ff00;
-  text-shadow: 0 0 8px #00ff00;
-}
-
-.summary-row span:last-child {
-  flex: 0 0 auto;
-  text-align: right;
-  white-space: nowrap;
-  color: #00ff00;
-  text-shadow: 0 0 8px #00ff00;
-}
-
-/* Highlight unrecognized items in red neon */
-.summary-row.unrecognized span:first-child,
-.summary-row.unrecognized span:last-child {
-  color: #ff3333;
-  text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
-}
-
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  border-top: 1px solid rgba(0, 255, 0, 0.4);
-  padding-top: 10px;
-  margin-top: 8px;
-  font-weight: bold;
-  font-size: 17px;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-}
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 @keyframes unifiedGlow {
