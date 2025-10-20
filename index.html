@@ -271,20 +271,29 @@ function showContent(){
   };
 }
 
-// ===== URL PREFILL =====
+// ===== URL PREFILL / Shared Inventory =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const inv = params.get('inv');
+
+  const leftContract = document.getElementById('leftContainer');
+  const totalCostContainer = document.getElementById('totalCostContainer');
+  const submitBtn = document.getElementById('submitButton');
+  const shareBtn = document.getElementById('shareButton');
+  const summaryContainer = document.getElementById('summaryContainer');
+
   if(inv){
+    // Prefill textarea (in memory)
     document.getElementById('message').value = decodeURIComponent(inv);
     showContent();
 
-    // Hide contracts when loaded via shared URL
-    document.getElementById('leftContainer').style.display = 'none';
-    document.getElementById('totalCostContainer').style.display = 'block'; // keep total cost
+    // Hide everything except logo + summary
+    leftContract.style.display = 'none';
+    totalCostContainer.style.display = 'block'; // show total cost
+    submitBtn.style.display = 'none';
+    shareBtn.style.display = 'none';
   }
 });
-
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').addEventListener('click', showContent);
