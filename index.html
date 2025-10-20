@@ -251,12 +251,10 @@ function showContent(prefillText){
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
-  const invParam = params.get('inv');
-  if(invParam){
-    const decoded = decodeURIComponent(invParam);
-    document.getElementById('message').value = decoded;
-    showContent(decoded);
-
+  const inv = params.get('inv');
+  if(inv){
+    document.getElementById('message').value = decodeURIComponent(inv);
+    showContent(inv);  // Pass the URL parameter to showContent
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('submitButton').style.display='none';
@@ -264,8 +262,15 @@ window.addEventListener('load', () => {
   }
 });
 
+
 // ===== BUTTONS =====
-document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('submitButton').addEventListener('click', ()=>{
+    const textareaValue = document.getElementById('message').value.trim();
+    if(textareaValue){
+        showContent(textareaValue);
+    }
+});
+
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
 // ===== LOGO ANIMATION =====
