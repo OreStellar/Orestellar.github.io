@@ -39,7 +39,6 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 #totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
 
-/* ===== SUMMARY CONTAINER ===== */
 .summary-container{
   display:none;
   flex-direction:column;
@@ -71,40 +70,32 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* Ledger table */
-.summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.summary-table th, .summary-table td { padding:6px 10px; font-size:14px; white-space:nowrap; font-family: 'Share Tech Mono', monospace; }
-.summary-table th:nth-child(1), .summary-table td:nth-child(1) { width:38%; text-align:left; }
-.summary-table th:nth-child(2), .summary-table td:nth-child(2) { width:20%; text-align:right; }
-.summary-table th:nth-child(3), .summary-table td:nth-child(3) { width:18%; text-align:center; }
-.summary-table th:nth-child(4), .summary-table td:nth-child(4) { width:24%; text-align:right; }
-.summary-table th { text-align:center; color:#00ff00; text-shadow:0 0 6px #00ff00; border-bottom:1px solid rgba(0,255,0,0.3); cursor:pointer; position:relative; }
-.summary-table td { color:#e0ffe0; text-shadow:none; }
-.summary-table td.price, .summary-table td.total-column { font-variant-numeric: tabular-nums; letter-spacing:0.5px; }
-.summary-table td.price::after { content:" ISK"; color: rgba(0,255,0,0.6); font-size:12px; margin-left:3px; }
-.summary-table td.unrecognized { color:#ff4444 !important; text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important; font-weight:bold; text-align:left !important; animation: unrecognizedGlow 1.5s infinite alternate; }
-@keyframes unrecognizedGlow { 0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;} 50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;} }
-.summary-total td { font-weight:bold; border-top:1px solid rgba(0,255,0,0.4); color:#00ff00; text-shadow:0 0 10px #00ff00,0 0 25px #00ff00; }
-.summary-total td:first-child { text-align:right; }
-.summary-total td:last-child { text-align:right; position:relative; }
-.summary-total td:last-child::after { content:" ISK"; color:rgba(0,255,0,0.8); font-size:13px; margin-left:4px; }
+.summary-table {width: 100%; border-collapse: collapse; table-layout: fixed;}
+.summary-table th, .summary-table td {padding:6px 10px; border-bottom:1px solid rgba(0,255,0,0.15); font-size:14px; white-space: nowrap; font-family: 'Share Tech Mono', monospace;}
+.summary-table th:nth-child(1), .summary-table td:nth-child(1) { width: 38%; text-align: left; }
+.summary-table th:nth-child(2), .summary-table td:nth-child(2) { width: 20%; text-align: right; }
+.summary-table th:nth-child(3), .summary-table td:nth-child(3) { width: 18%; text-align: center; }
+.summary-table th:nth-child(4), .summary-table td:nth-child(4) { width: 24%; text-align: right; }
 
-/* Sort arrows */
-.summary-table th.sorted-asc::after { content:"▲"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
-.summary-table th.sorted-desc::after { content:"▼"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
-.summary-table th::after { opacity:0; transition: opacity 0.2s; }
-/* Move arrows to the right of the header without overlapping text */
-.summary-table th { position: relative; padding-right: 18px; } 
-.summary-table th.sorted-asc::after,
-.summary-table th.sorted-desc::after {
-    right: 4px;
-}
+.summary-table th {text-align: center; color: #00ff00; text-shadow: 0 0 6px #00ff00; border-bottom:1px solid rgba(0,255,0,0.3); position: relative; user-select:none; cursor:pointer; transition: color 0.25s, text-shadow 0.3s;}
+.summary-table th:hover {color:#00ffaa; text-shadow:0 0 8px #00ffaa;}
+.summary-table th.sorted {color:#00ffcc; text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc;}
+.summary-table th::after {content:""; position:absolute; right:8px; opacity:0; transition:opacity 0.2s; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; font-size:12px;}
+.summary-table th.sorted-asc::after {content:"▲"; opacity:1;}
+.summary-table th.sorted-desc::after {content:"▼"; opacity:1;}
 
-/* Active header color */
-.summary-table th.sorted { color:#00ffcc; text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc; }
+.summary-table td.price, .summary-table td.total-column {font-variant-numeric: tabular-nums; letter-spacing: 0.5px;}
+.summary-table td.price::after {content:" ISK"; color: rgba(0,255,0,0.6); font-size:12px; margin-left:3px;}
+.summary-table td {color:#e0ffe0; text-shadow:none;}
+.summary-table td.unrecognized {color:#ff4444 !important; text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important; font-weight:bold; text-align:left !important; animation:unrecognizedGlow 1.5s infinite alternate;}
+@keyframes unrecognizedGlow {0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;}50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;}}
+.summary-total td {font-weight:bold; border-top:1px solid rgba(0,255,0,0.4); color:#00ff00; text-shadow:0 0 10px #00ff00,0 0 25px #00ff00;}
+.summary-total td:first-child {text-align:right;}
+.summary-total td:last-child {text-align:right; position:relative;}
+.summary-total td:last-child::after {content:" ISK"; color: rgba(0,255,0,0.8); font-size:13px; margin-left:4px;}
 </style>
 </head>
-<body data-show-inventory="true">
+<body>
 
 <canvas id="starfield"></canvas>
 
@@ -165,155 +156,91 @@ async function fetchPrices(){
 // ===== HELPERS =====
 function formatNumber(n){return n.toLocaleString();}
 function animateCount(el,start,end,duration=2000){let startTime=null;function step(t){if(!startTime)startTime=t;let progress=Math.min((t-startTime)/duration,1);const current=Math.floor(progress*(end-start)+start);el.innerText=current.toLocaleString()+' ISK';if(progress<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
 
 // ===== SHOW SUMMARY =====
-function showContent(prefillText){
+async function showContent(prefillText){
+  await fetchPrices();
   const t = prefillText || document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
-
-while((match = regex.exec(t)) !== null){
-  const nameRaw = match[1].trim();
-  const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
-  const qty = parseInt(match[2]);
-  const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
-  if(priceList[name] !== undefined){
-    summary.push({name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name]});
-    total += qty * priceList[name];
-  } else {
-    summary.push({name: displayName, price:'?', qty: qty, val:'Unrecognized', unrecognized: true});
+  while((match = regex.exec(t)) !== null){
+    const nameRaw = match[1].trim();
+    const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
+    const qty = parseInt(match[2]);
+    const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
+    if(priceList[name] !== undefined){
+      summary.push({name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name]});
+      total += qty * priceList[name];
+    } else {
+      summary.push({name: displayName, price:'?', qty: qty, val:'Unrecognized', unrecognized:true});
+    }
   }
-}
 
-const summaryContainer=document.getElementById('summaryContainer');
-let tableHTML='<table class="summary-table"><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr>';
-summary.forEach(item=>{
-  tableHTML+=`<tr>
+  const summaryContainer=document.getElementById('summaryContainer');
+  let tableHTML='<table class="summary-table"><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr>';
+  summary.forEach(item=>{
+    tableHTML+=`<tr${item.unrecognized?' class="unrecognized"':''}>
 <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
 <td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td>
-<td class="quantity">${formatNumber(item.qty)}</td>
-<td class="${item.unrecognized?'unrecognized total-column':'total-column'}">${item.unrecognized?item.val:formatNumber(item.val)}</td>
-</tr>`;
-});
-tableHTML+=`<tr class="summary-total">
-<td colspan="3" style="text-align:right;">Total</td>
-<td id="summaryTotal">${formatNumber(total)}</td>
-</tr></table>`;
-summaryContainer.innerHTML=tableHTML;
-summaryContainer.style.display='flex';
-
-const leftContract=document.getElementById('leftContainer');
-const totalCostContainer=document.getElementById('totalCostContainer');
-leftContract.style.display='block';
-totalCostContainer.style.display='block';
-animateCount(document.getElementById('totalCostText'),0,total,2000);
-
-function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
-makeTotalCopyable(document.getElementById('summaryTotal'));
-makeTotalCopyable(document.getElementById('totalCostText'));
-
-document.querySelector('.main-container').style.display='none';
-document.getElementById('shareButton').style.display='inline-block';
-
-// ===== SORTING WITH FIXES =====
-const table = document.querySelector('.summary-table');
-if(table){
-    const tbody = table.querySelector('tbody') || table;
-    const headers = table.querySelectorAll('th');
-    let activeColumn = null;
-    let sortDirection = 1;
-
-    headers.forEach((header, index) => {
-        header.onclick = () => {
-            const allRows = Array.from(tbody.querySelectorAll('tr'))
-                                 .filter(r => !r.classList.contains('summary-total') && !r.querySelector('td').classList.contains('unrecognized'));
-
-            const unrecognizedRows = Array.from(tbody.querySelectorAll('tr'))
-                                 .filter(r => r.querySelector('td').classList.contains('unrecognized'));
-
-            const totalRow = tbody.querySelector('.summary-total');
-
-            // toggle sort
-            if(activeColumn === index) sortDirection *= -1;
-            else { activeColumn = index; sortDirection = 1; activeColumn = index; }
-
-            // reset header classes
-            headers.forEach(h => h.classList.remove('sorted', 'sorted-asc', 'sorted-desc'));
-            header.classList.add('sorted', sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
-
-            // determine if numeric column
-            const isNumeric = index > 0;
-
-            // sort normal rows
-            allRows.sort((a,b)=>{
-                const aVal = a.children[index].innerText.replace(/[^\d.-]/g,'');
-                const bVal = b.children[index].innerText.replace(/[^\d.-]/g,'');
-                return (isNumeric ? parseFloat(aVal) - parseFloat(bVal) : aVal.localeCompare(bVal)) * sortDirection;
-            });
-
-            // re-append rows: normal rows first, then unrecognized, then total
-            allRows.forEach(r => tbody.appendChild(r));
-            unrecognizedRows.forEach(r => tbody.appendChild(r));
-            if(totalRow) tbody.appendChild(totalRow);
-        };
-    });
+<td class="quantity">${item.qty}</td>
+<td class="total-column">${item.unrecognized?item.val:formatNumber(item.val)}</td></tr>`;
+  });
+  tableHTML+=`<tr class="summary-total"><td>Total</td><td></td><td></td><td>${formatNumber(total)}</td></tr></table>`;
+  summaryContainer.innerHTML=tableHTML;
+  summaryContainer.style.display='flex';
+  document.getElementById('totalCostText').innerText='0 ISK';
+  animateCount(document.getElementById('totalCostText'),0,total,1800);
+  document.getElementById('shareButton').style.display='inline-block';
+  makeTotalCopyable(document.getElementById('totalCostText'));
+  makeTableSortable();
 }
 
-
-// ===== BUTTONS =====
-document.getElementById('submitButton').disabled=false;
-document.getElementById('submitButton').addEventListener('click',()=>{
-  const textareaValue=document.getElementById('message').value.trim();
-  if(textareaValue) showContent(textareaValue);
+// ===== SUBMIT BUTTON =====
+document.getElementById('message').addEventListener('input',()=>{
+  document.getElementById('submitButton').disabled=!document.getElementById('message').value.trim();
 });
+document.getElementById('submitButton').addEventListener('click',()=>{showContent();});
 
-// ===== SHARE BUTTON =====
-const shareBtn=document.getElementById('shareButton');
-shareBtn.onclick=async()=>{
-  const invText=document.getElementById('message').value.trim();
-  if(!invText)return;
-  const compressed=LZString.compressToEncodedURIComponent(invText);
-  const shortUrl=`${location.origin}${location.pathname}?inv=${compressed}`;
-  await navigator.clipboard.writeText(shortUrl);
-  shareBtn.innerText="Copied";
-  setTimeout(()=>{shareBtn.innerText="Shared";},2000);
-};
+// ===== TABLE SORTING WITH FIXED RULES =====
+function makeTableSortable(){
+  const table=document.querySelector('.summary-table');
+  if(!table)return;
+  const tbody=table.querySelector('tbody')||table;
+  const headers=table.querySelectorAll('th');
+  let activeCol=null,sortDir=1;
 
-// ===== PREFILL FROM URL =====
-window.addEventListener('load',async()=>{
-  await fetchPrices();
-  const params=new URLSearchParams(window.location.search);
-  const inv=params.get('inv');
-  if(inv){
-    const inventoryText=LZString.decompressFromEncodedURIComponent(inv);
-    document.getElementById('message').value=inventoryText;
-    showContent(inventoryText);
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('submitButton').style.display='none';
-    document.getElementById('shareButton').style.display='none';
-  }
-});
+  headers.forEach((header,index)=>{
+    header.onclick=()=>{
+      const rows=Array.from(tbody.querySelectorAll('tr')).filter(r=>!r.classList.contains('summary-total'));
+      const unrecognized=rows.filter(r=>r.querySelector('td').classList.contains('unrecognized'));
+      const normal=rows.filter(r=>!r.querySelector('td').classList.contains('unrecognized'));
 
-// ===== LOGO ANIMATION =====
-window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore'),stellar=document.getElementById('stellar');
-  setTimeout(()=>{
-    ore.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-    setTimeout(()=>{
-      stellar.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
-    },400);
-    setTimeout(()=>{
-      ore.style.animation='flickerQuick 0.3s linear forwards';
-      stellar.style.animation='flickerQuick 0.3s linear forwards';
-      setTimeout(()=>{ore.style.animation='softGlow 6s infinite';stellar.style.animation='softGlow 6s infinite';},300);
-    },1100);
-  },500);
-});
+      if(activeCol===index) sortDir*=-1;
+      else { activeCol=index; sortDir=1; }
 
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+      headers.forEach(h=>{h.classList.remove('sorted','sorted-asc','sorted-desc');});
+      header.classList.add('sorted',sortDir===1?'sorted-asc':'sorted-desc');
+
+      if(index>0){ // skip Name column
+        normal.sort((a,b)=>{
+          const aVal=a.children[index].innerText.replace(/[^\d.-]/g,'');
+          const bVal=b.children[index].innerText.replace(/[^\d.-]/g,'');
+          const numeric=index>0;
+          return (numeric?parseFloat(aVal)-parseFloat(bVal):aVal.localeCompare(bVal))*sortDir;
+        });
+      }
+
+      // rebuild table: Name first, sorted normal, then unrecognized, then total
+      const nameRow=normal.find(r=>r.children[0].innerText==='Name');
+      if(nameRow) tbody.appendChild(nameRow);
+      normal.forEach(r=>{if(r!==nameRow) tbody.appendChild(r);});
+      unrecognized.forEach(r=>tbody.appendChild(r));
+      const totalRow=tbody.querySelector('.summary-total');
+      if(totalRow) tbody.appendChild(totalRow);
+    };
+  });
+}
 </script>
 </body>
 </html>
