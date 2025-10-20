@@ -93,6 +93,12 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-table th.sorted-asc::after { content:"▲"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
 .summary-table th.sorted-desc::after { content:"▼"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
 .summary-table th::after { opacity:0; transition: opacity 0.2s; }
+/* Move arrows to the right of the header without overlapping text */
+.summary-table th { position: relative; padding-right: 18px; } 
+.summary-table th.sorted-asc::after,
+.summary-table th.sorted-desc::after {
+    right: 4px;
+}
 
 /* Active header color */
 .summary-table th.sorted { color:#00ffcc; text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc; }
@@ -209,7 +215,7 @@ makeTotalCopyable(document.getElementById('totalCostText'));
 document.querySelector('.main-container').style.display='none';
 document.getElementById('shareButton').style.display='inline-block';
 
-// ===== SORTING =====
+// ===== SORTING WITH FIXES =====
 const table = document.querySelector('.summary-table');
 if(table){
     const tbody = table.querySelector('tbody') || table;
@@ -219,32 +225,40 @@ if(table){
 
     headers.forEach((header, index) => {
         header.onclick = () => {
-            const allRows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('summary-total'));
+            const allRows = Array.from(tbody.querySelectorAll('tr'))
+                                 .filter(r => !r.classList.contains('summary-total') && !r.querySelector('td').classList.contains('unrecognized'));
+
+            const unrecognizedRows = Array.from(tbody.querySelectorAll('tr'))
+                                 .filter(r => r.querySelector('td').classList.contains('unrecognized'));
+
             const totalRow = tbody.querySelector('.summary-total');
 
             // toggle sort
             if(activeColumn === index) sortDirection *= -1;
-            else { activeColumn = index; sortDirection = 1; }
+            else { activeColumn = index; sortDirection = 1; activeColumn = index; }
 
             // reset header classes
             headers.forEach(h => h.classList.remove('sorted', 'sorted-asc', 'sorted-desc'));
             header.classList.add('sorted', sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
 
-            // sort rows
+            // determine if numeric column
             const isNumeric = index > 0;
-            allRows.sort((a,b) => {
+
+            // sort normal rows
+            allRows.sort((a,b)=>{
                 const aVal = a.children[index].innerText.replace(/[^\d.-]/g,'');
                 const bVal = b.children[index].innerText.replace(/[^\d.-]/g,'');
                 return (isNumeric ? parseFloat(aVal) - parseFloat(bVal) : aVal.localeCompare(bVal)) * sortDirection;
             });
 
-            // re-append rows
+            // re-append rows: normal rows first, then unrecognized, then total
             allRows.forEach(r => tbody.appendChild(r));
+            unrecognizedRows.forEach(r => tbody.appendChild(r));
             if(totalRow) tbody.appendChild(totalRow);
         };
     });
 }
-}
+
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').disabled=false;
