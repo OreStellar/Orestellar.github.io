@@ -291,7 +291,7 @@ textarea#message:focus {
   <div class="main-container">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
     <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
-    <button id="submitButton" disabled>Submit</button>
+    <button id="submitButton">Submit</button>
   </div>
 
   <div class="contracts-wrapper">
@@ -379,8 +379,6 @@ priceList["magma mercoxit"]=40599;
 priceList["compressed mordunium"]=592556;
 priceList["bistot"]=1320;
 
-document.getElementById('submitButton').disabled=false;
-
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
@@ -396,30 +394,34 @@ function animateCount(el,start,end,duration=2000){
 
 function showContent(){
   const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match;
+  let summary=[];
+  let total=0;
+
   while((match = regex.exec(t)) !== null){
-  const nameRaw = match[1].trim();                     // original input
-  const name = nameRaw.toLowerCase().replace(/\s+/g,' '); // normalize lowercase + spaces
-  const qty = parseInt(match[2]);
+    const nameRaw = match[1].trim();
+    const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
+    const qty = parseInt(match[2]);
 
-  if(priceList[name] !== undefined){
-    summary.push({
-      name: nameRaw,
-      price: priceList[name],
-      qty: qty,
-      val: qty * priceList[name]
-    });
-    total += qty * priceList[name];
-  } else {
-    summary.push({
-      name: nameRaw,
-      price: '?',
-      qty: qty,
-      val: 'Unrecognized',
-      unrecognized: true
-    });
+    if(priceList[name] !== undefined){
+      summary.push({
+        name: nameRaw,
+        price: priceList[name],
+        qty: qty,
+        val: qty * priceList[name]
+      });
+      total += qty * priceList[name];
+    } else {
+      summary.push({
+        name: nameRaw,
+        price: '?',
+        qty: qty,
+        val: 'Unrecognized',
+        unrecognized: true
+      });
+    }
   }
-}
-
 
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.innerHTML = '';
@@ -433,9 +435,9 @@ function showContent(){
     </tr>`;
   });
   tableHTML += '</table>';
-  summaryHTML = tableHTML+`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+  const summaryHTML = tableHTML+`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
   summaryContainer.innerHTML = summaryHTML;
-  summaryContainer.style.display='block';
+  summaryContainer.style.display='flex';
 
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
