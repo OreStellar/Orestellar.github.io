@@ -204,18 +204,18 @@ textarea#message:focus {
   border: 1px solid rgba(0, 255, 0, 0.5);
   border-radius: 12px;
   padding: 14px 20px;
-  width: 90%;           /* keeps container responsive */
-  max-width: 450px;      /* limit width to match main container/contracts */
+  width: 100%;           
+  max-width: 650px;      
   min-width: 300px;
   text-shadow: 0 0 6px #00ff00;
   box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
   backdrop-filter: blur(6px);
-  max-height: 420px;     /* vertical scroll if too tall */
+  max-height: 420px;     
   overflow-y: auto;      
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
-  margin: 0 auto;        /* center horizontally */
+  margin: 0 auto;        
 }
 
 .summary-container::-webkit-scrollbar {
@@ -266,14 +266,32 @@ textarea#message:focus {
 #shareButton {
   display: none;
   margin-top: 12px;
-  padding: 10px 20px;
+  padding: 15px 35px;
   font-family: 'Orbitron', sans-serif;
   font-weight: bold;
-  color: #000;
-  background: #00ff00;
-  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(145deg, #161616, #242424);
+  border: 2px solid #ccc;
+  border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 0 12px #00ff00;
+  text-shadow: 0 0 2px #fff;
+  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
+  transition: all 0.35s ease;
+}
+#shareButton:hover {
+  color: #000;
+  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
+  border-color: #fff;
+  transform: translateY(-2px) scale(1.04);
+  animation: hoverPulse 1.6s infinite alternate;
+}
+
+/* Responsive tweaks */
+@media(max-width:700px){
+  #logoText{font-size:4rem;}
+  .main-container{width:95%;}
+  .total-cost-container{width:90%;height:auto;}
+  .summary-container{max-width:90%;}
 }
 </style>
 </head>
@@ -291,7 +309,7 @@ textarea#message:focus {
   <div class="main-container">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
     <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
-    <button id="submitButton">Submit</button>
+    <button id="submitButton" disabled>Submit</button>
   </div>
 
   <div class="contracts-wrapper">
@@ -307,7 +325,6 @@ textarea#message:focus {
   </div>
 
   <button id="shareButton">Share Summary</button>
-
 </div>
 
 <script>
@@ -317,10 +334,8 @@ const ctx = canvas.getContext("2d");
 function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-let stars=[], brightStars=[], brightStarTimer=0;
-const clusterCount=12;
-
-function createStars() {
+let stars=[], clusterCount=12;
+function createStars(){
   stars=[];
   const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
@@ -333,35 +348,21 @@ function createStars() {
       const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle);
       y=c.y+radius*Math.sin(angle);
-    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
+    } else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
-
-let lastBrightTime=0;
-let nextBrightInterval=7000+Math.random()*8000;
-
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(time-lastBrightTime>nextBrightInterval){
-    lastBrightTime=time;
-    nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
-  }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
-    else s.isBright=false;
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle=s.color;
     ctx.globalAlpha=alpha;
-    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
+    ctx.shadowBlur=s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
   }
@@ -370,15 +371,20 @@ function drawStars(time=0){
 }
 drawStars();
 
-// ===== PRICES & SUBMIT =====
+// ===== FETCH PRICES CSV =====
 let priceList={};
-// example price list for testing
-priceList["compressed ytirium"]=16587;
-priceList["jet ochre"]=13527;
-priceList["magma mercoxit"]=40599;
-priceList["compressed mordunium"]=592556;
-priceList["bistot"]=1320;
+fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
+.then(res=>res.text())
+.then(data=>{
+  const lines = data.split('\n');
+  lines.forEach(line=>{
+    const [ore,price] = line.split(',');
+    if(ore && price) priceList[ore.trim().toLowerCase()]=parseInt(price);
+  });
+  document.getElementById('submitButton').disabled=false;
+});
 
+// ===== HELPERS =====
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
@@ -392,114 +398,80 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function showContent() {
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match;
-  let summary = [];
-  let total = 0;
-
-  // Normalize price list keys for case-insensitive matching
-  let normalizedPriceList = {};
-  for (const key in priceList) {
-    normalizedPriceList[key.toLowerCase()] = priceList[key];
-  }
-
-  // Automatically create aliases: "Compressed Ytirium" -> "Ytirium"
-  const oreAliases = {};
-  for (const key in normalizedPriceList) {
-    if (key.startsWith("compressed ")) {
-      const shortName = key.replace("compressed ", "");
-      oreAliases[shortName] = key;
-    }
-  }
-
-  while ((match = regex.exec(t)) !== null) {
-    const nameRaw = match[1].trim();
-    let name = nameRaw.toLowerCase().replace(/\s+/g, ' ');
-
-    // map aliases automatically
-    if (oreAliases[name]) name = oreAliases[name];
-
-    const qty = parseInt(match[2]);
-
-    if (normalizedPriceList[name] !== undefined) {
-      summary.push({
-        name: nameRaw,
-        price: normalizedPriceList[name],
-        qty: qty,
-        val: qty * normalizedPriceList[name]
-      });
-      total += qty * normalizedPriceList[name];
+// ===== SHOW CONTENT =====
+function showContent(){
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
+  let match; let summary=[]; let total=0;
+  while((match=regex.exec(t))!==null){
+    let nameRaw = match[1].trim();
+    let qty = parseInt(match[2]);
+    let nameNorm = nameRaw.toLowerCase().replace(/^compressed\s+/,'');
+    // accept compressed or not
+    let foundKey = Object.keys(priceList).find(k=>k.toLowerCase()===nameNorm || k.toLowerCase()==='compressed '+nameNorm);
+    if(foundKey){
+      const price = priceList[foundKey];
+      summary.push({name:nameRaw,price:price,qty:qty,val:price*qty});
+      total += price*qty;
     } else {
-      summary.push({
-        name: nameRaw,
-        price: '?',
-        qty: qty,
-        val: 'Unrecognized',
-        unrecognized: true
-      });
+      summary.push({name:nameRaw,price:'?',qty:qty,val:'Unrecognized',unrecognized:true});
     }
   }
 
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML = '';
-  let tableHTML = '<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
-  summary.forEach(item => {
+  // Populate summary table
+  const summaryContainer=document.getElementById('summaryContainer');
+  summaryContainer.innerHTML='';
+  let tableHTML='<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
+  summary.forEach(item=>{
     tableHTML += `<tr>
-      <td class="${item.unrecognized ? 'unrecognized' : ''}">${item.name}</td>
-      <td>${item.unrecognized ? item.price : formatNumber(item.price)}</td>
-      <td>${item.unrecognized ? item.qty : formatNumber(item.qty)}</td>
-      <td>${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+      <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
+      <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
+      <td>${item.unrecognized?item.qty:formatNumber(item.qty)}</td>
+      <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
     </tr>`;
   });
-  tableHTML += '</table>';
-  let summaryHTML = tableHTML + `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
-  summaryContainer.innerHTML = summaryHTML;
-  summaryContainer.style.display = 'block';
-
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'block';
-  animateCount(document.getElementById('totalCostText'), 0, total);
-  document.querySelector('.main-container').style.display = 'none';
-
-  const shareBtn = document.getElementById('shareButton');
-  shareBtn.style.display = 'block';
+  tableHTML+='</table>';
+  tableHTML += `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+  summaryContainer.innerHTML=tableHTML;
+  summaryContainer.style.display='block';
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
+  animateCount(document.getElementById('totalCostText'),0,total);
+  document.querySelector('.main-container').style.display='none';
+  document.getElementById('shareButton').style.display='block';
 }
 
-
-
-// Share Summary
+// ===== SHARE SUMMARY =====
 document.getElementById('shareButton').addEventListener('click',()=>{
-  const data = encodeURIComponent(document.getElementById('message').value);
-  const url = `${location.origin}${location.pathname}?inv=${data}`;
-  navigator.clipboard.writeText(url);
+  const data=encodeURIComponent(document.getElementById('message').value);
+  const shortUrl=`${location.origin}${location.pathname}?inv=${data}`; // simple encode
+  navigator.clipboard.writeText(shortUrl);
   alert('Share Summary URL Copied!');
 });
 
-// Submit button
+// ===== SUBMIT BUTTON =====
 document.getElementById('submitButton').addEventListener('click',showContent);
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
 // ===== LOGO ANIMATION =====
-window.addEventListener('load', () => {
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
-
-  setTimeout(() => {
-    ore.style.animation = 'flickerRapid 0.3s linear forwards';
-    setTimeout(() => { ore.style.animation = 'softGlow 6s infinite'; }, 300);
-
-    setTimeout(() => {
-      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
-      setTimeout(() => { stellar.style.animation = 'softGlow 6s infinite'; }, 300);
-    }, 400);
-
-    setTimeout(() => {
-      ore.style.animation = 'flickerQuick 0.3s linear forwards';
-      stellar.style.animation = 'flickerQuick 0.3s linear forwards';
-      setTimeout(() => { ore.style.animation = 'softGlow 6s infinite'; stellar.style.animation = 'softGlow 6s infinite'; }, 300);
-    }, 1100);
+window.addEventListener('load',()=>{
+  const ore=document.getElementById('ore');
+  const stellar=document.getElementById('stellar');
+  setTimeout(()=>{
+    ore.style.animation='flickerRapid 0.3s linear forwards';
+    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
+    setTimeout(()=>{
+      stellar.style.animation='flickerRapid 0.3s linear forwards';
+      setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
+    },400);
+    setTimeout(()=>{
+      ore.style.animation='flickerQuick 0.3s linear forwards';
+      stellar.style.animation='flickerQuick 0.3s linear forwards';
+      setTimeout(()=>{
+        ore.style.animation='softGlow 6s infinite';
+        stellar.style.animation='softGlow 6s infinite';
+      },300);
+    },1100);
   },500);
 });
 </script>
