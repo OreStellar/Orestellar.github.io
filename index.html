@@ -272,14 +272,19 @@ function showContent(){
 }
 
 // ===== URL PREFILL =====
-window.addEventListener('load',()=>{
+window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const inv = params.get('inv');
   if(inv){
     document.getElementById('message').value = decodeURIComponent(inv);
     showContent();
+
+    // Hide contracts when loaded via shared URL
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'block'; // keep total cost
   }
 });
+
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').addEventListener('click', showContent);
