@@ -39,9 +39,39 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 #totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
 
-.summary-container{display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:'Orbitron',monospace;font-size:14px;line-height:1.4;color:#fff;background:rgba(0,10,0,0.85);border:1px solid rgba(0,255,0,0.5);border-radius:12px;padding:12px 18px;min-width:400px;max-width:500px;text-shadow:none;box-shadow:0 0 12px rgba(0,255,0,0.3);backdrop-filter:blur(6px);max-height:420px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#00ff00 transparent;}
+/* ===== IMPROVED SUMMARY CONTAINER ===== */
+.summary-container{
+  display:none;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  font-family:'Orbitron',monospace;
+  font-size:14px;
+  line-height:1.4;
+  color:#00ff00;
+  background: rgba(0,10,0,0.9);
+  border: 2px solid #00ff00;
+  border-radius:12px;
+  padding:16px 20px;
+  min-width:400px;
+  max-width:500px;
+  max-height:420px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  box-shadow:0 0 15px rgba(0,255,0,0.5), inset 0 0 10px rgba(0,255,0,0.3);
+  backdrop-filter:blur(6px);
+  animation: pulseGlow 2s infinite alternate;
+  scrollbar-width: thin;
+  scrollbar-color: #00ff00 transparent;
+}
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 12px rgba(0,255,0,0.5), inset 0 0 6px rgba(0,255,0,0.3);}
+  100%{box-shadow:0 0 20px rgba(0,255,0,0.7), inset 0 0 12px rgba(0,255,0,0.5);}
+}
 .summary-container::-webkit-scrollbar{width:6px;}
-.summary-container::-webkit-scrollbar-thumb{background:#00ff00;box-shadow:0 0 10px #00ff00;border-radius:4px;}
+.summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
+
+/* Table styles inside summary container */
 .summary-table{width:100%;border-collapse:collapse;}
 .summary-table th,.summary-table td{padding:4px 8px;font-size:14px;border-bottom:1px solid rgba(0,255,0,0.2);}
 .summary-table th{color:#00ff00;text-shadow:0 0 6px #00ff00;}
@@ -86,10 +116,6 @@ Bistot 1320"></textarea>
 </div>
 
 <script>
-// ===== URL PARAM CHECK =====
-const params=new URLSearchParams(window.location.search);
-if(!params.get('inv')){document.body.setAttribute('data-show-inventory','true');}
-
 // ===== STARFIELD =====
 const canvas=document.getElementById("starfield"),ctx=canvas.getContext("2d");
 function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
@@ -131,10 +157,7 @@ while((match = regex.exec(t)) !== null){
   const nameRaw = match[1].trim();
   const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
   const qty = parseInt(match[2]);
-
-  // Create display name for table only
   const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
-
   if(priceList[name] !== undefined){
     summary.push({name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name]});
     total += qty * priceList[name];
@@ -143,37 +166,35 @@ while((match = regex.exec(t)) !== null){
   }
 }
 
-
-
-  const summaryContainer=document.getElementById('summaryContainer');
-  let tableHTML='<table class="summary-table"><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr>';
-  summary.forEach(item=>{
-    tableHTML+=`<tr>
+const summaryContainer=document.getElementById('summaryContainer');
+let tableHTML='<table class="summary-table"><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr>';
+summary.forEach(item=>{
+  tableHTML+=`<tr>
 <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
 <td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td>
 <td class="quantity">${formatNumber(item.qty)}</td>
 <td class="${item.unrecognized?'unrecognized total-column':'total-column'}">${item.unrecognized?item.val:formatNumber(item.val)}</td>
 </tr>`;
-  });
-  tableHTML+=`<tr class="summary-total">
+});
+tableHTML+=`<tr class="summary-total">
 <td colspan="3" style="text-align:right;">Total</td>
 <td id="summaryTotal">${formatNumber(total)}</td>
 </tr></table>`;
-  summaryContainer.innerHTML=tableHTML;
-  summaryContainer.style.display='block';
+summaryContainer.innerHTML=tableHTML;
+summaryContainer.style.display='flex';
 
-  const leftContract=document.getElementById('leftContainer');
-  const totalCostContainer=document.getElementById('totalCostContainer');
-  leftContract.style.display='block';
-  totalCostContainer.style.display='block';
-  animateCount(document.getElementById('totalCostText'),0,total,2000);
+const leftContract=document.getElementById('leftContainer');
+const totalCostContainer=document.getElementById('totalCostContainer');
+leftContract.style.display='block';
+totalCostContainer.style.display='block';
+animateCount(document.getElementById('totalCostText'),0,total,2000);
 
-  function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
-  makeTotalCopyable(document.getElementById('summaryTotal'));
-  makeTotalCopyable(document.getElementById('totalCostText'));
+function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
+makeTotalCopyable(document.getElementById('summaryTotal'));
+makeTotalCopyable(document.getElementById('totalCostText'));
 
-  document.querySelector('.main-container').style.display='none';
-  document.getElementById('shareButton').style.display='inline-block';
+document.querySelector('.main-container').style.display='none';
+document.getElementById('shareButton').style.display='inline-block';
 }
 
 // ===== BUTTONS =====
