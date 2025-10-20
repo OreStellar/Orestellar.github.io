@@ -248,6 +248,30 @@ summaryContainer.innerHTML = tableHTML;
   leftContract.style.display = 'block';
   totalCostContainer.style.display = 'block';
   animateCount(document.getElementById('totalCostText'),0,total,2000);
+// ===== COPY TOTAL ISK FUNCTION =====
+function makeTotalCopyable(el) {
+  if (!el) return;
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', async () => {
+    const numericValue = el.innerText.replace(/[^0-9]/g, '');
+    if (!numericValue) return;
+
+    await navigator.clipboard.writeText(numericValue);
+
+    const originalText = el.innerText;
+    el.innerText = 'Copied';
+    setTimeout(() => {
+      el.innerText = originalText;
+    }, 1500);
+  });
+}
+
+// Attach copy functionality AFTER elements exist
+const summaryTotalEl = document.getElementById('summaryTotal');
+const contractTotalEl = document.getElementById('totalCostText');
+
+makeTotalCopyable(summaryTotalEl);
+makeTotalCopyable(contractTotalEl);
 
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
