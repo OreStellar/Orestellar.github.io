@@ -208,6 +208,9 @@ function showContent(prefillText){
 
   makeTotalCopyable(document.getElementById('totalCostText'));
   attachSorting(summaryContainer);
+// Hide the inventory textarea and submit button
+document.querySelector('.main-container').style.display = 'none';
+document.getElementById('submitButton').style.display = 'none';
 }
 
 // ===== SORTING =====
