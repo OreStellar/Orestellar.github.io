@@ -195,23 +195,25 @@ textarea#message:focus {
 }
 
 .summary-container {
-  display: none; /* HIDE by default until submit */
+  display: none;
   flex-direction: column;
   align-items: flex-end;
-  overflow-x: auto;
   justify-content: flex-start;
   font-family: 'Orbitron', sans-serif;
-  color: #00ff00; /* match total ISK */
-  background: rgba(0, 10, 0, 0.75); /* darker for readability */
-  border: 1px solid rgba(0, 255, 170, 0.5);
+  color: #00ff00;
+  background: rgba(0, 10, 0, 0.75);
+  border: 1px solid rgba(0, 255, 0, 0.5);
   border-radius: 10px;
   padding: 12px 24px;
-  width: fit-content;
+  width: auto;            /* allow dynamic width */
   min-width: 280px;
-  max-width: 420px;
-  text-shadow: 0 0 8px #00ff00; /* neon glow effect */
-  box-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
+  max-width: 100%;        /* don't exceed screen width */
+  text-shadow: 0 0 8px #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+  overflow-x: auto;       /* scroll if too wide */
+  white-space: nowrap;    /* prevent wrapping inside container */
 }
+
 
 .summary-row {
   display: flex;
@@ -222,19 +224,6 @@ textarea#message:focus {
   font-size: 15px;
   color: #00ff00; /* match total ISK green */
   text-shadow: 0 0 6px #00ffaa;
-}
-
-.summary-row span:first-child {
-  flex: 1;
-  text-align: left;
-  color: #00ff00; /* optional: slightly lighter label for readability */
-}
-
-.summary-row span:last-child {
-  flex: 0 0 130px;
-  text-align: right;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ffaa; /* neon glow for ISK values */
 }
 
 .summary-total {
@@ -248,23 +237,22 @@ textarea#message:focus {
   color: #00ff00;
   text-shadow: 0 0 8px #00ffaa;
 }
-
-.summary-total span:first-child {
-  text-align: left;
-  flex: 1;
-  color: #00ff00;          /* exact same bright green as total ISK */
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; /* match total glow exactly */
-}
-
+.summary-row span:last-child,
 .summary-total span:last-child {
-  flex: 0 0 auto;          /* allow width to fit content */
-  min-width: 130px;        /* optional minimum width */
+  flex: 0 0 auto;         /* let width fit content */
   text-align: right;
-  white-space: nowrap;     /* PREVENT WRAPPING */
+  white-space: nowrap;    /* prevent wrapping */
   color: #00ff00;
   text-shadow: 0 0 6px #00ff00;
 }
 
+.summary-row span:first-child,
+.summary-total span:first-child {
+  flex: 1 1 auto;         /* label takes remaining space */
+  text-align: left;
+  color: #00ff00;
+  white-space: nowrap;    /* optional if labels are long */
+}
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 @keyframes unifiedGlow {
