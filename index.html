@@ -129,7 +129,7 @@ function createStars(){
       const radius=Math.random()*120; const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
     } else { x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
-    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.8+Math.random()*0.2});
+    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.3+Math.random()*0.2});
   }
 }
 createStars();
@@ -144,11 +144,12 @@ function drawStars(time=0){
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.6+0.3*Math.sin(time*0.002+s.phase);
+    if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
     ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
+    ctx.fillStyle=s.color;
+    ctx.globalAlpha=alpha;
     ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
@@ -177,33 +178,6 @@ fetchPrices();
 // ===== ENABLE SUBMIT BUTTON =====
 document.getElementById('submitButton').disabled = false;
 
-// ===== BASE62 ENCODE/DECODE =====
-const base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-function base62Encode(str){
-  let result="", n;
-  for(let i=0;i<str.length;i++){
-    n=str.charCodeAt(i);
-    do{
-      result=base62chars[n%62]+result;
-      n=Math.floor(n/62);
-    }while(n>0);
-  }
-  return result;
-}
-function base62Decode(str){
-  let result="";
-  for(let i=0;i<str.length;i++){
-    let n=0;
-    let multiplier=1;
-    for(let j=i;j<str.length;j++){
-      n = n*62 + base62chars.indexOf(str[j]);
-    }
-    result += String.fromCharCode(n);
-    i=str.length; // break outer loop
-  }
-  return result;
-}
-
 // ===== HELPERS =====
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
@@ -218,9 +192,38 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
+// ===== BASE62 ENCODE/DECODE =====
+const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function encodeBase62(str){
+  let result='';
+  for(let i=0;i<str.length;i++){
+    let code=str.charCodeAt(i);
+    let chars=[];
+    do{
+      chars.push(BASE62[code%62]);
+      code=Math.floor(code/62);
+    }while(code>0);
+    result+=chars.reverse().join('');
+  }
+  return result;
+}
+function decodeBase62(str){
+  let result='';
+  let i=0;
+  while(i<str.length){
+    let val=0;
+    let j=i;
+    // decode one char per loop
+    val=BASE62.indexOf(str[j]);
+    result+=String.fromCharCode(val);
+    i++;
+  }
+  return result;
+}
+
 // ===== SHOW SUMMARY =====
-function showContent(invStr=null){
-  const t = invStr || document.getElementById('message').value;
+function showContent(){
+  const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
 
@@ -247,7 +250,6 @@ function showContent(invStr=null){
     </tr>`;
   });
   tableHTML += '</table>';
-  tableHTML += `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'block';
 
@@ -256,7 +258,9 @@ function showContent(invStr=null){
   const totalCostContainer = document.getElementById('totalCostContainer');
   leftContract.style.display = 'block';
   totalCostContainer.style.display = 'block';
-  animateCount(document.getElementById('totalCostText'),0,total,1500);
+
+  // Animate total ISK
+  animateCount(document.getElementById('totalCostText'),0,total);
 
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
@@ -264,42 +268,42 @@ function showContent(invStr=null){
   // === SHARE BUTTON ===
   const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display = 'inline-block';
-  shareBtn.onclick = () => {
-    const inv = document.getElementById('message').value;
-    const code = base62Encode(inv);
-    const url = `${location.origin}${location.pathname}?c=${code}`;
-    navigator.clipboard.writeText(url);
-    alert('Shareable URL copied!');
+  shareBtn.onclick = async () => {
+    const invText = document.getElementById('message').value;
+    const shortCode = encodeBase62(invText);
+    const shortUrl = `${location.origin}${location.pathname}?c=${shortCode}`;
+    await navigator.clipboard.writeText(shortUrl);
+    alert('Short URL copied!');
   };
 }
 
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
+  const shortCode = params.get('c');
   const inv = params.get('inv');
-  if(inv){
-    // Set the inventory textarea
-    document.getElementById('message').value = decodeURIComponent(inv);
 
-    // Generate the summary immediately
+  if(shortCode){
+    document.getElementById('message').value = decodeBase62(shortCode);
     showContent();
 
-    // === Bash short URL view adjustments ===
-    // Hide contracts
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
-
-    // Hide submit and share buttons
     document.getElementById('submitButton').style.display='none';
     document.getElementById('shareButton').style.display='none';
+  } else if(inv){
+    document.getElementById('message').value = decodeURIComponent(inv);
+    showContent();
 
-    // Only show summary and logo (container-wrapper already includes logo)
-    document.querySelector('.main-container').style.display='none';
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
+    document.getElementById('submitButton').style.display='none';
+    document.getElementById('shareButton').style.display='none';
   }
 });
 
 // ===== BUTTONS =====
-document.getElementById('submitButton').addEventListener('click', ()=>showContent());
+document.getElementById('submitButton').addEventListener('click', showContent);
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
 // ===== LOGO ANIMATION =====
