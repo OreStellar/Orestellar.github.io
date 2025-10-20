@@ -392,21 +392,32 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function showContent() {
-  const t=document.getElementById('message').value;
+function showContent(){
+  const t = document.getElementById('message').value;
+  const regex = /([\w\s]+?)\s+(\d+)/g;
+  let match;
+  let summary = [];
+  let total = 0;
+
+  // Normalize price list keys for case-insensitive matching
+  let normalizedPriceList = {};
+  for (const key in priceList) {
+    normalizedPriceList[key.toLowerCase()] = priceList[key];
+  }
+
   while((match = regex.exec(t)) !== null){
     const nameRaw = match[1].trim();
     const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
     const qty = parseInt(match[2]);
 
-    if(priceList[name] !== undefined){
+    if(normalizedPriceList[name] !== undefined){
       summary.push({
         name: nameRaw,
-        price: priceList[name],
+        price: normalizedPriceList[name],
         qty: qty,
-        val: qty * priceList[name]
+        val: qty * normalizedPriceList[name]
       });
-      total += qty * priceList[name];
+      total += qty * normalizedPriceList[name];
     } else {
       summary.push({
         name: nameRaw,
@@ -417,14 +428,11 @@ function showContent() {
       });
     }
   }
-  // ... rest of function
-}
-
 
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.innerHTML = '';
   let tableHTML = '<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
-  summary.forEach(item=>{
+  summary.forEach(item => {
     tableHTML += `<tr>
       <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
       <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
@@ -433,19 +441,20 @@ function showContent() {
     </tr>`;
   });
   tableHTML += '</table>';
-  const summaryHTML = tableHTML+`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+  let summaryHTML = tableHTML + `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
   summaryContainer.innerHTML = summaryHTML;
-  summaryContainer.style.display='flex';
+  summaryContainer.style.display = 'block';
 
-  document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
-  animateCount(document.getElementById('totalCostText'),0,total);
-  document.querySelector('.main-container').style.display='none';
+  document.getElementById('leftContainer').style.display = 'block';
+  document.getElementById('totalCostContainer').style.display = 'block';
+  animateCount(document.getElementById('totalCostText'), 0, total);
+  document.querySelector('.main-container').style.display = 'none';
 
-  // show share button
+  // Show share button
   const shareBtn = document.getElementById('shareButton');
-  shareBtn.style.display='block';
+  shareBtn.style.display = 'block';
 }
+
 
 // Share Summary
 document.getElementById('shareButton').addEventListener('click',()=>{
