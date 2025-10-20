@@ -219,41 +219,53 @@ textarea#message:focus {
   border-radius: 4px;
 }
 
-/* Share Summary button */
-#shareSummaryBtn {
-  display: none;
-  margin-top: 10px;
-  background: #000;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-  padding: 8px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  text-shadow: 0 0 6px #00ff00;
-  font-family: 'Orbitron', monospace;
-  align-self: center;
-}
-
-/* Table inside summary */
-.summary-container table {
+.summary-table {
   width: 100%;
   border-collapse: collapse;
 }
-.summary-container th, .summary-container td {
-  padding: 4px 6px;
-  text-align: right;
+.summary-table th, .summary-table td {
+  padding: 4px 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,255,0,0.2);
 }
-.summary-container th:first-child,
-.summary-container td:first-child { text-align: left; }
-.summary-container tr.unrecognized td { 
-  color: #ff3333; 
+.summary-table th {
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+}
+.summary-table td {
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+}
+.summary-table td.unrecognized {
+  color: #ff3333;
   text-shadow: 0 0 10px #ff3333,0 0 20px #ff0000;
 }
 
-/* Total row */
-.summary-total-row td {
+/* Total Line */
+.summary-total {
+  margin-top: 6px;
   font-weight: bold;
+  border-top: 1px solid rgba(0,255,0,0.3);
+  display: flex;
+  justify-content: space-between;
+}
+.summary-total span {
+  color: #00ff00;
   text-shadow: 0 0 12px #00ff00,0 0 24px #00ff00;
+}
+
+/* Share Summary Button */
+#shareButton {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  color: #000;
+  background: #00ff00;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 12px #00ff00;
 }
 </style>
 </head>
@@ -278,20 +290,7 @@ textarea#message:focus {
     <div id="leftContainer" class="total-cost-container"></div>
 
     <div id="summaryContainer" class="summary-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Price</th><th>Quantity</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody id="summaryBody"></tbody>
-        <tfoot>
-          <tr class="summary-total-row">
-            <td>Total</td>
-            <td colspan="3" id="summaryTotal">0 ISK</td>
-          </tr>
-        </tfoot>
-      </table>
+      <!-- JS will populate table -->
     </div>
 
     <div id="totalCostContainer" class="total-cost-container">
@@ -299,19 +298,23 @@ textarea#message:focus {
     </div>
   </div>
 
-  <button id="shareSummaryBtn">Share Summary</button>
+  <button id="shareButton">Share Summary</button>
+
 </div>
 
 <script>
 // ===== STARFIELD =====
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-let stars=[], clusterCount=12;
-function createStars(){
-  stars=[]; const clusterCenters=[];
+let stars=[], brightStars=[], brightStarTimer=0;
+const clusterCount=12;
+
+function createStars() {
+  stars=[];
+  const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
@@ -320,13 +323,17 @@ function createStars(){
       const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
       const radius=Math.random()*120;
       const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
-    }else{x=Math.random()*canvas.width; y=Math.random()*canvas.height;}
+      x=c.x+radius*Math.cos(angle);
+      y=c.y+radius*Math.sin(angle);
+    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
-let lastBrightTime=0, nextBrightInterval=7000+Math.random()*8000;
+
+let lastBrightTime=0;
+let nextBrightInterval=7000+Math.random()*8000;
+
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(time-lastBrightTime>nextBrightInterval){
@@ -357,21 +364,14 @@ drawStars();
 
 // ===== PRICES & SUBMIT =====
 let priceList={};
-async function loadPrices(){
-  const response=await fetch('data/prices.csv');
-  const text=await response.text();
-  const lines=text.split('\n').filter(l=>l.trim());
-  const headers=lines[0].split(',');
-  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    const ore=cols[0].trim();
-    const price=parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
-  }
-  document.getElementById('submitButton').disabled=false;
-}
-loadPrices();
+// example price list for testing
+priceList["compressed ytirium"]=16587;
+priceList["jet ochre"]=13527;
+priceList["magma mercoxit"]=40599;
+priceList["compressed mordunium"]=592556;
+priceList["bistot"]=1320;
+
+document.getElementById('submitButton').disabled=false;
 
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
@@ -394,50 +394,70 @@ function showContent(){
     const name=match[1].trim(),qty=parseInt(match[2]);
     const lookupName=name.toLowerCase();
     if(priceList[lookupName]){
-      const val=qty*priceList[lookupName];
-      summary.push({name,price:priceList[lookupName],qty,val});
-      total+=val;
-    } else summary.push({name,price:'-',qty, val:'-',unrecognized:true});
+      summary.push({name,price:priceList[lookupName],qty,val:qty*priceList[lookupName]});
+      total+=qty*priceList[lookupName];
+    } else summary.push({name,price:'?',qty,val:'Unrecognized',unrecognized:true});
   }
 
-  const summaryBody = document.getElementById('summaryBody');
-  summaryBody.innerHTML = '';
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.innerHTML = '';
+  let tableHTML = '<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
   summary.forEach(item=>{
-    const tr=document.createElement('tr');
-    if(item.unrecognized) tr.classList.add('unrecognized');
-    tr.innerHTML=`<td>${item.name}</td>
-                   <td>${item.price==='-'?'-':formatNumber(item.price)}</td>
-                   <td>${item.qty}</td>
-                   <td>${item.val==='-'?'-':formatNumber(item.val)}</td>`;
-    summaryBody.appendChild(tr);
+    tableHTML += `<tr>
+      <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
+      <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
+      <td>${item.unrecognized?item.qty:formatNumber(item.qty)}</td>
+      <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
+    </tr>`;
   });
-  document.getElementById('summaryTotal').innerText=formatNumber(total)+' ISK';
+  tableHTML += '</table>';
+  summaryHTML = tableHTML+`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+  summaryContainer.innerHTML = summaryHTML;
+  summaryContainer.style.display='block';
 
-  // Show containers
-  document.getElementById('summaryContainer').style.display='block';
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
+  animateCount(document.getElementById('totalCostText'),0,total);
   document.querySelector('.main-container').style.display='none';
-  animateCount(document.getElementById('totalCostText'), 0, total);
 
-  // Show Share Summary button
-  const shareBtn=document.getElementById('shareSummaryBtn');
+  // show share button
+  const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display='block';
-  shareBtn.onclick=()=>{ 
-    const inventory=encodeURIComponent(document.getElementById('message').value);
-    const shareUrl=`${window.location.origin}${window.location.pathname}?inv=${inventory}`;
-    navigator.clipboard.writeText(shareUrl);
-    shareBtn.innerText='Copied!';
-    setTimeout(()=>{shareBtn.innerText='Share Summary';},1500);
-  };
 }
 
+// Share Summary
+document.getElementById('shareButton').addEventListener('click',()=>{
+  const data = encodeURIComponent(document.getElementById('message').value);
+  const url = `${location.origin}${location.pathname}?inv=${data}`;
+  navigator.clipboard.writeText(url);
+  alert('Share Summary URL Copied!');
+});
+
+// Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
-// Logo click refresh
-document.getElementById('myHeader').addEventListener('click',()=>{ location.reload(); });
+// ===== LOGO ANIMATION =====
+window.addEventListener('load', () => {
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
 
+  setTimeout(() => {
+    ore.style.animation = 'flickerRapid 0.3s linear forwards';
+    setTimeout(() => { ore.style.animation = 'softGlow 6s infinite'; }, 300);
+
+    setTimeout(() => {
+      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
+      setTimeout(() => { stellar.style.animation = 'softGlow 6s infinite'; }, 300);
+    }, 400);
+
+    setTimeout(() => {
+      ore.style.animation = 'flickerQuick 0.3s linear forwards';
+      stellar.style.animation = 'flickerQuick 0.3s linear forwards';
+      setTimeout(() => { ore.style.animation = 'softGlow 6s infinite'; stellar.style.animation = 'softGlow 6s infinite'; }, 300);
+    }, 1100);
+  },500);
+});
 </script>
-
 </body>
 </html>
