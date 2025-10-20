@@ -52,6 +52,10 @@
   .summary-table td.total-column { color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
   .summary-total td { font-weight:bold; border-top:1px solid rgba(0,255,0,0.3); }
   .summary-total td.total-column { color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
+  .summary-table td.price { text-align: center; }
+  .summary-table td.total-column { text-align: left; color: #00ff00; text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; }
+  .summary-total td.total-column { text-align: left; color: #00ff00; text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; }
+
 </style>
 </head>
 <body>
@@ -168,14 +172,14 @@ function showContent(prefillText){
 
   const summaryContainer=document.getElementById('summaryContainer');
   let tableHTML='<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
-  summary.forEach(item=>{
-    tableHTML+=`<tr>
-      <td>${item.name}</td>
-      <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
-      <td class="quantity">${formatNumber(item.qty)}</td>
-      <td class="total-column">${item.unrecognized?item.val:formatNumber(item.val)}</td>
-    </tr>`;
-  });
+summary.forEach(item=>{
+  tableHTML+=`<tr>
+    <td>${item.name}</td>
+    <td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td>
+    <td class="quantity">${formatNumber(item.qty)}</td>
+    <td class="total-column">${item.unrecognized?item.val:formatNumber(item.val)}</td>
+  </tr>`;
+});
   tableHTML+=`<tr class="summary-total">
     <td colspan="3" style="text-align:right;">Total</td>
     <td id="summaryTotal" class="total-column"></td>
