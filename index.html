@@ -276,11 +276,25 @@ function showContent(invStr=null){
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
-  const code = params.get('c');
-  if(code){
-    const inv = base62Decode(code);
-    document.getElementById('message').value = inv;
-    showContent(inv);
+  const inv = params.get('inv');
+  if(inv){
+    // Set the inventory textarea
+    document.getElementById('message').value = decodeURIComponent(inv);
+
+    // Generate the summary immediately
+    showContent();
+
+    // === Bash short URL view adjustments ===
+    // Hide contracts
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
+
+    // Hide submit and share buttons
+    document.getElementById('submitButton').style.display='none';
+    document.getElementById('shareButton').style.display='none';
+
+    // Only show summary and logo (container-wrapper already includes logo)
+    document.querySelector('.main-container').style.display='none';
   }
 });
 
