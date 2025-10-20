@@ -255,6 +255,34 @@ summaryContainer.innerHTML = tableHTML;
   // === SHOW SHARE BUTTON ===
   document.getElementById('shareButton').style.display='inline-block';
 }
+// ===== COPY TOTAL ISK FUNCTION =====
+function makeTotalCopyable(el) {
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', async () => {
+    const originalText = el.innerText;
+    // Extract only numbers
+    const numericValue = originalText.replace(/[^0-9]/g, '');
+    if(!numericValue) return;
+
+    // Copy to clipboard
+    await navigator.clipboard.writeText(numericValue);
+
+    // Temporarily show "Copied"
+    el.innerText = 'Copied';
+    setTimeout(() => {
+      el.innerText = originalText; // revert to original
+    }, 2000);
+  });
+}
+
+// Apply to both contract and summary totals
+window.addEventListener('load', () => {
+  const contractTotal = document.getElementById('totalCostText');
+  const summaryTotal = document.getElementById('summaryTotal');
+
+  makeTotalCopyable(contractTotal);
+  makeTotalCopyable(summaryTotal);
+});
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').disabled=false;
