@@ -52,7 +52,7 @@ canvas#starfield {
 }
 
 #logoText {
-  display: inline; 
+  display: inline;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
@@ -131,7 +131,7 @@ textarea#message:focus {
 }
 
 /* Submit Button */
-#submitButton, #copyShareButton {
+#submitButton {
   margin-top: 10px;
   background: linear-gradient(145deg, #161616, #242424);
   color: #fff;
@@ -152,7 +152,7 @@ textarea#message:focus {
   0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
   100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
 }
-#submitButton:hover, #copyShareButton:hover {
+#submitButton:hover {
   color: #000;
   background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
   border-color: #fff;
@@ -191,6 +191,22 @@ textarea#message:focus {
   cursor: pointer;
 }
 
+#shareUrlButton {
+  display: none;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #000000bb;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-shadow: 0 0 6px #00ff00;
+}
+
 .summary-container {
   display: none;
   flex-direction: column;
@@ -214,7 +230,10 @@ textarea#message:focus {
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
 }
-.summary-container::-webkit-scrollbar { width: 6px; }
+
+.summary-container::-webkit-scrollbar {
+  width: 6px;
+}
 .summary-container::-webkit-scrollbar-thumb {
   background: #00ff00;
   box-shadow: 0 0 10px #00ff00;
@@ -270,12 +289,14 @@ textarea#message:focus {
   font-weight: bold;
   font-size: 16px;
 }
+
 .summary-total span:first-child {
   text-align: left;
   flex: 1;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
 }
+
 .summary-total span:last-child {
   text-align: right;
   flex: 0 0 auto;
@@ -300,9 +321,9 @@ textarea#message:focus {
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
     <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
-    <button id="submitButton" disabled>Submit</button>  
+    <button id="submitButton" disabled>Submit</button>
   </div>
-  <button id="copyShareButton" style="display:none;">Share URL</button>
+
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
     <div id="summaryContainer" class="summary-container"></div>
@@ -310,22 +331,23 @@ textarea#message:focus {
       <div id="totalCostText">0 ISK</div>
       <div id="copiedMessage">Copied!</div>
     </div>
+    <button id="shareUrlButton">Share URL</button>
   </div>
+
 </div>
 
 <script>
 // ===== STARFIELD =====
-const canvas=document.getElementById("starfield");
-const ctx=canvas.getContext("2d");
-function resizeCanvas(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
 let stars=[], brightStars=[], brightStarTimer=0;
 const clusterCount=12;
 
-function createStars(){
-  stars=[];
-  const clusterCenters=[];
+function createStars() {
+  stars=[]; const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
@@ -336,37 +358,28 @@ function createStars(){
       const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle);
       y=c.y+radius*Math.sin(angle);
-    } else {x=Math.random()*canvas.width; y=Math.random()*canvas.height;}
+    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
 
-let lastBrightTime=0;
-let nextBrightInterval=7000+Math.random()*8000;
-
+let lastBrightTime=0; let nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(time-lastBrightTime>nextBrightInterval){
     lastBrightTime=time;
     nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
+    for(let i=0;i<2;i++){const s=stars[Math.floor(Math.random()*stars.length)]; s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;}
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
-    else s.isBright=false;
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;
-    ctx.globalAlpha=alpha;
+    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1; else s.isBright=false;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
     ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
-    ctx.shadowColor=s.color;
-    ctx.fill();
+    ctx.shadowColor=s.color; ctx.fill();
   }
   ctx.globalAlpha=1;
   requestAnimationFrame(drawStars);
@@ -391,11 +404,10 @@ async function loadPrices(){
 }
 loadPrices();
 
-function formatNumber(n){return n.toLocaleString();}
+function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
-  function step(t){
-    if(!startTime) startTime=t;
+  function step(t){ if(!startTime) startTime=t;
     let progress=Math.min((t-startTime)/duration,1);
     const current=Math.floor(progress*(end-start)+start);
     el.innerText=current.toLocaleString()+' ISK';
@@ -404,34 +416,59 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function showContent(){
-  const t=document.getElementById('message').value;
+// ----- SUMMARY FUNCTION -----
+function populateSummaryFromText(text){
   const regex=/([\w\s]+?)\s+(\d+)/g;
-  let match,total=0,summary=[];
-  while((match=regex.exec(t))!==null){
-    const name=match[1].trim(),qty=parseInt(match[2]);
+  let match, total=0, summary=[];
+  while((match=regex.exec(text))!==null){
+    const name=match[1].trim(), qty=parseInt(match[2]);
     const lookupName=name.toLowerCase();
     if(priceList[lookupName]){
       summary.push({name,qty,val:qty*priceList[lookupName]});
       total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
+
   const summaryContainer=document.getElementById('summaryContainer');
   summaryContainer.innerHTML='';
   summary.forEach(item=>{
     const rowClass=item.unrecognized?'summary-row unrecognized':'summary-row';
-    summaryContainer.innerHTML+=`<div class="${rowClass}"><span>${item.name}</span><span>${item.unrecognized?'Unrecognized':formatNumber(item.val)+' ISK'}</span></div>`;
+    summaryContainer.innerHTML+=`
+      <div class="${rowClass}">
+        <span>${item.name}</span>
+        <span>${item.unrecognized?'Unrecognized':formatNumber(item.val)+' ISK'}</span>
+      </div>`;
   });
-  summaryContainer.innerHTML+=`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+
+  summaryContainer.innerHTML+=`
+    <div class="summary-total">
+      <span>Total</span>
+      <span>${formatNumber(total)} ISK</span>
+    </div>`;
+
   summaryContainer.style.display='flex';
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
-  document.getElementById('copyShareButton').style.display='inline-block'; // show share button
-  animateCount(document.getElementById('totalCostText'), 0, total);
   document.querySelector('.main-container').style.display='none';
+  document.getElementById('shareUrlButton').style.display='inline-block';
+
+  animateCount(document.getElementById('totalCostText'),0,total);
 }
 
-// Copy total ISK number
+// ----- SUBMIT BUTTON -----
+document.getElementById('submitButton').addEventListener('click',()=>{
+  populateSummaryFromText(document.getElementById('message').value);
+});
+
+// ----- SHARE BUTTON -----
+document.getElementById('shareUrlButton').addEventListener('click',()=>{
+  const inv=encodeURIComponent(document.getElementById('message').value);
+  const shareUrl=`${location.origin}${location.pathname}?inventory=${inv}`;
+  navigator.clipboard.writeText(shareUrl);
+  alert('URL copied to clipboard!');
+});
+
+// ----- TOTAL COST CLICK TO COPY -----
 const totalCostEl=document.getElementById('totalCostText');
 totalCostEl.addEventListener('click',()=>{
   const numericText=totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
@@ -441,33 +478,18 @@ totalCostEl.addEventListener('click',()=>{
   setTimeout(()=>{totalCostEl.innerText=originalText;},1500);
 });
 
-// Copy Share URL
-document.getElementById('copyShareButton').addEventListener('click',()=>{
-  const shareURL = window.location.href + "?data=" + encodeURIComponent(document.getElementById('message').value);
-  navigator.clipboard.writeText(shareURL);
-  const btn = document.getElementById('copyShareButton');
-  const originalText = btn.innerText;
-  btn.innerText = 'Copied!';
-  setTimeout(()=>{ btn.innerText = originalText; },1500);
-});
-
-document.getElementById('submitButton').addEventListener('click', showContent);
-document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
-
-// ===== LOGO ANIMATION =====
-window.addEventListener('load', () => {
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
+// ----- LOGO ANIMATION -----
+window.addEventListener('load',()=>{
+  const ore=document.getElementById('ore');
+  const stellar=document.getElementById('stellar');
 
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{ ore.style.animation='softGlow 6s infinite'; },300);
-
+    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
     setTimeout(()=>{
       stellar.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>{ stellar.style.animation='softGlow 6s infinite'; },300);
+      setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
     },400);
-
     setTimeout(()=>{
       ore.style.animation='flickerQuick 0.3s linear forwards';
       stellar.style.animation='flickerQuick 0.3s linear forwards';
@@ -478,17 +500,18 @@ window.addEventListener('load', () => {
     },1100);
   },500);
 });
-  // ===== URL SHARE HANDLING =====
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const inv = params.get('inventory');
-  if (inv) {
-    const decoded = decodeURIComponent(inv);
-    document.getElementById('message').value = decoded;
-    showContent(); // auto-populate summary
+
+// ----- AUTO LOAD FROM URL -----
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const inv=params.get('inventory');
+  if(inv){
+    const decoded=decodeURIComponent(inv);
+    document.getElementById('message').value=decoded;
+    populateSummaryFromText(decoded);
   }
 });
-</script>
 
+</script>
 </body>
 </html>
