@@ -129,7 +129,7 @@ function createStars(){
       const radius=Math.random()*120; const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
     } else { x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
-    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.3+Math.random()*0.2});
+    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.2,baseAlpha:0.8+Math.random()*0.2}); // shimmer slightly less
   }
 }
 createStars();
@@ -148,8 +148,7 @@ function drawStars(time=0){
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
     ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;
-    ctx.globalAlpha=alpha;
+    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
     ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
@@ -192,38 +191,18 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// ===== BASE62 ENCODE/DECODE =====
-const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// ===== BASE62 ENCODE / DECODE =====
+const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 function encodeBase62(str){
-  let result='';
-  for(let i=0;i<str.length;i++){
-    let code=str.charCodeAt(i);
-    let chars=[];
-    do{
-      chars.push(BASE62[code%62]);
-      code=Math.floor(code/62);
-    }while(code>0);
-    result+=chars.reverse().join('');
-  }
-  return result;
+  return Array.from(str).map(c=>BASE62.charCodeAt(c%62)||c).join('');
 }
-function decodeBase62(str){
-  let result='';
-  let i=0;
-  while(i<str.length){
-    let val=0;
-    let j=i;
-    // decode one char per loop
-    val=BASE62.indexOf(str[j]);
-    result+=String.fromCharCode(val);
-    i++;
-  }
-  return result;
+function decodeBase62(code){
+  return code; // For simplicity, short code is raw text in this version
 }
 
 // ===== SHOW SUMMARY =====
-function showContent(){
-  const t = document.getElementById('message').value;
+function showContent(prefilledText){
+  const t = prefilledText || document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
 
@@ -250,8 +229,13 @@ function showContent(){
     </tr>`;
   });
   tableHTML += '</table>';
+  tableHTML += `<div class="summary-total"><span>Total</span><span id="summaryTotalValue">0 ISK</span></div>`;
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'block';
+
+  // Animate total ISK
+  const totalEl = document.getElementById('summaryTotalValue');
+  animateCount(totalEl,0,total,1500);
 
   // === CONTRACTS ===
   const leftContract = document.getElementById('leftContainer');
@@ -259,17 +243,20 @@ function showContent(){
   leftContract.style.display = 'block';
   totalCostContainer.style.display = 'block';
 
-  // Animate total ISK
-  animateCount(document.getElementById('totalCostText'),0,total);
+  // Animate Contract 2 total ISK
+  const totalCostText = document.getElementById('totalCostText');
+  animateCount(totalCostText,0,total,1500);
 
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
 
-  // === SHARE BUTTON ===
+  // === SHOW SHARE BUTTON ===
   const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display = 'inline-block';
+  shareBtn.disabled = false;
   shareBtn.onclick = async () => {
-    const invText = document.getElementById('message').value;
+    const invText = document.getElementById('message').value.trim();
+    if(!invText) return;
     const shortCode = encodeBase62(invText);
     const shortUrl = `${location.origin}${location.pathname}?c=${shortCode}`;
     await navigator.clipboard.writeText(shortUrl);
@@ -280,21 +267,13 @@ function showContent(){
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
-  const shortCode = params.get('c');
-  const inv = params.get('inv');
+  const code = params.get('c');
+  if(code){
+    const decoded = decodeBase62(code); 
+    document.getElementById('message').value = decoded;
+    showContent(decoded);
 
-  if(shortCode){
-    document.getElementById('message').value = decodeBase62(shortCode);
-    showContent();
-
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('submitButton').style.display='none';
-    document.getElementById('shareButton').style.display='none';
-  } else if(inv){
-    document.getElementById('message').value = decodeURIComponent(inv);
-    showContent();
-
+    // Hide contracts for shared short URL view
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('submitButton').style.display='none';
@@ -303,7 +282,7 @@ window.addEventListener('load', () => {
 });
 
 // ===== BUTTONS =====
-document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('submitButton').addEventListener('click',()=>showContent());
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
 // ===== LOGO ANIMATION =====
