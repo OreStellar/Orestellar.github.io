@@ -14,6 +14,7 @@
 <style>
 html,body{margin:0;padding:0;height:100%;overflow:hidden;background:black;font-family:monospace;color:white;}
 canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
 .container-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;padding:20px;z-index:2;position:relative;}
 #myHeader{display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;width:100%;max-width:650px;margin-bottom:30px;cursor:pointer;z-index:2;}
 #logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
@@ -39,7 +40,6 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 #totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
 
-/* ===== SUMMARY CONTAINER ===== */
 .summary-container{
   display:none;
   flex-direction:column;
@@ -71,23 +71,24 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* Table Layout */
 .summary-table {width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td {padding:6px 10px;font-size:14px;font-family:'Share Tech Mono', monospace;white-space:nowrap;}
-.summary-table th {cursor:pointer;position:relative;user-select:none;text-align:center;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.3);transition:color 0.25s, text-shadow 0.3s;}
-.summary-table th:hover {color:#00ffaa;text-shadow:0 0 8px #00ffaa;}
-.summary-table th.sorted {color:#00ffcc;text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc;}
-.summary-table th::after {content:"";position:absolute;right:8px;opacity:0;transition:opacity 0.2s;color:#00ffcc;font-size:12px;text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc;}
+.summary-table th,
+.summary-table td{padding:6px 10px;border-bottom:1px solid rgba(0,255,0,0.15);font-size:14px;white-space:nowrap;font-family:'Share Tech Mono', monospace;}
+.summary-table th:nth-child(1), .summary-table td:nth-child(1){width:38%;text-align:left;}
+.summary-table th:nth-child(2), .summary-table td:nth-child(2){width:20%;text-align:right;}
+.summary-table th:nth-child(3), .summary-table td:nth-child(3){width:18%;text-align:center;}
+.summary-table th:nth-child(4), .summary-table td:nth-child(4){width:24%;text-align:right;}
+
+.summary-table th{position:relative;transition:color 0.25s, text-shadow 0.3s;user-select:none;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:5px;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.3);}
+.summary-table th.sorted{color:#00ffcc;text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc;}
+.summary-table th::after{content:'';opacity:0;transition:opacity 0.2s;font-size:12px;color:#00ffcc;}
 .summary-table th.sorted-asc::after{content:"▲";opacity:1;}
 .summary-table th.sorted-desc::after{content:"▼";opacity:1;}
-.summary-table th:nth-child(1), .summary-table td:nth-child(1) {width:38%;text-align:left;} 
-.summary-table th:nth-child(2), .summary-table td:nth-child(2) {width:20%;text-align:right;} 
-.summary-table th:nth-child(3), .summary-table td:nth-child(3) {width:18%;text-align:center;} 
-.summary-table th:nth-child(4), .summary-table td:nth-child(4) {width:24%;text-align:right;} 
+
 .summary-table td.price,.summary-table td.total-column{font-variant-numeric:tabular-nums;letter-spacing:0.5px;}
 .summary-table td.price::after{content:" ISK";color:rgba(0,255,0,0.6);font-size:12px;margin-left:3px;}
 .summary-table td{color:#e0ffe0;text-shadow:none;}
-.summary-table td.unrecognized{color:#ff4444 !important;text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;font-weight:bold;animation:unrecognizedGlow 1.5s infinite alternate;}
+.summary-table td.unrecognized{color:#ff4444 !important;text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important;font-weight:bold;text-align:left !important;animation:unrecognizedGlow 1.5s infinite alternate;}
 @keyframes unrecognizedGlow{0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;}50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;}}
 .summary-total td{font-weight:bold;border-top:1px solid rgba(0,255,0,0.4);color:#00ff00;text-shadow:0 0 10px #00ff00,0 0 25px #00ff00;}
 .summary-total td:first-child{text-align:right;}
@@ -95,7 +96,7 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-total td:last-child::after{content:" ISK";color:rgba(0,255,0,0.8);font-size:13px;margin-left:4px;}
 </style>
 </head>
-<body data-show-inventory="true">
+<body>
 
 <canvas id="starfield"></canvas>
 
@@ -156,7 +157,6 @@ async function fetchPrices(){
 // ===== HELPERS =====
 function formatNumber(n){return n.toLocaleString();}
 function animateCount(el,start,end,duration=2000){let startTime=null;function step(t){if(!startTime)startTime=t;let progress=Math.min((t-startTime)/duration,1);const current=Math.floor(progress*(end-start)+start);el.innerText=current.toLocaleString()+' ISK';if(progress<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
-function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
 
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
@@ -177,13 +177,9 @@ function showContent(prefillText){
     }
   }
 
-  // Separate recognized/unrecognized
-  const recognized = summary.filter(i => !i.unrecognized);
-  const unrecognized = summary.filter(i => i.unrecognized);
-
   const summaryContainer=document.getElementById('summaryContainer');
   let tableHTML='<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-  recognized.concat(unrecognized).forEach(item=>{
+  summary.forEach(item=>{
     tableHTML+=`<tr>
 <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
 <td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td>
@@ -202,59 +198,15 @@ function showContent(prefillText){
   const totalCostContainer=document.getElementById('totalCostContainer');
   leftContract.style.display='block';
   totalCostContainer.style.display='block';
-  animateCount(document.getElementById('totalCostText'),0,total,2000);
-  makeTotalCopyable(document.getElementById('summaryTotal'));
-  makeTotalCopyable(document.getElementById('totalCostText'));
-  document.querySelector('.main-container').style.display='none';
+  document.getElementById('totalCostText').innerText=formatNumber(total)+' ISK';
   document.getElementById('shareButton').style.display='inline-block';
 
-  attachSorting(); // attach sorting after table is built
+  attachSorting();
 }
 
-// ===== BUTTONS =====
-document.getElementById('submitButton').disabled=false;
-document.getElementById('submitButton').addEventListener('click',()=>{
-  const textareaValue=document.getElementById('message').value.trim();
-  if(textareaValue) showContent(textareaValue);
-});
-
-// ===== SHARE BUTTON =====
-document.getElementById('shareButton').onclick=async()=>{
-  const invText=document.getElementById('message').value.trim();
-  if(!invText)return;
-  const compressed=LZString.compressToEncodedURIComponent(invText);
-  const shortUrl=`${location.origin}${location.pathname}?inv=${compressed}`;
-  await navigator.clipboard.writeText(shortUrl);
-  document.getElementById('shareButton').innerText="Copied";
-  setTimeout(()=>{document.getElementById('shareButton').innerText="Shared";},2000);
-};
-
-// ===== PREFILL FROM URL =====
-window.addEventListener('load',async()=>{
-  await fetchPrices();
-  const params=new URLSearchParams(window.location.search);
-  const inv=params.get('inv');
-  if(inv){
-    const inventoryText=LZString.decompressFromEncodedURIComponent(inv);
-    document.getElementById('message').value=inventoryText;
-    showContent(inventoryText);
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('submitButton').style.display='none';
-    document.getElementById('shareButton').style.display='none';
-  }
-});
-
-// ===== LOGO ANIMATION =====
-window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore'),stellar=document.getElementById('stellar');
-  setTimeout(()=>{ore.style.animation='flickerRapid 0.3s linear forwards';setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);setTimeout(()=>{stellar.style.animation='flickerRapid 0.3s linear forwards';setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);},400);setTimeout(()=>{ore.style.animation='flickerQuick 0.3s linear forwards';stellar.style.animation='flickerQuick 0.3s linear forwards';setTimeout(()=>{ore.style.animation='softGlow 6s infinite';stellar.style.animation='softGlow 6s infinite';},300);},1100);},500);
-});
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-
-// ===== SORTING FUNCTION =====
+// ===== SORTING =====
 function attachSorting(){
-  const table = document.querySelector('.summary-table');
+  const table=document.querySelector('.summary-table');
   if(!table) return;
   const headers = table.querySelectorAll('th');
   let sortDirection = 1;
@@ -262,30 +214,41 @@ function attachSorting(){
 
   headers.forEach((header,index)=>{
     header.addEventListener('click',()=>{
-      const rows = Array.from(table.querySelectorAll('tbody tr'))
-                    .filter(r => !r.classList.contains('summary-total'));
-
+      const tbody=table.querySelector('tbody');
+      const totalRow = tbody.querySelector('.summary-total');
+      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r=>!r.classList.contains('summary-total'));
       headers.forEach(h=>h.classList.remove('sorted-asc','sorted-desc','sorted'));
-
-      if(activeColumn===index){sortDirection*=-1;} else {sortDirection=1;activeColumn=index;}
+      if(activeColumn===index) sortDirection*=-1;
+      else {sortDirection=1;activeColumn=index;}
 
       const recognized = rows.filter(r=>!r.querySelector('td').classList.contains('unrecognized'));
       const unrecognized = rows.filter(r=>r.querySelector('td').classList.contains('unrecognized'));
 
       const isNumeric = index>0;
       recognized.sort((a,b)=>{
-        const aText=a.children[index].innerText.replace(/[^\d.-]/g,'');
-        const bText=b.children[index].innerText.replace(/[^\d.-]/g,'');
+        const aText = a.children[index].innerText.replace(/[^\d.-]/g,'');
+        const bText = b.children[index].innerText.replace(/[^\d.-]/g,'');
         if(isNumeric) return (parseFloat(aText)-parseFloat(bText))*sortDirection;
         else return aText.localeCompare(bText)*sortDirection;
       });
 
-      activeColumn===0?table.querySelector('tbody').append(...recognized,...unrecognized):table.querySelector('tbody').append(...recognized,...unrecognized);
+      tbody.innerHTML='';
+      tbody.appendChild(totalRow);
+      tbody.append(...recognized,...unrecognized);
+
       header.classList.add('sorted');
       header.classList.add(sortDirection===1?'sorted-asc':'sorted-desc');
     });
   });
 }
+
+// ===== BUTTONS =====
+document.getElementById('message').addEventListener('input',()=>{document.getElementById('submitButton').disabled=!document.getElementById('message').value.trim().length;});
+document.getElementById('submitButton').addEventListener('click',()=>{showContent();});
+
+// ===== INIT =====
+fetchPrices();
 </script>
 </body>
 </html>
+
