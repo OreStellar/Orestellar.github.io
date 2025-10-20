@@ -455,9 +455,9 @@ document.getElementById('submitButton').addEventListener('click', showContent);
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
 // ===== LOGO ANIMATION =====
-window.onload = ()=>{
-  const ore=document.getElementById('ore');
-  const stellar=document.getElementById('stellar');
+window.addEventListener('load', () => {
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
 
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
@@ -477,7 +477,17 @@ window.onload = ()=>{
       },300);
     },1100);
   },500);
-};
+});
+  // ===== URL SHARE HANDLING =====
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const inv = params.get('inventory');
+  if (inv) {
+    const decoded = decodeURIComponent(inv);
+    document.getElementById('message').value = decoded;
+    showContent(); // auto-populate summary
+  }
+});
 </script>
 
 </body>
