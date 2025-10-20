@@ -207,25 +207,32 @@ async function showContent(){
   shareBtn.style.display='inline-block';
 
   // ===== Share using Bash URL Shortener =====
-  shareBtn.onclick=async()=>{
-    const data=encodeURIComponent(t);
-    const fullUrl=`${location.origin}${location.pathname}?inv=${data}`;
-    try{
-      const res=await fetch('https://bash-url-shortener.example/api', { // replace with your bash API endpoint
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({url:fullUrl})
-      });
-      const json=await res.json();
-      const shortUrl=json.shortUrl || fullUrl;
-      navigator.clipboard.writeText(shortUrl);
-      alert('Share Summary URL Copied!');
-    } catch(e){
-      navigator.clipboard.writeText(fullUrl);
-      alert('Share Summary URL Copied!');
-    }
-  };
-}
+  s// ===== Share using Bash URL Shortener (silent copy) =====
+shareBtn.onclick = async () => {
+  const data = encodeURIComponent(t);
+  const fullUrl = `${location.origin}${location.pathname}?inv=${data}`;
+  let shortUrl = fullUrl;
+
+  try {
+    const res = await fetch('https://bash-url-shortener.example/api', { // replace with your Bash API endpoint
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: fullUrl })
+    });
+    const json = await res.json();
+    if(json.shortUrl) shortUrl = json.shortUrl;
+  } catch(e) {
+    // fallback: full URL will be copied
+  }
+
+  // Copy silently
+  await navigator.clipboard.writeText(shortUrl);
+
+  // Optional: small visual cue (button flash)
+  shareBtn.style.transform = 'scale(1.08)';
+  setTimeout(()=>{ shareBtn.style.transform = 'scale(1)'; }, 200);
+};
+
 
 // ===== Check for URL prefill =====
 window.addEventListener('load',()=>{
