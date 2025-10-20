@@ -9,281 +9,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
-  font-family: monospace;
-  color: white;
-}
+html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
 
 /* Starfield canvas */
-canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
+canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
 /* Container wrapper */
-.container-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  gap: 20px;
-  padding: 20px;
-  z-index: 2;
-  position: relative;
-}
+.container-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:20px; padding:20px; z-index:2; position:relative; }
 
 /* Header / Logo */
-#myHeader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  width: 100%;
-  max-width: 650px;
-  margin-bottom: 30px;
-  cursor: pointer;
-  z-index: 2;
-}
-
-#logoText {
-  display: inline; 
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 4.3rem;
-  letter-spacing: 0;
-  color: rgba(255,255,255,0.1);
-  transform: skewX(-8deg);
-}
-
-#logoText span {
-  display: inline;
-  color: rgba(255,255,255,0.1);
-  text-shadow: none;
-}
-
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
-  50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
-}
-
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
-  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-}
+#myHeader { display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; width:100%; max-width:650px; margin-bottom:30px; cursor:pointer; z-index:2; }
+#logoText { display:inline; font-family:'Orbitron',sans-serif; font-weight:700; font-size:4.5rem; letter-spacing:0; color:rgba(255,255,255,0.1); transform:skewX(-8deg); }
+#logoText span { display:inline; color:rgba(255,255,255,0.1); text-shadow:none; }
+@keyframes softGlow { 0%,100% { text-shadow:0 0 5px #fff; color:rgba(255,255,255,0.75);} 50% {text-shadow:0 0 15px #fff; color:rgba(255,255,255,1);} }
+@keyframes flickerRapid { 0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; } 10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; } }
+@keyframes flickerQuick { 0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow:none; } 25%,75% { color: rgba(255,255,255,1); text-shadow:0 0 10px #fff; } }
 
 /* Main inventory box */
-.main-container {
-  width: 650px; max-width: 90%;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(20,20,20,0.92);
-  border-radius: 15px;
-}
-
-/* Textarea */
-.main-container textarea#message {
-  display: block;
-  margin: 0 auto;
-  width: 92%;
-  font-size: 18px;
-  padding: 20px;
-  border-radius: 10px;
-  resize: vertical;
-  background-color: rgba(17,17,17,0.97);
-  color: #ffffff;
-  border: 1px solid #333;
-  text-align: left;
-  font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 5px #111; 
-  transition: all 0.2s ease-in-out;
-}
-.main-container textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
-textarea#message:focus {
-  outline: none;
-  border-color: #fff;
-  box-shadow: inset 0 0 15px #fff, 0 0 25px #fff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
+.main-container { width:650px; max-width:90%; padding:30px; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.92); border-radius:15px; }
+.main-container textarea#message { display:block; margin:0 auto; width:92%; font-size:18px; padding:18px; border-radius:10px; resize:vertical; background-color:rgba(17,17,17,0.97); color:#fff; border:1px solid #333; text-align:left; font-family:'Share Tech Mono', monospace; box-shadow:inset 0 0 5px #111; transition: all 0.2s ease-in-out; }
+.main-container textarea#message::placeholder { color:#fff; opacity:0.6; }
+textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 15px #fff,0 0 25px #fff; transition:box-shadow 0.3s ease, border-color 0.3s ease; }
 
 /* Quote text */
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
+.quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
+@keyframes glowPulse { 0%,100% { text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;} 50% { text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
 
 /* Submit Button */
-#submitButton {
-  margin-top: 15px;
-  background: linear-gradient(145deg, #161616, #242424);
-  color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 15px 35px;
-  font-weight: bold;
-  font-family: 'Orbitron', sans-serif;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  text-shadow: 0 0 2px #fff;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
-  animation: ambientGlow 3.5s ease-in-out infinite alternate;
-  transition: all 0.35s ease;
-}
-@keyframes ambientGlow {
-  0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
-  100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
-}
-#submitButton:hover {
-  color: #000;
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  border-color: #fff;
-  transform: translateY(-2px) scale(1.04);
-  animation: hoverPulse 1.6s infinite alternate;
-  box-shadow: 0 0 10px #ffffffcc, 0 0 20px #ffffff66 inset;
-}
-@keyframes hoverPulse {
-  0% { box-shadow: 0 0 8px #ffffff88, 0 0 15px #ffffff33 inset; }
-  100% { box-shadow: 0 0 16px #ffffffcc, 0 0 25px #ffffff66 inset; }
-}
+#submitButton { margin-top:15px; background:linear-gradient(145deg,#161616,#242424); color:#fff; border:2px solid #ccc; border-radius:10px; padding:15px 35px; font-weight:bold; font-family:'Orbitron',sans-serif; cursor:pointer; position:relative; overflow:hidden; text-shadow:0 0 2px #fff; box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset; animation:ambientGlow 3.5s ease-in-out infinite alternate; transition:all 0.35s ease; }
+@keyframes ambientGlow { 0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;} 100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;} }
+#submitButton:hover { color:#000; background:linear-gradient(145deg,#f2f2f2,#dcdcdc); border-color:#fff; transform:translateY(-2px) scale(1.04); animation:hoverPulse 1.6s infinite alternate; box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset; }
+@keyframes hoverPulse { 0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;} 100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;} }
 
 /* Contracts and summary */
-.contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 15px; flex-wrap: wrap; width: 100%;
-}
-
-/* Contract Images */
-.total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
-}
-
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-
-#totalCostText {
-  position: absolute;
-  top: calc(50% + 10px);
-  left: calc(50% + -42px);
-  font-size: 14px; /* smaller */
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  cursor: pointer;
-}
+.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:15px; flex-wrap:wrap; width:100%; }
+.total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
+#leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
+#totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
+#totalCostText { position:absolute; top:calc(50% + 10px); left:calc(50% - 42px); font-size:14px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
 
 /* Summary Container Table Style */
-.summary-container {
-  display: none;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  font-family: 'Orbitron', monospace;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #00ff00;
-  background: rgba(0, 10, 0, 0.85);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  border-radius: 12px;
-  padding: 12px 18px;
-  width: 100%;
-  max-width: 650px;
-  min-width: 300px;
-  text-shadow: 0 0 6px #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
-  backdrop-filter: blur(6px);
-  max-height: 420px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #00ff00 transparent;
-  margin: 0 auto;
-}
-
-.summary-container::-webkit-scrollbar {
-  width: 6px;
-}
-.summary-container::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  box-shadow: 0 0 10px #00ff00;
-  border-radius: 4px;
-}
-
-.summary-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.summary-table th, .summary-table td {
-  padding: 4px 8px;
-  text-align: left;
-  border-bottom: 1px solid rgba(0,255,0,0.2);
-  font-size: 14px;
-}
-.summary-table th {
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-}
-.summary-table td {
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-}
-.summary-table td.unrecognized {
-  color: #ff3333;
-  text-shadow: 0 0 10px #ff3333,0 0 20px #ff0000;
-}
-
-/* Total Line */
-.summary-total {
-  margin-top: 6px;
-  font-weight: bold;
-  border-top: 1px solid rgba(0,255,0,0.3);
-  display: flex;
-  justify-content: space-between;
-}
-.summary-total span {
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00,0 0 24px #00ff00;
-}
+.summary-container { display:none; flex-direction:column; align-items:stretch; justify-content:flex-start; font-family:'Orbitron',monospace; font-size:14px; line-height:1.4; color:#00ff00; background:rgba(0,10,0,0.85); border:1px solid rgba(0,255,0,0.5); border-radius:12px; padding:12px 18px; width:100%; max-width:650px; min-width:300px; text-shadow:0 0 6px #00ff00; box-shadow:0 0 12px rgba(0,255,0,0.3); backdrop-filter:blur(6px); max-height:420px; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#00ff00 transparent; margin:0 auto; }
+.summary-container::-webkit-scrollbar { width:6px; }
+.summary-container::-webkit-scrollbar-thumb { background:#00ff00; box-shadow:0 0 10px #00ff00; border-radius:4px; }
+.summary-table { width:100%; border-collapse:collapse; }
+.summary-table th,.summary-table td { padding:4px 8px; text-align:left; border-bottom:1px solid rgba(0,255,0,0.2); font-size:14px; }
+.summary-table th { color:#00ff00; text-shadow:0 0 6px #00ff00; }
+.summary-table td { color:#00ff00; text-shadow:0 0 6px #00ff00; }
+.summary-table td.unrecognized { color:#ff3333; text-shadow:0 0 10px #ff3333,0 0 20px #ff0000; }
+.summary-total { margin-top:6px; font-weight:bold; border-top:1px solid rgba(0,255,0,0.3); display:flex; justify-content:space-between; }
+.summary-total span { color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
 
 /* Share Summary Button */
-#shareButton {
-  display: none;
-  margin-top: 12px;
-  padding: 12px 28px;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: bold;
-  color: #000;
-  background: linear-gradient(145deg, #00ff00, #00cc00);
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 0 12px #00ff00;
-}
-#shareButton:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 18px #00ff00, 0 0 28px #00cc00 inset;
-}
+#shareButton { display:none; margin-top:12px; padding:12px 28px; font-family:'Orbitron',sans-serif; font-weight:bold; color:#000; background:linear-gradient(145deg,#00ff00,#00cc00); border-radius:10px; cursor:pointer; box-shadow:0 0 12px #00ff00; }
+#shareButton:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 0 18px #00ff00,0 0 28px #00cc00 inset; }
+
 </style>
 </head>
 <body>
@@ -292,9 +72,7 @@ textarea#message:focus {
 
 <div class="container-wrapper">
   <header id="myHeader">
-    <h1 id="logoText">
-      <span id="ore">Ore</span><span id="stellar">Stellar</span>
-    </h1>
+    <h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
   </header>
 
   <div class="main-container">
@@ -323,19 +101,17 @@ resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStar
 
 let stars=[], clusterCount=12;
 function createStars(){
-  stars=[];
-  const clusterCenters=[];
+  stars=[]; const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
     let x,y;
     if(Math.random()<0.6){
       const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
-      const radius=Math.random()*120;
-      const angle=Math.random()*Math.PI*2;
+      const radius=Math.random()*120; const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
-    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
-    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.15,baseAlpha:0.8+Math.random()*0.2});
+    }else{ x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
+    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
@@ -345,45 +121,36 @@ let nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(time-lastBrightTime>nextBrightInterval){
-    lastBrightTime=time;
-    nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
+    lastBrightTime=time; nextBrightInterval=7000+Math.random()*8000;
+    for(let i=0;i<2;i++){ const s=stars[Math.floor(Math.random()*stars.length)]; s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000; }
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.6+0.3*Math.sin(time*0.002+s.phase);
+    if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;
-    ctx.globalAlpha=alpha;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
     ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
   }
-  ctx.globalAlpha=1;
-  requestAnimationFrame(drawStars);
+  ctx.globalAlpha=1; requestAnimationFrame(drawStars);
 }
 drawStars();
 
-// ===== FETCH PRICES CSV =====
+// ===== FETCH PRICES CSV (second-last column) =====
 let priceList={};
 async function fetchPrices(){
   const response = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
   const csvText = await response.text();
-  const rows = csvText.split('\n').slice(1); // skip header
+  const rows = csvText.split('\n');
   rows.forEach(row=>{
-    const cols = row.split(',');
-    if(cols.length>=3){
+    const cols=row.split(',');
+    if(cols.length>=2){
       const oreName = cols[0].toLowerCase().trim();
-      const suggestedPrice = parseInt(cols[2]);
-      if(!isNaN(suggestedPrice)){
-        priceList[oreName] = suggestedPrice;
-      }
+      const suggestedPrice=parseInt(cols[cols.length-2]); // second-last column
+      if(!isNaN(suggestedPrice)) priceList[oreName]=suggestedPrice;
     }
   });
 }
@@ -405,23 +172,20 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function normalizeName(name){ return name.toLowerCase().replace(/\s+/g,' ').trim(); }
-
 function showContent(){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match;
-  let summary=[];
-  let total=0;
+  let summary=[]; let total=0;
 
   while((match=regex.exec(t))!==null){
     const nameRaw=match[1].trim();
-    const name = normalizeName(nameRaw);
-    const qty = parseInt(match[2]);
+    const name=nameRaw.toLowerCase().replace(/\s+/g,' ');
+    const qty=parseInt(match[2]);
 
     if(priceList[name]!==undefined){
       summary.push({name:nameRaw,price:priceList[name],qty:qty,val:qty*priceList[name]});
-      total += qty*priceList[name];
+      total+=qty*priceList[name];
     } else {
       summary.push({name:nameRaw,price:'?',qty:qty,val:'Unrecognized',unrecognized:true});
     }
@@ -433,7 +197,7 @@ function showContent(){
     tableHTML+=`<tr>
       <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
       <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
-      <td>${item.unrecognized?item.qty:formatNumber(item.qty)}</td>
+      <td>${formatNumber(item.qty)}</td>
       <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
     </tr>`;
   });
