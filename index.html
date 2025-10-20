@@ -62,20 +62,21 @@ canvas#starfield {
 }
 
 #logoText span {
-  display: inline;
+  display: inline; 
   color: rgba(255,255,255,0.1);
-  text-shadow: none;
+  text-shadow: none; 
 }
 
-/* Logo Animations */
 @keyframes softGlow {
   0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
   50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
 }
+
 @keyframes flickerRapid {
   0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
   10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
 }
+
 @keyframes flickerQuick {
   0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
   25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
@@ -194,66 +195,100 @@ textarea#message:focus {
 
 .summary-container {
   display: none;
-  width: 100%;
-  max-width: 650px;
-  background: rgba(0,10,0,0.85);
-  border: 1px solid rgba(0,255,0,0.5);
-  border-radius: 12px;
-  padding: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  font-family: 'Orbitron', monospace;
   color: #00ff00;
+  background: rgba(0, 10, 0, 0.85);
+  border: 1px solid rgba(0, 255, 0, 0.5);
+  border-radius: 12px;
+  padding: 14px 20px;
+  width: auto;
+  min-width: 300px;
+  max-width: 100%;
   text-shadow: 0 0 6px #00ff00;
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
+  backdrop-filter: blur(6px);
   max-height: 420px;
   overflow-y: auto;
-  font-family: 'Orbitron', monospace;
-  box-shadow: 0 0 12px rgba(0,255,0,0.3);
-  backdrop-filter: blur(6px);
+  overflow-x: hidden;         
+  scrollbar-width: thin;
+  scrollbar-color: #00ff00 transparent;
 }
 
-.summary-container table {
+.summary-container::-webkit-scrollbar {
+  width: 6px;
+}
+.summary-container::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+  border-radius: 4px;
+}
+
+.summary-table {
   width: 100%;
   border-collapse: collapse;
 }
-
-.summary-container th, .summary-container td {
+.summary-table th, .summary-table td {
   padding: 6px 10px;
   text-align: left;
 }
-
-.summary-container th {
-  border-bottom: 1px solid rgba(0,255,0,0.4);
-  font-weight: bold;
+.summary-table th {
+  border-bottom: 1px solid rgba(0,255,0,0.5);
 }
-
-.summary-container td.price,
-.summary-container td.qty,
-.summary-container td.total {
+.summary-table td.price, .summary-table td.total {
   text-align: right;
 }
-
-.summary-row.unrecognized td {
+.unrecognized {
   color: #ff3333;
   text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
 }
 
+/* Total line - ledger style neon green */
 .summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-top: 1px solid rgba(0, 255, 0, 0.4);
+  padding-top: 10px;
+  margin-top: 8px;
   font-weight: bold;
+  font-size: 16px;
 }
 
-#copyUrlButton {
-  display: none;
-  margin-top: 10px;
-  background: #111;
-  border: 1px solid #00ff00;
+.summary-total span:first-child {
+  text-align: left;
+  flex: 1;
+  color: #00ff00;          
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
+}
+
+.summary-total span:last-child {
+  text-align: right;
+  flex: 0 0 auto;
   color: #00ff00;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Orbitron', monospace;
-  text-shadow: 0 0 4px #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
 }
 
-#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
+/* Share summary button */
+#copyUrlButton {
+  margin: 12px auto 0 auto;
+  display: none; 
+  padding: 12px 30px;
+  font-family: 'Orbitron', monospace;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(145deg, #161616, #242424);
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
+}
 
+/* Copied message */
+#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -262,9 +297,9 @@ textarea#message:focus {
 
 <div class="container-wrapper">
   <header id="myHeader">
-    <h1 id="logoText">
-      <span id="ore">Ore</span><span id="stellar">Stellar</span>
-    </h1>
+<h1 id="logoText">
+  <span id="ore">Ore</span><span id="stellar">Stellar</span>
+</h1>
   </header>
 
   <div class="main-container w3-card w3-container w3-center">
@@ -275,16 +310,14 @@ textarea#message:focus {
 
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
-
     <div id="summaryContainer" class="summary-container"></div>
-
-    <button id="copyUrlButton">Share Summary</button>
-
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
       <div id="copiedMessage">Copied!</div>
     </div>
   </div>
+
+  <button id="copyUrlButton">Share Summary</button>
 
 </div>
 
@@ -297,8 +330,7 @@ resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStar
 
 let stars=[], clusterCount=12;
 function createStars() {
-  stars=[];
-  const clusterCenters=[]; 
+  stars=[]; const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
@@ -307,34 +339,23 @@ function createStars() {
       const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
       const radius=Math.random()*120;
       const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle);
-      y=c.y+radius*Math.sin(angle);
-    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
+      x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
+    } else { x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
-let lastBrightTime=0,nextBrightInterval=7000+Math.random()*8000;
+
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(time-lastBrightTime>nextBrightInterval){
-    lastBrightTime=time;
-    nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
-  }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
-    else s.isBright=false;
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle=s.color;
     ctx.globalAlpha=alpha;
-    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
+    ctx.shadowBlur=s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
   }
@@ -343,7 +364,7 @@ function drawStars(time=0){
 }
 drawStars();
 
-// ===== PRICES & SUBMIT =====
+// ===== PRICES =====
 let priceList={};
 async function loadPrices(){
   const response=await fetch('data/prices.csv');
@@ -361,6 +382,7 @@ async function loadPrices(){
 }
 loadPrices();
 
+// ===== UTIL =====
 function formatNumber(n){ return n.toLocaleString(); }
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
@@ -374,95 +396,109 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function showContent(fromUrl=false){
-  const t=document.getElementById('message').value;
+// ===== SUMMARY GENERATION =====
+function showContent(inputText=null, isShared=false){
+  const t = inputText || document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
+
   while((match=regex.exec(t))!==null){
     const name=match[1].trim(),qty=parseInt(match[2]);
     const lookupName=name.toLowerCase();
     if(priceList[lookupName]){
-      summary.push({name,qty,price:priceList[lookupName],val:qty*priceList[lookupName]});
+      summary.push({name,qty,val:priceList[lookupName]});
       total+=qty*priceList[lookupName];
-    } else summary.push({name,qty,price:'-',val:'Unrecognized',unrecognized:true});
+    } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
 
   const summaryContainer=document.getElementById('summaryContainer');
-  summaryContainer.innerHTML=`
-    <table>
-      <thead>
-        <tr><th>Ore</th><th>Price</th><th>Qty</th><th>Value</th></tr>
-      </thead>
-      <tbody>
-        ${summary.map(item=>`
-          <tr class="${item.unrecognized?'summary-row unrecognized':''}">
-            <td>${item.name}</td>
-            <td class="price">${item.price==='-'?'-':formatNumber(item.price)+' ISK'}</td>
-            <td class="qty">${item.qty}</td>
-            <td class="total">${item.val==='Unrecognized'?'Unrecognized':formatNumber(item.val)+' ISK'}</td>
-          </tr>`).join('')}
-      </tbody>
-      <tfoot>
-        <tr class="summary-total">
-          <td>Total</td><td></td><td></td><td>${formatNumber(total)} ISK</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  summaryContainer.style.display='block';
+  summaryContainer.innerHTML='';
 
-  document.getElementById('leftContainer').style.display=fromUrl?'none':'block';
-  document.getElementById('totalCostContainer').style.display=fromUrl?'none':'block';
-  if(!fromUrl) animateCount(document.getElementById('totalCostText'),0,total);
+  // Build table
+  const table=document.createElement('table');
+  table.className='summary-table';
+  const header=document.createElement('tr');
+  header.innerHTML='<th>Ore</th><th>Price</th><th>Qty</th><th>Total</th>';
+  table.appendChild(header);
 
-  if(!fromUrl) document.getElementById('copyUrlButton').style.display='inline-block';
-  document.querySelector('.main-container').style.display='none';
+  summary.forEach(item=>{
+    const row=document.createElement('tr');
+    if(item.unrecognized) row.classList.add('unrecognized');
+    row.innerHTML=`<td>${item.name}</td>
+                     <td class="price">${item.val==='Unrecognized'?'-':formatNumber(item.val)}</td>
+                     <td class="qty">${item.qty}</td>
+                     <td class="total">${item.val==='Unrecognized'?'-':formatNumber(item.val*item.qty)}</td>`;
+    table.appendChild(row);
+  });
+  summaryContainer.appendChild(table);
+
+  // Total line
+  const totalDiv=document.createElement('div');
+  totalDiv.className='summary-total';
+  totalDiv.innerHTML=`<span>Total</span><span>${formatNumber(total)} ISK</span>`;
+  summaryContainer.appendChild(totalDiv);
+
+  summaryContainer.style.display='flex';
+  document.getElementById('leftContainer').style.display=isShared?'none':'block';
+  document.getElementById('totalCostContainer').style.display=isShared?'none':'block';
+  animateCount(document.getElementById('totalCostText'),0,total);
+  if(!isShared) document.querySelector('.main-container').style.display='none';
+  document.getElementById('copyUrlButton').style.display=isShared?'none':'block';
 }
-
-// ===== COPY TOTAL ISK =====
-document.getElementById('totalCostText').addEventListener('click',()=>{
-  const numericText=document.getElementById('totalCostText').innerText.replace(/\s*ISK\s*/i,'');
-  navigator.clipboard.writeText(numericText);
-  const el=document.getElementById('totalCostText');
-  const original=el.innerText;
-  el.innerText='Copied'; setTimeout(()=>el.innerText=original,1500);
-});
-
-// ===== COPY SHARE URL =====
-document.getElementById('copyUrlButton').addEventListener('click',()=>{
-  const inventory=document.getElementById('message').value;
-  const baseUrl=window.location.origin+window.location.pathname;
-  const shareUrl=baseUrl+'?inv='+encodeURIComponent(inventory);
-  navigator.clipboard.writeText(shareUrl);
-  const btn=document.getElementById('copyUrlButton');
-  const original=btn.innerText; btn.innerText='Copied!'; setTimeout(()=>btn.innerText=original,1500);
-});
 
 // ===== SUBMIT BUTTON =====
-document.getElementById('submitButton').addEventListener('click',()=>showContent(false));
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+document.getElementById('submitButton').addEventListener('click',()=>showContent());
 
-// ===== LOAD INVENTORY FROM URL =====
-function loadFromUrl(){
+// ===== COPY TOTAL COST =====
+const totalCostEl=document.getElementById('totalCostText');
+totalCostEl.addEventListener('click',()=>{
+  const numericText=totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
+  navigator.clipboard.writeText(numericText);
+  const original=totalCostEl.innerText;
+  totalCostEl.innerText='Copied';
+  setTimeout(()=>{totalCostEl.innerText=original;},1500);
+});
+
+// ===== SHARE SUMMARY BUTTON =====
+const copyBtn=document.getElementById('copyUrlButton');
+copyBtn.addEventListener('click',()=>{
+  const input=document.getElementById('message').value;
+  const encoded=encodeURIComponent(input);
+  const shortUrl=`${location.origin}${location.pathname}?inventory=${encoded}`;
+  navigator.clipboard.writeText(shortUrl);
+  copyBtn.innerText='Copied!';
+  setTimeout(()=>{copyBtn.innerText='Share Summary';},1500);
+});
+
+// ===== LOAD FROM URL =====
+function checkSharedUrl(){
   const params=new URLSearchParams(window.location.search);
-  const inv=params.get('inv');
-  if(inv){
-    document.getElementById('message').value=inv;
-    showContent(true);
+  if(params.has('inventory')){
+    const inv=decodeURIComponent(params.get('inventory'));
+    const waitPrices=setInterval(()=>{
+      if(Object.keys(priceList).length>0){
+        showContent(inv,true);
+        clearInterval(waitPrices);
+      }
+    },50);
   }
 }
-loadFromUrl();
+checkSharedUrl();
+
+// ===== LOGO CLICK REFRESH =====
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
 // ===== LOGO ANIMATION =====
 window.addEventListener('load',()=>{
   const ore=document.getElementById('ore');
   const stellar=document.getElementById('stellar');
+
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>ore.style.animation='softGlow 6s infinite',300);
+    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
     setTimeout(()=>{
       stellar.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>stellar.style.animation='softGlow 6s infinite',300);
+      setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
     },400);
     setTimeout(()=>{
       ore.style.animation='flickerQuick 0.3s linear forwards';
@@ -475,5 +511,6 @@ window.addEventListener('load',()=>{
   },500);
 });
 </script>
+
 </body>
 </html>
