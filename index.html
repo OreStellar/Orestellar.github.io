@@ -198,6 +198,7 @@ textarea#message:focus {
   display: none; /* HIDE by default until submit */
   flex-direction: column;
   align-items: flex-end;
+  overflow-x: auto;
   justify-content: flex-start;
   font-family: 'Orbitron', sans-serif;
   color: #00ff00; /* match total ISK */
@@ -256,8 +257,12 @@ textarea#message:focus {
 }
 
 .summary-total span:last-child {
+  flex: 0 0 auto;          /* allow width to fit content */
+  min-width: 130px;        /* optional minimum width */
   text-align: right;
-  flex: 0 0 130px;
+  white-space: nowrap;     /* PREVENT WRAPPING */
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
 }
 
 
