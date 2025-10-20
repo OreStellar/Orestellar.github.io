@@ -144,7 +144,7 @@ function drawStars(time=0){
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.55+0.45*Math.sin(time*0.002+s.phase); // reduced shimmer by 5%
+    if(s.twinkle) alpha=0.55+0.3*Math.sin(time*0.002+s.phase); // reduced shimmer by 5%
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
     ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
