@@ -177,10 +177,35 @@ fetchPrices();
 // ===== ENABLE SUBMIT BUTTON =====
 document.getElementById('submitButton').disabled = false;
 
+// ===== BASE62 ENCODE/DECODE =====
+const base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+function base62Encode(str){
+  let result="", n;
+  for(let i=0;i<str.length;i++){
+    n=str.charCodeAt(i);
+    do{
+      result=base62chars[n%62]+result;
+      n=Math.floor(n/62);
+    }while(n>0);
+  }
+  return result;
+}
+function base62Decode(str){
+  let result="";
+  for(let i=0;i<str.length;i++){
+    let n=0;
+    let multiplier=1;
+    for(let j=i;j<str.length;j++){
+      n = n*62 + base62chars.indexOf(str[j]);
+    }
+    result += String.fromCharCode(n);
+    i=str.length; // break outer loop
+  }
+  return result;
+}
+
 // ===== HELPERS =====
 function formatNumber(n){ return n.toLocaleString(); }
-
-// Animate Contract 2 total
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
   function step(t){
@@ -193,26 +218,9 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// Simple numeric hash → Base62
-function base62Encode(num){
-  const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let s="";
-  do { s=chars[num%62]+s; num=Math.floor(num/62); } while(num>0);
-  return s;
-}
-function urlToShortCode(url){
-  // Simple hash
-  let hash=0;
-  for(let i=0;i<url.length;i++){
-    hash=((hash<<5)-hash)+url.charCodeAt(i);
-    hash=hash & hash; // force 32-bit
-  }
-  return base62Encode(Math.abs(hash));
-}
-
 // ===== SHOW SUMMARY =====
-function showContent(){
-  const t = document.getElementById('message').value;
+function showContent(invStr=null){
+  const t = invStr || document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
 
@@ -243,13 +251,12 @@ function showContent(){
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'block';
 
-  // Animate Contract 2 total
-  const totalCostText = document.getElementById('totalCostText');
-  animateCount(totalCostText,0,total,1500);
-
   // === CONTRACTS ===
-  document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
+  const leftContract = document.getElementById('leftContainer');
+  const totalCostContainer = document.getElementById('totalCostContainer');
+  leftContract.style.display = 'block';
+  totalCostContainer.style.display = 'block';
+  animateCount(document.getElementById('totalCostText'),0,total,1500);
 
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
@@ -257,38 +264,28 @@ function showContent(){
   // === SHARE BUTTON ===
   const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display = 'inline-block';
-  shareBtn.onclick = async () => {
-    let longUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(document.getElementById('message').value)}`;
-    let code = urlToShortCode(longUrl);
-    let shortUrl = `${location.origin}${location.pathname}?s=${code}`;
-    await navigator.clipboard.writeText(shortUrl);
-    alert('Short URL copied: '+shortUrl);
+  shareBtn.onclick = () => {
+    const inv = document.getElementById('message').value;
+    const code = base62Encode(inv);
+    const url = `${location.origin}${location.pathname}?c=${code}`;
+    navigator.clipboard.writeText(url);
+    alert('Shareable URL copied!');
   };
 }
 
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
-  const inv = params.get('inv');
-  const s = params.get('s');
-  if(inv){
-    document.getElementById('message').value = decodeURIComponent(inv);
-    showContent();
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('submitButton').style.display='none';
-    document.getElementById('shareButton').style.display='none';
-  } else if(s){
-    alert('Shared summary loaded with code: '+s);
-    document.getElementById('main-container').style.display='none';
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-    document.getElementById('shareButton').style.display='none';
+  const code = params.get('c');
+  if(code){
+    const inv = base62Decode(code);
+    document.getElementById('message').value = inv;
+    showContent(inv);
   }
 });
 
 // ===== BUTTONS =====
-document.getElementById('submitButton').addEventListener('click', showContent);
+document.getElementById('submitButton').addEventListener('click', ()=>showContent());
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
 // ===== LOGO ANIMATION =====
