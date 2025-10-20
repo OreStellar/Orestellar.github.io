@@ -185,27 +185,50 @@ function showContent(prefillText){
     }
   }
 
-  const summaryContainer=document.getElementById('summaryContainer');
-  let tableHTML='<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-  summary.forEach(item=>{
-    tableHTML+=`<tr class="${item.unrecognized?'unrecognized':''}"><td>${item.name}</td><td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td><td class="quantity">${formatNumber(item.qty)}</td><td class="${item.unrecognized?'total-column unrecognized':'total-column'}">${item.unrecognized?item.val:formatNumber(item.val)}</td></tr>`;
+  const summaryContainer = document.getElementById('summaryContainer');
+  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
+  
+  summary.forEach(item => {
+    tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
+      <td>${item.name}</td>
+      <td class="price">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+      <td class="quantity">${formatNumber(item.qty)}</td>
+      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+    </tr>`;
   });
-  tableHTML+=`<tr class="summary-total"><td colspan="3" style="text-align:right;">Total</td><td id="summaryTotal">${formatNumber(total)}</td></tr></tbody></table>`;
-  summaryContainer.innerHTML=tableHTML;
-  summaryContainer.style.display='flex';
 
-  const leftContract=document.getElementById('leftContainer');
-  const rightContract=document.getElementById('totalCostContainer');
-  leftContract.style.display='block';
-  rightContract.style.display='block';
-  document.getElementById('totalCostText').innerText=formatNumber(total)+' ISK';
+  tableHTML += `<tr class="summary-total">
+    <td colspan="3" style="text-align:right;">Total</td>
+    <td id="summaryTotal">${formatNumber(total)}</td>
+  </tr></tbody></table>`;
 
-  makeTotalCopyable(document.getElementById('totalCostText'));
+  summaryContainer.innerHTML = tableHTML;
+  summaryContainer.style.display = 'flex';
+
+  const leftContract = document.getElementById('leftContainer');
+  const rightContract = document.getElementById('totalCostContainer');
+  leftContract.style.display = 'block';
+  rightContract.style.display = 'block';
+
+  // Update contract total ISK
+  const totalText = document.getElementById('totalCostText');
+  totalText.innerText = formatNumber(total) + ' ISK';
+
+  // Make totals copyable
+  makeTotalCopyable(totalText);             // Contract overlay
+  makeTotalCopyable(document.getElementById('summaryTotal')); // Summary container
+
+  // Attach sorting for the summary table
   attachSorting(summaryContainer);
 
-  // Hide inventory
+  // Hide the inventory textarea and submit button
   document.querySelector('.main-container').style.display = 'none';
+  document.getElementById('submitButton').style.display = 'none';
+
+  // Show the Share Summary button
+  document.getElementById('shareButton').style.display = 'inline-block';
 }
+
 
 // ===== SORTING =====
 function attachSorting(container){
