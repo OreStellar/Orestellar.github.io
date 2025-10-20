@@ -106,8 +106,29 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
 /* Make only the last column (totals) green, excluding the header row */
 .summary-table tr:not(:first-child) td:last-child {
   color:#00ff00;
-  text-
+  text-shadow:0 0 8px #00ff00, 0 0 16px #00ff00;
+}
 
+/* Unrecognized ores stay red */
+.summary-table td.unrecognized {
+  color:#ff3333;
+  text-shadow:0 0 10px #ff3333,0 0 20px #ff0000;
+}
+
+/* Total row styling */
+.summary-total td {
+  font-weight:bold;
+  border-top:1px solid rgba(255,255,255,0.3);
+  color:#ffffff;
+  text-shadow:0 0 6px #ffffff;
+}
+
+/* Final total ISK value bright green */
+.summary-total td:last-child,
+.summary-total span {
+  color:#00ff00 !important;
+  text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;
+}
 
 </style>
 </head>
