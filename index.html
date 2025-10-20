@@ -206,6 +206,30 @@ window.addEventListener('load',async()=>{
     document.getElementById('shareButton').style.display='none';
   }
 });
+  window.addEventListener('load', () => {
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
+
+  setTimeout(() => {
+    ore.style.animation = 'flickerRapid 0.3s linear forwards';
+    setTimeout(() => { ore.style.animation = 'softGlow 6s infinite'; }, 300);
+
+    setTimeout(() => {
+      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
+      setTimeout(() => { stellar.style.animation = 'softGlow 6s infinite'; }, 300);
+    }, 400);
+
+    setTimeout(() => {
+      ore.style.animation = 'flickerQuick 0.3s linear forwards';
+      stellar.style.animation = 'flickerQuick 0.3s linear forwards';
+      setTimeout(() => {
+        ore.style.animation = 'softGlow 6s infinite';
+        stellar.style.animation = 'softGlow 6s infinite';
+      }, 300);
+    }, 1100);
+  }, 500);
+});
+
 </script>
 
 </body>
