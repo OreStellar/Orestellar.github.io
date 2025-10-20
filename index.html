@@ -238,34 +238,38 @@ function attachSorting(container){
     header.addEventListener('click', ()=>{
       const tbody = table.querySelector('tbody');
       const rows = Array.from(tbody.querySelectorAll('tr'));
-      const currentSorted = header.classList.contains('sorted-asc') || header.classList.contains('sorted-desc');
+
+      const ascending = !header.classList.contains('sorted-asc');
       headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
       header.classList.add('sorted');
-      let ascending = !header.classList.contains('sorted-asc');
       header.classList.toggle('sorted-asc', ascending);
       header.classList.toggle('sorted-desc', !ascending);
 
       rows.sort((a,b)=>{
-        const valA = a.children[index].innerText.replace(/[^0-9]/g,'');
-        const valB = b.children[index].innerText.replace(/[^0-9]/g,'');
         if(a.classList.contains('summary-total')) return 1;
         if(b.classList.contains('summary-total')) return -1;
         if(a.classList.contains('unrecognized')) return 1;
         if(b.classList.contains('unrecognized')) return -1;
+
+        const valA = a.children[index].innerText.replace(/[^0-9.]/g,'');
+        const valB = b.children[index].innerText.replace(/[^0-9.]/g,'');
         
-        // ✅ Name column fix
-        if(index===0){
+        if(index === 0){ // Name column
           return ascending
             ? a.children[index].innerText.localeCompare(b.children[index].innerText)
             : b.children[index].innerText.localeCompare(a.children[index].innerText);
+        } else { // Numeric columns
+          return ascending
+            ? parseFloat(valA || 0) - parseFloat(valB || 0)
+            : parseFloat(valB || 0) - parseFloat(valA || 0);
         }
-
-        return ascending ? valA - valB : valB - valA;
       });
+
       rows.forEach(r=>tbody.appendChild(r));
     });
   });
 }
+
 
 
 // ===== SUBMIT BUTTON =====
@@ -303,25 +307,35 @@ window.addEventListener('load',()=>{
 });
 // ===== SHARE SUMMARY BUTTON =====
 document.getElementById('shareButton').addEventListener('click', () => {
-  const summaryContainer = document.getElementById('summaryContainer');
-  if (!summaryContainer) return;
+  const messageBox = document.getElementById('message');
+  const inventoryText = messageBox.value.trim();
+  if(!inventoryText) return;
 
-  // Copy table as text
-  const textToCopy = Array.from(summaryContainer.querySelectorAll('tr'))
-    .map(row => Array.from(row.cells).map(cell => cell.innerText).join('\t'))
-    .join('\n');
+  // Compress and encode
+  const compressed = LZString.compressToEncodedURIComponent(inventoryText);
 
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    const btn = document.getElementById('shareButton');
-    const originalText = btn.innerText;
-    btn.innerText = 'Copied!';
-    setTimeout(() => { btn.innerText = originalText; }, 1500);
-  });
+  // Construct shareable URL
+  const shareURL = `${window.location.origin}${window.location.pathname}?data=${compressed}`;
+
+  // Open new tab with summary
+  window.open(shareURL, '_blank');
 });
+
 
 // ===== INITIALIZE =====
 fetchPrices();
-  
+  window.addEventListener('load', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const compressedData = urlParams.get('data');
+  if(compressedData){
+    const inventoryText = LZString.decompressFromEncodedURIComponent(compressedData);
+    if(inventoryText){
+      document.getElementById('message').value = inventoryText;
+      showContent(inventoryText);
+    }
+  }
+});
+
 </script>
 </body>
 </html>
