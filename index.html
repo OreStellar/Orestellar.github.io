@@ -92,8 +92,8 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Share Tech Mono', monospace; /* consistent digit spacing */
-  table-layout: fixed; /* makes centering consistent */
+  font-family: 'Share Tech Mono', monospace;
+  table-layout: fixed;
 }
 
 .summary-table th,
@@ -149,8 +149,10 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
   border-top: 1px solid rgba(255,255,255,0.3);
   color: #ffffff;
   text-shadow: 0 0 6px #ffffff;
-  white-space: nowrap; /* prevent wrapping */
-  text-align: center; /* center total ISK label and value */
+  white-space: nowrap; /* no wrapping */
+  overflow: visible;   /* no truncation */
+  text-overflow: clip; /* disable ellipsis */
+  text-align: center;
 }
 
 /* Final total ISK value bright green */
@@ -159,6 +161,7 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
   color: #00ff00 !important;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
   white-space: nowrap;
+  overflow: visible;
 }
 
 </style>
@@ -405,6 +408,21 @@ window.addEventListener('load',()=>{
 });
 
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
+
+// === Shorten "Compressed" to "Comp." in summary container ===
+function shortenCompressedNames() {
+  const nameCells = document.querySelectorAll('.summary-table td:first-child');
+  nameCells.forEach(cell => {
+    cell.textContent = cell.textContent.replace(/^Compressed\s+/i, 'Comp. ');
+  });
+}
+
+// Watch for summary updates and auto-run shortening
+const summaryObserver = new MutationObserver(shortenCompressedNames);
+const summaryContainer = document.querySelector('#summaryContainer');
+if (summaryContainer) {
+  summaryObserver.observe(summaryContainer, { childList: true, subtree: true });
+}  
 </script>
 </body>
 </html>
