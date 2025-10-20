@@ -199,7 +199,7 @@ textarea#message:focus {
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', monospace;
   color: #00ff00;
   background: rgba(0, 10, 0, 0.85);
   border: 1px solid rgba(0, 255, 0, 0.5);
@@ -212,13 +212,12 @@ textarea#message:focus {
   box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
   backdrop-filter: blur(6px);
   max-height: 420px;          /* scroll limit */
-  overflow-y: auto;           /* vertical scroll when tall */
-  overflow-x: hidden;         /* prevent horizontal scroll */
+  overflow-y: auto;           /* vertical scroll */
+  overflow-x: hidden;         
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
 }
 
-/* Scrollbar aesthetic for WebKit browsers */
 .summary-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -233,12 +232,64 @@ textarea#message:focus {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 8px;
-  font-size: 14px;          /* smaller text size */
+  margin-bottom: 6px;
+  font-size: 14px;          
   line-height: 1.4;
   padding-bottom: 4px;
-  border-bottom: 1px solid rgba(0,
+  border-bottom: 1px solid rgba(0, 255, 0, 0.08);
+}
 
+/* Ore names left-aligned */
+.summary-row span:first-child {
+  flex: 1 1 auto;
+  text-align: left;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  white-space: nowrap;
+}
+
+/* ISK values right-aligned */
+.summary-row span:last-child {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+}
+
+/* Unrecognized items glow red */
+.summary-row.unrecognized span:first-child,
+.summary-row.unrecognized span:last-child {
+  color: #ff3333;
+  text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
+}
+
+/* Total line - keep ledger style neon green exactly like total ISK */
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-top: 1px solid rgba(0, 255, 0, 0.4);
+  padding-top: 10px;
+  margin-top: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.summary-total span:first-child {
+  text-align: left;
+  flex: 1;
+  color: #00ff00;          
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
+}
+
+.summary-total span:last-child {
+  text-align: right;
+  flex: 0 0 auto;
+  color: #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
+}
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 @keyframes unifiedGlow {
@@ -402,6 +453,7 @@ summary.forEach(item => {
       <span>${item.unrecognized ? 'Unrecognized' : formatNumber(item.val) + ' ISK'}</span>
     </div>`;
 });
+
 
 
 summaryContainer.innerHTML += `
