@@ -1,5 +1,3 @@
-/*WORKING VERSION 1.0*/
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +7,9 @@
 
 <!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- LZString for URL compression -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
 <style>
   /* Hide inventory by default */
@@ -93,7 +94,6 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
   color: #00ff00;
 }
-
 .summary-total span { color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
 </style>
 </head>
@@ -124,7 +124,7 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
 </div>
 
 <script>
-  // Check URL params before anything else
+  // ===== URL PARAM CHECK =====
 const params = new URLSearchParams(window.location.search);
 if(!params.get('inv')){
   document.body.setAttribute('data-show-inventory','true');
@@ -152,7 +152,6 @@ function createStars(){
   }
 }
 createStars();
-
 let lastBrightTime=0;
 let nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
@@ -163,7 +162,7 @@ function drawStars(time=0){
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.55+0.25*Math.sin(time*0.002+s.phase); // reduced shimmer slightly
+    if(s.twinkle) alpha=0.55+0.25*Math.sin(time*0.002+s.phase);
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
     ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
@@ -234,11 +233,11 @@ function showContent(prefillText){
       <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
     </tr>`;
   });
-tableHTML += `<tr class="summary-total">
+  tableHTML += `<tr class="summary-total">
     <td colspan="3" style="text-align:right;">Total</td>
     <td id="summaryTotal"></td>
   </tr></table>`;
-summaryContainer.innerHTML = tableHTML;
+  summaryContainer.innerHTML = tableHTML;
 
   summaryContainer.style.display = 'block';
 
@@ -250,30 +249,28 @@ summaryContainer.innerHTML = tableHTML;
   leftContract.style.display = 'block';
   totalCostContainer.style.display = 'block';
   animateCount(document.getElementById('totalCostText'),0,total,2000);
-// ===== COPY TOTAL ISK FUNCTION =====
-function makeTotalCopyable(el) {
-  if (!el) return;
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', async () => {
-    const numericValue = el.innerText.replace(/[^0-9]/g, '');
-    if (!numericValue) return;
 
-    await navigator.clipboard.writeText(numericValue);
+  // ===== COPY TOTAL ISK FUNCTION =====
+  function makeTotalCopyable(el) {
+    if (!el) return;
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', async () => {
+      const numericValue = el.innerText.replace(/[^0-9]/g, '');
+      if (!numericValue) return;
 
-    const originalText = el.innerText;
-    el.innerText = 'Copied';
-    setTimeout(() => {
-      el.innerText = originalText;
-    }, 1500);
-  });
-}
+      await navigator.clipboard.writeText(numericValue);
 
-// Attach copy functionality AFTER elements exist
-const summaryTotalEl = document.getElementById('summaryTotal');
-const contractTotalEl = document.getElementById('totalCostText');
+      const originalText = el.innerText;
+      el.innerText = 'Copied';
+      setTimeout(() => { el.innerText = originalText; }, 1500);
+    });
+  }
 
-makeTotalCopyable(summaryTotalEl);
-makeTotalCopyable(contractTotalEl);
+  const summaryTotalEl = document.getElementById('summaryTotal');
+  const contractTotalEl = document.getElementById('totalCostText');
+
+  makeTotalCopyable(summaryTotalEl);
+  makeTotalCopyable(contractTotalEl);
 
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
@@ -281,34 +278,6 @@ makeTotalCopyable(contractTotalEl);
   // === SHOW SHARE BUTTON ===
   document.getElementById('shareButton').style.display='inline-block';
 }
-// ===== COPY TOTAL ISK FUNCTION =====
-function makeTotalCopyable(el) {
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', async () => {
-    const originalText = el.innerText;
-    // Extract only numbers
-    const numericValue = originalText.replace(/[^0-9]/g, '');
-    if(!numericValue) return;
-
-    // Copy to clipboard
-    await navigator.clipboard.writeText(numericValue);
-
-    // Temporarily show "Copied"
-    el.innerText = 'Copied';
-    setTimeout(() => {
-      el.innerText = originalText; // revert to original
-    }, 2000);
-  });
-}
-
-// Apply to both contract and summary totals
-window.addEventListener('load', () => {
-  const contractTotal = document.getElementById('totalCostText');
-  const summaryTotal = document.getElementById('summaryTotal');
-
-  makeTotalCopyable(contractTotal);
-  makeTotalCopyable(summaryTotal);
-});
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').disabled=false;
@@ -317,26 +286,32 @@ document.getElementById('submitButton').addEventListener('click', ()=>{
   if(textareaValue) showContent(textareaValue);
 });
 
-// ===== SHARE BUTTON =====
+// ===== SHARE BUTTON (COMPRESSED URL) =====
 const shareBtn = document.getElementById('shareButton');
 shareBtn.onclick = async () => {
   const invText = document.getElementById('message').value.trim();
   if (!invText) return;
-  const shortUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(invText)}`;
+
+  // Compress inventory
+  const compressed = LZString.compressToEncodedURIComponent(invText);
+
+  const shortUrl = `${location.origin}${location.pathname}?inv=${compressed}`;
   await navigator.clipboard.writeText(shortUrl);
-  shareBtn.innerText="Copied";
-  setTimeout(()=>{ shareBtn.innerText="Shared"; },2000);
+
+  shareBtn.innerText = "Copied";
+  setTimeout(() => { shareBtn.innerText = "Shared"; }, 2000);
 };
 
-// ===== PREFILL FROM URL =====
+// ===== PREFILL FROM URL (DECOMPRESS) =====
 window.addEventListener('load', async () => {
   await fetchPrices();
   const params = new URLSearchParams(window.location.search);
   const inv = params.get('inv');
   if(inv){
-    document.getElementById('message').value = decodeURIComponent(inv);
-    showContent(inv);
-    // Hide contracts & buttons for shared view
+    const inventoryText = LZString.decompressFromEncodedURIComponent(inv);
+    document.getElementById('message').value = inventoryText;
+    showContent(inventoryText);
+
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('submitButton').style.display='none';
