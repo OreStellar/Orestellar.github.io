@@ -392,7 +392,7 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-function showContent(){
+function showContent() {
   const t = document.getElementById('message').value;
   const regex = /([\w\s]+?)\s+(\d+)/g;
   let match;
@@ -405,12 +405,25 @@ function showContent(){
     normalizedPriceList[key.toLowerCase()] = priceList[key];
   }
 
-  while((match = regex.exec(t)) !== null){
+  // Automatically create aliases: "Compressed Ytirium" -> "Ytirium"
+  const oreAliases = {};
+  for (const key in normalizedPriceList) {
+    if (key.startsWith("compressed ")) {
+      const shortName = key.replace("compressed ", "");
+      oreAliases[shortName] = key;
+    }
+  }
+
+  while ((match = regex.exec(t)) !== null) {
     const nameRaw = match[1].trim();
-    const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
+    let name = nameRaw.toLowerCase().replace(/\s+/g, ' ');
+
+    // map aliases automatically
+    if (oreAliases[name]) name = oreAliases[name];
+
     const qty = parseInt(match[2]);
 
-    if(normalizedPriceList[name] !== undefined){
+    if (normalizedPriceList[name] !== undefined) {
       summary.push({
         name: nameRaw,
         price: normalizedPriceList[name],
@@ -434,10 +447,10 @@ function showContent(){
   let tableHTML = '<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
   summary.forEach(item => {
     tableHTML += `<tr>
-      <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
-      <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
-      <td>${item.unrecognized?item.qty:formatNumber(item.qty)}</td>
-      <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
+      <td class="${item.unrecognized ? 'unrecognized' : ''}">${item.name}</td>
+      <td>${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+      <td>${item.unrecognized ? item.qty : formatNumber(item.qty)}</td>
+      <td>${item.unrecognized ? item.val : formatNumber(item.val)}</td>
     </tr>`;
   });
   tableHTML += '</table>';
@@ -450,10 +463,10 @@ function showContent(){
   animateCount(document.getElementById('totalCostText'), 0, total);
   document.querySelector('.main-container').style.display = 'none';
 
-  // Show share button
   const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display = 'block';
 }
+
 
 
 // Share Summary
