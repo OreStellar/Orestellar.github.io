@@ -187,20 +187,23 @@ function showContent(text){
 
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
-while((match = regex.exec(t)) !== null){
-  const originalName = match[1].trim();                 // keep full name for lookup
-  const displayName = originalName.replace(/Compressed/gi,'Comp.'); // shorten only for display
-  const name = originalName.toLowerCase().replace(/\s+/g,' ');     // lookup key
+while ((match = regex.exec(t)) !== null) {
+  const originalName = match[1].trim(); // for price lookup
+  const nameKey = originalName.toLowerCase().replace(/\s+/g, ' '); // lookup key
   const qty = parseInt(match[2]);
 
-  if(priceList[name] !== undefined){
+  let displayName = originalName;
+  // shorten "Compressed" only for display
+  if (/compressed/i.test(originalName)) displayName = originalName.replace(/Compressed/gi, 'Comp.');
+
+  if (priceList[nameKey] !== undefined) {
     summary.push({
-      name: displayName,     // use the shortened name for the table
-      price: priceList[name],
+      name: displayName, // display version
+      price: priceList[nameKey],
       qty: qty,
-      val: qty * priceList[name]
+      val: qty * priceList[nameKey]
     });
-    total += qty * priceList[name];
+    total += qty * priceList[nameKey];
   } else {
     summary.push({
       name: displayName,
