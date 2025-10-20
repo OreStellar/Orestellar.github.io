@@ -164,8 +164,7 @@ async function fetchPrices(){
 
 // ===== HELPERS =====
 function formatNumber(n){return n.toLocaleString();}
-function animateCount(el,start,end,duration=2000){let startTime=null;function step(t){if(!startTime)startTime=t;let progress=Math.min((t-startTime)/duration,1);const current=Math.floor(progress*(end-start)+start);el.innerText=current.toLocaleString()+' ISK';if(progress<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
-function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{const numericValue=el.innerText.replace(/[^0-9]/g,'');if(!numericValue)return;await navigator.clipboard.writeText(numericValue);const originalText=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=originalText;},1500);});}
+function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));const original=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=original;},1500);});}
 
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
@@ -189,17 +188,9 @@ function showContent(prefillText){
   const summaryContainer=document.getElementById('summaryContainer');
   let tableHTML='<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
   summary.forEach(item=>{
-    tableHTML+=`<tr class="${item.unrecognized?'unrecognized':''}">
-<td>${item.name}</td>
-<td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td>
-<td class="quantity">${formatNumber(item.qty)}</td>
-<td class="${item.unrecognized?'total-column unrecognized':'total-column'}">${item.unrecognized?item.val:formatNumber(item.val)}</td>
-</tr>`;
+    tableHTML+=`<tr class="${item.unrecognized?'unrecognized':''}"><td>${item.name}</td><td class="price">${item.unrecognized?item.price:formatNumber(item.price)}</td><td class="quantity">${formatNumber(item.qty)}</td><td class="${item.unrecognized?'total-column unrecognized':'total-column'}">${item.unrecognized?item.val:formatNumber(item.val)}</td></tr>`;
   });
-  tableHTML+=`<tr class="summary-total">
-<td colspan="3" style="text-align:right;">Total</td>
-<td id="summaryTotal">${formatNumber(total)}</td>
-</tr></tbody></table>`;
+  tableHTML+=`<tr class="summary-total"><td colspan="3" style="text-align:right;">Total</td><td id="summaryTotal">${formatNumber(total)}</td></tr></tbody></table>`;
   summaryContainer.innerHTML=tableHTML;
   summaryContainer.style.display='flex';
 
@@ -211,36 +202,36 @@ function showContent(prefillText){
 
   makeTotalCopyable(document.getElementById('totalCostText'));
   attachSorting(summaryContainer);
-// Hide the inventory textarea and submit button
-document.querySelector('.main-container').style.display = 'none';
-document.getElementById('submitButton').style.display = 'none';
+
+  // Hide inventory
+  document.querySelector('.main-container').style.display = 'none';
 }
 
 // ===== SORTING =====
 function attachSorting(container){
   const table = container.querySelector('table');
   const headers = table.querySelectorAll('th');
-  headers.forEach((header, index)=>{
-    header.addEventListener('click', ()=>{
+  headers.forEach((header,index)=>{
+    header.addEventListener('click',()=>{
       const tbody = table.querySelector('tbody');
       const rows = Array.from(tbody.querySelectorAll('tr'));
-      const currentSorted = header.classList.contains('sorted-asc') || header.classList.contains('sorted-desc');
+      const ascending = !header.classList.contains('sorted-asc');
       headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
       header.classList.add('sorted');
-      let ascending = !header.classList.contains('sorted-asc');
-      header.classList.toggle('sorted-asc', ascending);
-      header.classList.toggle('sorted-desc', !ascending);
+      header.classList.toggle('sorted-asc',ascending);
+      header.classList.toggle('sorted-desc',!ascending);
 
       rows.sort((a,b)=>{
-        const valA = a.children[index].innerText.replace(/[^0-9]/g,'');
-        const valB = b.children[index].innerText.replace(/[^0-9]/g,'');
         if(a.classList.contains('summary-total')) return 1;
         if(b.classList.contains('summary-total')) return -1;
         if(a.classList.contains('unrecognized')) return 1;
         if(b.classList.contains('unrecognized')) return -1;
-        if(isNaN(valA) || valA==='') return 1;
-        if(isNaN(valB) || valB==='') return -1;
-        if(index===0){return a.children[index].innerText.localeCompare(b.children[index].innerText);}
+
+        let valA = a.children[index].innerText;
+        let valB = b.children[index].innerText;
+        if(index===0) return valA.localeCompare(valB);
+        valA = parseInt(valA.replace(/[^0-9]/g,''))||0;
+        valB = parseInt(valB.replace(/[^0-9]/g,''))||0;
         return ascending?valA-valB:valB-valA;
       });
       rows.forEach(r=>tbody.appendChild(r));
@@ -252,9 +243,16 @@ function attachSorting(container){
 const submitBtn=document.getElementById('submitButton');
 const messageBox=document.getElementById('message');
 messageBox.addEventListener('input',()=>{submitBtn.disabled=messageBox.value.trim()==='';});
-submitBtn.addEventListener('click',()=>{
-  showContent();
-  window.scrollTo({top:0,behavior:'smooth'});
+submitBtn.addEventListener('click',()=>{showContent();window.scrollTo({top:0,behavior:'smooth'});});
+
+// ===== LOGO CLICK RESET =====
+document.getElementById('myHeader').addEventListener('click',()=>{
+  document.querySelector('.main-container').style.display='flex';
+  document.getElementById('summaryContainer').style.display='none';
+  document.getElementById('leftContainer').style.display='none';
+  document.getElementById('totalCostContainer').style.display='none';
+  document.getElementById('message').value='';
+  submitBtn.disabled=true;
 });
 
 // ===== LOGO ANIMATION =====
@@ -264,12 +262,10 @@ window.addEventListener('load',()=>{
 
   ore.style.animation='flickerRapid 0.3s linear forwards';
   setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-
   setTimeout(()=>{
     stellar.style.animation='flickerRapid 0.3s linear forwards';
     setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
   },400);
-
   setTimeout(()=>{
     ore.style.animation='flickerQuick 0.3s linear forwards';
     stellar.style.animation='flickerQuick 0.3s linear forwards';
