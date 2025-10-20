@@ -234,33 +234,39 @@ function showContent(prefillText){
 function attachSorting(container){
   const table = container.querySelector('table');
   const headers = table.querySelectorAll('th');
-  headers.forEach((header,index)=>{
-    header.addEventListener('click',()=>{
+  headers.forEach((header, index)=>{
+    header.addEventListener('click', ()=>{
       const tbody = table.querySelector('tbody');
       const rows = Array.from(tbody.querySelectorAll('tr'));
-      const ascending = !header.classList.contains('sorted-asc');
+      const currentSorted = header.classList.contains('sorted-asc') || header.classList.contains('sorted-desc');
       headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
       header.classList.add('sorted');
-      header.classList.toggle('sorted-asc',ascending);
-      header.classList.toggle('sorted-desc',!ascending);
+      let ascending = !header.classList.contains('sorted-asc');
+      header.classList.toggle('sorted-asc', ascending);
+      header.classList.toggle('sorted-desc', !ascending);
 
       rows.sort((a,b)=>{
+        const valA = a.children[index].innerText.replace(/[^0-9]/g,'');
+        const valB = b.children[index].innerText.replace(/[^0-9]/g,'');
         if(a.classList.contains('summary-total')) return 1;
         if(b.classList.contains('summary-total')) return -1;
         if(a.classList.contains('unrecognized')) return 1;
         if(b.classList.contains('unrecognized')) return -1;
+        
+        // ✅ Name column fix
+        if(index===0){
+          return ascending
+            ? a.children[index].innerText.localeCompare(b.children[index].innerText)
+            : b.children[index].innerText.localeCompare(a.children[index].innerText);
+        }
 
-        let valA = a.children[index].innerText;
-        let valB = b.children[index].innerText;
-        if(index===0) return valA.localeCompare(valB);
-        valA = parseInt(valA.replace(/[^0-9]/g,''))||0;
-        valB = parseInt(valB.replace(/[^0-9]/g,''))||0;
-        return ascending?valA-valB:valB-valA;
+        return ascending ? valA - valB : valB - valA;
       });
       rows.forEach(r=>tbody.appendChild(r));
     });
   });
 }
+
 
 // ===== SUBMIT BUTTON =====
 const submitBtn=document.getElementById('submitButton');
@@ -295,9 +301,27 @@ window.addEventListener('load',()=>{
     setTimeout(()=>{ore.style.animation='softGlow 6s infinite';stellar.style.animation='softGlow 6s infinite';},300);
   },1100);
 });
+// ===== SHARE SUMMARY BUTTON =====
+document.getElementById('shareButton').addEventListener('click', () => {
+  const summaryContainer = document.getElementById('summaryContainer');
+  if (!summaryContainer) return;
+
+  // Copy table as text
+  const textToCopy = Array.from(summaryContainer.querySelectorAll('tr'))
+    .map(row => Array.from(row.cells).map(cell => cell.innerText).join('\t'))
+    .join('\n');
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const btn = document.getElementById('shareButton');
+    const originalText = btn.innerText;
+    btn.innerText = 'Copied!';
+    setTimeout(() => { btn.innerText = originalText; }, 1500);
+  });
+});
 
 // ===== INITIALIZE =====
 fetchPrices();
+  
 </script>
 </body>
 </html>
