@@ -14,33 +14,35 @@
 <style>
   html, body { margin:0; padding:0; height:100%; overflow:hidden; background:black; font-family:monospace; color:white; }
   canvas#starfield { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-  
-  .main-container { display:none; width:650px; max-width:90%; padding:30px; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.92); border-radius:15px; }
-  body[data-show-inventory="true"] .main-container { display:flex; }
 
   .container-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:20px; padding:20px; z-index:2; position:relative; }
+  .main-container { display:none; width:650px; max-width:90%; padding:30px; flex-direction:column; justify-content:center; align-items:center; background-color:rgba(20,20,20,0.92); border-radius:15px; }
+  body[data-show-inventory="true"] .main-container { display:flex; }
 
   /* Header / Logo */
   #myHeader { display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; width:100%; max-width:650px; margin-bottom:30px; cursor:pointer; z-index:2; }
   #logoText { display:inline; font-family:'Orbitron',sans-serif; font-weight:700; font-size:4.5rem; letter-spacing:0; color:rgba(255,255,255,0.1); transform:skewX(-8deg); }
   #logoText span { display:inline; color:rgba(255,255,255,0.1); text-shadow:none; }
-
   @keyframes softGlow { 0%,100% { text-shadow:0 0 5px #fff; color:rgba(255,255,255,0.75);} 50% {text-shadow:0 0 15px #fff; color:rgba(255,255,255,1);} }
   @keyframes flickerRapid { 0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; } 10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; } }
   @keyframes flickerQuick { 0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow:none; } 25%,75% { color: rgba(255,255,255,1); text-shadow:0 0 10px #fff; } }
 
+  /* Quote text */
   .quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
   @keyframes glowPulse { 0%,100% { text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;} 50% { text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
 
+  /* Textarea */
   textarea#message { display:block; margin:0 auto; width:92%; font-size:18px; padding:18px; border-radius:10px; resize:vertical; background-color:rgba(17,17,17,0.97); color:#fff; border:1px solid #333; text-align:left; font-family:'Share Tech Mono', monospace; box-shadow:inset 0 0 5px #111; transition: all 0.2s ease-in-out; }
   textarea#message::placeholder { color:#fff; opacity:0.6; }
   textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 15px #fff,0 0 25px #fff; transition:box-shadow 0.3s ease, border-color 0.3s ease; }
 
+  /* Buttons */
   .actionButton { margin-top:15px; background:linear-gradient(145deg,#161616,#242424); color:#fff; border:2px solid #ccc; border-radius:10px; padding:15px 35px; font-weight:bold; font-family:'Orbitron',sans-serif; cursor:pointer; position:relative; overflow:hidden; text-shadow:0 0 2px #fff; box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset; animation:ambientGlow 3.5s ease-in-out infinite alternate; transition:all 0.35s ease; }
   .actionButton:hover { color:#000; background:linear-gradient(145deg,#f2f2f2,#dcdcdc); border-color:#fff; transform:translateY(-2px) scale(1.04); animation:hoverPulse 1.6s infinite alternate; box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset; }
   @keyframes ambientGlow { 0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;} 100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;} }
   @keyframes hoverPulse { 0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;} 100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;} }
 
+  /* Contracts & Summary */
   .contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:15px; flex-wrap:wrap; width:100%; }
   .total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
   #leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
@@ -75,14 +77,15 @@
   .summary-container::-webkit-scrollbar { width:6px; }
   .summary-container::-webkit-scrollbar-thumb { background:#00ff00; box-shadow:0 0 10px #00ff00; border-radius:4px; }
 
-  .summary-table { width:100%; border-collapse:collapse; font-family:'Share Tech Mono', monospace; table-layout:fixed; }
-  .summary-table th, .summary-table td { padding:6px 8px; border-bottom:1px solid rgba(255,255,255,0.15); font-size:14px; color:#ffffff; text-shadow:0 0 4px #ffffff; box-sizing:border-box; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .summary-table { width:100%; border-collapse:collapse; table-layout:fixed; font-family:'Share Tech Mono', monospace; }
+  .summary-table th, .summary-table td { padding:6px 8px; border-bottom:1px solid rgba(255,255,255,0.15); font-size:14px; color:#ffffff; text-shadow:0 0 4px #ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .summary-table th:first-child, .summary-table td:first-child { text-align:left; }
   .summary-table th:nth-child(2), .summary-table td:nth-child(2),
   .summary-table th:nth-child(3), .summary-table td:nth-child(3),
   .summary-table th:nth-child(4), .summary-table td:nth-child(4) { text-align:center; }
-  .summary-table tr:not(:first-child) td:last-child { color:#00ff00; text-shadow:0 0 8px #00ff00,0 0 16px #00ff00; }
+
   .summary-table td.unrecognized { color:#ff3333; text-shadow:0 0 10px #ff3333,0 0 20px #ff0000; }
+  .summary-table tr:not(:first-child) td:last-child { color:#00ff00; text-shadow:0 0 8px #00ff00,0 0 16px #00ff00; }
 
   .summary-total td { font-weight:bold; border-top:1px solid rgba(255,255,255,0.3); color:#ffffff; text-shadow:0 0 6px #ffffff; white-space:nowrap; overflow:visible; text-overflow:clip; text-align:center; }
   .summary-total td:last-child, .summary-total span { color:#00ff00 !important; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; white-space:nowrap; overflow:visible; }
@@ -201,7 +204,6 @@
     const t = prefillText || document.getElementById('message').value;
     const regex = /([\w\s]+?)\s+(\d+)/g;
     let match, summary=[], total=0;
-
     while((match = regex.exec(t)) !== null){
       const nameRaw = match[1].trim();
       const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
@@ -231,50 +233,41 @@
     summaryContainer.innerHTML = tableHTML;
 
     summaryContainer.style.display = 'block';
-
     animateCount(document.getElementById('summaryTotal'),0,total,2000);
 
-    // === CONTRACTS ===
     const leftContract = document.getElementById('leftContainer');
     const totalCostContainer = document.getElementById('totalCostContainer');
     leftContract.style.display = 'block';
     totalCostContainer.style.display = 'block';
     animateCount(document.getElementById('totalCostText'),0,total,2000);
 
-    // ===== COPY TOTAL ISK FUNCTION =====
+    // COPY TOTAL
     function makeTotalCopyable(el) {
       if (!el) return;
       el.style.cursor = 'pointer';
       el.addEventListener('click', async () => {
         const numericValue = el.innerText.replace(/[^0-9]/g, '');
         if (!numericValue) return;
-
         await navigator.clipboard.writeText(numericValue);
-
         const originalText = el.innerText;
         el.innerText = 'Copied';
         setTimeout(() => { el.innerText = originalText; }, 1500);
       });
     }
-
     makeTotalCopyable(document.getElementById('summaryTotal'));
     makeTotalCopyable(document.getElementById('totalCostText'));
 
-    // === HIDE INVENTORY ===
     document.querySelector('.main-container').style.display = 'none';
-
-    // === SHOW SHARE BUTTON ===
     document.getElementById('shareButton').style.display='inline-block';
   }
 
   // ===== BUTTONS =====
-  document.getElementById('submitButton').disabled=false;
   document.getElementById('submitButton').addEventListener('click', ()=>{
     const textareaValue = document.getElementById('message').value.trim();
     if(textareaValue) showContent(textareaValue);
   });
 
-  // ===== SHARE BUTTON (COMPRESSED URL) =====
+  // ===== SHARE BUTTON =====
   const shareBtn = document.getElementById('shareButton');
   shareBtn.onclick = async () => {
     const invText = document.getElementById('message').value.trim();
@@ -286,9 +279,11 @@
     setTimeout(() => { shareBtn.innerText = "Shared"; }, 2000);
   };
 
-  // ===== PREFILL FROM URL (DECOMPRESS) =====
+  // ===== PREFILL & ENABLE SUBMIT =====
   window.addEventListener('load', async () => {
     await fetchPrices();
+    document.getElementById('submitButton').disabled = false;
+
     const params = new URLSearchParams(window.location.search);
     const inv = params.get('inv');
     if(inv){
@@ -323,7 +318,7 @@
 
   document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
-  // ===== SHORTEN "COMPRESSED" TO "COMP." IN SUMMARY =====
+  // ===== SHORTEN "COMPRESSED" TO "COMP." =====
   function shortenCompressedNames() {
     const nameCells = document.querySelectorAll('.summary-table td:first-child');
     nameCells.forEach(cell => {
