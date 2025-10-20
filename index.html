@@ -5,474 +5,348 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron -->
+<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 html, body {
-  margin: 0; padding: 0;
-  height: 100%; overflow: hidden;
-  background: black;
-  font-family: monospace;
-  color: white;
-}
-
-/* Starfield canvas */
-canvas#starfield {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
-
-/* Container wrapper */
-.container-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  gap: 20px;
-  padding: 20px;
-  z-index: 2;
-  position: relative;
-}
-
-/* Header / Logo */
-#myHeader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  width: 100%;
-  max-width: 650px;
-  margin-bottom: 40px;
-  cursor: pointer;
-  z-index: 2;
-}
-
-#logoText {
-  display: inline; 
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  font-size: 5rem;
-  letter-spacing: 0;
-  color: rgba(255,255,255,0.1);
-  transform: skewX(-8deg);
-}
-
-#logoText span {
-  display: inline;
-  color: rgba(255,255,255,0.1);
-  text-shadow: none;
-}
-
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
-  50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
-}
-
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
-  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-}
-
-/* Main inventory box */
-.main-container {
-  width: 650px; max-width: 90%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(20,20,20,0.92);
-  border-radius: 15px;
-}
-
-/* Textarea */
-.main-container textarea#message {
-  display: block;
-  margin: 0 auto;
-  width: 90%;
-  font-size: 18px;
-  padding: 15px;
-  border-radius: 10px;
-  resize: vertical;
-  background-color: rgba(17,17,17,0.97);
-  color: #ffffff;
-  border: 1px solid #333;
-  text-align: left;
-  font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 5px #111; 
-  transition: all 0.2s ease-in-out;
-}
-.main-container textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
-textarea#message:focus {
-  outline: none;
-  border-color: #fff;
-  box-shadow: inset 0 0 15px #fff, 0 0 25px #fff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-/* Quote text */
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
-
-/* Submit Button */
-#submitButton {
-  margin-top: 10px;
-  background: linear-gradient(145deg, #161616, #242424);
-  color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 15px 35px;
-  font-weight: bold;
-  font-family: 'Orbitron', sans-serif;
-  cursor: pointer;
-  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  text-shadow: 0 0 2px #fff;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
-  animation: ambientGlow 3.5s ease-in-out infinite alternate;
-  transition: all 0.35s ease;
-}
-@keyframes ambientGlow {
-  0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
-  100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
-}
-#submitButton:hover {
-  color: #000;
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  border-color: #fff;
-  transform: translateY(-2px) scale(1.04);
-  animation: hoverPulse 1.6s infinite alternate;
-  box-shadow: 0 0 10px #ffffffcc, 0 0 20px #ffffff66 inset;
-}
-@keyframes hoverPulse {
-  0% { box-shadow: 0 0 8px #ffffff88, 0 0 15px #ffffff33 inset; }
-  100% { box-shadow: 0 0 16px #ffffffcc, 0 0 25px #ffffff66 inset; }
-}
-
-/* Contracts and summary */
-.contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
-}
-
-.total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
-}
-#leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
-#totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
-
-#totalCostText {
-  position: absolute;
-  top: calc(50% + 10px);
-  left: calc(50% + -42px);
-  font-size: 16px;
-  font-weight: bold;
+  background: black;
+  font-family: 'Orbitron', sans-serif;
   color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+}
+
+/* STARFIELD BACKGROUND */
+#stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at bottom, #020111 0%, #000000 100%);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: moveStars linear infinite;
+}
+
+@keyframes moveStars {
+  from { transform: translateY(0px); }
+  to { transform: translateY(1000px); }
+}
+
+/* HEADER LOGO */
+header {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  padding-top: 20px;
+}
+
+#myHeader img {
+  width: 240px;
+  animation: neonPulse 3s ease-in-out infinite;
   cursor: pointer;
 }
 
-/* Summary Container Table Style */
-.summary-container {
-  display: none;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  font-family: 'Orbitron', monospace;
+@keyframes neonPulse {
+  0%, 100% { filter: drop-shadow(0 0 5px #00ffff) drop-shadow(0 0 20px #00ffff); }
+  50% { filter: drop-shadow(0 0 15px #00ffff) drop-shadow(0 0 35px #00ffff); }
+}
+
+/* MAIN CONTAINER */
+main {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  margin-top: 30px;
+}
+
+/* TEXTAREA */
+textarea {
+  width: 320px;
+  height: 150px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #00ff00;
   color: #00ff00;
-  background: rgba(0, 10, 0, 0.85);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  border-radius: 12px;
-  padding: 14px 20px;
-  width: 100%;           
-  max-width: 650px;      
-  min-width: 300px;
-  text-shadow: 0 0 6px #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
-  backdrop-filter: blur(6px);
-  max-height: 420px;     
-  overflow-y: auto;      
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #00ff00 transparent;
-  margin: 0 auto;        
-}
-
-.summary-container::-webkit-scrollbar {
-  width: 6px;
-}
-.summary-container::-webkit-scrollbar-thumb {
-  background: #00ff00;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9em;
+  resize: none;
   box-shadow: 0 0 10px #00ff00;
-  border-radius: 4px;
+  border-radius: 8px;
+  padding: 10px;
 }
 
-.summary-table {
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 15px #00ff00;
+}
+
+/* BUTTONS */
+button {
+  background: transparent;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1em;
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00ff00;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: rgba(0,255,0,0.2);
+  box-shadow: 0 0 15px #00ff00;
+}
+
+/* CONTRACTS */
+.contracts {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.contract {
+  display: none;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 12px #00ff00;
+  border-radius: 15px;
+  width: 200px;
+  height: 140px;
+  position: relative;
+}
+
+.contract img {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  opacity: 0.9;
+}
+
+.contract .total {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  font-size: 1em;
+}
+
+/* SUMMARY CONTAINER */
+#summaryContainer {
+  display: none;
+  background: rgba(10,10,10,0.85);
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 15px #00ff00;
+  border-radius: 10px;
+  margin: 20px auto 0;
+  max-width: 360px;
+  width: 90%;
+  max-height: 420px;
+  overflow-y: auto;
+  color: #00ff00;
+  font-family: 'Orbitron', sans-serif;
+  padding: 10px;
+  text-align: left;
+}
+
+/* SUMMARY TABLE */
+#summaryTable {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.9em;
 }
-.summary-table th, .summary-table td {
-  padding: 4px 8px;
+
+#summaryTable th, #summaryTable td {
+  padding: 6px 10px;
   text-align: left;
-  border-bottom: 1px solid rgba(0,255,0,0.2);
+  white-space: nowrap;
 }
-.summary-table th {
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
+
+#summaryTable th {
+  border-bottom: 1px solid #00ff00;
+  text-shadow: 0 0 5px #00ff00;
 }
-.summary-table td {
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
+
+#summaryTable td {
+  text-shadow: 0 0 4px #00ff00;
 }
-.summary-table td.unrecognized {
+
+#summaryTable .unrecognized td {
   color: #ff3333;
-  text-shadow: 0 0 10px #ff3333,0 0 20px #ff0000;
+  text-shadow: 0 0 6px #ff3333;
 }
 
-/* Total Line */
+/* TOTAL ISK LEDGER */
 .summary-total {
-  margin-top: 6px;
-  font-weight: bold;
-  border-top: 1px solid rgba(0,255,0,0.3);
-  display: flex;
-  justify-content: space-between;
-}
-.summary-total span {
+  text-align: right;
+  font-size: 1em;
   color: #00ff00;
-  text-shadow: 0 0 12px #00ff00,0 0 24px #00ff00;
+  margin-top: 6px;
+  text-shadow: 0 0 8px #00ff00;
 }
 
-/* Share Summary Button */
+/* SHARE SUMMARY BUTTON */
 #shareButton {
   display: none;
-  margin-top: 12px;
-  padding: 15px 35px;
+  background: transparent;
+  border: 1px solid #00ff00;
+  color: #00ff00;
   font-family: 'Orbitron', sans-serif;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(145deg, #161616, #242424);
-  border: 2px solid #ccc;
+  font-size: 1em;
+  padding: 8px 16px;
   border-radius: 10px;
+  box-shadow: 0 0 10px #00ff00;
   cursor: pointer;
-  text-shadow: 0 0 2px #fff;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
-  transition: all 0.35s ease;
+  margin: 20px auto;
+  transition: 0.3s;
 }
 #shareButton:hover {
-  color: #000;
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  border-color: #fff;
-  transform: translateY(-2px) scale(1.04);
-  animation: hoverPulse 1.6s infinite alternate;
-}
-
-/* Responsive tweaks */
-@media(max-width:700px){
-  #logoText{font-size:4rem;}
-  .main-container{width:95%;}
-  .total-cost-container{width:90%;height:auto;}
-  .summary-container{max-width:90%;}
+  background: rgba(0,255,0,0.2);
+  box-shadow: 0 0 15px #00ff00;
 }
 </style>
 </head>
 <body>
+<div id="stars"></div>
 
-<canvas id="starfield"></canvas>
-
-<div class="container-wrapper">
-  <header id="myHeader">
-    <h1 id="logoText">
-      <span id="ore">Ore</span><span id="stellar">Stellar</span>
-    </h1>
-  </header>
-
-  <div class="main-container">
-    <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
-    <button id="submitButton" disabled>Submit</button>
+<header>
+  <div id="myHeader">
+    <img src="https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/16f71443-963c-483c-a6c1.png" alt="OreStellar Logo">
   </div>
+</header>
 
-  <div class="contracts-wrapper">
-    <div id="leftContainer" class="total-cost-container"></div>
+<main>
+  <textarea id="message" placeholder="Paste your ore list here..."></textarea><br>
+  <button id="submitBtn">Submit</button>
 
-    <div id="summaryContainer" class="summary-container">
-      <!-- JS will populate table -->
+  <div class="contracts">
+    <div id="contract1" class="contract">
+      <img src="https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/contract1.png" alt="Contract 1">
+      <div class="total">0 ISK</div>
     </div>
-
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
+    <div id="contract2" class="contract">
+      <img src="https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/contract2.png" alt="Contract 2">
+      <div class="total">0 ISK</div>
     </div>
   </div>
 
+  <div id="summaryContainer"></div>
   <button id="shareButton">Share Summary</button>
-</div>
+</main>
 
 <script>
-// ===== STARFIELD =====
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
-function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
-
-let stars=[], clusterCount=12;
-function createStars(){
-  stars=[];
-  const clusterCenters=[];
-  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
-  const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
-  for(let i=0;i<totalStars;i++){
-    let x,y;
-    if(Math.random()<0.6){
-      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
-      const radius=Math.random()*120;
-      const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle);
-      y=c.y+radius*Math.sin(angle);
-    } else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
-    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
-  }
+// STARFIELD
+const starContainer = document.getElementById('stars');
+for (let i = 0; i < 300; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  const size = Math.random() * 2 + 1;
+  star.style.width = size + 'px';
+  star.style.height = size + 'px';
+  star.style.top = Math.random() * 100 + '%';
+  star.style.left = Math.random() * 100 + '%';
+  star.style.animationDuration = 10 + Math.random() * 20 + 's';
+  starContainer.appendChild(star);
 }
-createStars();
-function drawStars(time=0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let s of stars){
-    let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;
-    ctx.globalAlpha=alpha;
-    ctx.shadowBlur=s.size*4;
-    ctx.shadowColor=s.color;
-    ctx.fill();
-  }
-  ctx.globalAlpha=1;
-  requestAnimationFrame(drawStars);
-}
-drawStars();
 
-// ===== FETCH PRICES CSV =====
-let priceList={};
+// ===== CSV PRICE FETCH =====
+const priceList = {};
 fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
-.then(res=>res.text())
-.then(data=>{
-  const lines = data.split('\n');
-  lines.forEach(line=>{
-    const [ore,price] = line.split(',');
-    if(ore && price) priceList[ore.trim().toLowerCase()]=parseInt(price);
+  .then(res => res.text())
+  .then(csv => {
+    const rows = csv.split('\n').slice(1);
+    for (const row of rows) {
+      const cols = row.split(',');
+      if (cols.length >= 2) {
+        const name = cols[0].trim().toLowerCase();
+        const price = parseFloat(cols[1]);
+        if (!isNaN(price)) priceList[name] = price;
+      }
+    }
   });
-  document.getElementById('submitButton').disabled=false;
-});
 
-// ===== HELPERS =====
-function formatNumber(n){ return n.toLocaleString(); }
-function animateCount(el,start,end,duration=2000){
-  let startTime=null;
-  function step(t){
-    if(!startTime) startTime=t;
-    let progress=Math.min((t-startTime)/duration,1);
-    const current=Math.floor(progress*(end-start)+start);
-    el.innerText=current.toLocaleString()+' ISK';
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+// ===== MAIN FUNCTION =====
+function showContent() {
+  const t = document.getElementById('message').value;
+  const regex = /([\w\s]+?)\s+(\d+)/g;
+  let match;
+  let summary = [];
+  let total = 0;
 
-// ===== SHOW CONTENT =====
-function showContent(){
-  const t=document.getElementById('message').value;
-  const regex=/([\w\s]+?)\s+(\d+)/g;
-  let match; let summary=[]; let total=0;
-  while((match=regex.exec(t))!==null){
-    let nameRaw = match[1].trim();
-    let qty = parseInt(match[2]);
-    let nameNorm = nameRaw.toLowerCase().replace(/^compressed\s+/,'');
-    // accept compressed or not
-    let foundKey = Object.keys(priceList).find(k=>k.toLowerCase()===nameNorm || k.toLowerCase()==='compressed '+nameNorm);
-    if(foundKey){
+  while ((match = regex.exec(t)) !== null) {
+    const nameRaw = match[1].trim();
+    const qty = parseInt(match[2]);
+    const name = nameRaw.toLowerCase();
+
+    const foundKey = Object.keys(priceList).find(k => name.includes(k) || k.includes(name));
+
+    if (foundKey) {
       const price = priceList[foundKey];
-      summary.push({name:nameRaw,price:price,qty:qty,val:price*qty});
-      total += price*qty;
+      const val = qty * price;
+      summary.push({ name: nameRaw, price: price, qty: qty, val: val });
+      total += val;
     } else {
-      summary.push({name:nameRaw,price:'?',qty:qty,val:'Unrecognized',unrecognized:true});
+      summary.push({ name: nameRaw, price: '?', qty: qty, val: 'Unrecognized', unrecognized: true });
     }
   }
 
-  // Populate summary table
-  const summaryContainer=document.getElementById('summaryContainer');
-  summaryContainer.innerHTML='';
-  let tableHTML='<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
-  summary.forEach(item=>{
-    tableHTML += `<tr>
-      <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
-      <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
-      <td>${item.unrecognized?item.qty:formatNumber(item.qty)}</td>
-      <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
+  document.querySelectorAll('.contract').forEach(c => c.style.display = 'none');
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.style.display = 'block';
+
+  let html = `<table id="summaryTable">
+    <tr><th>Name</th><th>Price</th><th>Qty</th><th>Total</th></tr>`;
+  summary.forEach(item => {
+    html += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
+      <td>${item.name}</td>
+      <td>${item.price === '?' ? '?' : item.price.toLocaleString()}</td>
+      <td>${item.qty.toLocaleString()}</td>
+      <td>${item.val === 'Unrecognized' ? 'Unrecognized' : item.val.toLocaleString()}</td>
     </tr>`;
   });
-  tableHTML+='</table>';
-  tableHTML += `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
-  summaryContainer.innerHTML=tableHTML;
-  summaryContainer.style.display='block';
-  document.getElementById('leftContainer').style.display='block';
-  document.getElementById('totalCostContainer').style.display='block';
-  animateCount(document.getElementById('totalCostText'),0,total);
-  document.querySelector('.main-container').style.display='none';
-  document.getElementById('shareButton').style.display='block';
+  html += `</table><div class="summary-total">Total ISK: ${total.toLocaleString()}</div>`;
+  summaryContainer.innerHTML = html;
+
+  document.getElementById('shareButton').style.display = 'inline-block';
 }
 
 // ===== SHARE SUMMARY =====
-document.getElementById('shareButton').addEventListener('click',()=>{
-  const data=encodeURIComponent(document.getElementById('message').value);
-  const shortUrl=`${location.origin}${location.pathname}?inv=${data}`; // simple encode
-  navigator.clipboard.writeText(shortUrl);
+document.getElementById('shareButton').addEventListener('click', () => {
+  const data = encodeURIComponent(document.getElementById('message').value);
+  const shareUrl = `${location.origin}${location.pathname}?inv=${data}`;
+  navigator.clipboard.writeText(shareUrl);
   alert('Share Summary URL Copied!');
 });
 
-// ===== SUBMIT BUTTON =====
-document.getElementById('submitButton').addEventListener('click',showContent);
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+// ===== SUBMIT =====
+document.getElementById('submitBtn').addEventListener('click', showContent);
 
-// ===== LOGO ANIMATION =====
-window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore');
-  const stellar=document.getElementById('stellar');
-  setTimeout(()=>{
-    ore.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-    setTimeout(()=>{
-      stellar.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
-    },400);
-    setTimeout(()=>{
-      ore.style.animation='flickerQuick 0.3s linear forwards';
-      stellar.style.animation='flickerQuick 0.3s linear forwards';
-      setTimeout(()=>{
-        ore.style.animation='softGlow 6s infinite';
-        stellar.style.animation='softGlow 6s infinite';
-      },300);
-    },1100);
-  },500);
+// ===== LOGO REFRESH =====
+document.getElementById('myHeader').addEventListener('click', () => location.reload());
+
+// ===== AUTO LOAD SHARED SUMMARY =====
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('inv')) {
+    document.getElementById('message').value = decodeURIComponent(params.get('inv'));
+    showContent();
+  }
 });
 </script>
 </body>
