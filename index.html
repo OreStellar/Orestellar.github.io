@@ -409,7 +409,9 @@ window.addEventListener('load',()=>{
 
 document.getElementById('myHeader').addEventListener('click', ()=>location.reload());
 
-// === Shorten "Compressed" to "Comp." in summary container ===
+// ===== EXISTING CODE ABOVE (starfield, prices, buttons, summary etc.) =====
+
+// === SHORTEN "COMPRESSED" TO "COMP." ===
 function shortenCompressedNames() {
   const nameCells = document.querySelectorAll('.summary-table td:first-child');
   nameCells.forEach(cell => {
@@ -424,9 +426,11 @@ if (summaryContainer) {
   summaryObserver.observe(summaryContainer, { childList: true, subtree: true });
 }
 
-// Run once after page load (handles shared summaries)
-document.addEventListener('DOMContentLoaded', () => {
+// Run once after summary populates from shared URL
+window.addEventListener('load', () => {
   setTimeout(shortenCompressedNames, 500);
+});
+
 </script>
 </body>
 </html>
