@@ -180,7 +180,7 @@ document.getElementById('submitButton').disabled = false;
 // ===== HELPERS =====
 function formatNumber(n){ return n.toLocaleString(); }
 
-// Animate numbers smoothly
+// Animate Contract 2 total
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
   function step(t){
@@ -193,15 +193,21 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// Base62 Shortener
+// Simple numeric hash → Base62
 function base62Encode(num){
   const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let str='';
-  do{
-    str=chars[num % 62]+str;
-    num=Math.floor(num/62);
-  }while(num>0);
-  return str;
+  let s="";
+  do { s=chars[num%62]+s; num=Math.floor(num/62); } while(num>0);
+  return s;
+}
+function urlToShortCode(url){
+  // Simple hash
+  let hash=0;
+  for(let i=0;i<url.length;i++){
+    hash=((hash<<5)-hash)+url.charCodeAt(i);
+    hash=hash & hash; // force 32-bit
+  }
+  return base62Encode(Math.abs(hash));
 }
 
 // ===== SHOW SUMMARY =====
@@ -233,31 +239,30 @@ function showContent(){
     </tr>`;
   });
   tableHTML += '</table>';
+  tableHTML += `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'block';
 
-  // Animate Total ISK on Contract 2
+  // Animate Contract 2 total
   const totalCostText = document.getElementById('totalCostText');
-  animateCount(totalCostText,0,total,2000);
+  animateCount(totalCostText,0,total,1500);
 
-  // Show Contracts
+  // === CONTRACTS ===
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
 
-  // Hide Inventory Box
-  document.querySelector('.main-container').style.display='none';
+  // === HIDE INVENTORY ===
+  document.querySelector('.main-container').style.display = 'none';
 
-  // Show Share Button
+  // === SHARE BUTTON ===
   const shareBtn = document.getElementById('shareButton');
   shareBtn.style.display = 'inline-block';
   shareBtn.onclick = async () => {
-    const longUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(document.getElementById('message').value)}`;
-    let shortUrl='';
-    for(let i=0;i<longUrl.length;i++){
-      shortUrl += base62Encode(longUrl.charCodeAt(i));
-    }
+    let longUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(document.getElementById('message').value)}`;
+    let code = urlToShortCode(longUrl);
+    let shortUrl = `${location.origin}${location.pathname}?s=${code}`;
     await navigator.clipboard.writeText(shortUrl);
-    alert('Short URL copied to clipboard!');
+    alert('Short URL copied: '+shortUrl);
   };
 }
 
@@ -265,12 +270,19 @@ function showContent(){
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const inv = params.get('inv');
+  const s = params.get('s');
   if(inv){
     document.getElementById('message').value = decodeURIComponent(inv);
     showContent();
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('submitButton').style.display='none';
+    document.getElementById('shareButton').style.display='none';
+  } else if(s){
+    alert('Shared summary loaded with code: '+s);
+    document.getElementById('main-container').style.display='none';
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('shareButton').style.display='none';
   }
 });
