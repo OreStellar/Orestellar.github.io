@@ -39,7 +39,7 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 #totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
 
-/* ===== IMPROVED SUMMARY CONTAINER ===== */
+/* ===== SUMMARY CONTAINER ===== */
 .summary-container{
   display:none;
   flex-direction:column;
@@ -71,138 +71,31 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* === LEDGER-STYLE SUMMARY TABLE (EVEN ALIGNMENT + CLEAN TOTAL) === */
-.summary-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed; /* keeps all columns consistent */
-}
+/* Ledger table */
+.summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.summary-table th, .summary-table td { padding:6px 10px; font-size:14px; white-space:nowrap; font-family: 'Share Tech Mono', monospace; }
+.summary-table th:nth-child(1), .summary-table td:nth-child(1) { width:38%; text-align:left; }
+.summary-table th:nth-child(2), .summary-table td:nth-child(2) { width:20%; text-align:right; }
+.summary-table th:nth-child(3), .summary-table td:nth-child(3) { width:18%; text-align:center; }
+.summary-table th:nth-child(4), .summary-table td:nth-child(4) { width:24%; text-align:right; }
+.summary-table th { text-align:center; color:#00ff00; text-shadow:0 0 6px #00ff00; border-bottom:1px solid rgba(0,255,0,0.3); cursor:pointer; position:relative; }
+.summary-table td { color:#e0ffe0; text-shadow:none; }
+.summary-table td.price, .summary-table td.total-column { font-variant-numeric: tabular-nums; letter-spacing:0.5px; }
+.summary-table td.price::after { content:" ISK"; color: rgba(0,255,0,0.6); font-size:12px; margin-left:3px; }
+.summary-table td.unrecognized { color:#ff4444 !important; text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important; font-weight:bold; text-align:left !important; animation: unrecognizedGlow 1.5s infinite alternate; }
+@keyframes unrecognizedGlow { 0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;} 50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;} }
+.summary-total td { font-weight:bold; border-top:1px solid rgba(0,255,0,0.4); color:#00ff00; text-shadow:0 0 10px #00ff00,0 0 25px #00ff00; }
+.summary-total td:first-child { text-align:right; }
+.summary-total td:last-child { text-align:right; position:relative; }
+.summary-total td:last-child::after { content:" ISK"; color:rgba(0,255,0,0.8); font-size:13px; margin-left:4px; }
 
-.summary-table th,
-.summary-table td {
-  padding: 6px 10px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.15);
-  font-size: 14px;
-  white-space: nowrap;
-  font-family: 'Share Tech Mono', monospace;
-}
+/* Sort arrows */
+.summary-table th.sorted-asc::after { content:"▲"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
+.summary-table th.sorted-desc::after { content:"▼"; opacity:1; position:absolute; right:8px; color:#00ffcc; text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc; }
+.summary-table th::after { opacity:0; transition: opacity 0.2s; }
 
-/* Column layout */
-.summary-table th:nth-child(1),
-.summary-table td:nth-child(1) { width: 38%; text-align: left; }   /* Ore Name */
-.summary-table th:nth-child(2),
-.summary-table td:nth-child(2) { width: 20%; text-align: right; }  /* Price */
-.summary-table th:nth-child(3),
-.summary-table td:nth-child(3) { width: 18%; text-align: center; } /* Quantity */
-.summary-table th:nth-child(4),
-.summary-table td:nth-child(4) { width: 24%; text-align: right; }  /* Total */
-
-/* Header style */
-.summary-table th {
-  text-align: center;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-  border-bottom: 1px solid rgba(0,255,0,0.3);
-}
-
-/* Numeric alignment helper: use a monospaced font & right padding */
-.summary-table td.price,
-.summary-table td.total-column {
-  font-variant-numeric: tabular-nums; /* ensures all digits line up */
-  letter-spacing: 0.5px;
-}
-
-/* Dim "ISK" only after price values */
-.summary-table td.price::after {
-  content: " ISK";
-  color: rgba(0, 255, 0, 0.6);
-  font-size: 12px;
-  margin-left: 3px;
-}
-
-/* Regular rows */
-.summary-table td {
-  color: #e0ffe0;
-  text-shadow: none;
-}
-
-/* Unrecognized ores (red alert style) */
-.summary-table td.unrecognized {
-  color: #ff4444 !important;
-  text-shadow: 0 0 12px #ff3333, 0 0 24px #ff0000 !important;
-  font-weight: bold;
-  text-align: left !important;
-  animation: unrecognizedGlow 1.5s infinite alternate;
-}
-@keyframes unrecognizedGlow {
-  0%, 100% { text-shadow: 0 0 12px #ff3333, 0 0 24px #ff0000; }
-  50% { text-shadow: 0 0 18px #ff6666, 0 0 28px #ff2222; }
-}
-
-/* === TOTAL ROW === */
-.summary-total td {
-  font-weight: bold;
-  border-top: 1px solid rgba(0, 255, 0, 0.4);
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00, 0 0 25px #00ff00;
-}
-
-.summary-total td:first-child {
-  text-align: right;
-}
-
-.summary-total td:last-child {
-  text-align: right;
-  position: relative;
-}
-
-/* Add ISK to the GRAND TOTAL only */
-.summary-total td:last-child::after {
-  content: " ISK";
-  color: rgba(0, 255, 0, 0.8);
-  font-size: 13px;
-  margin-left: 4px;
-}
-/* === SORTABLE COLUMN HEADERS (NEON ARROWS) === */
-.summary-table th {
-  position: relative;
-  transition: color 0.25s, text-shadow 0.3s;
-  user-select: none;
-  cursor: pointer;
-}
-
-.summary-table th:hover {
-  color: #00ffaa;
-  text-shadow: 0 0 8px #00ffaa;
-}
-
-.summary-table th.sorted {
-  color: #00ffcc;
-  text-shadow: 0 0 10px #00ffcc, 0 0 25px #00ffcc;
-}
-
-/* Neon arrows — only visible when sorted */
-.summary-table th::after {
-  content: "";
-  position: absolute;
-  right: 8px;
-  opacity: 0;
-  transition: opacity 0.2s;
-  color: #00ffcc;
-  text-shadow: 0 0 8px #00ffcc, 0 0 15px #00ffcc;
-  font-size: 12px;
-}
-
-.summary-table th.sorted-asc::after {
-  content: "▲";
-  opacity: 1;
-}
-
-.summary-table th.sorted-desc::after {
-  content: "▼";
-  opacity: 1;
-}
-
+/* Active header color */
+.summary-table th.sorted { color:#00ffcc; text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc; }
 </style>
 </head>
 <body data-show-inventory="true">
@@ -315,7 +208,42 @@ makeTotalCopyable(document.getElementById('totalCostText'));
 
 document.querySelector('.main-container').style.display='none';
 document.getElementById('shareButton').style.display='inline-block';
-enableTableSorting();  
+
+// ===== SORTING =====
+const table = document.querySelector('.summary-table');
+if(table){
+    const tbody = table.querySelector('tbody') || table;
+    const headers = table.querySelectorAll('th');
+    let activeColumn = null;
+    let sortDirection = 1;
+
+    headers.forEach((header, index) => {
+        header.onclick = () => {
+            const allRows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('summary-total'));
+            const totalRow = tbody.querySelector('.summary-total');
+
+            // toggle sort
+            if(activeColumn === index) sortDirection *= -1;
+            else { activeColumn = index; sortDirection = 1; }
+
+            // reset header classes
+            headers.forEach(h => h.classList.remove('sorted', 'sorted-asc', 'sorted-desc'));
+            header.classList.add('sorted', sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
+
+            // sort rows
+            const isNumeric = index > 0;
+            allRows.sort((a,b) => {
+                const aVal = a.children[index].innerText.replace(/[^\d.-]/g,'');
+                const bVal = b.children[index].innerText.replace(/[^\d.-]/g,'');
+                return (isNumeric ? parseFloat(aVal) - parseFloat(bVal) : aVal.localeCompare(bVal)) * sortDirection;
+            });
+
+            // re-append rows
+            allRows.forEach(r => tbody.appendChild(r));
+            if(totalRow) tbody.appendChild(totalRow);
+        };
+    });
+}
 }
 
 // ===== BUTTONS =====
@@ -372,62 +300,6 @@ window.addEventListener('load',()=>{
 });
 
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-  document.addEventListener('DOMContentLoaded', () => {
-// ===== SORTABLE SUMMARY TABLE =====
-function enableTableSorting() {
-  const table = document.querySelector('.summary-table');
-  if (!table) return;
-
-  // Add <tbody> if missing
-  let tbody = table.querySelector('tbody');
-  if (!tbody) {
-    const bodyRows = Array.from(table.querySelectorAll('tr')).slice(1);
-    tbody = document.createElement('tbody');
-    bodyRows.forEach(r => tbody.appendChild(r));
-    table.appendChild(tbody);
-  }
-
-  const headers = table.querySelectorAll('th');
-  let sortDirection = 1;
-  let activeColumn = null;
-
-  headers.forEach((header, index) => {
-    header.addEventListener('click', () => {
-      const allRows = Array.from(tbody.querySelectorAll('tr'));
-      const totalRow = allRows.find(r => r.classList.contains('summary-total'));
-      const rows = allRows.filter(r => r !== totalRow);
-
-      // reset styles
-      headers.forEach(h => h.classList.remove('sorted', 'sorted-asc', 'sorted-desc'));
-
-      // toggle direction
-      if (activeColumn === index) sortDirection *= -1;
-      else { sortDirection = 1; activeColumn = index; }
-
-      // mark header
-      header.classList.add('sorted', sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
-
-      // sort logic
-      const isNumeric = index > 0;
-      rows.sort((a, b) => {
-        const aVal = a.children[index]?.innerText.replace(/[^\d.-]/g, '') || '';
-        const bVal = b.children[index]?.innerText.replace(/[^\d.-]/g, '') || '';
-
-        if (isNumeric) {
-          return (parseFloat(aVal) - parseFloat(bVal)) * sortDirection;
-        } else {
-          return aVal.localeCompare(bVal) * sortDirection;
-        }
-      });
-
-      // rebuild table with sorted rows
-      rows.forEach(r => tbody.appendChild(r));
-      if (totalRow) tbody.appendChild(totalRow);
-    });
-  });
-}
-
 </script>
-  
 </body>
 </html>
