@@ -236,17 +236,25 @@ function showContent(prefillText){
   // === HIDE INVENTORY ===
   document.querySelector('.main-container').style.display = 'none';
 
-  // === SHARE BUTTON ===
-  const shareBtn = document.getElementById('shareButton');
-  shareBtn.style.display = 'inline-block';
-  shareBtn.onclick = async () => {
+// === SHARE BUTTON ===
+const shareBtn = document.getElementById('shareButton');
+shareBtn.style.display = 'inline-block';
+shareBtn.onclick = async () => {
     const invText = document.getElementById('message').value.trim();
-    if(!invText) return;
+    if (!invText) return;
+
     const shortUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(invText)}`;
+
+    // Copy to clipboard
     await navigator.clipboard.writeText(shortUrl);
-    alert('Short URL copied!');
-  };
-}
+
+    // Change button text dynamically
+    shareBtn.innerText = "Copied";
+    setTimeout(() => {
+        shareBtn.innerText = "Shared";
+    }, 2000);
+};
+
 
 // ===== PREFILL FROM URL =====
 window.addEventListener('load', () => {
