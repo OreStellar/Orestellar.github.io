@@ -192,84 +192,97 @@ function animateCount(el,start,end,duration=2000){
 }
 
 // ===== SHOW SUMMARY =====
+<!-- Only the updated JS parts are changed; CSS and HTML remain intact -->
+<script>
+// ===== BASE62 SHORT URL =====
+const base62Chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function toBase62(num){ let str=''; do{ str=base62Chars[num%62]+str; num=Math.floor(num/62); }while(num>0); return str; }
+function hashString(str){ let hash=0; for(let i=0;i<str.length;i++){ hash=(hash<<5)-hash+str.charCodeAt(i); hash|=0; } return Math.abs(hash); }
+function makeShortUrl(invStr){ const hash=hashString(invStr); return `${location.origin}${location.pathname}?inv=${toBase62(hash)}`; }
+
+// ===== ANIMATE COUNT =====
+function animateCount(el,start,end,duration=2000){
+  let startTime=null;
+  function step(t){
+    if(!startTime) startTime=t;
+    let progress=Math.min((t-startTime)/duration,1);
+    const current=Math.floor(progress*(end-start)+start);
+    el.innerText=current.toLocaleString()+' ISK';
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ===== SHOW SUMMARY =====
 function showContent(){
-  const t = document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
+  const t=document.getElementById('message').value;
+  const regex=/([\w\s]+?)\s+(\d+)/g;
   let match, summary=[], total=0;
 
-  while((match = regex.exec(t)) !== null){
-    const nameRaw = match[1].trim();
-    const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
-    const qty = parseInt(match[2]);
-    if(priceList[name] !== undefined){
-      summary.push({name:nameRaw, price:priceList[name], qty:qty, val:qty*priceList[name]});
-      total += qty*priceList[name];
-    } else {
-      summary.push({name:nameRaw, price:'?', qty:qty, val:'Unrecognized', unrecognized:true});
-    }
+  while((match=regex.exec(t))!==null){
+    const nameRaw=match[1].trim();
+    const name=nameRaw.toLowerCase().replace(/\s+/g,' ');
+    const qty=parseInt(match[2]);
+    if(priceList[name]!==undefined){ summary.push({name:nameRaw,price:priceList[name],qty:qty,val:qty*priceList[name]}); total+=qty*priceList[name]; }
+    else{ summary.push({name:nameRaw,price:'?',qty:qty,val:'Unrecognized',unrecognized:true}); }
   }
 
-  const summaryContainer = document.getElementById('summaryContainer');
-  let tableHTML = '<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
-  summary.forEach(item => {
-    tableHTML += `<tr>
+  const summaryContainer=document.getElementById('summaryContainer');
+  let tableHTML='<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
+  summary.forEach(item=>{
+    tableHTML+=`<tr>
       <td class="${item.unrecognized?'unrecognized':''}">${item.name}</td>
       <td>${item.unrecognized?item.price:formatNumber(item.price)}</td>
       <td>${formatNumber(item.qty)}</td>
       <td>${item.unrecognized?item.val:formatNumber(item.val)}</td>
     </tr>`;
   });
-  tableHTML += '</table>';
-  tableHTML += `<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
-  summaryContainer.innerHTML = tableHTML;
-  summaryContainer.style.display = 'block';
+  tableHTML+='</table>';
+  tableHTML+=`<div class="summary-total"><span>Total</span><span>0 ISK</span></div>`;
+  summaryContainer.innerHTML=tableHTML;
+  summaryContainer.style.display='block';
 
   // === CONTRACTS ===
-  const leftContract = document.getElementById('leftContainer');
-  const totalCostContainer = document.getElementById('totalCostContainer');
-  leftContract.style.display = 'block';
-  totalCostContainer.style.display = 'block';
+  const leftContract=document.getElementById('leftContainer');
+  const totalCostContainer=document.getElementById('totalCostContainer');
+  leftContract.style.display='block';
+  totalCostContainer.style.display='block';
+
+  // Animate Contract 2 total
+  animateCount(document.getElementById('totalCostText'),0,total);
+  // Animate summary total
+  animateCount(summaryContainer.querySelector('.summary-total span:last-child'),0,total);
 
   // === HIDE INVENTORY ===
-  document.querySelector('.main-container').style.display = 'none';
+  document.querySelector('.main-container').style.display='none';
 
   // === SHARE BUTTON ===
-  const shareBtn = document.getElementById('shareButton');
-  shareBtn.style.display = 'inline-block';
-  shareBtn.onclick = async () => {
-    let longUrl = `${location.origin}${location.pathname}?inv=${encodeURIComponent(document.getElementById('message').value)}`;
-
-    try {
-      // Bash URL shortener API call
-      const res = await fetch('https://bash-url-shortener.example.com/api', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({url: longUrl})
-      });
-      const json = await res.json();
-      if(json.shortUrl) longUrl = json.shortUrl;
-    } catch(e){ console.error('Bash URL shortener failed:', e); }
-
-    await navigator.clipboard.writeText(longUrl);
+  const shareBtn=document.getElementById('shareButton');
+  shareBtn.style.display='inline-block';
+  shareBtn.onclick=async()=>{
+    const shortUrl=makeShortUrl(document.getElementById('message').value);
+    await navigator.clipboard.writeText(shortUrl);
     alert('Bash short URL copied!');
   };
 }
 
 // ===== PREFILL FROM URL =====
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const inv = params.get('inv');
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const inv=params.get('inv');
   if(inv){
-    document.getElementById('message').value = decodeURIComponent(inv);
+    document.getElementById('message').value=decodeURIComponent(inv);
     showContent();
 
-    // Hide contracts for Bash URL
+    // Hide contracts for short URL
     document.getElementById('leftContainer').style.display='none';
     document.getElementById('totalCostContainer').style.display='none';
     document.getElementById('submitButton').style.display='none';
     document.getElementById('shareButton').style.display='none';
   }
 });
+</script>
+
 
 // ===== BUTTONS =====
 document.getElementById('submitButton').addEventListener('click', showContent);
