@@ -422,7 +422,11 @@ const summaryObserver = new MutationObserver(shortenCompressedNames);
 const summaryContainer = document.querySelector('#summaryContainer');
 if (summaryContainer) {
   summaryObserver.observe(summaryContainer, { childList: true, subtree: true });
-}  
+}
+
+// Run once after page load (handles shared summaries)
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(shortenCompressedNames, 500);
 </script>
 </body>
 </html>
