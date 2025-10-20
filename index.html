@@ -191,7 +191,6 @@ textarea#message:focus {
   cursor: pointer;
 }
 
-/* Summary container */
 .summary-container {
   display: none;
   flex-direction: column;
@@ -209,9 +208,9 @@ textarea#message:focus {
   text-shadow: 0 0 6px #00ff00;
   box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
   backdrop-filter: blur(6px);
-  max-height: 420px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  max-height: 420px;          
+  overflow-y: auto;           
+  overflow-x: hidden;         
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
 }
@@ -231,12 +230,13 @@ textarea#message:focus {
   align-items: center;
   gap: 16px;
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: 14px;          
   line-height: 1.4;
   padding-bottom: 4px;
   border-bottom: 1px solid rgba(0, 255, 0, 0.08);
 }
 
+/* Ore names left-aligned */
 .summary-row span:first-child {
   flex: 1 1 auto;
   text-align: left;
@@ -244,6 +244,8 @@ textarea#message:focus {
   text-shadow: 0 0 6px #00ff00;
   white-space: nowrap;
 }
+
+/* ISK values right-aligned */
 .summary-row span:last-child {
   flex: 0 0 auto;
   text-align: right;
@@ -251,13 +253,15 @@ textarea#message:focus {
   color: #00ff00;
   text-shadow: 0 0 6px #00ff00;
 }
+
+/* Unrecognized items glow red */
 .summary-row.unrecognized span:first-child,
 .summary-row.unrecognized span:last-child {
   color: #ff3333;
   text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
 }
 
-/* Total line */
+/* Total line - ledger style neon green exactly like total ISK */
 .summary-total {
   display: flex;
   justify-content: space-between;
@@ -273,39 +277,38 @@ textarea#message:focus {
 .summary-total span:first-child {
   text-align: left;
   flex: 1;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+  color: #00ff00;          
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
 }
 
 .summary-total span:last-child {
   text-align: right;
   flex: 0 0 auto;
   color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
 }
 
-/* Copy share URL button */
 #shareUrlButton {
   display: none;
-  margin-top: 12px;
-  padding: 10px 18px;
-  background: linear-gradient(145deg, #161616, #242424);
-  color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  font-family: 'Orbitron', sans-serif;
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: #111;
+  color: #00ff00;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
-  transition: all 0.3s ease;
+  text-align: center;
+  text-shadow: 0 0 6px #00ff00;
+  box-shadow: 0 0 10px #00ff00 inset;
+  transition: all 0.2s ease;
 }
 #shareUrlButton:hover {
-  transform: scale(1.03);
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  color: #000;
+  background-color: #222;
+  box-shadow: 0 0 16px #00ff00 inset;
 }
 
-/* Copied message */
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
+
 </style>
 </head>
 <body>
@@ -336,18 +339,20 @@ textarea#message:focus {
     </div>
   </div>
 
-  <button id="shareUrlButton">Copy Share URL</button>
+  <div id="shareUrlButton">Copy Share URL</div>
 </div>
 
 <script>
 // ===== STARFIELD =====
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-let stars=[], clusterCount=12;
-function createStars(){
+let stars=[], brightStars=[], brightStarTimer=0;
+const clusterCount=12;
+
+function createStars() {
   stars=[];
   const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
@@ -360,33 +365,22 @@ function createStars(){
       const angle=Math.random()*Math.PI*2;
       x=c.x+radius*Math.cos(angle);
       y=c.y+radius*Math.sin(angle);
-    } else { x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
+    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
 
-let lastBrightTime=0, nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(time-lastBrightTime>nextBrightInterval){
-    lastBrightTime=time;
-    nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
-  }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
-    else s.isBright=false;
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle=s.color;
     ctx.globalAlpha=alpha;
-    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
+    ctx.shadowBlur=s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
   }
@@ -426,8 +420,8 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// ===== SHOW CONTENT FUNCTION =====
-function showContent(hideContracts=false){
+// ===== SHOW CONTENT =====
+function showContent(isShared=false){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
@@ -439,61 +433,88 @@ function showContent(hideContracts=false){
       total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
-
   const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML='';
-  summary.forEach(item=>{
-    const rowClass=item.unrecognized?'summary-row unrecognized':'summary-row';
-    summaryContainer.innerHTML+=`
+  summaryContainer.innerHTML = '';
+
+  summary.forEach(item => {
+    const rowClass = item.unrecognized ? 'summary-row unrecognized' : 'summary-row';
+    summaryContainer.innerHTML += `
       <div class="${rowClass}">
         <span>${item.name}</span>
-        <span>${item.unrecognized?'Unrecognized':formatNumber(item.val)+' ISK'}</span>
+        <span>${item.unrecognized ? 'Unrecognized' : formatNumber(item.val) + ' ISK'}</span>
       </div>`;
   });
 
-  summaryContainer.innerHTML+=`
+  summaryContainer.innerHTML += `
     <div class="summary-total">
       <span>Total</span>
       <span>${formatNumber(total)} ISK</span>
     </div>`;
+
   summaryContainer.style.display='flex';
-  document.getElementById('leftContainer').style.display=hideContracts?'none':'block';
-  document.getElementById('totalCostContainer').style.display=hideContracts?'none':'block';
-  if(!hideContracts) animateCount(document.getElementById('totalCostText'),0,total);
+  document.getElementById('leftContainer').style.display = isShared ? 'none' : 'block';
+  document.getElementById('totalCostContainer').style.display = isShared ? 'none' : 'block';
+
+  animateCount(document.getElementById('totalCostText'),0,total);
 
   document.querySelector('.main-container').style.display='none';
-  document.getElementById('shareUrlButton').style.display='block';
+  document.getElementById('shareUrlButton').style.display = isShared ? 'none' : 'block';
 }
 
-// ===== SHARE URL BUTTON =====
+// ===== COPY TOTAL COST =====
+const totalCostEl = document.getElementById('totalCostText');
+totalCostEl.addEventListener('click', () => {
+  const numericText = totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
+  navigator.clipboard.writeText(numericText);
+  const originalText = totalCostEl.innerText;
+  totalCostEl.innerText = 'Copied';
+  setTimeout(()=>{ totalCostEl.innerText=originalText; },1500);
+});
+
+// ===== LOGO CLICK REFRESH =====
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+
+// ===== BASE62 SHARE URL SYSTEM =====
+const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function base62Encode(num){ let s=''; do{s=chars[num%62]+s; num=Math.floor(num/62);}while(num>0); return s; }
+function hashInventory(str){ let hash=0; for(let i=0;i<str.length;i++){hash=(hash*31+str.charCodeAt(i))>>>0;} return hash; }
+
+const inventoryDB = JSON.parse(localStorage.getItem('oreStellarDB')||'{}');
+
 document.getElementById('shareUrlButton').addEventListener('click',()=>{
-  const inventory=document.getElementById('message').value;
-  const url=window.location.origin+window.location.pathname+'?inventory='+encodeURIComponent(inventory);
+  const inventory = document.getElementById('message').value;
+  const code = base62Encode(hashInventory(inventory));
+  inventoryDB[code]=inventory;
+  localStorage.setItem('oreStellarDB', JSON.stringify(inventoryDB));
+  const url=window.location.origin+window.location.pathname+'#'+code;
   navigator.clipboard.writeText(url);
   document.getElementById('shareUrlButton').innerText='Copied!';
   setTimeout(()=>{ document.getElementById('shareUrlButton').innerText='Copy Share URL'; },1500);
 });
 
-// ===== TOTAL COST COPY =====
-const totalCostEl=document.getElementById('totalCostText');
-totalCostEl.addEventListener('click',()=>{
-  const numericText=totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
-  navigator.clipboard.writeText(numericText);
-  const originalText=totalCostEl.innerText;
-  totalCostEl.innerText='Copied';
-  setTimeout(()=>{ totalCostEl.innerText=originalText; },1500);
+// ===== LOAD FROM SHARE URL =====
+window.addEventListener('load',()=>{
+  const code = window.location.hash.substring(1);
+  if(code && inventoryDB[code]){
+    document.getElementById('message').value = inventoryDB[code];
+    showContent(true);
+  }
 });
 
 // ===== SUBMIT BUTTON =====
-document.getElementById('submitButton').addEventListener('click',()=>showContent(false));
-
-// ===== HEADER REFRESH =====
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+document.getElementById('submitButton').addEventListener('click',()=>{
+  const inv=document.getElementById('message').value;
+  const code = base62Encode(hashInventory(inv));
+  inventoryDB[code]=inv;
+  localStorage.setItem('oreStellarDB',JSON.stringify(inventoryDB));
+  showContent(false);
+});
 
 // ===== LOGO ANIMATION =====
 window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore');
-  const stellar=document.getElementById('stellar');
+  const ore = document.getElementById('ore');
+  const stellar = document.getElementById('stellar');
+
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
     setTimeout(()=>{ ore.style.animation='softGlow 6s infinite'; },300);
@@ -510,15 +531,6 @@ window.addEventListener('load',()=>{
       },300);
     },1100);
   },500);
-});
-
-// ===== LOAD SHARE URL =====
-window.addEventListener('load',()=>{
-  const params=new URLSearchParams(window.location.search);
-  if(params.has('inventory')){
-    document.getElementById('message').value=params.get('inventory');
-    showContent(true);
-  }
 });
 </script>
 </body>
