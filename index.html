@@ -71,22 +71,23 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* === LEDGER-STYLE SUMMARY TABLE === */
+/* === LEDGER-STYLE SUMMARY TABLE (EVEN ALIGNMENT + CLEAN TOTAL) === */
 .summary-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* ensures consistent column spacing */
+  table-layout: fixed; /* keeps all columns consistent */
 }
 
-.summary-table th, 
+.summary-table th,
 .summary-table td {
   padding: 6px 10px;
   border-bottom: 1px solid rgba(0, 255, 0, 0.15);
   font-size: 14px;
   white-space: nowrap;
+  font-family: 'Share Tech Mono', monospace;
 }
 
-/* Column layout and alignment */
+/* Column layout */
 .summary-table th:nth-child(1),
 .summary-table td:nth-child(1) { width: 38%; text-align: left; }   /* Ore Name */
 .summary-table th:nth-child(2),
@@ -96,41 +97,36 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-table th:nth-child(4),
 .summary-table td:nth-child(4) { width: 24%; text-align: right; }  /* Total */
 
-/* Header styling */
+/* Header style */
 .summary-table th {
   text-align: center;
   color: #00ff00;
   text-shadow: 0 0 6px #00ff00;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+  border-bottom: 1px solid rgba(0,255,0,0.3);
 }
 
-/* Base row styles */
-.summary-table td {
-  color: #e0ffe0;
-  text-shadow: none;
-  font-family: 'Share Tech Mono', monospace;
+/* Numeric alignment helper: use a monospaced font & right padding */
+.summary-table td.price,
+.summary-table td.total-column {
+  font-variant-numeric: tabular-nums; /* ensures all digits line up */
+  letter-spacing: 0.5px;
 }
 
-/* Dim “ISK” text but keep number bright */
-.summary-table td.price::after,
-.summary-table td.total-column::after {
+/* Dim "ISK" only after price values */
+.summary-table td.price::after {
   content: " ISK";
   color: rgba(0, 255, 0, 0.6);
   font-size: 12px;
   margin-left: 3px;
 }
 
-/* Total row highlight */
-.summary-total td {
-  font-weight: bold;
-  border-top: 1px solid rgba(0, 255, 0, 0.4);
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00, 0 0 25px #00ff00;
+/* Regular rows */
+.summary-table td {
+  color: #e0ffe0;
+  text-shadow: none;
 }
-.summary-total td:first-child { text-align: right; }
-.summary-total td:last-child { text-align: right; }
 
-/* Unrecognized ores (red pulsing) */
+/* Unrecognized ores (red alert style) */
 .summary-table td.unrecognized {
   color: #ff4444 !important;
   text-shadow: 0 0 12px #ff3333, 0 0 24px #ff0000 !important;
@@ -141,6 +137,31 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 @keyframes unrecognizedGlow {
   0%, 100% { text-shadow: 0 0 12px #ff3333, 0 0 24px #ff0000; }
   50% { text-shadow: 0 0 18px #ff6666, 0 0 28px #ff2222; }
+}
+
+/* === TOTAL ROW === */
+.summary-total td {
+  font-weight: bold;
+  border-top: 1px solid rgba(0, 255, 0, 0.4);
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 25px #00ff00;
+}
+
+.summary-total td:first-child {
+  text-align: right;
+}
+
+.summary-total td:last-child {
+  text-align: right;
+  position: relative;
+}
+
+/* Add ISK to the GRAND TOTAL only */
+.summary-total td:last-child::after {
+  content: " ISK";
+  color: rgba(0, 255, 0, 0.8);
+  font-size: 13px;
+  margin-left: 4px;
 }
 
 </style>
