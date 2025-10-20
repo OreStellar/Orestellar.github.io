@@ -388,16 +388,30 @@ function animateCount(el,start,end,duration=2000){
 
 function showContent(){
   const t=document.getElementById('message').value;
-  const regex=/([\w\s]+?)\s+(\d+)/g;
-  let match,total=0,summary=[];
-  while((match=regex.exec(t))!==null){
-    const name=match[1].trim(),qty=parseInt(match[2]);
-    const lookupName=name.toLowerCase();
-    if(priceList[lookupName]){
-      summary.push({name,price:priceList[lookupName],qty,val:qty*priceList[lookupName]});
-      total+=qty*priceList[lookupName];
-    } else summary.push({name,price:'?',qty,val:'Unrecognized',unrecognized:true});
+  while((match = regex.exec(t)) !== null){
+  const nameRaw = match[1].trim();                     // original input
+  const name = nameRaw.toLowerCase().replace(/\s+/g,' '); // normalize lowercase + spaces
+  const qty = parseInt(match[2]);
+
+  if(priceList[name] !== undefined){
+    summary.push({
+      name: nameRaw,
+      price: priceList[name],
+      qty: qty,
+      val: qty * priceList[name]
+    });
+    total += qty * priceList[name];
+  } else {
+    summary.push({
+      name: nameRaw,
+      price: '?',
+      qty: qty,
+      val: 'Unrecognized',
+      unrecognized: true
+    });
   }
+}
+
 
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.innerHTML = '';
