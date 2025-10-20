@@ -35,44 +35,64 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
 .quote-text { font-style:italic; font-weight:bold; font-size:21px; animation:glowPulse 3s infinite; }
 @keyframes glowPulse { 0%,100% { text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;} 50% { text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
 
-/* Submit Button */
-#submitButton { margin-top:15px; background:linear-gradient(145deg,#161616,#242424); color:#fff; border:2px solid #ccc; border-radius:10px; padding:15px 35px; font-weight:bold; font-family:'Orbitron',sans-serif; cursor:pointer; position:relative; overflow:hidden; text-shadow:0 0 2px #fff; box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset; animation:ambientGlow 3.5s ease-in-out infinite alternate; transition:all 0.35s ease; }
-@keyframes ambientGlow { 0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;} 100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;} }
-#submitButton:hover { color:#000; background:linear-gradient(145deg,#f2f2f2,#dcdcdc); border-color:#fff; transform:translateY(-2px) scale(1.04); animation:hoverPulse 1.6s infinite alternate; box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset; }
-@keyframes hoverPulse { 0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;} 100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;} }
+/* Submit & Share Buttons */
+button#submitButton, button#shareButton {
+    margin-top:15px;
+    background:linear-gradient(145deg,#161616,#242424);
+    color:#fff;
+    border:2px solid #ccc;
+    border-radius:10px;
+    padding:15px 35px;
+    font-weight:bold;
+    font-family:'Orbitron',sans-serif;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    text-shadow:0 0 2px #fff;
+    box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;
+    animation:ambientGlow 3.5s ease-in-out infinite alternate;
+    transition:all 0.35s ease;
+}
+button#submitButton:hover, button#shareButton:hover {
+    color:#000;
+    background:linear-gradient(145deg,#f2f2f2,#dcdcdc);
+    border-color:#fff;
+    transform:translateY(-2px) scale(1.04);
+    animation:hoverPulse 1.6s infinite alternate;
+    box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset;
+}
 
 /* Contracts and summary */
-.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:15px; flex-wrap:wrap; width:100%; }
+.contracts-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:15px; flex-wrap:nowrap; width:100%; }
 .total-cost-container { width:630px; height:418px; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none; }
 #leftContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 #totalCostText { position:absolute; top:calc(50% + 10px); left:calc(50% - 42px); font-size:14px; font-weight:bold; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; cursor:pointer; }
 
-/* Summary Container Table Style */
-.contracts-wrapper { flex-wrap: nowrap; }
+/* Summary container */
 .summary-container {
-  display: none;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  font-family: 'Orbitron', monospace;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #00ff00;
-  background: rgba(0, 10, 0, 0.85);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  border-radius: 12px;
-  padding: 12px 18px;
-  min-width: 400px;
-  max-width: 500px;
-  text-shadow: 0 0 6px #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
-  backdrop-filter: blur(6px);
-  max-height: 420px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #00ff00 transparent;
+  display:none;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  font-family:'Orbitron', monospace;
+  font-size:14px;
+  line-height:1.4;
+  color:#00ff00;
+  background:rgba(0,10,0,0.85);
+  border:1px solid rgba(0,255,0,0.5);
+  border-radius:12px;
+  padding:12px 18px;
+  min-width:400px;
+  max-width:500px;
+  text-shadow:0 0 6px #00ff00;
+  box-shadow:0 0 12px rgba(0,255,0,0.3);
+  backdrop-filter:blur(6px);
+  max-height:420px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:#00ff00 transparent;
 }
 .summary-container::-webkit-scrollbar { width:6px; }
 .summary-container::-webkit-scrollbar-thumb { background:#00ff00; box-shadow:0 0 10px #00ff00; border-radius:4px; }
@@ -83,10 +103,6 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
 .summary-table td.unrecognized { color:#ff3333; text-shadow:0 0 10px #ff3333,0 0 20px #ff0000; }
 .summary-total { margin-top:6px; font-weight:bold; border-top:1px solid rgba(0,255,0,0.3); display:flex; justify-content:space-between; }
 .summary-total span { color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
-
-/* Share Summary Button */
-#shareButton { display:none; margin-top:12px; padding:12px 28px; font-family:'Orbitron',sans-serif; font-weight:bold; color:#000; background:linear-gradient(145deg,#00ff00,#00cc00); border-radius:10px; cursor:pointer; box-shadow:0 0 12px #00ff00; }
-#shareButton:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 0 18px #00ff00,0 0 28px #00cc00 inset; }
 
 </style>
 </head>
@@ -103,6 +119,7 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
     <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
     <button id="submitButton" disabled>Submit</button>
+    <button id="shareButton">Share Summary</button>
   </div>
 
   <div class="contracts-wrapper">
@@ -112,98 +129,53 @@ textarea#message:focus { outline:none; border-color:#fff; box-shadow:inset 0 0 1
       <div id="totalCostText">0 ISK</div>
     </div>
   </div>
-
-  <button id="shareButton">Share Summary</button>
 </div>
 
 <script>
 // ===== STARFIELD =====
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
-let stars=[], clusterCount=12;
-function createStars(){
-  stars=[]; const clusterCenters=[];
-  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
-  const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
-  for(let i=0;i<totalStars;i++){
-    let x,y;
-    if(Math.random()<0.6){
-      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
-      const radius=Math.random()*120; const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
-    }else{ x=Math.random()*canvas.width; y=Math.random()*canvas.height; }
-    stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.8+Math.random()*0.2});
-  }
-}
+const canvas=document.getElementById("starfield");
+const ctx=canvas.getContext("2d");
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();window.addEventListener("resize",()=>{resizeCanvas();createStars();});
+let stars=[],clusterCount=12;
+function createStars(){stars=[];const clusterCenters=[];for(let i=0;i<clusterCount;i++)clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];const radius=Math.random()*120;const angle=Math.random()*Math.PI*2;x=c.x+radius*Math.cos(angle);y=c.y+radius*Math.sin(angle);}else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.8+Math.random()*0.2});}}
 createStars();
 let lastBrightTime=0;
 let nextBrightInterval=7000+Math.random()*8000;
-function drawStars(time=0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(time-lastBrightTime>nextBrightInterval){
-    lastBrightTime=time; nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){ const s=stars[Math.floor(Math.random()*stars.length)]; s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000; }
-  }
-  for(let s of stars){
-    let alpha=s.baseAlpha;
-    if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
-    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
-    else s.isBright=false;
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
-    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
-    ctx.shadowColor=s.color;
-    ctx.fill();
-  }
-  ctx.globalAlpha=1; requestAnimationFrame(drawStars);
-}
+function drawStars(time=0){ctx.clearRect(0,0,canvas.width,canvas.height);if(time-lastBrightTime>nextBrightInterval){lastBrightTime=time;nextBrightInterval=7000+Math.random()*8000;for(let i=0;i<2;i++){const s=stars[Math.floor(Math.random()*stars.length)];s.isBright=true;s.brightStart=time;s.brightEnd=time+2000+Math.random()*1000;}}for(let s of stars){let alpha=s.baseAlpha;if(s.twinkle)alpha=0.6+0.4*Math.sin(time*0.002+s.phase);if(s.isBright&&time>=s.brightStart&&time<s.brightEnd)alpha=1;else s.isBright=false;ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=alpha;ctx.shadowBlur=alpha===1?s.size*8:s.size*4;ctx.shadowColor=s.color;ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(drawStars);}
 drawStars();
 
 // ===== FETCH PRICES CSV (second-last column) =====
 let priceList={};
 async function fetchPrices(){
-  const response = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
-  const csvText = await response.text();
-  const rows = csvText.split('\n');
+  const response=await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
+  const csvText=await response.text();
+  const rows=csvText.split('\n');
   rows.forEach(row=>{
     const cols=row.split(',');
     if(cols.length>=2){
-      const oreName = cols[0].toLowerCase().trim();
+      const oreName=cols[0].toLowerCase().trim();
       const suggestedPrice=parseInt(cols[cols.length-2]);
-      if(!isNaN(suggestedPrice)) priceList[oreName]=suggestedPrice;
+      if(!isNaN(suggestedPrice))priceList[oreName]=suggestedPrice;
     }
   });
 }
 fetchPrices();
 
-// ===== SHOW CONTENT =====
 document.getElementById('submitButton').disabled=false;
-function formatNumber(n){ return n.toLocaleString(); }
-function animateCount(el,start,end,duration=2000){
-  let startTime=null;
-  function step(t){
-    if(!startTime) startTime=t;
-    let progress=Math.min((t-startTime)/duration,1);
-    const current=Math.floor(progress*(end-start)+start);
-    el.innerText=current.toLocaleString()+' ISK';
-    if(progress<1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+function formatNumber(n){return n.toLocaleString();}
+function animateCount(el,start,end,duration=2000){let startTime=null;function step(t){if(!startTime)startTime=t;let progress=Math.min((t-startTime)/duration,1);const current=Math.floor(progress*(end-start)+start);el.innerText=current.toLocaleString()+' ISK';if(progress<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function showContent(){
+// ===== SHOW CONTENT =====
+async function showContent(){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match;
   let summary=[]; let total=0;
-
   while((match=regex.exec(t))!==null){
     const nameRaw=match[1].trim();
     const name=nameRaw.toLowerCase().replace(/\s+/g,' ');
     const qty=parseInt(match[2]);
-
     if(priceList[name]!==undefined){
       summary.push({name:nameRaw,price:priceList[name],qty:qty,val:qty*priceList[name]});
       total+=qty*priceList[name];
@@ -211,7 +183,6 @@ function showContent(){
       summary.push({name:nameRaw,price:'?',qty:qty,val:'Unrecognized',unrecognized:true});
     }
   }
-
   const summaryContainer=document.getElementById('summaryContainer');
   let tableHTML='<table class="summary-table"><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>';
   summary.forEach(item=>{
@@ -230,35 +201,41 @@ function showContent(){
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   animateCount(document.getElementById('totalCostText'),0,total);
-  document.querySelector('.main-container').style.display='none';
 
+  document.getElementById('submitButton').style.display='none';
   const shareBtn=document.getElementById('shareButton');
-  shareBtn.style.display='block';
-}
+  shareBtn.style.display='inline-block';
 
-// ===== SHARE SUMMARY WITH SHORT URL =====
-document.getElementById('shareButton').addEventListener('click', async () => {
-    const inventoryData = encodeURIComponent(document.getElementById('message').value);
-    const longUrl = `${location.origin}${location.pathname}?inv=${inventoryData}`;
-
-    try {
-        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-        const shortUrl = await response.text();
-        await navigator.clipboard.writeText(shortUrl);
-        alert('Share Summary URL Copied! \n' + shortUrl);
-    } catch (err) {
-        await navigator.clipboard.writeText(longUrl);
-        alert('Could not shorten URL. Copied full URL instead:\n' + longUrl);
+  // ===== Share using Bash URL Shortener =====
+  shareBtn.onclick=async()=>{
+    const data=encodeURIComponent(t);
+    const fullUrl=`${location.origin}${location.pathname}?inv=${data}`;
+    try{
+      const res=await fetch('https://bash-url-shortener.example/api', { // replace with your bash API endpoint
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({url:fullUrl})
+      });
+      const json=await res.json();
+      const shortUrl=json.shortUrl || fullUrl;
+      navigator.clipboard.writeText(shortUrl);
+      alert('Share Summary URL Copied!');
+    } catch(e){
+      navigator.clipboard.writeText(fullUrl);
+      alert('Share Summary URL Copied!');
     }
-});
-
-// ===== PRE-FILL INVENTORY FROM URL =====
-const urlParams = new URLSearchParams(window.location.search);
-const invData = urlParams.get('inv');
-if (invData) {
-    document.getElementById('message').value = decodeURIComponent(invData);
-    showContent(); // Automatically display summary
+  };
 }
+
+// ===== Check for URL prefill =====
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const inv=params.get('inv');
+  if(inv){
+    document.getElementById('message').value=decodeURIComponent(inv);
+    showContent();
+  }
+});
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
@@ -268,16 +245,13 @@ document.getElementById('myHeader').addEventListener('click',()=>location.reload
 window.addEventListener('load',()=>{
   const ore=document.getElementById('ore');
   const stellar=document.getElementById('stellar');
-
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
     setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-
     setTimeout(()=>{
       stellar.style.animation='flickerRapid 0.3s linear forwards';
       setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
     },400);
-
     setTimeout(()=>{
       ore.style.animation='flickerQuick 0.3s linear forwards';
       stellar.style.animation='flickerQuick 0.3s linear forwards';
