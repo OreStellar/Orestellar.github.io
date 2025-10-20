@@ -52,7 +52,7 @@ canvas#starfield {
 }
 
 #logoText {
-  display: inline; /* inline ensures OreStellar sticks together */
+  display: inline;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
@@ -62,27 +62,15 @@ canvas#starfield {
 }
 
 #logoText span {
-  display: inline; /* no extra boxes around spans */
+  display: inline;
   color: rgba(255,255,255,0.1);
-  text-shadow: none; /* text-only glow will come from animation */
+  text-shadow: none;
 }
 
-
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
-  50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
-}
-
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
-  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-}
-
+/* Logo animations */
+@keyframes softGlow {0%,100% {text-shadow: 0 0 5px #fff;color: rgba(255,255,255,0.75);}50% {text-shadow: 0 0 15px #fff;color: rgba(255,255,255,1);}}
+@keyframes flickerRapid {0%,20%,40%,60%,80%,100% {color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff;}10%,30%,50%,70%,90% {color: rgba(255,255,255,0.1); text-shadow: none;}}
+@keyframes flickerQuick {0%,50%,100% {color: rgba(255,255,255,0.1); text-shadow: none;}25%,75% {color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff;}}
 
 /* Main inventory box */
 .main-container {
@@ -92,8 +80,8 @@ canvas#starfield {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-    background-color: rgba(20,20,20,0.92);
-  box-shadow: none; /* removes glow */
+  background-color: rgba(20,20,20,0.92);
+  box-shadow: none;
   border-radius: 15px;
 }
 
@@ -111,7 +99,7 @@ canvas#starfield {
   border: 1px solid #333;
   text-align: left;
   font-family: 'Share Tech Mono', monospace;
-  box-shadow: inset 0 0 5px #111; /* subtle inset only, no glow */
+  box-shadow: inset 0 0 5px #111;
   transition: all 0.2s ease-in-out;
 }
 .main-container textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
@@ -119,7 +107,6 @@ textarea#message:focus {
   outline: none;
   border-color: #fff;
   box-shadow: inset 0 0 15px #fff, 0 0 25px #fff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 /* Quote text */
@@ -128,44 +115,29 @@ textarea#message:focus {
   font-size: 21px;
   animation: glowPulse 3s infinite;
 }
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
+@keyframes glowPulse {0%,100% {text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;}50% {text-shadow:0 0 15px #fff,0 0 20px #aaa;}}
 
-/* Submit Button */
-#submitButton {
+/* Buttons */
+button {
   margin-top: 10px;
   background: linear-gradient(145deg, #161616, #242424);
   color: #fff;
   border: 2px solid #ccc;
   border-radius: 10px;
-  padding: 15px 35px;
+  padding: 12px 28px;
   font-weight: bold;
   font-family: 'Orbitron', sans-serif;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
   text-shadow: 0 0 2px #fff;
   box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
-  animation: ambientGlow 3.5s ease-in-out infinite alternate;
-  transition: all 0.35s ease;
+  transition: all 0.3s ease;
 }
-@keyframes ambientGlow {
-  0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
-  100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
-}
-#submitButton:hover {
+button:hover {
   color: #000;
   background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
   border-color: #fff;
   transform: translateY(-2px) scale(1.04);
-  animation: hoverPulse 1.6s infinite alternate;
   box-shadow: 0 0 10px #ffffffcc, 0 0 20px #ffffff66 inset;
-}
-@keyframes hoverPulse {
-  0% { box-shadow: 0 0 8px #ffffff88, 0 0 15px #ffffff33 inset; }
-  100% { box-shadow: 0 0 16px #ffffffcc, 0 0 25px #ffffff66 inset; }
 }
 
 /* Contracts and summary */
@@ -194,6 +166,7 @@ textarea#message:focus {
   cursor: pointer;
 }
 
+/* Summary container */
 .summary-container {
   display: none;
   flex-direction: column;
@@ -211,16 +184,14 @@ textarea#message:focus {
   text-shadow: 0 0 6px #00ff00;
   box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
   backdrop-filter: blur(6px);
-  max-height: 420px;          /* scroll limit */
-  overflow-y: auto;           /* vertical scroll */
-  overflow-x: hidden;         
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
 }
 
-.summary-container::-webkit-scrollbar {
-  width: 6px;
-}
+.summary-container::-webkit-scrollbar { width: 6px; }
 .summary-container::-webkit-scrollbar-thumb {
   background: #00ff00;
   box-shadow: 0 0 10px #00ff00;
@@ -233,13 +204,12 @@ textarea#message:focus {
   align-items: center;
   gap: 16px;
   margin-bottom: 6px;
-  font-size: 14px;          
+  font-size: 14px;
   line-height: 1.4;
   padding-bottom: 4px;
   border-bottom: 1px solid rgba(0, 255, 0, 0.08);
 }
 
-/* Ore names left-aligned */
 .summary-row span:first-child {
   flex: 1 1 auto;
   text-align: left;
@@ -248,7 +218,6 @@ textarea#message:focus {
   white-space: nowrap;
 }
 
-/* ISK values right-aligned */
 .summary-row span:last-child {
   flex: 0 0 auto;
   text-align: right;
@@ -257,53 +226,39 @@ textarea#message:focus {
   text-shadow: 0 0 6px #00ff00;
 }
 
-/* Unrecognized items glow red */
+/* Unrecognized items red glow */
 .summary-row.unrecognized span:first-child,
 .summary-row.unrecognized span:last-child {
   color: #ff3333;
   text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
 }
 
-/* Total line - keep ledger style neon green exactly like total ISK */
+/* Total */
 .summary-total {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-top: 1px solid rgba(0, 255, 0, 0.4);
+  border-top: 1px solid rgba(0,255,0,0.4);
   padding-top: 10px;
   margin-top: 8px;
   font-weight: bold;
   font-size: 16px;
 }
-
 .summary-total span:first-child {
   text-align: left;
   flex: 1;
-  color: #00ff00;          
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
+  color: #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
-
 .summary-total span:last-child {
   text-align: right;
   flex: 0 0 auto;
   color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
+  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
 #copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
-@keyframes unifiedGlow {
-  0%, 100% {
-    text-shadow: 0 0 4px #fff;
-    box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset;
-    color: rgba(255,255,255,0.75);
-  }
-  50% {
-    text-shadow: 0 0 15px #fff;
-    box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset;
-    color: rgba(255,255,255,1);
-  }
-}
 </style>
 </head>
 <body>
@@ -312,32 +267,32 @@ textarea#message:focus {
 
 <div class="container-wrapper">
   <header id="myHeader">
-<h1 id="logoText">
-  <span id="ore">Ore</span><span id="stellar">Stellar</span>
-</h1>
-
+    <h1 id="logoText">
+      <span id="ore">Ore</span><span id="stellar">Stellar</span>
+    </h1>
   </header>
 
   <div class="main-container w3-card w3-container w3-center">
     <h3 class="quote-text">Copy & Paste Your Inventory Below</h3><br>
-    <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527&#10;Magma Mercoxit 40599&#10;Compressed Mordunium 592556&#10;Bistot 1320"></textarea>
+    <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143&#10;Jet Ochre 13527"></textarea>
     <button id="submitButton" disabled>Submit</button>
+    <button id="copyShareButton" disabled>Copy Share URL</button>
   </div>
 
   <div class="contracts-wrapper">
-  <div id="leftContainer" class="total-cost-container"></div>
+    <div id="leftContainer" class="total-cost-container"></div>
 
-  <div id="summaryContainer" class="summary-container">
-    <!-- JS will populate this -->
-  </div>
+    <div id="summaryContainer" class="summary-container"></div>
 
-  <div id="totalCostContainer" class="total-cost-container">
-    <div id="totalCostText">0 ISK</div>
-    <div id="copiedMessage">Copied!</div>
+    <div id="totalCostContainer" class="total-cost-container">
+      <div id="totalCostText">0 ISK</div>
+      <div id="copiedMessage">Copied!</div>
+    </div>
   </div>
 </div>
 
-</div>
+<!-- LZ-string library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
 <script>
 // ===== STARFIELD =====
@@ -345,54 +300,36 @@ const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
-
-let stars=[], brightStars=[], brightStarTimer=0;
-const clusterCount=12;
-
+let stars=[], clusterCount=12;
 function createStars() {
-  stars=[];
-  const clusterCenters=[];
+  stars=[]; const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
     let x,y;
-    if(Math.random()<0.6){
-      const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
-      const radius=Math.random()*120;
-      const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle);
-      y=c.y+radius*Math.sin(angle);
-    }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
+    if(Math.random()<0.6){const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)]; const r=Math.random()*120; const a=Math.random()*Math.PI*2; x=c.x+r*Math.cos(a); y=c.y+r*Math.sin(a);}
+    else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
-
-let lastBrightTime=0;
-let nextBrightInterval=7000+Math.random()*8000;
-
+let lastBrightTime=0, nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(time-lastBrightTime>nextBrightInterval){
     lastBrightTime=time;
     nextBrightInterval=7000+Math.random()*8000;
-    for(let i=0;i<2;i++){
-      const s=stars[Math.floor(Math.random()*stars.length)];
-      s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;
-    }
+    for(let i=0;i<2;i++){const s=stars[Math.floor(Math.random()*stars.length)]; s.isBright=true; s.brightStart=time; s.brightEnd=time+2000+Math.random()*1000;}
   }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
     if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1;
     else s.isBright=false;
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fillStyle=s.color;
-    ctx.globalAlpha=alpha;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle=s.color; ctx.globalAlpha=alpha;
     ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
-    ctx.shadowColor=s.color;
-    ctx.fill();
+    ctx.shadowColor=s.color; ctx.fill();
   }
   ctx.globalAlpha=1;
   requestAnimationFrame(drawStars);
@@ -414,6 +351,7 @@ async function loadPrices(){
     if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
   }
   document.getElementById('submitButton').disabled=false;
+  document.getElementById('copyShareButton').disabled=false;
 }
 loadPrices();
 
@@ -430,6 +368,7 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
+// ===== SHOW SUMMARY =====
 function showContent(){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
@@ -442,87 +381,63 @@ function showContent(){
       total+=qty*priceList[lookupName];
     } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
-const summaryContainer = document.getElementById('summaryContainer');
-summaryContainer.innerHTML = ''; // clear old summary
-
-summary.forEach(item => {
-  const rowClass = item.unrecognized ? 'summary-row unrecognized' : 'summary-row';
-  summaryContainer.innerHTML += `
-    <div class="${rowClass}">
-      <span>${item.name}</span>
-      <span>${item.unrecognized ? 'Unrecognized' : formatNumber(item.val) + ' ISK'}</span>
-    </div>`;
-});
-
-
-
-summaryContainer.innerHTML += `
-  <div class="summary-total">
-    <span>Total</span>
-    <span>${formatNumber(total)} ISK</span>
-  </div>`;
-
-// SHOW container only now
-summaryContainer.style.display = 'flex';
-
-
+  const summaryContainer=document.getElementById('summaryContainer');
+  summaryContainer.innerHTML='';
+  summary.forEach(item=>{
+    const rowClass=item.unrecognized?'summary-row unrecognized':'summary-row';
+    summaryContainer.innerHTML+=`<div class="${rowClass}"><span>${item.name}</span><span>${item.unrecognized?'Unrecognized':formatNumber(item.val)+' ISK'}</span></div>`;
+  });
+  summaryContainer.innerHTML+=`<div class="summary-total"><span>Total</span><span>${formatNumber(total)} ISK</span></div>`;
+  summaryContainer.style.display='flex';
   document.getElementById('leftContainer').style.display='block';
   document.getElementById('totalCostContainer').style.display='block';
   animateCount(document.getElementById('totalCostText'), 0, total);
   document.querySelector('.main-container').style.display='none';
 }
 
-// Copied functionality
-const totalCostEl = document.getElementById('totalCostText');
-totalCostEl.addEventListener('click', () => {
-  // Extract only digits and commas (remove " ISK")
-  const numericText = totalCostEl.innerText.replace(/\s*ISK\s*/i, '');
+// ===== COPY TOTAL =====
+const totalCostEl=document.getElementById('totalCostText');
+totalCostEl.addEventListener('click',()=>{
+  const numericText=totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
   navigator.clipboard.writeText(numericText);
-  
-  // Optional feedback
-  const originalText = totalCostEl.innerText;
-  totalCostEl.innerText = 'Copied';
-  setTimeout(() => { totalCostEl.innerText = originalText; }, 1500);
+  const original=totalCostEl.innerText;
+  totalCostEl.innerText='Copied';
+  setTimeout(()=>totalCostEl.innerText=original,1500);
 });
 
+// ===== SHARE URL =====
+function generateShareURL(){
+  const inventoryText=document.getElementById('message').value;
+  const compressed=LZString.compressToEncodedURIComponent(inventoryText);
+  return `${window.location.origin}${window.location.pathname}?data=${compressed}`;
+}
+document.getElementById('copyShareButton').addEventListener('click',()=>{
+  const shareURL=generateShareURL();
+  navigator.clipboard.writeText(shareURL);
+  const btn=document.getElementById('copyShareButton');
+  const original=btn.innerText;
+  btn.innerText='Copied!';
+  setTimeout(()=>btn.innerText=original,1500);
+});
+
+// Load from share URL
+window.addEventListener('DOMContentLoaded',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const compressedData=params.get('data');
+  if(compressedData){
+    const decoded=LZString.decompressFromEncodedURIComponent(compressedData);
+    if(decoded){
+      document.getElementById('message').value=decoded;
+      document.getElementById('submitButton').disabled=false;
+      document.getElementById('copyShareButton').disabled=false;
+      showContent();
+    }
+  }
+});
 
 // Submit button
 document.getElementById('submitButton').addEventListener('click',showContent);
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-
-// ===== LOGO ANIMATION =====
-window.addEventListener('load', () => {
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
-
-  // Step 1: Initial dim for 2s
-  setTimeout(() => {
-    // Step 2: Ore rapid flicker 0.3s
-    ore.style.animation = 'flickerRapid 0.3s linear forwards';
-    setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite';
-    }, 300);
-
-    // Step 3: Stellar rapid flicker 0.3s after Ore
-    setTimeout(() => {
-      stellar.style.animation = 'flickerRapid 0.3s linear forwards';
-      setTimeout(() => {
-        stellar.style.animation = 'softGlow 6s infinite';
-      }, 300);
-    }, 400); // small gap after Ore finishes
-
-    // Step 4: Both flash dim + single quick flicker 0.25s
-    setTimeout(() => {
-      ore.style.animation = 'flickerQuick 0.3s linear forwards';
-      stellar.style.animation = 'flickerQuick 0.3s linear forwards';
-      // After the 0.25s single flicker, revert to soft glow
-      setTimeout(() => {
-        ore.style.animation = 'softGlow 6s infinite';
-        stellar.style.animation = 'softGlow 6s infinite';
-      }, 300);
-    }, 1100); // after both have soft glow
-  },500);
-});
 </script>
 </body>
 </html>
