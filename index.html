@@ -52,7 +52,7 @@ canvas#starfield {
 }
 
 #logoText {
-  display: inline;
+  display: inline; 
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
@@ -67,20 +67,10 @@ canvas#starfield {
   text-shadow: none;
 }
 
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75); }
-  50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); }
-}
-
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
-  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-}
+/* Glow animations */
+@keyframes softGlow { 0%,100% { text-shadow: 0 0 5px #fff; color: rgba(255,255,255,0.75);} 50% { text-shadow: 0 0 15px #fff; color: rgba(255,255,255,1); } }
+@keyframes flickerRapid {0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow:0 0 10px #fff;} 10%,30%,50%,70%,90%{color:rgba(255,255,255,0.1); text-shadow:none;}}
+@keyframes flickerQuick {0%,50%,100%{color:rgba(255,255,255,0.1); text-shadow:none;}25%,75%{color:rgba(255,255,255,1); text-shadow:0 0 10px #fff;}}
 
 /* Main inventory box */
 .main-container {
@@ -106,209 +96,127 @@ canvas#starfield {
   background-color: rgba(17,17,17,0.97);
   color: #ffffff;
   border: 1px solid #333;
-  text-align: left;
   font-family: 'Share Tech Mono', monospace;
   box-shadow: inset 0 0 5px #111;
   transition: all 0.2s ease-in-out;
 }
-.main-container textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
-textarea#message:focus {
-  outline: none;
-  border-color: #fff;
-  box-shadow: inset 0 0 15px #fff, 0 0 25px #fff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
+textarea#message::placeholder { color: #ffffff; opacity: 0.6; }
+textarea#message:focus { outline:none; border-color:#fff; box-shadow: inset 0 0 15px #fff, 0 0 25px #fff; transition:0.3s; }
 
 /* Quote text */
-.quote-text {
-  font-style: italic; font-weight: bold;
-  font-size: 21px;
-  animation: glowPulse 3s infinite;
-}
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 5px #b3b4b4, 0 0 10px #d5e2e1; }
-  50% { text-shadow: 0 0 15px #fff, 0 0 20px #aaa; }
-}
+.quote-text { font-style: italic; font-weight:bold; font-size:21px; animation: glowPulse 3s infinite; }
+@keyframes glowPulse { 0%,100%{text-shadow:0 0 5px #b3b4b4,0 0 10px #d5e2e1;}50%{text-shadow:0 0 15px #fff,0 0 20px #aaa;} }
 
 /* Submit Button */
 #submitButton {
   margin-top: 10px;
-  background: linear-gradient(145deg, #161616, #242424);
-  color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 15px 35px;
-  font-weight: bold;
-  font-family: 'Orbitron', sans-serif;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  text-shadow: 0 0 2px #fff;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
+  background: linear-gradient(145deg,#161616,#242424);
+  color:#fff;
+  border:2px solid #ccc;
+  border-radius:10px;
+  padding:15px 35px;
+  font-weight:bold;
+  font-family:'Orbitron',sans-serif;
+  cursor:pointer;
+  overflow:hidden;
+  text-shadow:0 0 2px #fff;
+  box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;
   animation: ambientGlow 3.5s ease-in-out infinite alternate;
   transition: all 0.35s ease;
 }
-@keyframes ambientGlow {
-  0% { box-shadow: 0 0 4px #ffffff33, 0 0 8px #ffffff11 inset; }
-  100% { box-shadow: 0 0 12px #ffffff88, 0 0 18px #ffffff33 inset; }
-}
-#submitButton:hover {
-  color: #000;
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  border-color: #fff;
-  transform: translateY(-2px) scale(1.04);
-  animation: hoverPulse 1.6s infinite alternate;
-  box-shadow: 0 0 10px #ffffffcc, 0 0 20px #ffffff66 inset;
-}
-@keyframes hoverPulse {
-  0% { box-shadow: 0 0 8px #ffffff88, 0 0 15px #ffffff33 inset; }
-  100% { box-shadow: 0 0 16px #ffffffcc, 0 0 25px #ffffff66 inset; }
-}
+@keyframes ambientGlow{0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;}100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;}}
+#submitButton:hover { color:#000; background:linear-gradient(145deg,#f2f2f2,#dcdcdc); border-color:#fff; transform:translateY(-2px) scale(1.04); animation:hoverPulse 1.6s infinite alternate; box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset;}
+@keyframes hoverPulse{0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;}100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;}}
 
 /* Contracts and summary */
 .contracts-wrapper {
-  display: flex; justify-content: center; align-items: flex-start;
-  gap: 10px; flex-wrap: wrap; width: 100%;
+  display:flex; justify-content:center; align-items:flex-start;
+  gap:10px; flex-wrap:wrap; width:100%;
 }
+
 .total-cost-container {
-  width: 630px; height: 418px;
-  background-size: contain; background-position: center; background-repeat: no-repeat;
-  position: relative; border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-  display: none;
+  width:630px; height:418px;
+  background-size:contain; background-position:center; background-repeat:no-repeat;
+  position:relative; border-radius:15px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.5);
+  display:none;
 }
+
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 
 #totalCostText {
-  position: absolute;
-  top: calc(50% + 10px);
-  left: calc(50% + -42px);
-  font-size: 16px;
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  cursor: pointer;
+  position:absolute;
+  top:calc(50% + 10px);
+  left:calc(50% + -42px);
+  font-size:16px;
+  font-weight:bold;
+  color:#00ff00;
+  text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;
+  cursor:pointer;
 }
 
+/* Summary container */
 .summary-container {
-  display: none;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  font-family: 'Orbitron', monospace;
-  color: #00ff00;
-  background: rgba(0, 10, 0, 0.85);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  border-radius: 12px;
-  padding: 14px 20px;
-  width: auto;
-  min-width: 300px;
-  max-width: 100%;
-  text-shadow: 0 0 6px #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
+  display:none;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  font-family:'Orbitron',monospace;
+  color:#00ff00;
+  background:rgba(0,10,0,0.85);
+  border:1px solid rgba(0,255,0,0.5);
+  border-radius:12px;
+  padding:14px 20px;
+  min-width:300px; max-width:100%;
+  text-shadow:0 0 6px #00ff00;
+  box-shadow:0 0 12px rgba(0,255,0,0.3);
   backdrop-filter: blur(6px);
-  max-height: 420px;          
-  overflow-y: auto;           
-  overflow-x: hidden;         
-  scrollbar-width: thin;
-  scrollbar-color: #00ff00 transparent;
+  max-height:420px;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 
-.summary-container::-webkit-scrollbar {
-  width: 6px;
-}
-.summary-container::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  box-shadow: 0 0 10px #00ff00;
-  border-radius: 4px;
-}
+/* Scrollbar */
+.summary-container::-webkit-scrollbar { width:6px; }
+.summary-container::-webkit-scrollbar-thumb { background:#00ff00; box-shadow:0 0 10px #00ff00; border-radius:4px; }
 
+/* Summary rows */
 .summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 6px;
-  font-size: 14px;          
-  line-height: 1.4;
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.08);
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; margin-bottom:6px; font-size:14px; line-height:1.4; padding-bottom:4px;
+  border-bottom:1px solid rgba(0,255,0,0.08);
 }
 
-/* Ore names left-aligned */
-.summary-row span:first-child {
-  flex: 1 1 auto;
-  text-align: left;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-  white-space: nowrap;
-}
+.summary-row span:first-child { flex:1 1 auto; text-align:left; color:#00ff00; text-shadow:0 0 6px #00ff00; white-space:nowrap; }
+.summary-row span:nth-child(2) { flex:0 0 auto; text-align:right; color:#00ff00; text-shadow:0 0 6px #00ff00; white-space:nowrap; }
+.summary-row span:last-child { flex:0 0 auto; text-align:right; color:#00ff00; text-shadow:0 0 6px #00ff00; white-space:nowrap; }
 
-/* ISK values right-aligned */
-.summary-row span:last-child {
-  flex: 0 0 auto;
-  text-align: right;
-  white-space: nowrap;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-}
+/* Unrecognized items red glow */
+.summary-row.unrecognized span { color:#ff3333; text-shadow:0 0 10px #ff3333,0 0 20px #ff0000; }
 
-/* Unrecognized items glow red */
-.summary-row.unrecognized span:first-child,
-.summary-row.unrecognized span:last-child {
-  color: #ff3333;
-  text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
-}
+/* Total line */
+.summary-total { display:flex; justify-content:space-between; align-items:center; width:100%; border-top:1px solid rgba(0,255,0,0.4); padding-top:10px; margin-top:8px; font-weight:bold; font-size:16px; }
+.summary-total span:first-child { text-align:left; flex:1; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
+.summary-total span:last-child { text-align:right; flex:0 0 auto; color:#00ff00; text-shadow:0 0 12px #00ff00,0 0 24px #00ff00; }
 
-/* Total line - ledger style neon green exactly like total ISK */
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  border-top: 1px solid rgba(0, 255, 0, 0.4);
-  padding-top: 10px;
-  margin-top: 8px;
-  font-weight: bold;
-  font-size: 16px;
+/* Share URL button */
+#shareButton {
+  display:none;
+  margin-top:10px;
+  padding:10px 20px;
+  font-family:'Orbitron',sans-serif;
+  font-weight:bold;
+  font-size:14px;
+  background-color:#111;
+  color:#00ff00;
+  border:1px solid #00ff00;
+  border-radius:8px;
+  cursor:pointer;
+  text-align:center;
+  text-decoration:none;
 }
-
-.summary-total span:first-child {
-  text-align: left;
-  flex: 1;
-  color: #00ff00;          
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
-}
-
-.summary-total span:last-child {
-  text-align: right;
-  flex: 0 0 auto;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00; 
-}
-
-#shareUrlButton {
-  display: none;
-  margin-top: 8px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background-color: #111;
-  color: #00ff00;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-  text-shadow: 0 0 6px #00ff00;
-  box-shadow: 0 0 10px #00ff00 inset;
-  transition: all 0.2s ease;
-}
-#shareUrlButton:hover {
-  background-color: #222;
-  box-shadow: 0 0 16px #00ff00 inset;
-}
-
-#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
-
+#shareButton:hover { background-color:#222; }
 </style>
 </head>
 <body>
@@ -332,27 +240,25 @@ textarea#message:focus {
     <div id="leftContainer" class="total-cost-container"></div>
 
     <div id="summaryContainer" class="summary-container"></div>
-
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-      <div id="copiedMessage">Copied!</div>
-    </div>
   </div>
 
-  <div id="shareUrlButton">Copy Share URL</div>
+  <div id="totalCostContainer" class="total-cost-container">
+    <div id="totalCostText">0 ISK</div>
+  </div>
+
+  <button id="shareButton">Copy Share URL</button>
 </div>
 
 <script>
 // ===== STARFIELD =====
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
-function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+const canvas=document.getElementById("starfield");
+const ctx=canvas.getContext("2d");
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resizeCanvas(); window.addEventListener("resize",()=>{resizeCanvas(); createStars();});
 
-let stars=[], brightStars=[], brightStarTimer=0;
-const clusterCount=12;
+let stars=[], clusterCount=12;
 
-function createStars() {
+function createStars(){
   stars=[];
   const clusterCenters=[];
   for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
@@ -363,24 +269,29 @@ function createStars() {
       const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];
       const radius=Math.random()*120;
       const angle=Math.random()*Math.PI*2;
-      x=c.x+radius*Math.cos(angle);
-      y=c.y+radius*Math.sin(angle);
+      x=c.x+radius*Math.cos(angle); y=c.y+radius*Math.sin(angle);
     }else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}
     stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.35,baseAlpha:0.8+Math.random()*0.2});
   }
 }
 createStars();
 
+let lastBrightTime=0,nextBrightInterval=7000+Math.random()*8000;
 function drawStars(time=0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(time-lastBrightTime>nextBrightInterval){
+    lastBrightTime=time; nextBrightInterval=7000+Math.random()*8000;
+    for(let i=0;i<2;i++){const s=stars[Math.floor(Math.random()*stars.length)];s.isBright=true;s.brightStart=time;s.brightEnd=time+2000+Math.random()*1000;}
+  }
   for(let s of stars){
     let alpha=s.baseAlpha;
     if(s.twinkle) alpha=0.6+0.4*Math.sin(time*0.002+s.phase);
+    if(s.isBright && time>=s.brightStart && time<s.brightEnd) alpha=1; else s.isBright=false;
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
     ctx.fillStyle=s.color;
     ctx.globalAlpha=alpha;
-    ctx.shadowBlur=s.size*4;
+    ctx.shadowBlur=alpha===1?s.size*8:s.size*4;
     ctx.shadowColor=s.color;
     ctx.fill();
   }
@@ -389,7 +300,7 @@ function drawStars(time=0){
 }
 drawStars();
 
-// ===== PRICES & SUBMIT =====
+// ===== PRICE LIST =====
 let priceList={};
 async function loadPrices(){
   const response=await fetch('data/prices.csv');
@@ -407,7 +318,8 @@ async function loadPrices(){
 }
 loadPrices();
 
-function formatNumber(n){ return n.toLocaleString(); }
+function formatNumber(n){return n.toLocaleString();}
+
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
   function step(t){
@@ -420,7 +332,7 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// ===== SHOW CONTENT =====
+// ===== SHOW SUMMARY =====
 function showContent(isShared=false){
   const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
@@ -428,100 +340,87 @@ function showContent(isShared=false){
   while((match=regex.exec(t))!==null){
     const name=match[1].trim(),qty=parseInt(match[2]);
     const lookupName=name.toLowerCase();
-    if(priceList[lookupName]){
-      summary.push({name,qty,val:qty*priceList[lookupName]});
-      total+=qty*priceList[lookupName];
-    } else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
+    if(priceList[lookupName]){summary.push({name,qty,val:qty*priceList[lookupName]}); total+=qty*priceList[lookupName];}
+    else summary.push({name,qty,val:'Unrecognized',unrecognized:true});
   }
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML = '';
 
-  summary.forEach(item => {
-    const rowClass = item.unrecognized ? 'summary-row unrecognized' : 'summary-row';
-    summaryContainer.innerHTML += `
+  const summaryContainer=document.getElementById('summaryContainer');
+  summaryContainer.innerHTML='';
+
+  summary.forEach(item=>{
+    const rowClass=item.unrecognized?'summary-row unrecognized':'summary-row';
+    summaryContainer.innerHTML+=`
       <div class="${rowClass}">
         <span>${item.name}</span>
-        <span>${item.unrecognized ? 'Unrecognized' : formatNumber(item.val) + ' ISK'}</span>
+        <span>${item.qty}</span>
+        <span>${item.unrecognized?'Unrecognized':formatNumber(priceList[item.name.toLowerCase()])+' × '+item.qty+' = '+formatNumber(item.val)+' ISK'}</span>
       </div>`;
   });
 
-  summaryContainer.innerHTML += `
+  summaryContainer.innerHTML+=`
     <div class="summary-total">
       <span>Total</span>
       <span>${formatNumber(total)} ISK</span>
     </div>`;
 
   summaryContainer.style.display='flex';
-  document.getElementById('leftContainer').style.display = isShared ? 'none' : 'block';
-  document.getElementById('totalCostContainer').style.display = isShared ? 'none' : 'block';
+
+  const leftContainer=document.getElementById('leftContainer');
+  const totalCostContainer=document.getElementById('totalCostContainer');
+  if(!isShared){
+    leftContainer.style.display='block';
+    totalCostContainer.style.display='block';
+  } else {
+    leftContainer.style.display='none';
+    totalCostContainer.style.display='none';
+  }
 
   animateCount(document.getElementById('totalCostText'),0,total);
-
   document.querySelector('.main-container').style.display='none';
-  document.getElementById('shareUrlButton').style.display = isShared ? 'none' : 'block';
+
+  if(!isShared){
+    const shareBtn=document.getElementById('shareButton');
+    shareBtn.style.display='block';
+    shareBtn.onclick=()=>{ 
+      const inv=encodeURIComponent(btoa(document.getElementById('message').value));
+      const shareURL='https://orestl.xyz/?inv='+inv;
+      navigator.clipboard.writeText(shareURL);
+      shareBtn.innerText='Copied!';
+      setTimeout(()=>{shareBtn.innerText='Copy Share URL';},1500);
+    };
+  }
 }
 
-// ===== COPY TOTAL COST =====
-const totalCostEl = document.getElementById('totalCostText');
-totalCostEl.addEventListener('click', () => {
-  const numericText = totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
+// Copied total ISK
+const totalCostEl=document.getElementById('totalCostText');
+totalCostEl.addEventListener('click',()=>{
+  const numericText=totalCostEl.innerText.replace(/\s*ISK\s*/i,'');
   navigator.clipboard.writeText(numericText);
-  const originalText = totalCostEl.innerText;
-  totalCostEl.innerText = 'Copied';
-  setTimeout(()=>{ totalCostEl.innerText=originalText; },1500);
+  const originalText=totalCostEl.innerText;
+  totalCostEl.innerText='Copied';
+  setTimeout(()=>{totalCostEl.innerText=originalText;},1500);
 });
 
-// ===== LOGO CLICK REFRESH =====
+// Submit button
+document.getElementById('submitButton').addEventListener('click',()=>showContent(false));
+
+// Logo click reload
 document.getElementById('myHeader').addEventListener('click',()=>location.reload());
-
-// ===== BASE62 SHARE URL SYSTEM =====
-const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-function base62Encode(num){ let s=''; do{s=chars[num%62]+s; num=Math.floor(num/62);}while(num>0); return s; }
-function hashInventory(str){ let hash=0; for(let i=0;i<str.length;i++){hash=(hash*31+str.charCodeAt(i))>>>0;} return hash; }
-
-const inventoryDB = JSON.parse(localStorage.getItem('oreStellarDB')||'{}');
-
-document.getElementById('shareUrlButton').addEventListener('click',()=>{
-  const inventory = document.getElementById('message').value;
-  const code = base62Encode(hashInventory(inventory));
-  inventoryDB[code]=inventory;
-  localStorage.setItem('oreStellarDB', JSON.stringify(inventoryDB));
-  const url=window.location.origin+window.location.pathname+'#'+code;
-  navigator.clipboard.writeText(url);
-  document.getElementById('shareUrlButton').innerText='Copied!';
-  setTimeout(()=>{ document.getElementById('shareUrlButton').innerText='Copy Share URL'; },1500);
-});
-
-// ===== LOAD FROM SHARE URL =====
-window.addEventListener('load',()=>{
-  const code = window.location.hash.substring(1);
-  if(code && inventoryDB[code]){
-    document.getElementById('message').value = inventoryDB[code];
-    showContent(true);
-  }
-});
-
-// ===== SUBMIT BUTTON =====
-document.getElementById('submitButton').addEventListener('click',()=>{
-  const inv=document.getElementById('message').value;
-  const code = base62Encode(hashInventory(inv));
-  inventoryDB[code]=inv;
-  localStorage.setItem('oreStellarDB',JSON.stringify(inventoryDB));
-  showContent(false);
-});
 
 // ===== LOGO ANIMATION =====
 window.addEventListener('load',()=>{
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
+  const ore=document.getElementById('ore');
+  const stellar=document.getElementById('stellar');
 
   setTimeout(()=>{
     ore.style.animation='flickerRapid 0.3s linear forwards';
     setTimeout(()=>{ ore.style.animation='softGlow 6s infinite'; },300);
+
     setTimeout(()=>{
       stellar.style.animation='flickerRapid 0.3s linear forwards';
       setTimeout(()=>{ stellar.style.animation='softGlow 6s infinite'; },300);
     },400);
+
     setTimeout(()=>{
       ore.style.animation='flickerQuick 0.3s linear forwards';
       stellar.style.animation='flickerQuick 0.3s linear forwards';
@@ -532,6 +431,19 @@ window.addEventListener('load',()=>{
     },1100);
   },500);
 });
+
+// ===== LOAD SHARE URL IF PRESENT =====
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  if(params.has('inv')){
+    try{
+      const inv=atob(decodeURIComponent(params.get('inv')));
+      document.getElementById('message').value=inv;
+      showContent(true);
+    } catch(e){ console.error('Invalid inventory share URL'); }
+  }
+});
 </script>
+
 </body>
 </html>
