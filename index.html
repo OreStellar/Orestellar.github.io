@@ -52,7 +52,7 @@ canvas#starfield {
 }
 
 #logoText {
-  display: inline; /* inline ensures OreStellar sticks together */
+  display: inline;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 5rem;
@@ -62,9 +62,9 @@ canvas#starfield {
 }
 
 #logoText span {
-  display: inline; /* no extra boxes around spans */
+  display: inline;
   color: rgba(255,255,255,0.1);
-  text-shadow: none; /* text-only glow will come from animation */
+  text-shadow: none;
 }
 
 @keyframes softGlow {
@@ -91,7 +91,7 @@ canvas#starfield {
   justify-content: center;
   align-items: center;
   background-color: rgba(20,20,20,0.92);
-  box-shadow: none; 
+  box-shadow: none;
   border-radius: 15px;
 }
 
@@ -171,7 +171,6 @@ textarea#message:focus {
   display: flex; justify-content: center; align-items: flex-start;
   gap: 10px; flex-wrap: wrap; width: 100%;
 }
-
 .total-cost-container {
   width: 630px; height: 418px;
   background-size: contain; background-position: center; background-repeat: no-repeat;
@@ -179,7 +178,6 @@ textarea#message:focus {
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   display: none;
 }
-
 #leftContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png'); }
 #totalCostContainer { background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png'); }
 
@@ -194,7 +192,7 @@ textarea#message:focus {
   cursor: pointer;
 }
 
-/* Summary Table */
+/* Summary container */
 .summary-container {
   display: none;
   flex-direction: column;
@@ -215,9 +213,9 @@ textarea#message:focus {
   max-height: 420px;
   overflow-y: auto;
   overflow-x: hidden;
+  font-size: 12px; /* smaller for fit */
   scrollbar-width: thin;
   scrollbar-color: #00ff00 transparent;
-  font-size: 12px;
 }
 
 .summary-container::-webkit-scrollbar {
@@ -229,54 +227,29 @@ textarea#message:focus {
   border-radius: 4px;
 }
 
-/* Summary header row */
-.summary-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  border-bottom: 1px solid rgba(0,255,0,0.5);
-  padding-bottom: 6px;
-  margin-bottom: 4px;
-}
-.summary-header span {
-  flex: 1 1 auto;
-  text-align: left;
-}
-.summary-header span:last-child {
-  text-align: right;
-  flex: 0 0 auto;
-}
-
-/* Summary rows */
+/* Summary table rows */
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 4px;
-  line-height: 1.4;
-  padding-bottom: 2px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.08);
+  gap: 12px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(0,255,0,0.08);
 }
 
-.summary-row span:first-child {
-  flex: 2 1 auto;
-  text-align: left;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-  white-space: nowrap;
-}
-.summary-row span:nth-child(2),
-.summary-row span:nth-child(3),
-.summary-row span:nth-child(4) {
+/* Columns */
+.summary-row span {
   flex: 1 1 auto;
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
-  color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
 }
 
-/* Unrecognized items glow red */
+.summary-row span.price { text-align: center; flex: 0 0 60px; }
+.summary-row span.quantity { text-align: center; flex: 0 0 60px; }
+.summary-row span.total { text-align: right; flex: 0 0 80px; }
+
+/* Unrecognized items red glow */
 .summary-row.unrecognized span {
   color: #ff3333;
   text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
@@ -292,45 +265,33 @@ textarea#message:focus {
   padding-top: 10px;
   margin-top: 8px;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .summary-total span:first-child {
   text-align: left;
-  flex: 2;
+  flex: 1;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
+
 .summary-total span:last-child {
   text-align: right;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
 }
 
-/* Share Summary Button */
+/* Share Summary button */
 #shareSummaryButton {
-  margin-top: 8px;
   display: none;
-  background: linear-gradient(145deg, #161616, #242424);
-  color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  padding: 10px 20px;
+  padding: 10px 24px;
+  font-size: 14px;
   font-weight: bold;
-  font-family: 'Orbitron', sans-serif;
+  border-radius: 8px;
   cursor: pointer;
-  text-shadow: 0 0 2px #fff;
-  box-shadow: 0 0 6px #ffffff33, 0 0 12px #ffffff11 inset;
+  text-align: center;
 }
-#shareSummaryButton:hover {
-  color: #000;
-  background: linear-gradient(145deg, #f2f2f2, #dcdcdc);
-  border-color: #fff;
-  transform: translateY(-1px) scale(1.03);
-}
-
-/* Copied Feedback */
-#copiedMessage { display: none; color: #00ff00; font-weight: bold; position: absolute; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -356,14 +317,16 @@ textarea#message:focus {
     <div id="summaryContainer" class="summary-container">
       <!-- JS will populate this -->
     </div>
-
-    <button id="shareSummaryButton">Share Summary</button>
-
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-      <div id="copiedMessage">Copied!</div>
-    </div>
   </div>
+
+  <div id="totalCostContainer" class="total-cost-container">
+    <div id="totalCostText">0 ISK</div>
+  </div>
+
+  <div style="display:flex; justify-content:center; margin-top:10px;">
+    <button id="shareSummaryButton">Share Summary</button>
+  </div>
+
 </div>
 
 <script>
@@ -378,8 +341,7 @@ const clusterCount=12;
 
 function createStars() {
   stars=[];
-  const clusterCenters=[];
-  for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+  const clusterCenters=[]; for(let i=0;i<clusterCount;i++) clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
   const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);
   for(let i=0;i<totalStars;i++){
     let x,y;
@@ -428,25 +390,16 @@ drawStars();
 
 // ===== PRICES & SUBMIT =====
 let priceList={};
-async function loadPrices(){
-  const response=await fetch('data/prices.csv');
-  const text=await response.text();
-  const lines=text.split('\n').filter(l=>l.trim());
-  const headers=lines[0].split(',');
-  const idx=headers.findIndex(h=>h.toLowerCase().includes('150%'));
-  for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    const ore=cols[0].trim();
-    const price=parseFloat(cols[idx]);
-    if(!isNaN(price)) priceList[ore.toLowerCase()]=price;
-  }
-  document.getElementById('submitButton').disabled=false;
-}
-loadPrices();
+// dummy prices
+priceList['compressed ytirium'] = 16587669;
+priceList['jet ochre'] = 1234567;
+priceList['magma mercoxit'] = 987654;
+priceList['compressed mordunium'] = 7654321;
+priceList['bistot'] = 111111;
 
-// ===== FORMAT FUNCTIONS =====
+document.getElementById('submitButton').disabled=false;
+
 function formatNumber(n){ return n.toLocaleString(); }
-
 function animateCount(el,start,end,duration=2000){
   let startTime=null;
   function step(t){
@@ -459,129 +412,83 @@ function animateCount(el,start,end,duration=2000){
   requestAnimationFrame(step);
 }
 
-// ===== SHOW SUMMARY =====
-function showContent(inventoryText=null, hideContracts=false){
-  const t = inventoryText || document.getElementById('message').value;
+function showContent(){
+  const t=document.getElementById('message').value;
   const regex=/([\w\s]+?)\s+(\d+)/g;
   let match,total=0,summary=[];
-
   while((match=regex.exec(t))!==null){
-    const name=match[1].trim();
-    const qty=parseInt(match[2]);
+    const name=match[1].trim(),qty=parseInt(match[2]);
     const lookupName=name.toLowerCase();
     if(priceList[lookupName]){
-      summary.push({name,price:priceList[lookupName],qty,val:qty*priceList[lookupName]});
+      summary.push({name,price:priceList[lookupName],qty,unrecognized:false});
       total+=qty*priceList[lookupName];
-    } else summary.push({name,price:'N/A',qty:qty,val:'Unrecognized',unrecognized:true});
+    } else summary.push({name,price:'-',qty,unrecognized:true});
   }
 
   const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML = '';
+  summaryContainer.innerHTML = ''; // clear old summary
 
   // header row
-  summaryContainer.innerHTML += `
-    <div class="summary-header">
-      <span>Name</span>
-      <span>Price</span>
-      <span>Qty</span>
-      <span>Total</span>
-    </div>`;
+  const headerRow = document.createElement('div');
+  headerRow.className='summary-row';
+  headerRow.innerHTML=`<span>Name</span><span class="price">Price</span><span class="quantity">Qty</span><span class="total">Total</span>`;
+  summaryContainer.appendChild(headerRow);
 
   summary.forEach(item => {
-    const rowClass = item.unrecognized ? 'summary-row unrecognized' : 'summary-row';
-    summaryContainer.innerHTML += `
-      <div class="${rowClass}">
-        <span>${item.name}</span>
-        <span>${item.price === 'N/A' ? 'N/A' : formatNumber(item.price)}</span>
-        <span>${item.qty}</span>
-        <span>${item.val === 'Unrecognized' ? 'Unrecognized' : formatNumber(item.val)}</span>
-      </div>`;
+    const row = document.createElement('div');
+    row.className='summary-row'+(item.unrecognized?' unrecognized':'');
+    row.innerHTML=`<span>${item.name}</span><span class="price">${item.price}</span><span class="quantity">${item.qty}</span><span class="total">${item.unrecognized?'-':formatNumber(item.price*item.qty)}</span>`;
+    summaryContainer.appendChild(row);
   });
 
-  summaryContainer.innerHTML += `
-    <div class="summary-total">
-      <span>Total</span>
-      <span>${formatNumber(total)}</span>
-    </div>`;
+  const totalRow = document.createElement('div');
+  totalRow.className='summary-total';
+  totalRow.innerHTML=`<span>Total</span><span>${formatNumber(total)} ISK</span>`;
+  summaryContainer.appendChild(totalRow);
 
   summaryContainer.style.display='flex';
-  document.getElementById('shareSummaryButton').style.display='block';
-
-  if(!hideContracts){
-    document.getElementById('leftContainer').style.display='block';
-    document.getElementById('totalCostContainer').style.display='block';
-  } else {
-    document.getElementById('leftContainer').style.display='none';
-    document.getElementById('totalCostContainer').style.display='none';
-  }
-
-  animateCount(document.getElementById('totalCostText'),0,total);
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
   document.querySelector('.main-container').style.display='none';
+  animateCount(document.getElementById('totalCostText'), 0, total);
+
+  // show share button
+  document.getElementById('shareSummaryButton').style.display='inline-block';
 }
-
-// ===== COPY TOTAL ISK =====
-const totalCostEl = document.getElementById('totalCostText');
-totalCostEl.addEventListener('click', () => {
-  const numericText = totalCostEl.innerText.replace(/\s*ISK\s*/i, '');
-  navigator.clipboard.writeText(numericText);
-  const originalText = totalCostEl.innerText;
-  totalCostEl.innerText = 'Copied';
-  setTimeout(() => { totalCostEl.innerText = originalText; },1500);
-});
-
-// ===== SHARE SUMMARY =====
-const shareButton = document.getElementById('shareSummaryButton');
-shareButton.addEventListener('click', ()=>{
-  const invText = document.getElementById('message').value;
-  const encoded = encodeURIComponent(btoa(invText));
-  const url = `${window.location.origin}${window.location.pathname}#${encoded}`;
-  navigator.clipboard.writeText(url);
-  shareButton.innerText='Copied!';
-  setTimeout(()=>{shareButton.innerText='Share Summary';},1500);
-});
-
-// ===== SUBMIT =====
-document.getElementById('submitButton').addEventListener('click',()=>{
-  showContent();
-});
-
-// ===== LOAD FROM HASH =====
-window.addEventListener('load', async()=>{
-  // Wait for prices to load
-  while(Object.keys(priceList).length===0){ await new Promise(r=>setTimeout(r,100)); }
-  if(window.location.hash.length>1){
-    const hash = window.location.hash.substring(1);
-    try {
-      const decoded = atob(decodeURIComponent(hash));
-      document.getElementById('message').value = decoded;
-      showContent(decoded,true);
-    } catch(e){}
-  }
-});
-
-// ===== LOGO CLICK REFRESH =====
-document.getElementById('myHeader').addEventListener('click',()=>location.reload());
 
 // ===== LOGO ANIMATION =====
 window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
-  setTimeout(() => {
-    ore.style.animation = 'flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{ ore.style.animation='softGlow 6s infinite'; },300);
-    setTimeout(()=>{
-      stellar.style.animation='flickerRapid 0.3s linear forwards';
-      setTimeout(()=>{ stellar.style.animation='softGlow 6s infinite'; },300);
-    },400);
-    setTimeout(()=>{
-      ore.style.animation='flickerQuick 0.3s linear forwards';
-      stellar.style.animation='flickerQuick 0.3s linear forwards';
-      setTimeout(()=>{
-        ore.style.animation='softGlow 6s infinite';
-        stellar.style.animation='softGlow 6s infinite';
-      },300);
-    },1100);
+  setTimeout(() => { ore.style.animation = 'flickerRapid 0.3s linear forwards'; setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
+    setTimeout(() => { stellar.style.animation = 'flickerRapid 0.3s linear forwards'; setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300); },400);
+    setTimeout(()=>{ ore.style.animation='flickerQuick 0.3s linear forwards'; stellar.style.animation='flickerQuick 0.3s linear forwards'; setTimeout(()=>{ore.style.animation='softGlow 6s infinite';stellar.style.animation='softGlow 6s infinite';},300);},1100);
   },500);
+});
+
+// ===== BUTTONS =====
+document.getElementById('submitButton').addEventListener('click',showContent);
+document.getElementById('myHeader').addEventListener('click',()=>location.reload());
+
+// Share Summary (URL hash encoding)
+document.getElementById('shareSummaryButton').addEventListener('click',()=>{
+  const t=document.getElementById('message').value;
+  const hash=btoa(unescape(encodeURIComponent(t))); 
+  const shareURL=location.origin+location.pathname+'#'+hash;
+  navigator.clipboard.writeText(shareURL);
+  alert('Share Summary URL copied!');
+});
+
+// On load, if hash exists, populate summary
+window.addEventListener('load',()=>{
+  if(location.hash.length>1){
+    const hash=location.hash.substring(1);
+    try{
+      const decoded=decodeURIComponent(escape(atob(hash)));
+      document.getElementById('message').value=decoded;
+      showContent();
+    }catch(e){ console.error(e); }
+  }
 });
 </script>
 </body>
