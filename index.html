@@ -279,14 +279,11 @@ messageBox.addEventListener('input',()=>{submitBtn.disabled=messageBox.value.tri
 submitBtn.addEventListener('click',()=>{showContent();window.scrollTo({top:0,behavior:'smooth'});});
 
 // ===== LOGO CLICK RESET =====
-document.getElementById('myHeader').addEventListener('click',()=>{
-  document.querySelector('.main-container').style.display='flex';
-  document.getElementById('summaryContainer').style.display='none';
-  document.getElementById('leftContainer').style.display='none';
-  document.getElementById('totalCostContainer').style.display='none';
-  document.getElementById('message').value='';
-  submitBtn.disabled=true;
+document.getElementById('myHeader').addEventListener('click', () => {
+  // Redirect to main homepage
+  window.location.href = window.location.origin + window.location.pathname;
 });
+
 
 // ===== LOGO ANIMATION =====
 window.addEventListener('load',()=>{
