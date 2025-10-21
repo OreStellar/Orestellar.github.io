@@ -307,20 +307,44 @@ window.addEventListener('load',()=>{
 });
 // ===== SHARE SUMMARY BUTTON =====
 document.getElementById('shareButton').addEventListener('click', () => {
-  const messageBox = document.getElementById('message');
-  const inventoryText = messageBox.value.trim();
-  if(!inventoryText) return;
+  const message = document.getElementById('message').value.trim();
+  if (!message) return;
 
-  // Compress and encode
-  const compressed = LZString.compressToEncodedURIComponent(inventoryText);
+  // Compress inventory text into URL-safe string
+  const compressed = LZString.compressToEncodedURIComponent(message);
 
-  // Construct shareable URL
-  const shareURL = `${window.location.origin}${window.location.pathname}?data=${compressed}`;
+  // Generate new URL
+  const shareURL = `${window.location.origin}${window.location.pathname}?s=${compressed}`;
 
-  // Open new tab with summary
-  window.open(shareURL, '_blank');
+  // Copy URL to clipboard
+  navigator.clipboard.writeText(shareURL).then(() => {
+    const btn = document.getElementById('shareButton');
+    const originalText = btn.innerText;
+    btn.innerText = 'Copied';
+    setTimeout(() => { btn.innerText = originalText; }, 1500);
+  });
 });
 
+// Auto-load summary if URL contains 's' parameter
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const compressed = params.get('s');
+  if (compressed) {
+    const inventoryText = LZString.decompressFromEncodedURIComponent(compressed);
+    if (inventoryText) {
+      showContent(inventoryText);
+
+      // Hide contracts & input for shared view
+      document.querySelector('.main-container').style.display = 'none';
+      document.getElementById('leftContainer').style.display = 'none';
+      document.getElementById('totalCostContainer').style.display = 'none';
+
+      // Ensure summary container is visible
+      document.getElementById('summaryContainer').style.display = 'flex';
+      document.getElementById('shareButton').style.display = 'none';
+    }
+  }
+});
 
 // ===== INITIALIZE =====
 fetchPrices();
