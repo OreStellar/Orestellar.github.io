@@ -7,8 +7,6 @@
 
 <!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
-<!-- LZString for URL compression -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
 <style>
@@ -35,7 +33,7 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 @keyframes hoverPulse{0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;}100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;}}
 
 .contracts-wrapper{display:flex;justify-content:center;align-items:flex-start;gap:15px;flex-wrap:wrap;width:100%;}
-.total-cost-container{width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;}
+.total-cost-container{width:300px;height:200px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;}
 #leftContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');}
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 #totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
@@ -100,19 +98,18 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-table th.sorted-asc::after{content:"▲";opacity:1;}
 .summary-table th.sorted-desc::after{content:"▼";opacity:1;}
   .quote-text {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.6rem;
+  font-family: 'Orbitron', sans-serif;    /* match logo font */
+  font-size: 1.6rem;                      /* larger text */
   font-weight: 700;
-  color: #fff;
+  color: #fff;                             /* white text */
   text-align: center;
   text-shadow: 
     0 0 8px #fff,
     0 0 16px #fff,
     0 0 24px #00ff00,
-    0 0 32px #00ff00;
-  animation: softGlow 2.5s infinite alternate;
+    0 0 32px #00ff00;                     /* neon glow effect */
+  animation: softGlow 2.5s infinite alternate;  /* subtle pulsing */
 }
-
 </style>
 </head>
 <body data-show-inventory="true">
@@ -136,11 +133,11 @@ Bistot 1320"></textarea>
 </div>
 
 <div class="contracts-wrapper">
-  <div id="leftContainer" class="total-cost-container"></div>
-  <div id="summaryContainer" class="summary-container"></div>
-  <div id="totalCostContainer" class="total-cost-container">
-    <div id="totalCostText">0 ISK</div>
-  </div>
+    <div id="leftContainer" class="total-cost-container"></div>
+    <div id="summaryContainer" class="summary-container"></div>
+    <div id="totalCostContainer" class="total-cost-container">
+      <div id="totalCostText">0 ISK</div>
+    </div>
 </div>
 
 <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
@@ -178,7 +175,7 @@ function formatNumber(n){return n.toLocaleString();}
 function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));const original=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=original;},1500);});}
 
 // ===== INVENTORY PARSER =====
-function parseInventoryText(text){
+function parseInventoryText(text) {
   const lines = text.split(/\r?\n/);
   const inventory = [];
 
@@ -190,38 +187,30 @@ function parseInventoryText(text){
 
     let matchedOre = '';
     let quantity = null;
-    let m3 = null;
-    let isk = null;
 
-    // Step 1: Match ore
-    for(let len=parts.length; len>0; len--){
-      for(let start=0; start<=parts.length-len; start++){
-        const candidate = parts.slice(start,start+len).join(' ').toLowerCase().trim();
-        if(priceList[candidate]!==undefined){
-          matchedOre=candidate;
-          parts.splice(start,len,matchedOre);
+    for (let len = parts.length; len > 0; len--) {
+      for (let start = 0; start <= parts.length - len; start++) {
+        const candidate = parts.slice(start, start + len).join(' ').toLowerCase().trim();
+        if (priceList[candidate] !== undefined) {
+          matchedOre = candidate;
+          parts.splice(start, len, matchedOre);
           break;
         }
       }
-      if(matchedOre) break;
+      if (matchedOre) break;
     }
 
-    if(!matchedOre){
-      inventory.push({name:parts.join(' '), qty:0, m3:null, isk:null, unrecognized:true});
+    if (!matchedOre) {
+      inventory.push({ name: parts.join(' ').slice(0,10), qty: 0, unrecognized: true });
       return;
     }
 
-    // Step 2: Next numeric values
-    for(let p of parts){
-      const num=parseFloat(p.replace(/,/g,''));
-      if(!isNaN(num)){
-        if(quantity===null) quantity=num;
-        else if(m3===null) m3=num;
-        else if(isk===null) isk=num;
-      }
+    for (let p of parts) {
+      const num = parseFloat(p.replace(/,/g,''));
+      if (!isNaN(num) && quantity===null) quantity = num;
     }
 
-    inventory.push({name:matchedOre, qty:quantity||0, m3:m3, isk:isk, unrecognized:false});
+    inventory.push({ name: matchedOre, qty: quantity || 0, unrecognized:false });
   });
 
   return inventory;
@@ -229,72 +218,90 @@ function parseInventoryText(text){
 
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
-  const t=prefillText||document.getElementById('message').value;
-  const inventory=parseInventoryText(t);
+  const t = prefillText || document.getElementById('message').value;
+  const inventory = parseInventoryText(t);
 
-  let summary=[], total=0;
-
+  let summary=[],total=0;
   inventory.forEach(item=>{
     if(!item.unrecognized){
-      const price = priceList[item.name.toLowerCase()]||0;
-      summary.push({
-        name:item.name,
-        price:price,
-        qty:item.qty,
-        val:item.qty*price,
-        unrecognized:false
-      });
-      total+=item.qty*price;
-    }else{
-      summary.push({
-        name:item.name.slice(0,10),
-        price:'---',
-        qty:'---',
-        val:'Unrecognized',
-        unrecognized:true
-      });
+      const price = priceList[item.name.toLowerCase()] || 0;
+      summary.push({name:item.name,price:price,qty:item.qty,val:item.qty*price,unrecognized:false});
+      total += item.qty*price;
+    } else {
+      summary.push({name:item.name,price:'---',qty:'---',val:'Unrecognized',unrecognized:true});
     }
   });
 
   const summaryContainer=document.getElementById('summaryContainer');
-  summaryContainer.innerHTML='';summaryContainer.style.display='flex';
-
-  const table=document.createElement('table');table.classList.add('summary-table');
-  const thead=document.createElement('thead');thead.innerHTML='<tr><th>Ore</th><th>Price</th><th>Qty</th><th>Total</th></tr>';
-  table.appendChild(thead);
-
-  const tbody=document.createElement('tbody');
-  summary.forEach(s=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="${s.unrecognized?'unrecognized':''}">${s.name}</td>
-    <td class="${s.unrecognized?'unrecognized price':''}">${s.price}</td>
-    <td class="${s.unrecognized?'unrecognized':''}">${s.qty}</td>
-    <td class="${s.unrecognized?'unrecognized total-column':''}">${s.val}</td>`;
-    tbody.appendChild(tr);
+  summaryContainer.innerHTML='';
+  const table=document.createElement('table');
+  table.className='summary-table';
+  const header=table.insertRow();
+  ['Name','Price','Qty','Value'].forEach(h=>{
+    const th=document.createElement('th');
+    th.innerText=h;
+    header.appendChild(th);
   });
 
-  // Total row
-  const trTotal=document.createElement('tr');trTotal.classList.add('summary-total');
-  trTotal.innerHTML=`<td colspan="3">Total</td><td>${formatNumber(total)}</td>`;
-  tbody.appendChild(trTotal);
+  summary.forEach(item=>{
+    const tr=table.insertRow();
+    tr.innerHTML=`
+      <td>${item.name}</td>
+      <td class="price ${item.unrecognized?'unrecognized':''}">${item.price!=='---'?formatNumber(item.price):'---'}</td>
+      <td>${item.qty!=='---'?formatNumber(item.qty):'---'}</td>
+      <td class="${item.unrecognized?'unrecognized total-column':''}">${item.val!=='Unrecognized'?formatNumber(item.val):'Unrecognized'}</td>
+    `;
+  });
 
-  table.appendChild(tbody);
+  const totalRow=table.insertRow();
+  totalRow.className='summary-total';
+  totalRow.innerHTML=`
+    <td>Total:</td><td></td><td></td><td>${formatNumber(total)}</td>
+  `;
+
   summaryContainer.appendChild(table);
+  summaryContainer.style.display='flex';
 
-  // Update totalCost
-  const totalCostText=document.getElementById('totalCostText');
-  totalCostText.innerText=formatNumber(total);
-  makeTotalCopyable(totalCostText);
+  document.getElementById('totalCostText').innerText=formatNumber(total)+' ISK';
+  document.getElementById('totalCostContainer').style.display='block';
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('shareButton').style.display='inline-block';
+
+  // Make total clickable
+  makeTotalCopyable(document.getElementById('totalCostText'));
 }
 
-// ===== BUTTON =====
-document.getElementById('submitButton').addEventListener('click',()=>{showContent();});
-document.getElementById('message').addEventListener('input',()=>{
-  document.getElementById('submitButton').disabled=!document.getElementById('message').value.trim();
+// ===== EVENT LISTENERS =====
+document.getElementById('message').addEventListener('input',e=>{
+  document.getElementById('submitButton').disabled=!e.target.value.trim();
 });
 
-// ===== INIT =====
-fetchPrices();
+document.getElementById('submitButton').addEventListener('click',()=>{
+  showContent();
+});
+
+// Hide inventory on click
+document.getElementById('summaryContainer').addEventListener('click',()=>{document.getElementById('summaryContainer').style.display='none';});
+
+// ===== SHARE BUTTON =====
+document.getElementById('shareButton').addEventListener('click',()=>{
+  const t=document.getElementById('message').value;
+  const compressed=LZString.compressToEncodedURIComponent(t);
+  const shareURL=window.location.origin+window.location.pathname+'?s='+compressed;
+  navigator.clipboard.writeText(shareURL);
+  alert('Share URL copied to clipboard!');
+});
+
+// ===== LOGO ANIMATION =====
+const oreSpan=document.getElementById('ore');
+const stellarSpan=document.getElementById('stellar');
+
+function flickerLogo(){
+  oreSpan.style.animation='flickerRapid 0.4s 2, flickerQuick 0.6s 1 forwards';
+  stellarSpan.style.animation='flickerRapid 0.4s 2, flickerQuick 0.6s 1 forwards';
+}
+flickerLogo();
 </script>
+
 </body>
 </html>
