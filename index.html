@@ -5,469 +5,225 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font: Orbitron -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
-<!-- LZString for URL compression -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-html,body{margin:0;padding:0;height:100%;overflow:hidden;background:black;font-family:monospace;color:white;}
-canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-
-.container-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;padding:20px;z-index:2;position:relative;}
-#myHeader{display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;width:100%;max-width:650px;margin-bottom:30px;cursor:pointer;z-index:2;}
-#logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
-#logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
-
-@keyframes softGlow{0%,100%{text-shadow:0 0 5px #fff;color:rgba(255,255,255,0.75);}50%{text-shadow:0 0 15px #fff;color:rgba(255,255,255,1);}}
-@keyframes flickerRapid{0%,20%,40%,60%,80%,100%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}10%,30%,50%,70%,90%{color: rgba(255,255,255,0.1);text-shadow:none;}}
-@keyframes flickerQuick{0%,50%,100%{color: rgba(255,255,255,0.1);text-shadow:none;}25%,75%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}}
-
-.main-container{width:650px;max-width:90%;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:rgba(20,20,20,0.92);border-radius:15px;}
-.main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:18px;padding:18px;border-radius:10px;resize:vertical;background-color:rgba(17,17,17,0.97);color:#fff;border:1px solid #333;text-align:left;font-family:'Share Tech Mono', monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;}
-.main-container textarea#message::placeholder{color:#fff;opacity:0.6;}
-textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px #fff,0 0 25px #fff;transition:box-shadow 0.3s ease,border-color 0.3s ease;}
-
-.actionButton{margin-top:15px;background:linear-gradient(145deg,#161616,#242424);color:#fff;border:2px solid #ccc;border-radius:10px;padding:15px 35px;font-weight:bold;font-family:'Orbitron',sans-serif;cursor:pointer;position:relative;overflow:hidden;text-shadow:0 0 2px #fff;box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;animation:ambientGlow 3.5s ease-in-out infinite alternate;transition:all 0.35s ease;}
-@keyframes ambientGlow{0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;}100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;}}
-.actionButton:hover{color:#000;background:linear-gradient(145deg,#f2f2f2,#dcdcdc);border-color:#fff;transform:translateY(-2px) scale(1.04);animation:hoverPulse 1.6s infinite alternate;box-shadow:0 0 10px #ffffffcc,0 0 20px #ffffff66 inset;}
-@keyframes hoverPulse{0%{box-shadow:0 0 8px #ffffff88,0 0 15px #ffffff33 inset;}100%{box-shadow:0 0 16px #ffffffcc,0 0 25px #ffffff66 inset;}}
-
-.contracts-wrapper{display:flex;justify-content:center;align-items:flex-start;gap:15px;flex-wrap:wrap;width:100%;}
-.total-cost-container{width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;}
-#leftContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');}
-#totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
-#totalCostText{position:absolute;top:calc(50% + 10px);left:calc(50% - 53px);font-size:18px;font-weight:bold;color:#00ff00;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;cursor:pointer;}
-
-/* Summary container */
-.summary-container{
-  display:none;
-  flex-direction:column;
-  align-items:stretch;
-  justify-content:flex-start;
-  font-family:'Orbitron',monospace;
-  font-size:14px;
-  line-height:1.4;
-  color:#00ff00;
-  background: rgba(0,10,0,0.9);
-  border: 2px solid #00ff00;
-  border-radius:12px;
-  padding:16px 20px;
-  min-width:400px;
-  max-width:500px;
-  max-height:420px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  box-shadow:0 0 15px rgba(0,255,0,0.5), inset 0 0 10px rgba(0,255,0,0.3);
-  backdrop-filter:blur(6px);
-  animation: pulseGlow 2s infinite alternate;
-  scrollbar-width: thin;
-  scrollbar-color: #00ff00 transparent;
+/* 🌌 STAR BACKGROUND */
+#stars, #stars2, #stars3 {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent url('https://orestellar.github.io/images/stars.png') repeat top center;
+  z-index: -1;
 }
-@keyframes pulseGlow{
-  0%{box-shadow:0 0 12px rgba(0,255,0,0.5), inset 0 0 6px rgba(0,255,0,0.3);}
-  100%{box-shadow:0 0 20px rgba(0,255,0,0.7), inset 0 0 12px rgba(0,255,0,0.5);}
+#stars { animation: moveStars 50s linear infinite; }
+#stars2 { animation: moveStars 100s linear infinite; opacity: 0.5; }
+#stars3 { animation: moveStars 150s linear infinite; opacity: 0.3; }
+
+@keyframes moveStars {
+  from { background-position: 0 0; }
+  to { background-position: -10000px 5000px; }
 }
-.summary-container::-webkit-scrollbar{width:6px;}
-.summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* Summary table */
-.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td{padding:6px 10px;border-bottom:1px solid rgba(0,255,0,0.15);font-size:14px;white-space:nowrap;font-family:'Share Tech Mono', monospace;}
-.summary-table th:nth-child(1), .summary-table td:nth-child(1){width:38%; text-align:left;}
-.summary-table th:nth-child(2), .summary-table td:nth-child(2){width:20%; text-align:right;}
-.summary-table th:nth-child(3), .summary-table td:nth-child(3){width:18%; text-align:center;}
-.summary-table th:nth-child(4), .summary-table td:nth-child(4){width:24%; text-align:right;}
-.summary-table th{text-align:center;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.3);}
-.summary-table td.price,.summary-table td.total-column{font-variant-numeric:tabular-nums;letter-spacing:0.5px;}
-.summary-table td.price::after{content:" ISK";color:rgba(0,255,0,0.6);font-size:12px;margin-left:3px;}
-.summary-table td{color:#e0ffe0;text-shadow:none;}
-.summary-table td.unrecognized{color:#ff4444 !important;text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important;font-weight:bold;text-align:left !important;animation: unrecognizedGlow 1.5s infinite alternate;}
-@keyframes unrecognizedGlow{0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;}50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;}}
+/* 🌠 NEON THEME */
+body {
+  font-family: 'Orbitron', sans-serif;
+  background-color: #000;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
-/* Total row */
-.summary-total td{font-weight:bold;border-top:1px solid rgba(0,255,0,0.4);color:#00ff00;text-shadow:0 0 10px #00ff00,0 0 25px #00ff00;}
-.summary-total td:first-child{text-align:right;}
-.summary-total td:last-child{text-align:right;position:relative;}
-.summary-total td:last-child::after{content:" ISK";color:rgba(0,255,0,0.8);font-size:13px;margin-left:4px;}
-
-/* Sortable neon arrows */
-.summary-table th{position:relative;transition:color 0.25s, text-shadow 0.3s;user-select:none;cursor:pointer;}
-.summary-table th:hover{color:#00ffaa;text-shadow:0 0 8px #00ffaa;}
-.summary-table th.sorted{color:#00ffcc;text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc;}
-.summary-table th::after{content:"";position:absolute;right:8px;opacity:0;transition:opacity 0.2s;color:#00ffcc;text-shadow:0 0 8px #00ffcc,0 0 15px #00ffcc;font-size:12px;}
-.summary-table th.sorted-asc::after{content:"▲";opacity:1;}
-.summary-table th.sorted-desc::after{content:"▼";opacity:1;}
-  .quote-text {
-  font-family: 'Orbitron', sans-serif;    /* match logo font */
-  font-size: 1.6rem;                      /* larger text */
-  font-weight: 700;
-  color: #fff;                             /* white text */
+header {
   text-align: center;
-  text-shadow: 
-    0 0 8px #fff,
-    0 0 16px #fff,
-    0 0 24px #00ff00,
-    0 0 32px #00ff00;                     /* neon glow effect */
-  animation: softGlow 2.5s infinite alternate;  /* subtle pulsing */
+  margin-top: 20px;
 }
 
+.logo {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  filter: drop-shadow(0 0 10px #00ffcc);
+  transition: transform 0.3s ease;
+}
+.logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px #00ffcc);
+}
+
+/* 🧾 MAIN CONTAINER */
+main {
+  max-width: 900px;
+  margin: 50px auto;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 20px #00ffff;
+}
+
+/* 🧮 TEXTAREA & BUTTON */
+textarea {
+  width: 100%;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px #00ffff;
+  resize: none;
+}
+
+button {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #00ffff;
+  color: #00ffff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  background-color: rgba(0, 255, 204, 0.2);
+  box-shadow: 0 0 20px #00ffff;
+}
+
+/* 📊 SUMMARY TABLE */
+#summary {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+#summary th, #summary td {
+  padding: 10px;
+  border-bottom: 1px solid #00ffff;
+}
+
+#summary th {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+#summary td.unrecognized {
+  color: #ff4444;
+  text-shadow: 0 0 8px #ff4444;
+}
 </style>
 </head>
-<body data-show-inventory="true">
 
-<canvas id="starfield"></canvas>
+<body>
+<div id="stars"></div>
+<div id="stars2"></div>
+<div id="stars3"></div>
 
-<div class="container-wrapper">
-  <header id="myHeader">
-    <h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
-  </header>
+<header>
+  <a href="https://orestellar.github.io/">
+    <img src="logo.png" alt="OreStellar Logo" class="logo">
+  </a>
+</header>
 
-<div class="main-container">
-  <!-- ===== BLUEPRINT HEADER ===== -->
-  <h3 class="quote-text">Paste Your Inventory Below</h3>
-  <br>
-  <textarea id="message" rows="8" placeholder="Compressed Ytirium 90143
-Jet Ochre 13527
-Magma Mercoxit 40599
-Compressed Mordunium 592556
-Bistot 1320"></textarea>
-  <button id="submitButton" class="actionButton" disabled>Submit</button>
-</div>
+<main>
+  <h2>Paste Your Inventory Here</h2>
+  <textarea id="inventoryInput" placeholder="Paste your inventory text here..."></textarea>
+  <button id="submitButton">Process Inventory</button>
 
-
-  <div class="contracts-wrapper">
-    <div id="leftContainer" class="total-cost-container"></div>
-    <div id="summaryContainer" class="summary-container"></div>
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-    </div>
-  </div>
-
-  <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
-</div>
+  <table id="summary">
+    <thead>
+      <tr>
+        <th>Ore Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody id="summaryBody"></tbody>
+  </table>
+</main>
 
 <script>
-/* ==========================
-   OreStellar — Full Script
-   Replace your current <script> block with this (paste before </body>)
-   ========================== */
+/* === STEP 1: FETCH RECOGNIZED ORE NAMES FROM CSV === */
+let recognizedOres = new Set();
 
-// ====== Globals ======
-let priceList = {};              // { "compressed ytirium": 12345, ... }
-let oreNames = [];               // ["compressed ytirium", ...] (lowercase)
-let oreNameMap = {};             // {"compressed ytirium": "Compressed Ytirium"} (original)
-
-// ====== Load prices.csv (rows 2..191) ======
-async function loadPriceList() {
-  try {
-    const res = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
-    const text = await res.text();
-    const rows = text.split('\n').map(r => r.trim()).filter(Boolean);
-    // rows[0] is header; want rows 1..190 inclusive (i.e. slice(1, 191))
-    const slice = rows.slice(1, 191);
-    slice.forEach(row => {
-      const cols = row.split(',');
-      if (cols.length < 1) return;
-      const rawName = cols[0].trim();
-      if (!rawName) return;
-      // Price is not always col[1], use same heuristic you had before: second-to-last
-      const suggestedPrice = parseFloat(cols[cols.length - 2].replace(/[^0-9.\-]/g,''));
-      const key = rawName.toLowerCase();
-      oreNames.push(key);
-      oreNameMap[key] = rawName;
-      if (!isNaN(suggestedPrice)) priceList[key] = suggestedPrice;
-      else priceList[key] = 0;
-    });
-    // sort oreNames by length DESC so longer names won't be shadowed — but matching will pick earliest index
-    oreNames.sort((a,b) => b.length - a.length);
-  } catch (e) {
-    console.error('Failed to load prices.csv', e);
-  }
-}
-loadPriceList();
-
-
-// ====== Helpers ======
-function formatNumber(n){
-  if (n === null || n === undefined || n === '' || isNaN(n)) return '---';
-  // For totals we want no more than 2 fractional digits
-  return Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
-}
-function makeTotalCopyable(el){
-  if(!el) return;
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(el.innerText.replace(/[^0-9.-]/g,''));
-      const original = el.innerText;
-      el.innerText = 'Copied';
-      setTimeout(()=> el.innerText = original, 1200);
-    } catch(e){
-      console.warn('copy failed', e);
+fetch('https://orestellar.github.io/data/prices.csv')
+  .then(res => res.text())
+  .then(text => {
+    const lines = text.split(/\r?\n/);
+    for (let i = 1; i <= 191 && i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols[0]) recognizedOres.add(cols[0].trim().toLowerCase());
     }
   });
-}
 
-
-// ====== Parser: find earliest ore then numbers after it ======
-function parseInventoryText(text){
+/* === STEP 2: PARSER === */
+function parseInventoryText(text) {
   const lines = text.split(/\r?\n/);
-  const results = [];
+  const inventory = [];
 
-  for (let rawLine of lines){
-    const line = rawLine.trim();
-    if (!line) continue;
+  for (const line of lines) {
+    const cleaned = line.trim();
+    if (!cleaned) continue;
 
-    const lower = line.toLowerCase();
+    // Try to find a recognized ore
+    const foundOre = Array.from(recognizedOres).find(ore => 
+      cleaned.toLowerCase().includes(ore)
+    );
 
-    // Find earliest match among oreNames
-    let bestMatch = null;
-    let bestIndex = Infinity;
-
-    for (const ore of oreNames){
-      const idx = lower.indexOf(ore);
-      if (idx >= 0 && idx < bestIndex){
-        bestIndex = idx;
-        bestMatch = ore;
-      }
+    if (foundOre) {
+      const numberMatch = cleaned.match(/(\d{1,3}(?:,\d{3})*|\d+)(?=\D|$)/);
+      const qty = numberMatch ? parseInt(numberMatch[0].replace(/,/g, '')) : 0;
+      inventory.push({ name: foundOre, qty, unrecognized: false });
+    } else {
+      // unrecognized line
+      const firstWord = cleaned.split(/\s+/)[0].slice(0,10);
+      inventory.push({ name: firstWord, qty: 0, unrecognized: true });
     }
-
-    if (!bestMatch){
-      // No ore found -> unrecognized. Show first 10 chars (original rawLine trimmed)
-      const display = rawLine.trim().slice(0, 10);
-      results.push({
-        original: rawLine,
-        name: display,
-        matchedKey: null,
-        qty: 0,
-        m3: null,
-        isk: null,
-        unrecognized: true
-      });
-      continue;
-    }
-
-    // We have a matched ore; focus on substring after the match (we want numbers associated to this ore)
-    const matchIndex = lower.indexOf(bestMatch);
-    const matchEnd = matchIndex + bestMatch.length;
-    const after = rawLine.slice(matchEnd); // preserve original case for number parsing
-
-    // Collect number tokens with context (unit)
-    // We'll capture runs like "7,135.74 m3" or "658,723,945.20 ISK" or plain "1189290"
-    const tokenRegex = /([\d,]+(?:\.\d+)?)(?:\s*(m3|m³|m\^3)?\b)?(?:\s*([iI][sS][kK])\b)?/g;
-    // We'll also collect all numeric tokens in order as fallback
-    const allNumbers = []; // {value:number, unit: 'm3'|'isk'|null, textIndex}
-    let m;
-    while ((m = tokenRegex.exec(after)) !== null){
-      const rawNum = m[1];
-      const unit1 = m[2] ? m[2].toLowerCase() : null;
-      const unit2 = m[3] ? m[3].toLowerCase() : null;
-      const unit = unit1 || (unit2 ? 'isk' : null) || null;
-      const value = parseFloat(rawNum.replace(/,/g,''));
-      if (!isNaN(value)){
-        allNumbers.push({ value, unit, index: m.index });
-      }
-      // Prevent infinite loops on zero-length matches
-      if (m.index === tokenRegex.lastIndex) tokenRegex.lastIndex++;
-    }
-
-    // Strategy to assign:
-    // - first numeric token -> qty
-    // - prefer tokens with unit 'm3' for m3 and 'isk' for isk
-    // - otherwise next numeric -> m3, next numeric -> isk
-    let qty = null, m3 = null, isk = null;
-    if (allNumbers.length > 0){
-      qty = allNumbers[0].value;
-      // find m3 by unit if present
-      const m3ByUnit = allNumbers.find(t => t.unit && t.unit.indexOf('m') === 0);
-      const iskByUnit = allNumbers.find(t => t.unit && t.unit.indexOf('is') === 0);
-      // assign m3
-      if (m3ByUnit) m3 = m3ByUnit.value;
-      // assign isk
-      if (iskByUnit) isk = iskByUnit.value;
-
-      // If unit-based values didn't fill, use remaining numeric tokens in order (skip the one used for qty)
-      let idx = 1;
-      for (; (m3 === null || isk === null) && idx < allNumbers.length; idx++){
-        const tok = allNumbers[idx];
-        if (tok === m3ByUnit || tok === iskByUnit) continue;
-        if (m3 === null) { m3 = tok.value; continue; }
-        if (isk === null) { isk = tok.value; continue; }
-      }
-    }
-
-    // push result (use original display name from oreNameMap)
-    results.push({
-      original: rawLine,
-      name: oreNameMap[bestMatch] || bestMatch,
-      matchedKey: bestMatch,
-      qty: qty || 0,
-      m3: m3,
-      isk: isk,
-      unrecognized: false
-    });
   }
 
-  return results;
+  return inventory;
 }
 
+/* === STEP 3: DISPLAY FUNCTION === */
+document.getElementById("submitButton").addEventListener("click", () => {
+  const text = document.getElementById("inventoryInput").value;
+  const parsed = parseInventoryText(text);
+  const tbody = document.getElementById("summaryBody");
+  tbody.innerHTML = "";
 
-// ====== showContent (build table) ======
-function showContent(prefillText){
-  try {
-    const t = (prefillText !== undefined && prefillText !== null) ? prefillText : document.getElementById('message').value;
-    const inventory = parseInventoryText(t);
+  parsed.forEach(item => {
+    const row = document.createElement("tr");
 
-    const summaryContainer = document.getElementById('summaryContainer');
-    let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-    let total = 0;
+    const nameCell = document.createElement("td");
+    nameCell.textContent = item.name.length > 10 ? item.name.slice(0,10) : item.name;
 
-    inventory.forEach(item => {
-      const isUn = !!item.unrecognized;
-      const displayName = isUn ? (String(item.name).slice(0,10)) : (String(item.name).replace(/^Compressed /i, 'Comp. '));
-      const key = item.matchedKey || (item.name && item.name.toLowerCase().trim());
-      const price = (!isUn && key && priceList[key] !== undefined) ? priceList[key] : 0;
-      const qtyDisplay = isUn ? '---' : formatNumber(item.qty);
-      const priceDisplay = isUn ? '---' : formatNumber(price);
-      const totalValue = (!isUn ? (item.qty * price) : null);
+    const priceCell = document.createElement("td");
+    const qtyCell = document.createElement("td");
+    const totalCell = document.createElement("td");
 
-      tableHTML += `<tr class="${isUn ? 'unrecognized' : ''}">
-        <td>${escapeHtml(displayName)}</td>
-        <td class="price">${priceDisplay}</td>
-        <td class="quantity">${qtyDisplay}</td>
-        <td class="${isUn ? 'total-column unrecognized' : 'total-column'}">${isUn ? 'Unrecognized' : formatNumber(totalValue)}</td>
-      </tr>`;
+    if (item.unrecognized) {
+      priceCell.textContent = "---";
+      qtyCell.textContent = "---";
+      totalCell.textContent = "Unrecognized";
+      totalCell.classList.add("unrecognized");
+    } else {
+      // (You can later link your price data here)
+      priceCell.textContent = "Loading...";
+      qtyCell.textContent = item.qty;
+      totalCell.textContent = "—";
+    }
 
-      if (!isUn) total += (item.qty * price || 0);
-    });
-
-    tableHTML += `<tr class="summary-total">
-      <td colspan="3" style="text-align:right;">Total</td>
-      <td id="summaryTotal">${formatNumber(total)}</td>
-    </tr></tbody></table>`;
-
-    summaryContainer.innerHTML = tableHTML;
-    summaryContainer.style.display = 'flex';
-
-    document.getElementById('leftContainer').style.display = 'block';
-    document.getElementById('totalCostContainer').style.display = 'block';
-
-    const totalText = document.getElementById('totalCostText');
-    totalText.innerText = formatNumber(total) + ' ISK';
-    makeTotalCopyable(totalText);
-    const summaryTotalEl = document.getElementById('summaryTotal');
-    if (summaryTotalEl) makeTotalCopyable(summaryTotalEl);
-
-    attachSorting(summaryContainer);
-
-    // Hide input area and show share
-    const mainContainer = document.querySelector('.main-container');
-    if (mainContainer) mainContainer.style.display = 'none';
-    const submitBtn = document.getElementById('submitButton');
-    if (submitBtn) submitBtn.style.display = 'none';
-    const shareBtn = document.getElementById('shareButton');
-    if (shareBtn) shareBtn.style.display = 'inline-block';
-  } catch (e) {
-    console.error('showContent error', e);
-    alert('An error occurred while parsing. Check console for details.');
-  }
-}
-
-// safe HTML escape for display
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
-}
-
-
-// ====== Sorting (unchanged behaviour but robust) ======
-function attachSorting(container){
-  const table = container.querySelector('table');
-  if (!table) return;
-  const headers = table.querySelectorAll('th');
-  headers.forEach((header, index) => {
-    header.addEventListener('click', () => {
-      const tbody = table.querySelector('tbody');
-      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r=>!r.classList.contains('summary-total'));
-      const ascending = !header.classList.contains('sorted-asc');
-      headers.forEach(h => h.classList.remove('sorted','sorted-asc','sorted-desc'));
-      header.classList.add('sorted');
-      header.classList.toggle('sorted-asc', ascending);
-      header.classList.toggle('sorted-desc', !ascending);
-
-      rows.sort((a,b) => {
-        const aCell = a.children[index].innerText.trim();
-        const bCell = b.children[index].innerText.trim();
-
-        // put unrecognized rows to bottom
-        if (a.classList.contains('unrecognized') && !b.classList.contains('unrecognized')) return 1;
-        if (b.classList.contains('unrecognized') && !a.classList.contains('unrecognized')) return -1;
-
-        // Name column: string compare
-        if (index === 0) return ascending ? aCell.localeCompare(bCell) : bCell.localeCompare(aCell);
-        // Numeric columns: strip non-numeric
-        const aNum = parseFloat(aCell.replace(/[^0-9.-]/g,'')) || 0;
-        const bNum = parseFloat(bCell.replace(/[^0-9.-]/g,'')) || 0;
-        return ascending ? aNum - bNum : bNum - aNum;
-      });
-
-      rows.forEach(r => tbody.insertBefore(r, tbody.querySelector('tr.summary-total')));
-    });
+    row.append(nameCell, priceCell, qtyCell, totalCell);
+    tbody.appendChild(row);
   });
-}
-
-
-// ====== Keep existing starfield & logo animation intact ======
-// The starfield code originally in your page (uses canvas#starfield). If you replaced it earlier, restore original code.
-// We'll keep it simple: if a starfield function already exists in page, don't overwrite.
-// If you have the earlier starfield code (present in your HTML before), leave it. We won't duplicate heavy code here.
-
-
-// ====== Submit button wiring & share / load handlers ======
-document.addEventListener('DOMContentLoaded', () => {
-  // enable submit button when message has text
-  const submitBtn = document.getElementById('submitButton');
-  const messageBox = document.getElementById('message');
-  if (messageBox && submitBtn) {
-    messageBox.addEventListener('input', () => { submitBtn.disabled = messageBox.value.trim() === ''; });
-    submitBtn.addEventListener('click', () => { showContent(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  }
-
-  // Share button
-  const shareBtn = document.getElementById('shareButton');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      const message = document.getElementById('message').value.trim();
-      if (!message) return;
-      const compressed = LZString.compressToEncodedURIComponent(message);
-      const shareURL = `${window.location.origin}${window.location.pathname}?s=${compressed}`;
-      navigator.clipboard.writeText(shareURL).then(() => {
-        const original = shareBtn.innerText;
-        shareBtn.innerText = 'Copied';
-        setTimeout(()=> shareBtn.innerText = original, 1500);
-      });
-    });
-  }
-
-  // Auto-load summary if URL contains 's' parameter
-  const params = new URLSearchParams(window.location.search);
-  const compressed = params.get('s');
-  if (compressed){
-    const inventoryText = LZString.decompressFromEncodedURIComponent(compressed);
-    if (inventoryText) {
-      document.getElementById('message').value = inventoryText;
-      showContent(inventoryText);
-      // hide inputs for shared view
-      const mc = document.querySelector('.main-container'); if(mc) mc.style.display = 'none';
-      const left = document.getElementById('leftContainer'); if(left) left.style.display = 'none';
-      const tc = document.getElementById('totalCostContainer'); if(tc) tc.style.display = 'none';
-      const sb = document.getElementById('shareButton'); if(sb) sb.style.display = 'none';
-      const sc = document.getElementById('summaryContainer'); if(sc) sc.style.display = 'flex';
-    }
-  }
 });
 </script>
-
 </body>
 </html>
