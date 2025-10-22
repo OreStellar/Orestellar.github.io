@@ -68,21 +68,37 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
 
-/* Summary Table */
-.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td{padding:6px 10px;border-bottom:1px solid rgba(0,255,0,0.15);font-size:14px;white-space:nowrap;font-family:'Share Tech Mono', monospace;}
-.summary-table th{text-align:center;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.3);cursor:pointer;}
-.summary-table td.price,.summary-table td.total-column{font-variant-numeric:tabular-nums;letter-spacing:0.5px;}
-.summary-table td.price::after{content:" ISK";color:rgba(0,255,0,0.6);font-size:12px;margin-left:3px;}
-.summary-table td.unrecognized{color:#ff4444 !important;text-shadow:0 0 12px #ff3333,0 0 24px #ff0000 !important;font-weight:bold;text-align:left !important;animation: unrecognizedGlow 1.5s infinite alternate;}
-@keyframes unrecognizedGlow{0%,100%{text-shadow:0 0 12px #ff3333,0 0 24px #ff0000;}50%{text-shadow:0 0 18px #ff6666,0 0 28px #ff2222;}}
-.summary-total td{font-weight:bold;border-top:1px solid rgba(0,255,0,0.4);color:#00ff00;text-shadow:0 0 10px #00ff00,0 0 25px #00ff00;}
-.summary-total td:first-child{text-align:right;}
-.summary-total td:last-child{text-align:right;position:relative;}
-.summary-total td:last-child::after{content:" ISK";color:rgba(0,255,0,0.8);font-size:13px;margin-left:4px;}
-.summary-table th.sorted{color:#00ffcc;text-shadow:0 0 10px #00ffcc,0 0 25px #00ffcc;}
-.summary-table th.sorted-asc::after{content:"▲";opacity:1;}
-.summary-table th.sorted-desc::after{content:"▼";opacity:1;}
+/* Summary table */
+.summary-table th, .summary-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0,255,0,0.15);
+  font-size: 14px;
+  white-space: nowrap;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Column alignments */
+.summary-table th:nth-child(1),
+.summary-table td:nth-child(1) { /* Name column */
+  text-align: right;
+}
+
+.summary-table th:nth-child(2),
+.summary-table td:nth-child(2), /* Price */
+.summary-table th:nth-child(3),
+.summary-table td:nth-child(3), /* Quantity */
+.summary-table th:nth-child(4),
+.summary-table td:nth-child(4)  /* Total */
+{
+  text-align: left;
+}
+
+/* Optional: headers neon effect */
+.summary-table th {
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  border-bottom: 1px solid rgba(0,255,0,0.3);
+}
 
 /* Quote Header */
 .quote-text {font-family: 'Orbitron', sans-serif;font-size:1.6rem;font-weight:700;color: #fff;text-align: center;text-shadow:0 0 8px #fff,0 0 16px #fff,0 0 24px #00ff00,0 0 32px #00ff00;animation: softGlow 2.5s infinite alternate;}
@@ -171,21 +187,21 @@ function showContent(prefillText){
   }
 
   const summaryContainer = document.getElementById('summaryContainer');
-  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-  
-  summary.forEach(item => {
-    tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
-      <td>${item.name}</td>
-      <td class="price">${item.price}</td>
-      <td class="quantity">${item.qty}</td>
-      <td class="total-column">${item.val}</td>
-    </tr>`;
-  });
+let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
 
-  tableHTML += `<tr class="summary-total">
-    <td colspan="3" style="text-align:right;">Total</td>
-    <td id="summaryTotal">${formatNumber(total)}</td>
-  </tr></tbody></table>`;
+summary.forEach(item => {
+  tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
+    <td>${item.name}</td>
+    <td class="price">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+    <td class="quantity">${formatNumber(item.qty)}</td>
+    <td class="total-column">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+  </tr>`;
+});
+
+tableHTML += `<tr class="summary-total">
+  <td colspan="3" style="text-align:left;">Total</td>
+  <td id="summaryTotal">${formatNumber(total)}</td>
+</tr></tbody></table>`;
 
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'flex';
