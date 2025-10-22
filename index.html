@@ -149,120 +149,128 @@ Bistot 1320"></textarea>
 </div>
 
 <script>
-// ===== STARFIELD =====
-const canvas=document.getElementById("starfield"),ctx=canvas.getContext("2d");
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resizeCanvas();window.addEventListener("resize",()=>{resizeCanvas();createStars();});
-let stars=[],clusterCount=12;
-function createStars(){stars=[];const clusterCenters=[];for(let i=0;i<clusterCount;i++)clusterCenters.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});const totalStars=Math.floor(window.innerWidth*window.innerHeight/600);for(let i=0;i<totalStars;i++){let x,y;if(Math.random()<0.6){const c=clusterCenters[Math.floor(Math.random()*clusterCenters.length)];const radius=Math.random()*120;const angle=Math.random()*Math.PI*2;x=c.x+radius*Math.cos(angle);y=c.y+radius*Math.sin(angle);}else{x=Math.random()*canvas.width;y=Math.random()*canvas.height;}stars.push({x,y,size:Math.random()*1.5+0.2,color:["#ffffff","#ff99aa","#99ccff","#f0f0f0"][Math.floor(Math.random()*4)],speed:Math.random()*0.2+0.05,phase:Math.random()*Math.PI*2,twinkle:Math.random()<0.25,baseAlpha:0.8+Math.random()*0.2});}}
-createStars();
-let lastBrightTime=0,nextBrightInterval=7000+Math.random()*8000;
-function drawStars(time=0){ctx.clearRect(0,0,canvas.width,canvas.height);if(time-lastBrightTime>nextBrightInterval){lastBrightTime=time;nextBrightInterval=7000+Math.random()*8000;for(let i=0;i<2;i++){const s=stars[Math.floor(Math.random()*stars.length)];s.isBright=true;s.brightStart=time;s.brightEnd=time+2000+Math.random()*1000;}}for(let s of stars){let alpha=s.baseAlpha;if(s.twinkle)alpha=0.55+0.25*Math.sin(time*0.002+s.phase);if(s.isBright&&time>=s.brightStart&&time<s.brightEnd)alpha=1;else s.isBright=false;ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=alpha;ctx.shadowBlur=alpha===1?s.size*8:s.size*4;ctx.shadowColor=s.color;ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(drawStars);}
-drawStars();
+/* ================================
+   OreStellar Smart Inventory Parser
+   ================================ */
 
-// ===== FETCH PRICES =====
-let priceList={};
-async function fetchPrices(){
-  const response = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
-  const csvText = await response.text();
-  const rows = csvText.split('\n');
-  rows.forEach(row=>{
-    const cols = row.split(',');
-    if(cols.length>=2){
-      const oreName = cols[0].toLowerCase().trim();
-      const suggestedPrice = parseInt(cols[cols.length-2]);
-      if(!isNaN(suggestedPrice)) priceList[oreName]=suggestedPrice;
-    }
+let priceList = {}; // will be filled dynamically
+const oreNames = []; // will store recognized ore names
+
+// Fetch ore names and prices from your CSV
+fetch('data/prices.csv')
+  .then(res => res.text())
+  .then(text => {
+    const rows = text.split('\n').slice(1, 191); // rows 2–191
+    rows.forEach(row => {
+      const cols = row.split(',');
+      const name = cols[0]?.trim();
+      const price = parseFloat(cols[1]) || 0;
+      if (name) {
+        oreNames.push(name.toLowerCase());
+        priceList[name.toLowerCase()] = price;
+      }
+    });
+  });
+
+// ===============================
+// Utility Functions
+// ===============================
+function formatNumber(num) {
+  if (isNaN(num)) return '---';
+  return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+}
+
+function makeTotalCopyable(element) {
+  element.addEventListener('click', () => {
+    navigator.clipboard.writeText(element.textContent.replace(' ISK','').trim());
+    element.classList.add('copied');
+    setTimeout(() => element.classList.remove('copied'), 800);
   });
 }
 
-// ===== HELPERS =====
-function formatNumber(n){return n.toLocaleString();}
-function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));const original=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=original;},1500);});}
-// ===== INVENTORY PARSER =====
-function parseInventoryText(text) {
-  const lines = text.split(/\r?\n/);
-  const inventory = [];
+// ===============================
+// Smart Inventory Parsing
+// ===============================
+function parseInventoryText(t) {
+  const lines = t.split(/\r?\n/);
+  const summary = [];
 
   lines.forEach(line => {
-    if (!line.trim()) return; // skip empty lines
+    let foundOre = null;
+    let foundQty = null;
+    let foundM3 = null;
+    let foundISK = null;
 
-    const parts = line.split(/\t| {2,}/).filter(Boolean);
-    if (!parts.length) return;
+    const lower = line.toLowerCase();
+    const words = lower.split(/[\t, ]+/);
 
-    let matchedOre = '';
-    let quantity = null;
-    let m3 = null;
-    let isk = null;
-
-    // --- Step 1: Find the longest matching ore name ---
-    for (let len = parts.length; len > 0; len--) {
-      for (let start = 0; start <= parts.length - len; start++) {
-        const candidate = parts.slice(start, start + len).join(' ').toLowerCase().trim();
-        if (priceList[candidate] !== undefined) {
-          matchedOre = candidate;
-          // Remove the matched words from parts so we only look at numbers next
-          parts.splice(start, len, matchedOre);
+    // Look for first recognized ore name
+    for (let i = 0; i < words.length; i++) {
+      for (const ore of oreNames) {
+        const oreParts = ore.split(' ');
+        if (oreParts.every((p, j) => words[i + j] === p)) {
+          foundOre = ore;
           break;
         }
       }
-      if (matchedOre) break;
+      if (foundOre) break;
     }
 
-    if (!matchedOre) {
-      // No ore matched, mark as unrecognized with first word as name
-      inventory.push({ name: parts.join(' '), qty: 0, m3: null, isk: null, unrecognized: true });
-      return;
+    if (!foundOre) return; // skip line entirely if no match
+
+    // Extract numbers
+    const numbers = line.match(/[\d,]+(?:\.\d+)?/g) || [];
+
+    // Assign meaning to numbers
+    if (numbers.length > 0) foundQty = parseFloat(numbers[0].replace(/,/g, ''));
+    if (numbers.length > 1) {
+      const maybeM3 = line.includes('m3');
+      const maybeISK = line.toLowerCase().includes('isk');
+      if (maybeM3) foundM3 = parseFloat(numbers[numbers.length - 2]?.replace(/,/g, ''));
+      if (maybeISK) foundISK = parseFloat(numbers[numbers.length - 1]?.replace(/,/g, ''));
     }
 
-    // --- Step 2: Assign the next numeric value as quantity ---
-    for (let p of parts) {
-      const num = parseFloat(p.replace(/,/g,''));
-      if (!isNaN(num)) {
-        if (quantity === null) quantity = num;
-        else if (m3 === null) m3 = num;
-        else if (isk === null) isk = num;
-      }
-    }
-
-if (!matchedOre) {
-  // No ore matched, mark as unrecognized with first 10 characters of combined parts
-  const rawName = parts.join(' ');
-  inventory.push({ 
-    name: rawName.substring(0, 10), // first 10 chars
-    qty: 0,
-    m3: null,
-    isk: null,
-    unrecognized: true 
+    summary.push({
+      name: foundOre,
+      qty: foundQty || 0,
+      m3: foundM3 || 0,
+      isk: foundISK || 0,
+      unrecognized: false
+    });
   });
-  return;
+
+  // Detect unrecognized or incomplete
+  return summary.map(item => {
+    if (!oreNames.includes(item.name?.toLowerCase())) {
+      item.unrecognized = true;
+    }
+    return item;
+  });
 }
 
-}
-
-
-// ===== SHOW SUMMARY =====
+// ===============================
+// Display Function
+// ===============================
 function showContent(prefillText) {
   const t = prefillText || document.getElementById('message').value;
-
-  // Parse inventory
   const inventory = parseInventoryText(t);
 
   let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
   let total = 0;
 
   inventory.forEach(item => {
-    // Truncate unrecognized names to first 10 characters
     const displayName = item.unrecognized ? item.name.slice(0, 10) : item.name;
+    const itemPrice = priceList[item.name?.toLowerCase()] || 0;
+    const itemTotal = item.unrecognized ? 0 : item.qty * itemPrice;
 
     tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
       <td>${displayName}</td>
-      <td class="price">${item.unrecognized ? '---' : formatNumber(priceList[item.name.toLowerCase()] || 0)}</td>
+      <td class="price">${item.unrecognized ? '---' : formatNumber(itemPrice)}</td>
       <td class="quantity">${item.unrecognized ? '---' : formatNumber(item.qty)}</td>
-      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? 'Unrecognized' : formatNumber(item.qty * priceList[item.name.toLowerCase()])}</td>
+      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? 'Unrecognized' : formatNumber(itemTotal)}</td>
     </tr>`;
 
-    if (!item.unrecognized) total += item.qty * (priceList[item.name.toLowerCase()] || 0);
+    if (!item.unrecognized) total += itemTotal;
   });
 
   tableHTML += `<tr class="summary-total">
@@ -274,11 +282,9 @@ function showContent(prefillText) {
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'flex';
 
-  // Show contract containers
   document.getElementById('leftContainer').style.display = 'block';
   document.getElementById('totalCostContainer').style.display = 'block';
 
-  // Update total cost text
   const totalText = document.getElementById('totalCostText');
   totalText.innerText = formatNumber(total) + ' ISK';
   makeTotalCopyable(totalText);
@@ -286,140 +292,79 @@ function showContent(prefillText) {
 
   attachSorting(summaryContainer);
 
-  // Hide input area
   document.querySelector('.main-container').style.display = 'none';
   document.getElementById('submitButton').style.display = 'none';
   document.getElementById('shareButton').style.display = 'inline-block';
 }
 
-
-// ===== SORTING =====
-function attachSorting(container){
-  const table = container.querySelector('table');
-  const headers = table.querySelectorAll('th');
-  headers.forEach((header, index)=>{
-    header.addEventListener('click', ()=>{
-      const tbody = table.querySelector('tbody');
-      const rows = Array.from(tbody.querySelectorAll('tr'));
-
-      const ascending = !header.classList.contains('sorted-asc');
-      headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
-      header.classList.add('sorted');
-      header.classList.toggle('sorted-asc', ascending);
-      header.classList.toggle('sorted-desc', !ascending);
-
-      rows.sort((a,b)=>{
-        if(a.classList.contains('summary-total')) return 1;
-        if(b.classList.contains('summary-total')) return -1;
-        if(a.classList.contains('unrecognized')) return 1;
-        if(b.classList.contains('unrecognized')) return -1;
-
-        const valA = a.children[index].innerText.replace(/[^0-9.]/g,'');
-        const valB = b.children[index].innerText.replace(/[^0-9.]/g,'');
-        
-        if(index === 0){ // Name column
-          return ascending
-            ? a.children[index].innerText.localeCompare(b.children[index].innerText)
-            : b.children[index].innerText.localeCompare(a.children[index].innerText);
-        } else { // Numeric columns
-          return ascending
-            ? parseFloat(valA || 0) - parseFloat(valB || 0)
-            : parseFloat(valB || 0) - parseFloat(valA || 0);
-        }
+// ===============================
+// Sorting
+// ===============================
+function attachSorting(container) {
+  const headers = container.querySelectorAll('th');
+  headers.forEach((th, i) => {
+    th.addEventListener('click', () => {
+      const rows = Array.from(container.querySelectorAll('tbody tr')).slice(0, -1);
+      const asc = !th.classList.contains('asc');
+      headers.forEach(h => h.classList.remove('asc', 'desc'));
+      th.classList.add(asc ? 'asc' : 'desc');
+      rows.sort((a, b) => {
+        const getValue = row => row.children[i].innerText.replace(/,/g, '');
+        const A = parseFloat(getValue(a)) || getValue(a);
+        const B = parseFloat(getValue(b)) || getValue(b);
+        return asc ? (A > B ? 1 : -1) : (A < B ? 1 : -1);
       });
-
-      rows.forEach(r=>tbody.appendChild(r));
+      rows.forEach(r => container.querySelector('tbody').insertBefore(r, container.querySelector('tbody tr.summary-total')));
     });
   });
 }
 
+// ===============================
+// Stars Animation + Logo
+// ===============================
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('stars');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const numStars = 300;
 
-
-// ===== SUBMIT BUTTON =====
-const submitBtn=document.getElementById('submitButton');
-const messageBox=document.getElementById('message');
-messageBox.addEventListener('input',()=>{submitBtn.disabled=messageBox.value.trim()==='';});
-submitBtn.addEventListener('click',()=>{showContent();window.scrollTo({top:0,behavior:'smooth'});});
-
-// ===== LOGO CLICK RESET =====
-document.getElementById('myHeader').addEventListener('click', () => {
-  // Redirect to main homepage
-  window.location.href = window.location.origin + window.location.pathname;
-});
-
-
-// ===== LOGO ANIMATION =====
-window.addEventListener('load',()=>{
-  const ore=document.getElementById('ore');
-  const stellar=document.getElementById('stellar');
-
-  ore.style.animation='flickerRapid 0.3s linear forwards';
-  setTimeout(()=>{ore.style.animation='softGlow 6s infinite';},300);
-  setTimeout(()=>{
-    stellar.style.animation='flickerRapid 0.3s linear forwards';
-    setTimeout(()=>{stellar.style.animation='softGlow 6s infinite';},300);
-  },400);
-  setTimeout(()=>{
-    ore.style.animation='flickerQuick 0.3s linear forwards';
-    stellar.style.animation='flickerQuick 0.3s linear forwards';
-    setTimeout(()=>{ore.style.animation='softGlow 6s infinite';stellar.style.animation='softGlow 6s infinite';},300);
-  },1100);
-});
-// ===== SHARE SUMMARY BUTTON =====
-document.getElementById('shareButton').addEventListener('click', () => {
-  const message = document.getElementById('message').value.trim();
-  if (!message) return;
-
-  // Compress inventory text into URL-safe string
-  const compressed = LZString.compressToEncodedURIComponent(message);
-
-  // Generate new URL
-  const shareURL = `${window.location.origin}${window.location.pathname}?s=${compressed}`;
-
-  // Copy URL to clipboard
-  navigator.clipboard.writeText(shareURL).then(() => {
-    const btn = document.getElementById('shareButton');
-    const originalText = btn.innerText;
-    btn.innerText = 'Copied';
-    setTimeout(() => { btn.innerText = originalText; }, 1500);
-  });
-});
-
-// Auto-load summary if URL contains 's' parameter
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const compressed = params.get('s');
-  if (compressed) {
-    const inventoryText = LZString.decompressFromEncodedURIComponent(compressed);
-    if (inventoryText) {
-      showContent(inventoryText);
-
-      // Hide contracts & input for shared view
-      document.querySelector('.main-container').style.display = 'none';
-      document.getElementById('leftContainer').style.display = 'none';
-      document.getElementById('totalCostContainer').style.display = 'none';
-
-      // Ensure summary container is visible
-      document.getElementById('summaryContainer').style.display = 'flex';
-      document.getElementById('shareButton').style.display = 'none';
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = Array.from({ length: numStars }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        z: Math.random() * canvas.width
+      }));
     }
+
+    function draw() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (const s of stars) {
+        s.z -= 2;
+        if (s.z <= 0) s.z = canvas.width;
+        const k = 128.0 / s.z;
+        const px = s.x * k + canvas.width / 2;
+        const py = s.y * k + canvas.height / 2;
+        if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+          const size = (1 - s.z / canvas.width) * 3;
+          ctx.fillStyle = 'rgba(0,255,180,0.7)';
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
   }
 });
-
-// ===== INITIALIZE =====
-fetchPrices();
-  window.addEventListener('load', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const compressedData = urlParams.get('data');
-  if(compressedData){
-    const inventoryText = LZString.decompressFromEncodedURIComponent(compressedData);
-    if(inventoryText){
-      document.getElementById('message').value = inventoryText;
-      showContent(inventoryText);
-    }
-  }
-});
-
 </script>
+
 </body>
 </html>
