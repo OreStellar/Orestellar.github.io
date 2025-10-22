@@ -187,29 +187,56 @@ function parseInventoryText(text) {
   lines.forEach(line => {
     if (!line.trim()) return; // skip empty lines
 
-    // Split by tabs or multiple spaces
     const parts = line.split(/\t| {2,}/).filter(Boolean);
+    if (!parts.length) return;
 
-    if (parts.length < 2) return; // skip invalid lines
+    let matchedOre = '';
+    let quantity = null;
+    let m3 = null;
+    let isk = null;
 
-    let name = '';
-    let quantity = 0;
+    // --- Step 1: Find the longest matching ore name ---
+    for (let len = parts.length; len > 0; len--) {
+      for (let start = 0; start <= parts.length - len; start++) {
+        const candidate = parts.slice(start, start + len).join(' ').toLowerCase().trim();
+        if (priceList[candidate] !== undefined) {
+          matchedOre = candidate;
+          // Remove the matched words from parts so we only look at numbers next
+          parts.splice(start, len, matchedOre);
+          break;
+        }
+      }
+      if (matchedOre) break;
+    }
 
-    // Find first numeric column
-    for (let i = 0; i < parts.length; i++) {
-      const num = parts[i].replace(/,/g, '').trim();
-      if (!isNaN(num) && num !== '') {
-        quantity = parseInt(num, 10);
-        name = parts.slice(0, i).join(' ').trim();
-        break;
+    if (!matchedOre) {
+      // No ore matched, mark as unrecognized with first word as name
+      inventory.push({ name: parts.join(' '), qty: 0, m3: null, isk: null, unrecognized: true });
+      return;
+    }
+
+    // --- Step 2: Assign the next numeric value as quantity ---
+    for (let p of parts) {
+      const num = parseFloat(p.replace(/,/g,''));
+      if (!isNaN(num)) {
+        if (quantity === null) quantity = num;
+        else if (m3 === null) m3 = num;
+        else if (isk === null) isk = num;
       }
     }
 
-    if (quantity > 0) inventory.push({ name, qty: quantity });
+    inventory.push({
+      name: matchedOre,
+      qty: quantity || 0,
+      m3: m3,
+      isk: isk,
+      unrecognized: false
+    });
   });
 
   return inventory;
 }
+
 
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
