@@ -169,77 +169,87 @@ async function fetchPrices(){
 // ===== HELPERS =====
 function formatNumber(n){return n.toLocaleString();}
 function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));const original=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=original;},1500);});}
-
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
   const t = prefillText || document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
+
+  // Regex: match lines starting with letters, optional 'Compressed', then a number (quantity)
+  const regex = /^([A-Za-z\s\.\-]+?)\s+([\d,]+)/gm;
   let match, summary=[], total=0;
 
-  while((match = regex.exec(t)) !== null){
-    const nameRaw = match[1].trim();
+  while ((match = regex.exec(t)) !== null) {
+    let nameRaw = match[1].trim();
+
+    // Remove trailing numbers / units like m3, ISK, etc.
+    nameRaw = nameRaw.replace(/\d+([.,]\d+)?\s*(m3|ISK)?$/i, '').trim();
+
     const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
-    const qty = parseInt(match[2]);
+    let qty = match[2].replace(/,/g,''); // remove commas
+    qty = parseInt(qty);
+
     const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
-    if(priceList[name] !== undefined){
-      summary.push({name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name], unrecognized:false});
+
+    if (priceList[name] !== undefined) {
+      summary.push({
+        name: displayName,
+        price: priceList[name],
+        qty: qty,
+        val: qty * priceList[name],
+        unrecognized: false
+      });
       total += qty * priceList[name];
     } else {
-      summary.push({name: displayName, price:'-', qty:'-', val:'Unrecognized', unrecognized:true});
+      summary.push({
+        name: displayName,
+        price: '-',
+        qty: '-',
+        val: 'Unrecognized',
+        unrecognized: true
+      });
     }
   }
 
   const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.style.display = 'flex';
 
-  // Determine if this is a share view (prefillText exists) or normal submit
-  const isShareView = !!prefillText;
-  if(isShareView){
-    // Hide contracts in share view
-    document.getElementById('leftContainer').style.display = 'none';
-    document.getElementById('totalCostContainer').style.display = 'none';
-    document.getElementById('shareButton').style.display = 'none';
-    // Hide input area in share view
-    document.querySelector('.main-container').style.display = 'none';
-  } else {
-    // Normal view: show contracts
-    document.getElementById('leftContainer').style.display = 'block';
-    document.getElementById('totalCostContainer').style.display = 'block';
-    document.getElementById('shareButton').style.display = 'inline-block';
-    // Hide input area
-    document.querySelector('.main-container').style.display = 'none';
-    document.getElementById('submitButton').style.display = 'none';
-  }
-
-  // Build table HTML
   let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
 
   summary.forEach(item => {
-    tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
-      <td style="text-align:right;">${item.name}</td>
-      <td class="price" style="text-align:left;">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
-      <td class="quantity" style="text-align:left;">${item.unrecognized ? item.qty : formatNumber(item.qty)}</td>
-      <td class="total-column" style="text-align:left;">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+    tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
+      <td>${item.name}</td>
+      <td class="price">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+      <td class="quantity">${item.unrecognized ? item.qty : formatNumber(item.qty)}</td>
+      <td class="total-column">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
     </tr>`;
   });
 
   tableHTML += `<tr class="summary-total">
-    <td colspan="3" style="text-align:right;">Total</td>
-    <td id="summaryTotal" style="text-align:left;">${formatNumber(total)}</td>
+    <td colspan="3" style="text-align:left;">Total</td>
+    <td id="summaryTotal">${formatNumber(total)}</td>
   </tr></tbody></table>`;
 
   summaryContainer.innerHTML = tableHTML;
+  summaryContainer.style.display = 'flex';
 
-  // Make totals copyable
+  // Show or hide contracts based on whether prefillText is from shared URL
+  const isSharedView = !!prefillText;
+  document.getElementById('leftContainer').style.display = isSharedView ? 'none' : 'block';
+  document.getElementById('totalCostContainer').style.display = isSharedView ? 'none' : 'block';
+  document.getElementById('shareButton').style.display = isSharedView ? 'none' : 'inline-block';
+  document.querySelector('.main-container').style.display = isSharedView ? 'none' : 'none';
+
+  // Update contract total ISK if not shared view
+  if (!isSharedView) {
+    document.getElementById('totalCostText').innerText = formatNumber(total) + ' ISK';
+    makeTotalCopyable(document.getElementById('totalCostText'));
+  }
+
+  // Make summary total copyable
   makeTotalCopyable(document.getElementById('summaryTotal'));
-  if(!isShareView) makeTotalCopyable(document.getElementById('totalCostText'));
 
-  // Update contract total if normal view
-  if(!isShareView) document.getElementById('totalCostText').innerText = formatNumber(total) + ' ISK';
-
-  // Attach sorting to summary table
+  // Attach sorting
   attachSorting(summaryContainer);
 }
+
 
 
 // ===== SORTING =====
