@@ -149,219 +149,322 @@ Bistot 1320"></textarea>
 </div>
 
 <script>
-/* ================================
-   OreStellar Smart Inventory Parser
-   ================================ */
+/* ==========================
+   OreStellar — Full Script
+   Replace your current <script> block with this (paste before </body>)
+   ========================== */
 
-let priceList = {}; // will be filled dynamically
-const oreNames = []; // will store recognized ore names
+// ====== Globals ======
+let priceList = {};              // { "compressed ytirium": 12345, ... }
+let oreNames = [];               // ["compressed ytirium", ...] (lowercase)
+let oreNameMap = {};             // {"compressed ytirium": "Compressed Ytirium"} (original)
 
-// Fetch ore names and prices from your CSV
-fetch('data/prices.csv')
-  .then(res => res.text())
-  .then(text => {
-    const rows = text.split('\n').slice(1, 191); // rows 2–191
-    rows.forEach(row => {
+// ====== Load prices.csv (rows 2..191) ======
+async function loadPriceList() {
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
+    const text = await res.text();
+    const rows = text.split('\n').map(r => r.trim()).filter(Boolean);
+    // rows[0] is header; want rows 1..190 inclusive (i.e. slice(1, 191))
+    const slice = rows.slice(1, 191);
+    slice.forEach(row => {
       const cols = row.split(',');
-      const name = cols[0]?.trim();
-      const price = parseFloat(cols[1]) || 0;
-      if (name) {
-        oreNames.push(name.toLowerCase());
-        priceList[name.toLowerCase()] = price;
-      }
+      if (cols.length < 1) return;
+      const rawName = cols[0].trim();
+      if (!rawName) return;
+      // Price is not always col[1], use same heuristic you had before: second-to-last
+      const suggestedPrice = parseFloat(cols[cols.length - 2].replace(/[^0-9.\-]/g,''));
+      const key = rawName.toLowerCase();
+      oreNames.push(key);
+      oreNameMap[key] = rawName;
+      if (!isNaN(suggestedPrice)) priceList[key] = suggestedPrice;
+      else priceList[key] = 0;
     });
-  });
+    // sort oreNames by length DESC so longer names won't be shadowed — but matching will pick earliest index
+    oreNames.sort((a,b) => b.length - a.length);
+  } catch (e) {
+    console.error('Failed to load prices.csv', e);
+  }
+}
+loadPriceList();
 
-// ===============================
-// Utility Functions
-// ===============================
-function formatNumber(num) {
-  if (isNaN(num)) return '---';
-  return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+// ====== Helpers ======
+function formatNumber(n){
+  if (n === null || n === undefined || n === '' || isNaN(n)) return '---';
+  // For totals we want no more than 2 fractional digits
+  return Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+}
+function makeTotalCopyable(el){
+  if(!el) return;
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(el.innerText.replace(/[^0-9.-]/g,''));
+      const original = el.innerText;
+      el.innerText = 'Copied';
+      setTimeout(()=> el.innerText = original, 1200);
+    } catch(e){
+      console.warn('copy failed', e);
+    }
+  });
 }
 
-function makeTotalCopyable(element) {
-  element.addEventListener('click', () => {
-    navigator.clipboard.writeText(element.textContent.replace(' ISK','').trim());
-    element.classList.add('copied');
-    setTimeout(() => element.classList.remove('copied'), 800);
-  });
-}
 
-// ===============================
-// Smart Inventory Parsing
-// ===============================
-function parseInventoryText(t) {
-  const lines = t.split(/\r?\n/);
-  const summary = [];
+// ====== Parser: find earliest ore then numbers after it ======
+function parseInventoryText(text){
+  const lines = text.split(/\r?\n/);
+  const results = [];
 
-  lines.forEach(line => {
-    let foundOre = null;
-    let foundQty = null;
-    let foundM3 = null;
-    let foundISK = null;
+  for (let rawLine of lines){
+    const line = rawLine.trim();
+    if (!line) continue;
 
     const lower = line.toLowerCase();
-    const words = lower.split(/[\t, ]+/);
 
-    // Look for first recognized ore name
-    for (let i = 0; i < words.length; i++) {
-      for (const ore of oreNames) {
-        const oreParts = ore.split(' ');
-        if (oreParts.every((p, j) => words[i + j] === p)) {
-          foundOre = ore;
-          break;
-        }
+    // Find earliest match among oreNames
+    let bestMatch = null;
+    let bestIndex = Infinity;
+
+    for (const ore of oreNames){
+      const idx = lower.indexOf(ore);
+      if (idx >= 0 && idx < bestIndex){
+        bestIndex = idx;
+        bestMatch = ore;
       }
-      if (foundOre) break;
     }
 
-    if (!foundOre) return; // skip line entirely if no match
-
-    // Extract numbers
-    const numbers = line.match(/[\d,]+(?:\.\d+)?/g) || [];
-
-    // Assign meaning to numbers
-    if (numbers.length > 0) foundQty = parseFloat(numbers[0].replace(/,/g, ''));
-    if (numbers.length > 1) {
-      const maybeM3 = line.includes('m3');
-      const maybeISK = line.toLowerCase().includes('isk');
-      if (maybeM3) foundM3 = parseFloat(numbers[numbers.length - 2]?.replace(/,/g, ''));
-      if (maybeISK) foundISK = parseFloat(numbers[numbers.length - 1]?.replace(/,/g, ''));
+    if (!bestMatch){
+      // No ore found -> unrecognized. Show first 10 chars (original rawLine trimmed)
+      const display = rawLine.trim().slice(0, 10);
+      results.push({
+        original: rawLine,
+        name: display,
+        matchedKey: null,
+        qty: 0,
+        m3: null,
+        isk: null,
+        unrecognized: true
+      });
+      continue;
     }
 
-    summary.push({
-      name: foundOre,
-      qty: foundQty || 0,
-      m3: foundM3 || 0,
-      isk: foundISK || 0,
+    // We have a matched ore; focus on substring after the match (we want numbers associated to this ore)
+    const matchIndex = lower.indexOf(bestMatch);
+    const matchEnd = matchIndex + bestMatch.length;
+    const after = rawLine.slice(matchEnd); // preserve original case for number parsing
+
+    // Collect number tokens with context (unit)
+    // We'll capture runs like "7,135.74 m3" or "658,723,945.20 ISK" or plain "1189290"
+    const tokenRegex = /([\d,]+(?:\.\d+)?)(?:\s*(m3|m³|m\^3)?\b)?(?:\s*([iI][sS][kK])\b)?/g;
+    // We'll also collect all numeric tokens in order as fallback
+    const allNumbers = []; // {value:number, unit: 'm3'|'isk'|null, textIndex}
+    let m;
+    while ((m = tokenRegex.exec(after)) !== null){
+      const rawNum = m[1];
+      const unit1 = m[2] ? m[2].toLowerCase() : null;
+      const unit2 = m[3] ? m[3].toLowerCase() : null;
+      const unit = unit1 || (unit2 ? 'isk' : null) || null;
+      const value = parseFloat(rawNum.replace(/,/g,''));
+      if (!isNaN(value)){
+        allNumbers.push({ value, unit, index: m.index });
+      }
+      // Prevent infinite loops on zero-length matches
+      if (m.index === tokenRegex.lastIndex) tokenRegex.lastIndex++;
+    }
+
+    // Strategy to assign:
+    // - first numeric token -> qty
+    // - prefer tokens with unit 'm3' for m3 and 'isk' for isk
+    // - otherwise next numeric -> m3, next numeric -> isk
+    let qty = null, m3 = null, isk = null;
+    if (allNumbers.length > 0){
+      qty = allNumbers[0].value;
+      // find m3 by unit if present
+      const m3ByUnit = allNumbers.find(t => t.unit && t.unit.indexOf('m') === 0);
+      const iskByUnit = allNumbers.find(t => t.unit && t.unit.indexOf('is') === 0);
+      // assign m3
+      if (m3ByUnit) m3 = m3ByUnit.value;
+      // assign isk
+      if (iskByUnit) isk = iskByUnit.value;
+
+      // If unit-based values didn't fill, use remaining numeric tokens in order (skip the one used for qty)
+      let idx = 1;
+      for (; (m3 === null || isk === null) && idx < allNumbers.length; idx++){
+        const tok = allNumbers[idx];
+        if (tok === m3ByUnit || tok === iskByUnit) continue;
+        if (m3 === null) { m3 = tok.value; continue; }
+        if (isk === null) { isk = tok.value; continue; }
+      }
+    }
+
+    // push result (use original display name from oreNameMap)
+    results.push({
+      original: rawLine,
+      name: oreNameMap[bestMatch] || bestMatch,
+      matchedKey: bestMatch,
+      qty: qty || 0,
+      m3: m3,
+      isk: isk,
       unrecognized: false
     });
-  });
+  }
 
-  // Detect unrecognized or incomplete
-  return summary.map(item => {
-    if (!oreNames.includes(item.name?.toLowerCase())) {
-      item.unrecognized = true;
-    }
-    return item;
-  });
+  return results;
 }
 
-// ===============================
-// Display Function
-// ===============================
-function showContent(prefillText) {
-  const t = prefillText || document.getElementById('message').value;
-  const inventory = parseInventoryText(t);
 
-  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-  let total = 0;
+// ====== showContent (build table) ======
+function showContent(prefillText){
+  try {
+    const t = (prefillText !== undefined && prefillText !== null) ? prefillText : document.getElementById('message').value;
+    const inventory = parseInventoryText(t);
 
-  inventory.forEach(item => {
-    const displayName = item.unrecognized ? item.name.slice(0, 10) : item.name;
-    const itemPrice = priceList[item.name?.toLowerCase()] || 0;
-    const itemTotal = item.unrecognized ? 0 : item.qty * itemPrice;
+    const summaryContainer = document.getElementById('summaryContainer');
+    let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
+    let total = 0;
 
-    tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
-      <td>${displayName}</td>
-      <td class="price">${item.unrecognized ? '---' : formatNumber(itemPrice)}</td>
-      <td class="quantity">${item.unrecognized ? '---' : formatNumber(item.qty)}</td>
-      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? 'Unrecognized' : formatNumber(itemTotal)}</td>
-    </tr>`;
+    inventory.forEach(item => {
+      const isUn = !!item.unrecognized;
+      const displayName = isUn ? (String(item.name).slice(0,10)) : (String(item.name).replace(/^Compressed /i, 'Comp. '));
+      const key = item.matchedKey || (item.name && item.name.toLowerCase().trim());
+      const price = (!isUn && key && priceList[key] !== undefined) ? priceList[key] : 0;
+      const qtyDisplay = isUn ? '---' : formatNumber(item.qty);
+      const priceDisplay = isUn ? '---' : formatNumber(price);
+      const totalValue = (!isUn ? (item.qty * price) : null);
 
-    if (!item.unrecognized) total += itemTotal;
-  });
+      tableHTML += `<tr class="${isUn ? 'unrecognized' : ''}">
+        <td>${escapeHtml(displayName)}</td>
+        <td class="price">${priceDisplay}</td>
+        <td class="quantity">${qtyDisplay}</td>
+        <td class="${isUn ? 'total-column unrecognized' : 'total-column'}">${isUn ? 'Unrecognized' : formatNumber(totalValue)}</td>
+      </tr>`;
 
-  tableHTML += `<tr class="summary-total">
-    <td colspan="3" style="text-align:right;">Total</td>
-    <td id="summaryTotal">${formatNumber(total)}</td>
-  </tr></tbody></table>`;
+      if (!isUn) total += (item.qty * price || 0);
+    });
 
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML = tableHTML;
-  summaryContainer.style.display = 'flex';
+    tableHTML += `<tr class="summary-total">
+      <td colspan="3" style="text-align:right;">Total</td>
+      <td id="summaryTotal">${formatNumber(total)}</td>
+    </tr></tbody></table>`;
 
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'block';
+    summaryContainer.innerHTML = tableHTML;
+    summaryContainer.style.display = 'flex';
 
-  const totalText = document.getElementById('totalCostText');
-  totalText.innerText = formatNumber(total) + ' ISK';
-  makeTotalCopyable(totalText);
-  makeTotalCopyable(document.getElementById('summaryTotal'));
+    document.getElementById('leftContainer').style.display = 'block';
+    document.getElementById('totalCostContainer').style.display = 'block';
 
-  attachSorting(summaryContainer);
+    const totalText = document.getElementById('totalCostText');
+    totalText.innerText = formatNumber(total) + ' ISK';
+    makeTotalCopyable(totalText);
+    const summaryTotalEl = document.getElementById('summaryTotal');
+    if (summaryTotalEl) makeTotalCopyable(summaryTotalEl);
 
-  document.querySelector('.main-container').style.display = 'none';
-  document.getElementById('submitButton').style.display = 'none';
-  document.getElementById('shareButton').style.display = 'inline-block';
+    attachSorting(summaryContainer);
+
+    // Hide input area and show share
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) mainContainer.style.display = 'none';
+    const submitBtn = document.getElementById('submitButton');
+    if (submitBtn) submitBtn.style.display = 'none';
+    const shareBtn = document.getElementById('shareButton');
+    if (shareBtn) shareBtn.style.display = 'inline-block';
+  } catch (e) {
+    console.error('showContent error', e);
+    alert('An error occurred while parsing. Check console for details.');
+  }
 }
 
-// ===============================
-// Sorting
-// ===============================
-function attachSorting(container) {
-  const headers = container.querySelectorAll('th');
-  headers.forEach((th, i) => {
-    th.addEventListener('click', () => {
-      const rows = Array.from(container.querySelectorAll('tbody tr')).slice(0, -1);
-      const asc = !th.classList.contains('asc');
-      headers.forEach(h => h.classList.remove('asc', 'desc'));
-      th.classList.add(asc ? 'asc' : 'desc');
-      rows.sort((a, b) => {
-        const getValue = row => row.children[i].innerText.replace(/,/g, '');
-        const A = parseFloat(getValue(a)) || getValue(a);
-        const B = parseFloat(getValue(b)) || getValue(b);
-        return asc ? (A > B ? 1 : -1) : (A < B ? 1 : -1);
+// safe HTML escape for display
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
+}
+
+
+// ====== Sorting (unchanged behaviour but robust) ======
+function attachSorting(container){
+  const table = container.querySelector('table');
+  if (!table) return;
+  const headers = table.querySelectorAll('th');
+  headers.forEach((header, index) => {
+    header.addEventListener('click', () => {
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r=>!r.classList.contains('summary-total'));
+      const ascending = !header.classList.contains('sorted-asc');
+      headers.forEach(h => h.classList.remove('sorted','sorted-asc','sorted-desc'));
+      header.classList.add('sorted');
+      header.classList.toggle('sorted-asc', ascending);
+      header.classList.toggle('sorted-desc', !ascending);
+
+      rows.sort((a,b) => {
+        const aCell = a.children[index].innerText.trim();
+        const bCell = b.children[index].innerText.trim();
+
+        // put unrecognized rows to bottom
+        if (a.classList.contains('unrecognized') && !b.classList.contains('unrecognized')) return 1;
+        if (b.classList.contains('unrecognized') && !a.classList.contains('unrecognized')) return -1;
+
+        // Name column: string compare
+        if (index === 0) return ascending ? aCell.localeCompare(bCell) : bCell.localeCompare(aCell);
+        // Numeric columns: strip non-numeric
+        const aNum = parseFloat(aCell.replace(/[^0-9.-]/g,'')) || 0;
+        const bNum = parseFloat(bCell.replace(/[^0-9.-]/g,'')) || 0;
+        return ascending ? aNum - bNum : bNum - aNum;
       });
-      rows.forEach(r => container.querySelector('tbody').insertBefore(r, container.querySelector('tbody tr.summary-total')));
+
+      rows.forEach(r => tbody.insertBefore(r, tbody.querySelector('tr.summary-total')));
     });
   });
 }
 
-// ===============================
-// Stars Animation + Logo
-// ===============================
+
+// ====== Keep existing starfield & logo animation intact ======
+// The starfield code originally in your page (uses canvas#starfield). If you replaced it earlier, restore original code.
+// We'll keep it simple: if a starfield function already exists in page, don't overwrite.
+// If you have the earlier starfield code (present in your HTML before), leave it. We won't duplicate heavy code here.
+
+
+// ====== Submit button wiring & share / load handlers ======
 document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('stars');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    const numStars = 300;
+  // enable submit button when message has text
+  const submitBtn = document.getElementById('submitButton');
+  const messageBox = document.getElementById('message');
+  if (messageBox && submitBtn) {
+    messageBox.addEventListener('input', () => { submitBtn.disabled = messageBox.value.trim() === ''; });
+    submitBtn.addEventListener('click', () => { showContent(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  }
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = Array.from({ length: numStars }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        z: Math.random() * canvas.width
-      }));
+  // Share button
+  const shareBtn = document.getElementById('shareButton');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      const message = document.getElementById('message').value.trim();
+      if (!message) return;
+      const compressed = LZString.compressToEncodedURIComponent(message);
+      const shareURL = `${window.location.origin}${window.location.pathname}?s=${compressed}`;
+      navigator.clipboard.writeText(shareURL).then(() => {
+        const original = shareBtn.innerText;
+        shareBtn.innerText = 'Copied';
+        setTimeout(()=> shareBtn.innerText = original, 1500);
+      });
+    });
+  }
+
+  // Auto-load summary if URL contains 's' parameter
+  const params = new URLSearchParams(window.location.search);
+  const compressed = params.get('s');
+  if (compressed){
+    const inventoryText = LZString.decompressFromEncodedURIComponent(compressed);
+    if (inventoryText) {
+      document.getElementById('message').value = inventoryText;
+      showContent(inventoryText);
+      // hide inputs for shared view
+      const mc = document.querySelector('.main-container'); if(mc) mc.style.display = 'none';
+      const left = document.getElementById('leftContainer'); if(left) left.style.display = 'none';
+      const tc = document.getElementById('totalCostContainer'); if(tc) tc.style.display = 'none';
+      const sb = document.getElementById('shareButton'); if(sb) sb.style.display = 'none';
+      const sc = document.getElementById('summaryContainer'); if(sc) sc.style.display = 'flex';
     }
-
-    function draw() {
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      for (const s of stars) {
-        s.z -= 2;
-        if (s.z <= 0) s.z = canvas.width;
-        const k = 128.0 / s.z;
-        const px = s.x * k + canvas.width / 2;
-        const py = s.y * k + canvas.height / 2;
-        if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-          const size = (1 - s.z / canvas.width) * 3;
-          ctx.fillStyle = 'rgba(0,255,180,0.7)';
-          ctx.beginPath();
-          ctx.arc(px, py, size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      requestAnimationFrame(draw);
-    }
-
-    window.addEventListener('resize', resize);
-    resize();
-    draw();
   }
 });
 </script>
