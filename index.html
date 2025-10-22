@@ -45,7 +45,25 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');}
 
 /* Summary Container */
-.summary-container{display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:'Orbitron',monospace;font-size:14px;line-height:1.4;color:#00ff00;background: rgba(0,10,0,0.9);border: 2px solid #00ff00;border-radius:12px;padding:16px 20px;min-width:400px;max-width:500px;max-height:420px;overflow-y:auto;overflow-x:hidden;box-shadow:0 0 15px rgba(0,255,0,0.5), inset 0 0 10px rgba(0,255,0,0.3);backdrop-filter:blur(6px);animation: pulseGlow 2s infinite alternate;}
+.summary-container{
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #00ff00;
+  background: rgba(0,10,0,0.9);
+  border: 2px solid #00ff00;
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 400px;
+  max-width: 500px;
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 0 15px rgba(0,255,0,0.5), inset 0 0 10px rgba(0,255,0,0.3);
+  backdrop-filter: blur(6px);
+  animation: pulseGlow 2s infinite alternate;
+}
+
 @keyframes pulseGlow{0%{box-shadow:0 0 12px rgba(0,255,0,0.5), inset 0 0 6px rgba(0,255,0,0.3);}100%{box-shadow:0 0 20px rgba(0,255,0,0.7), inset 0 0 12px rgba(0,255,0,0.5);}}
 .summary-container::-webkit-scrollbar{width:6px;}
 .summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:4px;box-shadow:0 0 10px #00ff00;}
@@ -248,15 +266,30 @@ document.getElementById('shareButton').addEventListener('click',()=>{
   });
 });
 
-// ===== AUTO-LOAD SHARED URL =====
-window.addEventListener('load',()=>{
+// Auto-load summary if URL contains 's' parameter
+window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const compressed = params.get('s');
-  if(compressed){
+  if (compressed) {
     const inventoryText = LZString.decompressFromEncodedURIComponent(compressed);
-    if(inventoryText) showContent(inventoryText);
+    if (inventoryText) {
+      showContent(inventoryText);
+
+      // Hide everything except the summary container
+      document.querySelector('.main-container').style.display = 'none';
+      document.getElementById('leftContainer').style.display = 'none';
+      document.getElementById('totalCostContainer').style.display = 'none';
+      document.getElementById('shareButton').style.display = 'none';
+
+      // Ensure summary container uses ledger-style font
+      const summaryContainer = document.getElementById('summaryContainer');
+      summaryContainer.style.fontFamily = "'Share Tech Mono', monospace";
+      summaryContainer.style.fontSize = "14px";
+      summaryContainer.style.lineHeight = "1.4";
+    }
   }
 });
+
 
 // ===== FETCH PRICES INIT =====
 fetchPrices();
