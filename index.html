@@ -242,72 +242,55 @@ if (!matchedOre) {
 
 
 // ===== SHOW SUMMARY =====
-function showContent(prefillText){
+function showContent(prefillText) {
   const t = prefillText || document.getElementById('message').value;
 
-  // ===== Use the unified parser =====
+  // Parse inventory
   const inventory = parseInventoryText(t);
 
-  let summary = [], total = 0;
+  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
+  let total = 0;
 
   inventory.forEach(item => {
-    const nameRaw = item.name;
-    const nameKey = nameRaw.toLowerCase().replace(/\s+/g,' ');
-    const qty = item.qty;
-    const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
+    // Truncate unrecognized names to first 10 characters
+    const displayName = item.unrecognized ? item.name.slice(0, 10) : item.name;
 
-    if(priceList[nameKey] !== undefined){
-      const price = priceList[nameKey];
-      summary.push({name: displayName, price: price, qty: qty, val: qty * price, unrecognized:false});
-      total += qty * price;
-    } else {
-      summary.push({name: displayName, price:'?', qty: qty, val:'Unrecognized', unrecognized:true});
-    }
+    tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
+      <td>${displayName}</td>
+      <td class="price">${item.unrecognized ? '---' : formatNumber(priceList[item.name.toLowerCase()] || 0)}</td>
+      <td class="quantity">${item.unrecognized ? '---' : formatNumber(item.qty)}</td>
+      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? 'Unrecognized' : formatNumber(item.qty * priceList[item.name.toLowerCase()])}</td>
+    </tr>`;
+
+    if (!item.unrecognized) total += item.qty * (priceList[item.name.toLowerCase()] || 0);
   });
-
-  const summaryContainer = document.getElementById('summaryContainer');
-  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-
-summary.forEach(item => {
-  const displayName = item.name; // already truncated if unrecognized
-  tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
-    <td>${displayName}</td>
-    <td class="price">${item.unrecognized ? '---' : formatNumber(item.price)}</td>
-    <td class="quantity">${item.unrecognized ? '---' : formatNumber(item.qty)}</td>
-    <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
-  </tr>`;
-  
-  if (!item.unrecognized) total += item.qty * item.price; // add to total only if recognized
-});
 
   tableHTML += `<tr class="summary-total">
     <td colspan="3" style="text-align:right;">Total</td>
     <td id="summaryTotal">${formatNumber(total)}</td>
   </tr></tbody></table>`;
 
+  const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'flex';
 
-  const leftContract = document.getElementById('leftContainer');
-  const rightContract = document.getElementById('totalCostContainer');
-  leftContract.style.display = 'block';
-  rightContract.style.display = 'block';
+  // Show contract containers
+  document.getElementById('leftContainer').style.display = 'block';
+  document.getElementById('totalCostContainer').style.display = 'block';
 
+  // Update total cost text
   const totalText = document.getElementById('totalCostText');
   totalText.innerText = formatNumber(total) + ' ISK';
-
   makeTotalCopyable(totalText);
   makeTotalCopyable(document.getElementById('summaryTotal'));
 
   attachSorting(summaryContainer);
 
-  // Hide the input area
+  // Hide input area
   document.querySelector('.main-container').style.display = 'none';
   document.getElementById('submitButton').style.display = 'none';
-
   document.getElementById('shareButton').style.display = 'inline-block';
 }
-
 
 
 // ===== SORTING =====
