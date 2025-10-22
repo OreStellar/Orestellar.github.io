@@ -46,6 +46,10 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 
 /* Summary Container */
 .summary-container{
+  display: none; /* Hidden by default */
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   font-family: 'Share Tech Mono', monospace;
   font-size: 14px;
   line-height: 1.4;
@@ -83,14 +87,13 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
   text-align: right;
 }
 
-.summary-table th:nth-child(2),
-.summary-table td:nth-child(2), /* Price */
-.summary-table th:nth-child(3),
-.summary-table td:nth-child(3), /* Quantity */
-.summary-table th:nth-child(4),
-.summary-table td:nth-child(4)  /* Total */
-{
-  text-align: left;
+.summary-table td.price,
+.summary-table td.quantity,
+.summary-table td.total-column {
+  text-align: left;  /* left-align numbers */
+}
+.summary-table td:first-child {
+  text-align: right; /* right-align name */
 }
 
 /* Optional: headers neon effect */
@@ -126,7 +129,7 @@ Bistot 1320"></textarea>
 
 <div class="contracts-wrapper">
   <div id="leftContainer" class="total-cost-container"></div>
-  <div id="summaryContainer" class="summary-container"></div>
+ <div id="summaryContainer" class="summary-container" style="display:none;"></div>
   <div id="totalCostContainer" class="total-cost-container">
     <div id="totalCostText">0 ISK</div>
   </div>
@@ -187,39 +190,57 @@ function showContent(prefillText){
   }
 
   const summaryContainer = document.getElementById('summaryContainer');
-let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
-
-summary.forEach(item => {
-  tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
-    <td>${item.name}</td>
-    <td class="price">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
-    <td class="quantity">${formatNumber(item.qty)}</td>
-    <td class="total-column">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
-  </tr>`;
-});
-
-tableHTML += `<tr class="summary-total">
-  <td colspan="3" style="text-align:left;">Total</td>
-  <td id="summaryTotal">${formatNumber(total)}</td>
-</tr></tbody></table>`;
-
-  summaryContainer.innerHTML = tableHTML;
   summaryContainer.style.display = 'flex';
 
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'block';
+  // Determine if this is a share view (prefillText exists) or normal submit
+  const isShareView = !!prefillText;
+  if(isShareView){
+    // Hide contracts in share view
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    document.getElementById('shareButton').style.display = 'none';
+    // Hide input area in share view
+    document.querySelector('.main-container').style.display = 'none';
+  } else {
+    // Normal view: show contracts
+    document.getElementById('leftContainer').style.display = 'block';
+    document.getElementById('totalCostContainer').style.display = 'block';
+    document.getElementById('shareButton').style.display = 'inline-block';
+    // Hide input area
+    document.querySelector('.main-container').style.display = 'none';
+    document.getElementById('submitButton').style.display = 'none';
+  }
 
-  document.getElementById('totalCostText').innerText = formatNumber(total) + ' ISK';
+  // Build table HTML
+  let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
 
-  makeTotalCopyable(document.getElementById('totalCostText'));
+  summary.forEach(item => {
+    tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
+      <td style="text-align:right;">${item.name}</td>
+      <td class="price" style="text-align:left;">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
+      <td class="quantity" style="text-align:left;">${item.unrecognized ? item.qty : formatNumber(item.qty)}</td>
+      <td class="total-column" style="text-align:left;">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+    </tr>`;
+  });
+
+  tableHTML += `<tr class="summary-total">
+    <td colspan="3" style="text-align:right;">Total</td>
+    <td id="summaryTotal" style="text-align:left;">${formatNumber(total)}</td>
+  </tr></tbody></table>`;
+
+  summaryContainer.innerHTML = tableHTML;
+
+  // Make totals copyable
   makeTotalCopyable(document.getElementById('summaryTotal'));
+  if(!isShareView) makeTotalCopyable(document.getElementById('totalCostText'));
 
+  // Update contract total if normal view
+  if(!isShareView) document.getElementById('totalCostText').innerText = formatNumber(total) + ' ISK';
+
+  // Attach sorting to summary table
   attachSorting(summaryContainer);
-
-  document.querySelector('.main-container').style.display = 'none';
-  document.getElementById('submitButton').style.display = 'none';
-  document.getElementById('shareButton').style.display = 'inline-block';
 }
+
 
 // ===== SORTING =====
 function attachSorting(container){
