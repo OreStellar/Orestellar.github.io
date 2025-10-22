@@ -5,225 +5,224 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OreStellar</title>
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<!-- Orbitron Font -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* 🌌 STAR BACKGROUND */
-#stars, #stars2, #stars3 {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  background: transparent url('https://orestellar.github.io/images/stars.png') repeat top center;
-  z-index: -1;
-}
-#stars { animation: moveStars 50s linear infinite; }
-#stars2 { animation: moveStars 100s linear infinite; opacity: 0.5; }
-#stars3 { animation: moveStars 150s linear infinite; opacity: 0.3; }
+  body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(circle at center, #000010 0%, #000 100%);
+    color: #00ffaa;
+    overflow-x: hidden;
+  }
 
-@keyframes moveStars {
-  from { background-position: 0 0; }
-  to { background-position: -10000px 5000px; }
-}
+  /* Stars */
+  .stars {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: transparent url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/assets/stars3.png') repeat;
+    background-size: 0.3%;
+    z-index: -2;
+    animation: moveStars 120s linear infinite;
+  }
 
-/* 🌠 NEON THEME */
-body {
-  font-family: 'Orbitron', sans-serif;
-  background-color: #000;
-  color: #00ffff;
-  text-shadow: 0 0 10px #00ffff;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
+  @keyframes moveStars {
+    from {background-position: 0 0;}
+    to {background-position: -10000px 5000px;}
+  }
 
-header {
-  text-align: center;
-  margin-top: 20px;
-}
+  /* Logo */
+  header img {
+    display: block;
+    margin: 30px auto 10px;
+    max-width: 300px;
+    cursor: pointer;
+    filter: drop-shadow(0 0 15px #00ffaa);
+  }
 
-.logo {
-  width: 200px;
-  height: auto;
-  display: block;
-  margin: 20px auto;
-  filter: drop-shadow(0 0 10px #00ffcc);
-  transition: transform 0.3s ease;
-}
-.logo:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 20px #00ffcc);
-}
+  h1 {
+    text-align: center;
+    color: #00ffaa;
+    text-shadow: 0 0 20px #00ffaa;
+  }
 
-/* 🧾 MAIN CONTAINER */
-main {
-  max-width: 900px;
-  margin: 50px auto;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 0 20px #00ffff;
-}
+  textarea {
+    display: block;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 600px;
+    height: 120px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00ffaa;
+    color: #00ffaa;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 10px;
+  }
 
-/* 🧮 TEXTAREA & BUTTON */
-textarea {
-  width: 100%;
-  height: 200px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #00ffff;
-  border: 1px solid #00ffff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 0 10px #00ffff;
-  resize: none;
-}
+  button {
+    display: block;
+    margin: 10px auto;
+    background: black;
+    border: 2px solid #00ffaa;
+    color: #00ffaa;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: 0.3s;
+    box-shadow: 0 0 15px #00ffaa;
+  }
 
-button {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #00ffff;
-  color: #00ffff;
-  border-radius: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.2s ease-in-out;
-}
-button:hover {
-  background-color: rgba(0, 255, 204, 0.2);
-  box-shadow: 0 0 20px #00ffff;
-}
+  button:hover {
+    background: #00ffaa;
+    color: black;
+    box-shadow: 0 0 25px #00ffaa;
+  }
 
-/* 📊 SUMMARY TABLE */
-#summary {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-  text-align: center;
-}
+  .summary {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+    background: rgba(0, 15, 0, 0.7);
+    border: 2px solid #00ffaa;
+    border-radius: 10px;
+    padding: 15px;
+    color: #00ffaa;
+    text-shadow: 0 0 10px #00ffaa;
+  }
 
-#summary th, #summary td {
-  padding: 10px;
-  border-bottom: 1px solid #00ffff;
-}
+  .summary table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-#summary th {
-  color: #00ffff;
-  font-weight: bold;
-}
+  .summary th, .summary td {
+    text-align: left;
+    padding: 6px;
+    border-bottom: 1px solid #005533;
+  }
 
-#summary td.unrecognized {
-  color: #ff4444;
-  text-shadow: 0 0 8px #ff4444;
-}
+  .unrecognized {
+    color: red;
+    text-shadow: 0 0 10px red;
+  }
 </style>
 </head>
-
 <body>
-<div id="stars"></div>
-<div id="stars2"></div>
-<div id="stars3"></div>
+
+<div class="stars"></div>
 
 <header>
-  <a href="https://orestellar.github.io/">
-    <img src="logo.png" alt="OreStellar Logo" class="logo">
+  <a href="https://orestellar.github.io">
+    <img src="https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/assets/logo.png" alt="OreStellar Logo">
   </a>
 </header>
 
-<main>
-  <h2>Paste Your Inventory Here</h2>
-  <textarea id="inventoryInput" placeholder="Paste your inventory text here..."></textarea>
-  <button id="submitButton">Process Inventory</button>
+<h1>Ore Value Optimizer</h1>
 
-  <table id="summary">
-    <thead>
-      <tr>
-        <th>Ore Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody id="summaryBody"></tbody>
-  </table>
-</main>
+<textarea id="inputText" placeholder="Paste your ore inventory here..."></textarea>
+<button id="submitButton">Calculate Value</button>
+<button id="shareButton">Share Summary</button>
+
+<div id="summaryContainer" class="summary"></div>
 
 <script>
-/* === STEP 1: FETCH RECOGNIZED ORE NAMES FROM CSV === */
-let recognizedOres = new Set();
+let priceList = {};
 
-fetch('https://orestellar.github.io/data/prices.csv')
-  .then(res => res.text())
-  .then(text => {
-    const lines = text.split(/\r?\n/);
-    for (let i = 1; i <= 191 && i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols[0]) recognizedOres.add(cols[0].trim().toLowerCase());
-    }
-  });
-
-/* === STEP 2: PARSER === */
-function parseInventoryText(text) {
-  const lines = text.split(/\r?\n/);
-  const inventory = [];
-
-  for (const line of lines) {
-    const cleaned = line.trim();
-    if (!cleaned) continue;
-
-    // Try to find a recognized ore
-    const foundOre = Array.from(recognizedOres).find(ore => 
-      cleaned.toLowerCase().includes(ore)
-    );
-
-    if (foundOre) {
-      const numberMatch = cleaned.match(/(\d{1,3}(?:,\d{3})*|\d+)(?=\D|$)/);
-      const qty = numberMatch ? parseInt(numberMatch[0].replace(/,/g, '')) : 0;
-      inventory.push({ name: foundOre, qty, unrecognized: false });
-    } else {
-      // unrecognized line
-      const firstWord = cleaned.split(/\s+/)[0].slice(0,10);
-      inventory.push({ name: firstWord, qty: 0, unrecognized: true });
-    }
+async function fetchPrices() {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
+    const csvText = await response.text();
+    const rows = csvText.split('\n').slice(1, 191); // skip header
+    rows.forEach(row => {
+      const cols = row.split(',');
+      if (cols.length >= 2) {
+        const oreName = cols[0].toLowerCase().trim();
+        const suggestedPrice = parseFloat(cols[cols.length - 2].replace(/,/g, ''));
+        if (!isNaN(suggestedPrice)) priceList[oreName] = suggestedPrice;
+      }
+    });
+    console.log("✅ Price data loaded dynamically:", Object.keys(priceList).length, "ores found.");
+  } catch (e) {
+    console.error("⚠️ Could not fetch prices.csv — dynamic loading failed.", e);
   }
-
-  return inventory;
 }
 
-/* === STEP 3: DISPLAY FUNCTION === */
-document.getElementById("submitButton").addEventListener("click", () => {
-  const text = document.getElementById("inventoryInput").value;
-  const parsed = parseInventoryText(text);
-  const tbody = document.getElementById("summaryBody");
-  tbody.innerHTML = "";
+function parseInput(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  const results = [];
 
-  parsed.forEach(item => {
-    const row = document.createElement("tr");
+  for (const line of lines) {
+    let found = false;
+    const lowerLine = line.toLowerCase();
 
-    const nameCell = document.createElement("td");
-    nameCell.textContent = item.name.length > 10 ? item.name.slice(0,10) : item.name;
-
-    const priceCell = document.createElement("td");
-    const qtyCell = document.createElement("td");
-    const totalCell = document.createElement("td");
-
-    if (item.unrecognized) {
-      priceCell.textContent = "---";
-      qtyCell.textContent = "---";
-      totalCell.textContent = "Unrecognized";
-      totalCell.classList.add("unrecognized");
-    } else {
-      // (You can later link your price data here)
-      priceCell.textContent = "Loading...";
-      qtyCell.textContent = item.qty;
-      totalCell.textContent = "—";
+    for (const ore in priceList) {
+      if (lowerLine.includes(ore)) {
+        const numMatch = line.match(/([\d,]+)/g);
+        const qty = numMatch ? parseInt(numMatch[0].replace(/,/g, '')) : 0;
+        results.push({ name: ore, qty, unrecognized: false });
+        found = true;
+        break;
+      }
     }
 
-    row.append(nameCell, priceCell, qtyCell, totalCell);
-    tbody.appendChild(row);
+    if (!found) {
+      const truncated = line.trim().slice(0, 10);
+      results.push({ name: truncated, qty: 0, unrecognized: true });
+    }
+  }
+  return results;
+}
+
+function displaySummary(summary) {
+  let html = `<table>
+  <tr><th>Ore</th><th>Qty</th><th>Price (ISK)</th><th>Total</th></tr>`;
+
+  let total = 0;
+
+  summary.forEach(item => {
+    if (item.unrecognized) {
+      html += `<tr>
+        <td>${item.name}</td>
+        <td>---</td>
+        <td>---</td>
+        <td class="unrecognized">Unrecognized</td>
+      </tr>`;
+    } else {
+      const price = priceList[item.name.toLowerCase()] || 0;
+      const value = price * item.qty;
+      total += value;
+      html += `<tr>
+        <td>${item.name}</td>
+        <td>${item.qty.toLocaleString()}</td>
+        <td>${price.toLocaleString()}</td>
+        <td>${value.toLocaleString()}</td>
+      </tr>`;
+    }
   });
+
+  html += `</table><h3>Total ISK: ${total.toLocaleString()}</h3>`;
+  document.getElementById("summaryContainer").innerHTML = html;
+}
+
+document.getElementById("submitButton").addEventListener("click", () => {
+  const inputText = document.getElementById("inputText").value;
+  const summary = parseInput(inputText);
+  displaySummary(summary);
 });
+
+document.getElementById("shareButton").addEventListener("click", () => {
+  const inputText = encodeURIComponent(document.getElementById("inputText").value);
+  const shortURL = `${window.location.origin}${window.location.pathname}?s=${inputText}`;
+  navigator.clipboard.writeText(shortURL);
+  alert("✅ Summary link copied to clipboard!");
+});
+
+fetchPrices();
 </script>
+
 </body>
 </html>
