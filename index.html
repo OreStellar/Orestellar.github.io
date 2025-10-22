@@ -179,29 +179,65 @@ async function fetchPrices(){
 // ===== HELPERS =====
 function formatNumber(n){return n.toLocaleString();}
 function makeTotalCopyable(el){if(!el)return;el.style.cursor='pointer';el.addEventListener('click',async()=>{await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));const original=el.innerText;el.innerText='Copied';setTimeout(()=>{el.innerText=original;},1500);});}
+// ===== INVENTORY PARSER =====
+function parseInventoryText(text) {
+  const lines = text.split(/\r?\n/);
+  const inventory = [];
+
+  lines.forEach(line => {
+    if (!line.trim()) return; // skip empty lines
+
+    // Split by tabs or multiple spaces
+    const parts = line.split(/\t| {2,}/).filter(Boolean);
+
+    if (parts.length < 2) return; // skip invalid lines
+
+    let name = '';
+    let quantity = 0;
+
+    // Find first numeric column
+    for (let i = 0; i < parts.length; i++) {
+      const num = parts[i].replace(/,/g, '').trim();
+      if (!isNaN(num) && num !== '') {
+        quantity = parseInt(num, 10);
+        name = parts.slice(0, i).join(' ').trim();
+        break;
+      }
+    }
+
+    if (quantity > 0) inventory.push({ name, qty: quantity });
+  });
+
+  return inventory;
+}
 
 // ===== SHOW SUMMARY =====
 function showContent(prefillText){
   const t = prefillText || document.getElementById('message').value;
-  const regex = /([\w\s]+?)\s+(\d+)/g;
-  let match, summary=[], total=0;
 
-  while((match = regex.exec(t)) !== null){
-    const nameRaw = match[1].trim();
-    const name = nameRaw.toLowerCase().replace(/\s+/g,' ');
-    const qty = parseInt(match[2]);
+  // ===== Use the unified parser =====
+  const inventory = parseInventoryText(t);
+
+  let summary = [], total = 0;
+
+  inventory.forEach(item => {
+    const nameRaw = item.name;
+    const nameKey = nameRaw.toLowerCase().replace(/\s+/g,' ');
+    const qty = item.qty;
     const displayName = nameRaw.replace(/^Compressed /i, "Comp. ");
-    if(priceList[name] !== undefined){
-      summary.push({name: displayName, price: priceList[name], qty: qty, val: qty * priceList[name], unrecognized:false});
-      total += qty * priceList[name];
+
+    if(priceList[nameKey] !== undefined){
+      const price = priceList[nameKey];
+      summary.push({name: displayName, price: price, qty: qty, val: qty * price, unrecognized:false});
+      total += qty * price;
     } else {
       summary.push({name: displayName, price:'?', qty: qty, val:'Unrecognized', unrecognized:true});
     }
-  }
+  });
 
   const summaryContainer = document.getElementById('summaryContainer');
   let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
-  
+
   summary.forEach(item => {
     tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
       <td>${item.name}</td>
@@ -224,24 +260,21 @@ function showContent(prefillText){
   leftContract.style.display = 'block';
   rightContract.style.display = 'block';
 
-  // Update contract total ISK
   const totalText = document.getElementById('totalCostText');
   totalText.innerText = formatNumber(total) + ' ISK';
 
-  // Make totals copyable
-  makeTotalCopyable(totalText);             // Contract overlay
-  makeTotalCopyable(document.getElementById('summaryTotal')); // Summary container
+  makeTotalCopyable(totalText);
+  makeTotalCopyable(document.getElementById('summaryTotal'));
 
-  // Attach sorting for the summary table
   attachSorting(summaryContainer);
 
-  // Hide the inventory textarea and submit button
+  // Hide the input area
   document.querySelector('.main-container').style.display = 'none';
   document.getElementById('submitButton').style.display = 'none';
 
-  // Show the Share Summary button
   document.getElementById('shareButton').style.display = 'inline-block';
 }
+
 
 
 // ===== SORTING =====
