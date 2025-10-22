@@ -225,16 +225,19 @@ function parseInventoryText(text) {
       }
     }
 
-    inventory.push({
-      name: matchedOre,
-      qty: quantity || 0,
-      m3: m3,
-      isk: isk,
-      unrecognized: false
-    });
+if (!matchedOre) {
+  // No ore matched, mark as unrecognized with first 10 characters of combined parts
+  const rawName = parts.join(' ');
+  inventory.push({ 
+    name: rawName.substring(0, 10), // first 10 chars
+    qty: 0,
+    m3: null,
+    isk: null,
+    unrecognized: true 
   });
+  return;
+}
 
-  return inventory;
 }
 
 
@@ -265,14 +268,17 @@ function showContent(prefillText){
   const summaryContainer = document.getElementById('summaryContainer');
   let tableHTML = '<table class="summary-table"><thead><tr><th>Name</th><th class="price">Price</th><th class="quantity">Quantity</th><th>Total</th></tr></thead><tbody>';
 
-  summary.forEach(item => {
-    tableHTML += `<tr class="${item.unrecognized?'unrecognized':''}">
-      <td>${item.name}</td>
-      <td class="price">${item.unrecognized ? item.price : formatNumber(item.price)}</td>
-      <td class="quantity">${formatNumber(item.qty)}</td>
-      <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
-    </tr>`;
-  });
+summary.forEach(item => {
+  const displayName = item.name; // already truncated if unrecognized
+  tableHTML += `<tr class="${item.unrecognized ? 'unrecognized' : ''}">
+    <td>${displayName}</td>
+    <td class="price">${item.unrecognized ? '---' : formatNumber(item.price)}</td>
+    <td class="quantity">${item.unrecognized ? '---' : formatNumber(item.qty)}</td>
+    <td class="${item.unrecognized ? 'total-column unrecognized' : 'total-column'}">${item.unrecognized ? item.val : formatNumber(item.val)}</td>
+  </tr>`;
+  
+  if (!item.unrecognized) total += item.qty * item.price; // add to total only if recognized
+});
 
   tableHTML += `<tr class="summary-total">
     <td colspan="3" style="text-align:right;">Total</td>
