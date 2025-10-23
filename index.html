@@ -183,79 +183,85 @@ submitBtn.addEventListener('click', ()=>{
     renderSummary(messageBox.value);
 });
 
-/* ===== LOAD PRICES FROM CSV ===== */
-let priceListRaw = {};
-async function loadPriceListCSV(){
-    const res = await fetch('data/prices.csv');
-    const text = await res.text();
-    const lines = text.trim().split(/\r?\n/);
-    lines.forEach(line=>{
-        const parts = line.split(',');
-        if(parts.length<2) return;
-        const name = parts[0].trim();
-        const price = parseFloat(parts[1].trim());
-        if(!name.toLowerCase().includes('compressed') && !isNaN(price)) priceListRaw[name] = price;
+/* ===== LOAD CSV AND BUILD PRICE LIST ===== */
+async function loadPriceCSV() {
+    const response = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
+    const csvText = await response.text();
+    const lines = csvText.trim().split('\n');
+    const priceData = {};
+
+    lines.forEach(line => {
+        const [name, price] = line.split(','); // CSV format: Ore,Price
+        if(name && price) priceData[name.trim()] = parseFloat(price);
     });
-    renderPriceList();
+
+    return priceData;
 }
-loadPriceListCSV();
+
+/* ===== DEFINE BASE ORES ===== */
+let baseOres = []; // Will hold list of all base ores (non-compressed)
+function getBaseOre(name, priceList) {
+    for(const base of baseOres){
+        if(name.toLowerCase().includes(base.toLowerCase()) && !name.toLowerCase().includes('compressed')){
+            return base;
+        }
+    }
+    return name; // fallback
+}
 
 /* ===== RENDER PRICE LIST ===== */
-const priceListContainer = document.getElementById('priceListContainer');
-/* ===== RENDER PRICE LIST WITH VARIANTS ===== */
-async function renderPriceListWithVariants() {
-    const res = await fetch('data/prices.csv');
-    const text = await res.text();
-    const lines = text.trim().split(/\r?\n/);
+async function renderPriceList() {
+    const priceListRaw = await loadPriceCSV();
 
-    // Parse CSV into raw list
-    const raw = {};
-    lines.forEach(line => {
-        const parts = line.split(',');
-        if(parts.length < 2) return;
-        const name = parts[0].trim();
-        const price = parseFloat(parts[1].trim());
-        if(!isNaN(price)) raw[name] = price;
-    });
+    // Build base ores list
+    baseOres = Object.keys(priceListRaw)
+        .filter(n => !n.toLowerCase().includes('compressed')) // only base ores
+        .sort();
 
-    // Build base ores
-    const baseSet = new Set();
-    Object.keys(raw).forEach(name => {
-        if(!name.toLowerCase().includes('compressed')) {
-            const base = name.split(' ')[0]; // first word as base
-            baseSet.add(base);
+    // Group ores by base
+    const grouped = {};
+    Object.keys(priceListRaw).forEach(name => {
+        if(!name.toLowerCase().includes('compressed')){
+            const base = getBaseOre(name, priceListRaw);
+            if(!grouped[base]) grouped[base] = [];
+            grouped[base].push(name);
         }
     });
-    const baseArray = Array.from(baseSet).sort();
 
-    // Build HTML table
+    // Sort variants alphabetically within each base
+    Object.keys(grouped).forEach(base => grouped[base].sort());
+
+    // Render HTML table
+    const priceListContainer = document.getElementById('priceListContainer');
     let html = '<table><tr><th>Ore</th><th>Price</th></tr>';
-    baseArray.forEach(base => {
-        // All ores containing the base (case-insensitive), excluding compressed
-        const variants = Object.keys(raw)
-            .filter(k => k.toLowerCase().includes(base.toLowerCase()) && !k.toLowerCase().includes('compressed'))
-            .sort();
-        if(variants.length === 0) return;
-        // Show base as first (if exists)
-        if(raw[base] !== undefined) html += `<tr><td>${base}</td><td>${raw[base]}</td></tr>`;
-        variants.forEach(v => {
-            if(v !== base) html += `<tr><td style="padding-left:12px">- ${v}</td><td>${raw[v]}</td></tr>`;
+
+    Object.keys(grouped).sort().forEach(base => {
+        const variants = grouped[base];
+        variants.forEach((variant, i) => {
+            if(i === 0) {
+                html += `<tr><td>${variant}</td><td>${priceListRaw[variant].toLocaleString()}</td></tr>`;
+            } else {
+                html += `<tr><td>&nbsp;&nbsp;- ${variant}</td><td>${priceListRaw[variant].toLocaleString()}</td></tr>`;
+            }
         });
     });
+
     html += '</table>';
     priceListContainer.innerHTML = html;
 }
 
-// Use this function instead of the old renderPriceList
-renderPriceListWithVariants();
+/* ===== INITIALIZE PRICE LIST ===== */
+renderPriceList();
 
-
-/* ===== TOGGLE PRICE LIST ===== */
-document.getElementById('priceTab').addEventListener('click', ()=>{
-    if(priceListContainer.style.display==='none') priceListContainer.style.display='block';
-    else priceListContainer.style.display='none';
+/* ===== TOGGLE PRICE LIST DISPLAY ===== */
+document.getElementById('priceTab').addEventListener('click', () => {
+    const priceListContainer = document.getElementById('priceListContainer');
+    if(priceListContainer.style.display === 'none' || priceListContainer.style.display === '') {
+        priceListContainer.style.display = 'block';
+    } else {
+        priceListContainer.style.display = 'none';
+    }
 });
-
 /* ===== RENDER SUMMARY ===== */
 const summaryContainer = document.getElementById('summaryContainer');
 function renderSummary(text){
