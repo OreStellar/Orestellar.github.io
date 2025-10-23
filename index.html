@@ -990,6 +990,53 @@ window.addEventListener('load', () => {
   }
   nextStep();
 });
+/* ====================== INVENTORY SUBMIT BEHAVIOR ====================== */
+submitButton.addEventListener('click', () => {
+  const text = messageBox.value.trim();
+  if (!text) return;
+
+  // Hide inventory input panel
+  document.getElementById('inventoryContainer').style.display = 'none';
+
+  // Generate the summary
+  const parsed = parseInventoryText(text);
+  renderSummary(parsed);
+});
+
+/* Render summary output */
+function renderSummary(items){
+  const summaryContainer = document.getElementById('summaryContainer');
+  let html = `
+    <table class="summary-table">
+      <thead>
+        <tr><th>Ore</th><th class="quantity">Qty</th><th class="price">Price</th><th class="total-column">Total</th></tr>
+      </thead>
+      <tbody>
+  `;
+
+  let totalISK = 0;
+  for(const it of items){
+    const priceStr = it.price ? it.price.toLocaleString() : '-';
+    const totalStr = it.total ? it.total.toLocaleString() : '-';
+    html += `<tr${it.unrecognized ? ' class="unrecognized"' : ''}>
+      <td>${it.name}</td>
+      <td class="quantity">${it.qty.toLocaleString()}</td>
+      <td class="price">${priceStr}</td>
+      <td class="total-column">${totalStr}</td>
+    </tr>`;
+    if(!it.unrecognized) totalISK += it.total;
+  }
+
+  html += `<tr class="summary-total"><td colspan="3">Total</td><td>${totalISK.toLocaleString()} ISK</td></tr></tbody></table>`;
+  summaryContainer.innerHTML = html;
+  summaryContainer.style.display = 'flex';
+
+  // Also show total on contract image
+  const totalCostContainer = document.getElementById('totalCostContainer');
+  const totalText = document.getElementById('totalCostText');
+  totalText.textContent = `${totalISK.toLocaleString()} ISK`;
+  totalCostContainer.styl
+
 </script>
 </body>
 </html>
