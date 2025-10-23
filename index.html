@@ -318,17 +318,16 @@ function drawStars(time){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   for (const s of stars){
-    // simple twinkle: fluctuate alpha slightly over time
     const alpha = s.baseAlpha + 0.3 * Math.sin((time + s.x + s.y) * 0.002);
     ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
     ctx.fillStyle = s.color;
     ctx.fillRect(s.x, s.y, Math.max(s.size,1), Math.max(s.size,1));
   }
 
-  requestAnimationFrame(drawStars);
+  requestAnimationFrame(drawStars); // ✅ keep timestamp passing
 }
-
 requestAnimationFrame(drawStars);
+
 
 
 /* ====================== LOGO FLICKER SEQUENCE ====================== */
@@ -896,8 +895,6 @@ shareButton.addEventListener('click', async ()=>{
 
 /* Auto-load from URL param ?s= (shared view) */
 window.addEventListener('load', async ()=>{
-  // start logo flicker immediately
-  playLogoFlicker();
 
   // fetch prices first
   await fetchPrices();
