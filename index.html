@@ -263,7 +263,7 @@ function createStars(){
   }
 
   // total scaled to roughly 3x from previous "safe" baseline
-  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 200));
+  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 500));
   
   for(let i=0;i<total;i++){
     let x, y;
@@ -321,7 +321,7 @@ function drawStars(time = 0){
 
   for(const s of stars){
     let alpha = s.baseAlpha;
-    if(s.twinkle) alpha = 0.45 + 0.5 * Math.abs(Math.sin(time*0.002 + s.phase));
+    if(s.twinkle) alpha = 0.45 + 0.5 * Math.abs(Math.sin(time*0.001 + s.phase));
     if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
     if(s.isBright && time >= s.brightEnd) s.isBright = false;
 
