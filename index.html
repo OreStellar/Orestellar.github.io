@@ -874,8 +874,9 @@ submitButton.addEventListener('click', ()=>{
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
   window.scrollTo({ top: 0, behavior:'smooth'});
-  // enable share button
-  shareButton.style.display = 'inline-block';
+  // HIDE INVENTORY AND SUBMIT
+  document.getElementById('inventoryContainer').style.display = 'none';
+  submitButton.style.display = 'none';
 });
 
 shareButton.addEventListener('click', async ()=>{
@@ -897,7 +898,11 @@ shareButton.addEventListener('click', async ()=>{
 window.addEventListener('load', async ()=>{
 
   // fetch prices first
-  await fetchPrices();
+     await fetchPrices();
+
+    // run logo flicker
+    flickerLogo();
+}
 
   // Check URL param
   const params = new URLSearchParams(window.location.search);
@@ -944,20 +949,6 @@ function parseIntSafeWithCommas(s){
   if(!m) return 0;
   return parseInt(m[0].replace(/,/g,''),10) || 0;
 }
-submitButton.addEventListener('click', ()=>{
-  // double-check we have user content
-  const txt = messageBox.value.trim();
-  if(!txt) return;
-  const parsed = parseInventoryText(txt);
-  renderSummary(parsed);
-  window.scrollTo({ top: 0, behavior:'smooth'});
-  // enable share button
-  shareButton.style.display = 'inline-block';
-
-  // HIDE INVENTORY AND SUBMIT
-  document.getElementById('inventoryContainer').style.display = 'none';
-  submitButton.style.display = 'none';
-});
 // call it when the page finishes loading
 window.addEventListener('load', () => {
     flickerLogo();
