@@ -250,25 +250,13 @@ Compressed Ducinium	4985
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-// grab logo elements (important!)
-const logoText = document.getElementById('logoText');
-const ore = document.getElementById('ore');
-const stellar = document.getElementById('stellar');
+let stars = [];
+const clusterCount = 5; // your cluster count
 
-// resize canvas
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
-resizeCanvas();
-window.addEventListener('resize', () => { 
-  resizeCanvas(); 
-  createStars();
-  drawStars(); 
-});
-
-let stars = [];
-let clusterCount = 20;
 
 function createStars() {
   stars = [];
@@ -293,9 +281,9 @@ function createStars() {
 
     const r = Math.random();
     let color = '#ffffff';
-    if (r < 0.005) color = '#ff0000';      // 0.5% red
-    else if (r < 0.025) color = '#ffb6c1'; // 2% light pink
-    else if (r < 0.055) color = '#ffff99'; // 3% light yellow
+    if (r < 0.005) color = '#ff0000';
+    else if (r < 0.025) color = '#ffb6c1';
+    else if (r < 0.055) color = '#ffff99';
 
     stars.push({
       x, y,
@@ -308,29 +296,55 @@ function createStars() {
     });
   }
 }
-createStars();
 
-// star twinkle state
-let lastBright = 0;
-let nextBright = 5000 + Math.random() * 7000;
-
-function drawStars(time){
+// draw stars
+function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  for (const s of stars){
-    // each star has its own phase and speed
-    const speed = 0.002 + Math.random() * 0.003;   // small variation per star
-    const phase = s.phase || Math.random() * Math.PI * 2; // random phase if not already set
-    s.phase = phase;
-
-    const alpha = s.baseAlpha + 0.3 * Math.sin((time * speed) + phase);
-    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  const now = performance.now();
+  for (const s of stars) {
+    let alpha = s.baseAlpha;
+    if (s.isBright && now >= s.brightStart && now <= s.brightEnd) {
+      alpha = 1;
+    }
+    ctx.globalAlpha = alpha;
     ctx.fillStyle = s.color;
-    ctx.fillRect(s.x, s.y, Math.max(s.size,1), Math.max(s.size,1));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fill();
   }
-
-  requestAnimationFrame(drawStars);
+  ctx.globalAlpha = 1;
 }
+
+// animate stars (twinkle)
+function animateStars() {
+  const now = performance.now();
+  for (const s of stars) {
+    if (Math.random() < 0.002 && !s.isBright) {
+      s.isBright = true;
+      s.brightStart = now;
+      s.brightEnd = now + 200 + Math.random() * 300; // twinkle duration
+    } else if (s.isBright && now > s.brightEnd) {
+      s.isBright = false;
+    }
+  }
+  drawStars();
+  requestAnimationFrame(animateStars);
+}
+
+// initial setup
+window.addEventListener('load', () => {
+  resizeCanvas();
+  createStars();
+  drawStars();
+  animateStars(); // start twinkle loop
+});
+
+// handle resizing
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  createStars();
+  drawStars();
+});
 
 
 /* ====================== LOGO FLICKER SEQUENCE ====================== */
