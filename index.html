@@ -306,30 +306,36 @@ createStars();
 let lastBright = 0, nextBright = 5000 + Math.random()*7000;
 
 function drawStars(time = 0){
-for(const s of stars){
-  let alpha = s.baseAlpha;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // simple twinkle: only every 3 frames
-  if(Math.random() < 0.02) alpha = 0.3 + Math.random()*0.7;
+  for(const s of stars){
+    let alpha = s.baseAlpha;
 
-  if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
-  if(s.isBright && time >= s.brightEnd) s.isBright = false;
+    // simple twinkle
+    if(Math.random() < 0.02) alpha = 0.3 + Math.random()*0.7;
 
-  ctx.globalAlpha = alpha;
-  ctx.fillStyle = s.color;
+    if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
+    if(s.isBright && time >= s.brightEnd) s.isBright = false;
 
-  // only use shadow for big/bright stars
-  if(s.size > 1.5 && alpha > 0.8){
-    ctx.shadowBlur = s.size*4;
-    ctx.shadowColor = s.color;
-  } else {
-    ctx.shadowBlur = 0;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = s.color;
+
+    // only use shadow for big/bright stars
+    if(s.size > 1.5 && alpha > 0.8){
+      ctx.shadowBlur = s.size*4;
+      ctx.shadowColor = s.color;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
+    ctx.fillRect(s.x, s.y, s.size, s.size);
   }
 
-  ctx.fillRect(s.x, s.y, s.size, s.size); // fast rectangle instead of arc
+  requestAnimationFrame(drawStars); // <-- keep this here
 }
 
-requestAnimationFrame(drawStars);
+// Start the animation loop
+drawStars();
 
 function setLogoState(color, shadow) {
   logoText.style.color = color;
