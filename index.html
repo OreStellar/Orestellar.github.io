@@ -357,11 +357,11 @@ document.getElementById('myHeader').addEventListener('click', () => {
 function playLogoSequence() {
   // Start fully dim
   setLogoState('rgba(220,220,220,0.15)', 'none');
-  logoText.style.animation = 'none'; // disable soft glow initially
+  logoText.style.animation = 'none'; // disable glow initially
 
   // Stay dim for 1.25 seconds
   setTimeout(() => {
-    // two quick flickers (200ms apart)
+    // Two quick flickers (0.2s apart)
     setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
     setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
     setTimeout(() => {
@@ -369,20 +369,20 @@ function playLogoSequence() {
       setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
     }, 200);
 
-    // stay dim again for 0.85 seconds
+    // After the two flickers, dim for 0.85s, then one single quick flicker
     setTimeout(() => {
-      // one more quick flicker
       setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf');
       setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 120);
 
-      // then fade into softGlow forever
+      // Finally fade into softGlow forever
       setTimeout(() => {
         setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
         logoText.style.animation = 'softGlow 6s infinite';
       }, 400);
-    }, 850);
+    }, 1250); // <-- fixed timing so only one final flicker
   }, 1250);
 }
+
 
 window.addEventListener('load', playLogoSequence);
 
