@@ -239,62 +239,54 @@ Compressed Ducinium	4985
 
 <script>
 /* ====================== STARFIELD ====================== */
-/* Increase total stars (approx 3x vs earlier baseline),
-   keep cluster distribution but do not increase cluster density.
-   Use the color ratios: red 5%, pink 3%, light-blue 2%. */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas(){
+function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 resizeCanvas();
-window.addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
+window.addEventListener('resize', () => { 
+  resizeCanvas(); 
+  createStars(); 
+});
 
 let stars = [];
 let clusterCount = 20;
 
-function createStars(){
+function createStars() {
   stars = [];
   const centers = [];
-  for(let i=0;i<clusterCount;i++){
-    centers.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height });
+  for (let i = 0; i < clusterCount; i++) {
+    centers.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
   }
 
-  // total scaled to roughly 3x from previous "safe" baseline
   const total = Math.max(500, Math.floor(canvas.width * canvas.height / 1000));
-  
-  for(let i=0;i<total;i++){
+  for (let i = 0; i < total; i++) {
     let x, y;
-    if(Math.random() < 0.6){
-      const c = centers[Math.floor(Math.random()*centers.length)];
-      const r = Math.random()*140;
-      const a = Math.random()*Math.PI*2;
-      x = c.x + r*Math.cos(a);
-      y = c.y + r*Math.sin(a);
+    if (Math.random() < 0.6) {
+      const c = centers[Math.floor(Math.random() * centers.length)];
+      const r = Math.random() * 140;
+      const a = Math.random() * Math.PI * 2;
+      x = c.x + r * Math.cos(a);
+      y = c.y + r * Math.sin(a);
     } else {
-      x = Math.random()*canvas.width;
-      y = Math.random()*canvas.height;
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
     }
 
-    // color distribution: red 5%, pink 3%, blue 2%, rest white
-const r = Math.random();
-let color = '#ffffff'; // default white
-
-if(r < 0.005) color = '#ff0000';      // 0.5% red
-else if(r < 0.025) color = '#ffb6c1'; // 2% light pink
-else if(r < 0.055) color = '#ffff99'; // 3% light yellow
-// rest (~94.5%) will be white
-
+    const r = Math.random();
+    let color = '#ffffff';
+    if (r < 0.005) color = '#ff0000';
+    else if (r < 0.025) color = '#ffb6c1';
+    else if (r < 0.055) color = '#ffff99';
 
     stars.push({
       x, y,
-      size: Math.random()*1.6 + 0.2,
+      size: Math.random() * 1.6 + 0.2,
       color,
-      phase: Math.random()*Math.PI*2,
-      twinkle: Math.random() < 0.01,
-      baseAlpha: 0.7 + Math.random()*0.25,
+      baseAlpha: 0.7 + Math.random() * 0.25,
       isBright: false,
       brightStart: 0,
       brightEnd: 0
@@ -303,38 +295,31 @@ else if(r < 0.055) color = '#ffff99'; // 3% light yellow
 }
 createStars();
 
-let lastBright = 0, nextBright = 5000 + Math.random()*7000;
+// star twinkle state
+let lastBright = 0, nextBright = 5000 + Math.random() * 7000;
 
-function drawStars(time = 0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+function drawStars(time = 0) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  for(const s of stars){
+  for (const s of stars) {
     let alpha = s.baseAlpha;
 
     // simple twinkle
-    if(Math.random() < 0.02) alpha = 0.3 + Math.random()*0.7;
+    if (Math.random() < 0.02) alpha = 0.3 + Math.random() * 0.7;
 
-    if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
-    if(s.isBright && time >= s.brightEnd) s.isBright = false;
+    // bright star logic
+    if (s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
+    if (s.isBright && time >= s.brightEnd) s.isBright = false;
 
     ctx.globalAlpha = alpha;
     ctx.fillStyle = s.color;
-
-    // only use shadow for big/bright stars
-    if(s.size > 1.5 && alpha > 0.8){
-      ctx.shadowBlur = s.size*4;
-      ctx.shadowColor = s.color;
-    } else {
-      ctx.shadowBlur = 0;
-    }
-
+    ctx.shadowBlur = s.size > 1.5 && alpha > 0.8 ? s.size * 4 : 0;
+    ctx.shadowColor = s.color;
     ctx.fillRect(s.x, s.y, s.size, s.size);
   }
 
-  requestAnimationFrame(drawStars); // <-- keep this here
+  requestAnimationFrame(drawStars);
 }
-
-// Start the animation loop
 drawStars();
 
 function setLogoState(color, shadow) {
