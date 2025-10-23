@@ -368,16 +368,16 @@ function flickerLogo() {
   const steps = [
     // Initial dim for 1.2 seconds
     { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
-    // Two quick flashes, 10ms each
+    // Two quick flashes, 20ms each
     { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1200 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1210 },
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1220 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 },
-    // Dim for 0.45 seconds
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 + 450 },
-    // One quick 20ms flash
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 1230 + 450 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 + 450 + 20 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1220 },
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1240 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
+    // Dim for 0.9 seconds
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
+    // One quick 40ms flash
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 1260 + 900 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 + 900 + 40 },
   ];
 
   steps.forEach(step => {
@@ -397,9 +397,8 @@ function flickerLogo() {
     logoText.style.animation = glowAnim;
     ore.style.animation = glowAnim;
     stellar.style.animation = glowAnim;
-  }, 1230 + 450 + 20); // end of last step
+  }, 1260 + 900 + 40); // end of last step
 }
-
 
 
 
