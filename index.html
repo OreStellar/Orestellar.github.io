@@ -355,20 +355,33 @@ document.getElementById('myHeader').addEventListener('click', () => {
 
 /* Play flicker sequence on load */
 function playLogoSequence() {
-  // Start dim
+  // Start fully dim
   setLogoState('rgba(220,220,220,0.15)', 'none');
+  logoText.style.animation = 'none'; // disable soft glow initially
 
-  // Two quick flashes
-  setTimeout(() => setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 90);
-  setTimeout(() => setLogoState('rgba(220,220,220,0.15)','none'), 220);
-  setTimeout(() => setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 340);
-  setTimeout(() => setLogoState('rgba(220,220,220,0.15)','none'), 470);
-
-  // One longer flash, then softGlow forever
+  // Stay dim for 1.25 seconds
   setTimeout(() => {
-    setLogoState('#dcdcdc','0 0 12px #bfbfbf,0 0 24px #bfbfbf,0 0 36px #bfbfbf');
-    logoText.style.animation = 'softGlow 6s infinite';
-  }, 620);
+    // two quick flickers (200ms apart)
+    setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
+    setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
+    setTimeout(() => {
+      setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
+      setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
+    }, 200);
+
+    // stay dim again for 0.85 seconds
+    setTimeout(() => {
+      // one more quick flicker
+      setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf');
+      setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 120);
+
+      // then fade into softGlow forever
+      setTimeout(() => {
+        setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
+        logoText.style.animation = 'softGlow 6s infinite';
+      }, 400);
+    }, 850);
+  }, 1250);
 }
 
 window.addEventListener('load', playLogoSequence);
