@@ -22,7 +22,13 @@
 }
 html,body{margin:0;padding:0;height:100%;background:var(--bg);font-family:monospace;color:#fff;overflow:hidden;}
 /* star canvas sits at z=0 and pointer-events none so overlay works */
-canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+canvas#starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
 
 /* ================== LAYOUT ================== */
 .container-wrapper{
@@ -307,40 +313,16 @@ createStars();
 let lastBright = 0;
 let nextBright = 5000 + Math.random() * 7000;
 
-function drawStars(time) {
-  time = time || performance.now();
+function drawStars(time){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  for (const s of stars) {
-    let alpha = s.baseAlpha;
-
-    // gentle twinkle — subtle and slow
-    if (Math.random() < 0.003) {
-      alpha = s.baseAlpha + (Math.random() - 0.5) * 0.3; 
-      alpha = Math.max(0.3, Math.min(1, alpha));
-    }
-
-    // rare bright star flash (1 every ~10–20s)
-    if (!s.isBright && time > nextBright) {
-      s.isBright = true;
-      s.brightStart = time;
-      s.brightEnd = time + 500 + Math.random() * 400; // 0.5–0.9s flash
-      nextBright = time + 10000 + Math.random() * 10000; // 10–20s between bright flashes
-    }
-
-    if (s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
-    if (s.isBright && time >= s.brightEnd) s.isBright = false;
-
-    ctx.globalAlpha = alpha;
+  for (const s of stars){
+    ctx.globalAlpha = 1; // force fully visible
     ctx.fillStyle = s.color;
-    ctx.shadowBlur = s.size > 1.5 && alpha > 0.8 ? s.size * 4 : 0;
-    ctx.shadowColor = s.color;
-    ctx.fillRect(s.x, s.y, s.size, s.size);
+    ctx.fillRect(s.x, s.y, Math.max(s.size, 1), Math.max(s.size, 1)); // at least 1px
   }
-
   requestAnimationFrame(drawStars);
 }
-drawStars();
+
 
 /* ====================== LOGO FLICKER SEQUENCE ====================== */
 /* single setLogoState used by flicker sequence */
