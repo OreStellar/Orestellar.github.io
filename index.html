@@ -895,14 +895,14 @@ shareButton.addEventListener('click', async ()=>{
 });
 
 /* Auto-load from URL param ?s= (shared view) */
-window.addEventListener('load', async ()=>{
+window.addEventListener('load', async () => {
+    // fetch prices first
+    await fetchPrices();
 
-  // fetch prices first
-     await fetchPrices();
-
-    // run logo flicker
+    // optionally start logo flicker
     flickerLogo();
-}
+}); // ✅ close both function block and addEventListener call
+
 
   // Check URL param
   const params = new URLSearchParams(window.location.search);
