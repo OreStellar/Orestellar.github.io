@@ -950,25 +950,37 @@ window.addEventListener('load', () => {
     stellar.style.textShadow = shadow || 'none';
   }
 
-  // Start dimmed for 0.6s
+  // Start dimmed
   setLogo('rgba(255,255,255,0.1)');
 
-  // First flicker sequence after 0.6s
+  // Step 1: wait 0.7s, then first quick flicker
   setTimeout(() => {
-    setLogo('#ffffff', '0 0 10px #fff, 0 0 20px #fff');
-    setTimeout(() => setLogo('rgba(255,255,255,0.1)'), 100);  // back dim
-    setTimeout(() => setLogo('#ffffff', '0 0 10px #fff, 0 0 20px #fff'), 200);
-  }, 600);
+    setLogo('#fff', '0 0 10px #fff, 0 0 20px #fff');
+  }, 700);
 
-  // Wait 0.4s after the last flicker then one longer flicker
+  // Step 2: second quick flicker (0.1s after first)
   setTimeout(() => {
-    setLogo('#ffffff', '0 0 14px #fff, 0 0 28px #fff, 0 0 42px #fff');
-    // then settle into softGlow
-    setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite';
-      stellar.style.animation = 'softGlow 6s infinite';
-    }, 300);
-  }, 1200); // 0.6 + 0.6 (two flickers) = 1.2s
+    setLogo('rgba(255,255,255,0.1)');
+  }, 850);
+  setTimeout(() => {
+    setLogo('#fff', '0 0 10px #fff, 0 0 20px #fff');
+  }, 1000);
+
+  // Step 3: dim for 0.5s
+  setTimeout(() => {
+    setLogo('rgba(255,255,255,0.1)');
+  }, 1500);
+
+  // Step 4: one more quick flicker
+  setTimeout(() => {
+    setLogo('#fff', '0 0 10px #fff, 0 0 20px #fff');
+  }, 2000);
+
+  // Step 5: stay on with softGlow
+  setTimeout(() => {
+    ore.style.animation = 'softGlow 6s infinite';
+    stellar.style.animation = 'softGlow 6s infinite';
+  }, 2200);
 });
 
 
