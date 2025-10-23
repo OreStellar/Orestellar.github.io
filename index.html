@@ -315,13 +315,19 @@ let nextBright = 5000 + Math.random() * 7000;
 
 function drawStars(time){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
   for (const s of stars){
-    ctx.globalAlpha = 1; // force fully visible
+    // simple twinkle: fluctuate alpha slightly over time
+    const alpha = s.baseAlpha + 0.3 * Math.sin((time + s.x + s.y) * 0.002);
+    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
     ctx.fillStyle = s.color;
-    ctx.fillRect(s.x, s.y, Math.max(s.size, 1), Math.max(s.size, 1)); // at least 1px
+    ctx.fillRect(s.x, s.y, Math.max(s.size,1), Math.max(s.size,1));
   }
+
   requestAnimationFrame(drawStars);
 }
+
+requestAnimationFrame(drawStars);
 
 
 /* ====================== LOGO FLICKER SEQUENCE ====================== */
@@ -342,42 +348,33 @@ document.getElementById('myHeader').addEventListener('click', () => {
 });
 
 /* Play flicker sequence on load (two quick flickers, dim, one single flicker, then soft glow) */
-function playLogoFlicker() {
-  // Start fully dim
-  setLogoState('rgba(220,220,220,0.15)', 'none');
-  logoText.style.animation = 'none';
+function playLogoFlicker(){
+  const sequence = [
+    [ 'rgba(220,220,220,0.15)', 'none', 1250 ],
+    [ '#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', 100 ],
+    [ 'rgba(220,220,220,0.15)', 'none', 100 ],
+    [ '#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', 100 ],
+    [ 'rgba(220,220,220,0.15)', 'none', 850 ],
+    [ '#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', 120 ],
+    [ 'rgba(220,220,220,0.15)', 'none', 400 ]
+  ];
 
-  // timings:
-  // stay dim for 1.25s, then two quick flickers 0.1s on/off, then dim for 0.85s then one quick flicker, then softGlow
-  setTimeout(() => {
-    // first quick flicker
-    setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
-    setTimeout(() => {
-      setLogoState('rgba(220,220,220,0.15)', 'none');
-      // second quick flicker shortly after
-      setTimeout(() => {
-        setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
-        setTimeout(() => {
-          setLogoState('rgba(220,220,220,0.15)', 'none');
-          // after two quick flickers, wait 0.85s then single flicker
-          setTimeout(() => {
-            setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf');
-            setTimeout(() => {
-              setLogoState('rgba(220,220,220,0.15)', 'none');
-              // fade into softGlow forever
-              setTimeout(() => {
-                setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
-                logoText.style.animation = 'softGlow 6s infinite';
-                ore.style.animation = 'softGlow 6s infinite';
-                stellar.style.animation = 'softGlow 6s infinite';
-              }, 400);
-            }, 120);
-          }, 850);
-        }, 100);
-      }, 100);
-    }, 100);
-  }, 1250);
+  let i = 0;
+  function next(){
+    if(i < sequence.length){
+      const [color, shadow, delay] = sequence[i++];
+      setLogoState(color, shadow);
+      setTimeout(next, delay);
+    } else {
+      // final soft glow infinite
+      logoText.style.animation = 'softGlow 6s infinite';
+      ore.style.animation = 'softGlow 6s infinite';
+      stellar.style.animation = 'softGlow 6s infinite';
+    }
+  }
+  next();
 }
+
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
 /*
@@ -564,8 +561,12 @@ function buildPriceGrouping(){
     if(!entry) return;
     const raw = entry.csvValue;
 
+    // Determine final price to display
+    let priceToShow = entry.headerHas150 ? raw : raw * 1.5;
+
     if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+
   });
 
 /* simple regex escape */
