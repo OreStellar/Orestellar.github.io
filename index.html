@@ -944,7 +944,12 @@ fetchPrices();
 window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
-
+  
+  ore.style.color = 'rgba(255,255,255,0.1)';
+  stellar.style.color = 'rgba(255,255,255,0.1)';
+  ore.style.textShadow = 'none';
+  stellar.style.textShadow = 'none';
+  
   // First quick flashes
   ore.style.animation = 'flickerRapid 0.3s linear forwards';
   stellar.style.animation = 'flickerRapid 0.3s linear forwards';
