@@ -263,7 +263,7 @@ function createStars(){
   }
 
   // total scaled to roughly 3x from previous "safe" baseline
-  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 700));
+  const total = Math.max(500, Math.floor(canvas.width * canvas.height / 1000));
   
   for(let i=0;i<total;i++){
     let x, y;
@@ -306,36 +306,29 @@ createStars();
 let lastBright = 0, nextBright = 5000 + Math.random()*7000;
 
 function drawStars(time = 0){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+for(const s of stars){
+  let alpha = s.baseAlpha;
 
-  if(time - lastBright > nextBright){
-    lastBright = time;
-    nextBright = 5000 + Math.random()*8000;
-    for(let i=0;i<3;i++){
-      const s = stars[Math.floor(Math.random()*stars.length)];
-      s.isBright = true;
-      s.brightStart = time;
-      s.brightEnd = time + 800 + Math.random()*1400;
-    }
-  }
+  // simple twinkle: only every 3 frames
+  if(Math.random() < 0.02) alpha = 0.3 + Math.random()*0.7;
 
-  for(const s of stars){
-    let alpha = s.baseAlpha;
-    if(s.twinkle) alpha = 0.45 + 0.5 * Math.abs(Math.sin(time*0.001 + s.phase));
-    if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
-    if(s.isBright && time >= s.brightEnd) s.isBright = false;
+  if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
+  if(s.isBright && time >= s.brightEnd) s.isBright = false;
 
-    ctx.beginPath();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = s.color;
-    ctx.shadowBlur = alpha === 1 ? s.size*8 : s.size*3;
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = s.color;
+
+  // only use shadow for big/bright stars
+  if(s.size > 1.5 && alpha > 0.8){
+    ctx.shadowBlur = s.size*4;
     ctx.shadowColor = s.color;
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fill();
+  } else {
+    ctx.shadowBlur = 0;
   }
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(drawStars);
+
+  ctx.fillRect(s.x, s.y, s.size, s.size); // fast rectangle instead of arc
 }
+
 requestAnimationFrame(drawStars);
 
 function setLogoState(color, shadow) {
