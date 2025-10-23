@@ -939,7 +939,6 @@ function parseIntSafeWithCommas(s){
 /* ====================== HOOK UP: price fetch now ====================== */
 fetchPrices();
 
-/* ====================== END SCRIPT ====================== */
 window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
@@ -959,7 +958,18 @@ window.addEventListener('load', () => {
     setLogo('#ffffff', '0 0 10px #fff, 0 0 20px #fff');
     setTimeout(() => setLogo('rgba(255,255,255,0.1)'), 100);  // back dim
     setTimeout(() => setLogo('#ffffff', '0 0 10px #fff, 0 0 20px #fff'), 200);
-  }, 1200);
+  }, 600);
+
+  // Wait 0.4s after the last flicker then one longer flicker
+  setTimeout(() => {
+    setLogo('#ffffff', '0 0 14px #fff, 0 0 28px #fff, 0 0 42px #fff');
+    // then settle into softGlow
+    setTimeout(() => {
+      ore.style.animation = 'softGlow 6s infinite';
+      stellar.style.animation = 'softGlow 6s infinite';
+    }, 300);
+  }, 1200); // 0.6 + 0.6 (two flickers) = 1.2s
+});
 
 
 </script>
