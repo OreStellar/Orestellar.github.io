@@ -29,13 +29,10 @@ canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;po
 
 /* Main Container */
 .main-container{width:650px;max-width:90%;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:rgba(20,20,20,0.92);border-radius:15px;z-index:2;}
+.main-container h3#inventoryHeader{font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 12px #fff,0 0 18px #fff,0 0 24px #fff;margin-bottom:12px;}
 .main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:18px;padding:18px;border-radius:10px;resize:vertical;background-color:rgba(17,17,17,0.97);color:#fff;border:1px solid #333;text-align:left;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;}
 .main-container textarea#message::placeholder{color:#fff;opacity:0.6;}
 textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px #fff,0 0 25px #fff;transition:box-shadow 0.3s ease,border-color 0.3s ease;}
-
-/* H3 heading: glowing white */
-.inventory-heading{font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 14px #fff,0 0 22px #00ff00,0 0 36px #00ff00;animation:headingPulse 3s ease-in-out infinite;}
-@keyframes headingPulse{0%{text-shadow:0 0 8px #fff,0 0 18px #00ff00;}50%{text-shadow:0 0 18px #fff,0 0 30px #00ff00;}100%{text-shadow:0 0 8px #fff,0 0 18px #00ff00;}}
 
 /* Buttons */
 .actionButton{margin-top:15px;background:linear-gradient(145deg,#161616,#242424);color:#fff;border:2px solid #ccc;border-radius:10px;padding:12px 26px;font-weight:bold;font-family:'Orbitron',sans-serif;cursor:pointer;position:relative;overflow:hidden;text-shadow:0 0 2px #fff;box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;animation:ambientGlow 3.5s ease-in-out infinite alternate;transition:all 0.35s ease;}
@@ -49,12 +46,10 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');display:none;position:relative;}
 #totalCostText{position:absolute;top:18px;right:20px;color:#00ff00;font-family:'Share Tech Mono',monospace;font-weight:bold;font-size:18px;text-shadow:0 0 6px #00ff00,0 0 12px #00ff00;cursor:pointer;}
 
-/* Price Tab (circular neon) */
-#priceTab{position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:#00ff00;color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px #00ff00,0 0 30px #00ff00 inset;z-index:30;transition:transform 0.18s ease, right 0.18s ease;}
-#priceTab:hover{transform:translateX(-6px) scale(1.05);}
-#priceTab svg{width:28px;height:28px;}
-
-/* Floating price list */
+/* Price Tab / Icon */
+#priceTab{position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:#00ff00;color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px #00ff00,0 0 30px #00ff00 inset;z-index:30;transition:transform 0.18s ease, right 0.18s ease;font-family:'Orbitron',sans-serif;}
+#priceTab::before{content:"\005A";position:absolute;top:7px;font-size:28px;} /* Z */
+#priceTab::after{content:"";position:absolute;top:21px;width:24px;height:2px;background:#000;} /* horizontal line */
 #priceListContainer{position:fixed;top:18vh;right:78px;width:320px;max-height:60vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid #00ff00;padding:10px;border-radius:10px;display:none;box-shadow:0 0 18px #00ff00;z-index:29;font-family:'Share Tech Mono',monospace;color:#00ff00;}
 #priceListContainer table{width:100%;border-collapse:collapse;}
 #priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.08);font-size:13px;text-align:left;}
@@ -67,16 +62,11 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 
 /* Summary table */
 .summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;}
+.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;white-space:nowrap;}
 .summary-table th:nth-child(1), .summary-table td:nth-child(1){text-align:left;}
-.summary-table th:nth-child(2), .summary-table th:nth-child(3), .summary-table th:nth-child(4){text-align:right;}
-.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column {text-align:right;font-variant-numeric:tabular-nums;}
-.summary-table tr.unrecognized td {color:#ff4444;font-weight:700;text-shadow:0 0 8px #ff3333;}
-.summary-table th {color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.15);} 
+.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column{text-align:right;font-variant-numeric:tabular-nums;}
+.summary-table th{text-align:right;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.15);}
 .summary-total td{border-top:2px solid rgba(0,255,0,0.25);font-weight:700;text-align:right;padding-top:10px;}
-
-/* Ledger style when shared */
-.shared-ledger{font-family:'Share Tech Mono',monospace;background:rgba(0,0,0,0.98);border:none;box-shadow:none;padding:10px 14px;border-radius:6px;}
 </style>
 </head>
 <body data-show-inventory="true">
@@ -89,8 +79,9 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
   </header>
 
   <div class="main-container" id="inventoryContainer">
-    <h3 class="inventory-heading">Paste Your Inventory Below</h3>
-    <textarea id="message" rows="8">Compressed Ytirium	1304752
+    <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
+    <textarea id="message" rows="8">
+Compressed Ytirium	1304752
 Compressed Gneiss	166047
 Obsidian Ochre	8603
 Eifyrium	8242
@@ -98,8 +89,9 @@ Compressed Dark Ochre	5086
 Compressed Jet Ochre	3750
 Compressed Prize Mordunium	998781
 Pellucid Crokite	2912
-Compressed Ducinium	4985</textarea>
-    <button id="submitButton" class="actionButton">Submit</button>
+Compressed Ducinium	4985
+    </textarea>
+    <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
   <div class="contracts-wrapper">
@@ -110,76 +102,57 @@ Compressed Ducinium	4985</textarea>
     </div>
   </div>
 
-  <div id="priceTab" title="Open price list" aria-label="Price list button"></div>
-  <div id="priceListContainer" aria-hidden="true"></div>
-
-  <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
+  <div id="priceTab"></div>
+  <div id="priceListContainer"></div>
 </div>
 
 <script>
-/* ===== STARFIELD (spread out + color mix) ===== */
+/* ===== STARFIELD ===== */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
 resizeCanvas(); addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
 
 let stars = [];
-// fewer clusters so stars are more evenly spread out
-let clusterCount = 3; // small cluster count to avoid densing up
+let clusterCount = 10;
 function createStars(){
   stars = [];
   const centers = [];
   for(let i=0;i<clusterCount;i++) centers.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height});
-  // total stars proportional but not too dense
-  const total = Math.max(120, Math.floor(canvas.width * canvas.height / 8000));
+  const total = Math.max(80, Math.floor(canvas.width * canvas.height / 5000)); // spread out
   for(let i=0;i<total;i++){
     let x,y;
-    // mostly random placement to avoid dense clusters; some small chance to be near a center
-    if(Math.random() < 0.12){
+    if(Math.random() < 0.6){
       const c = centers[Math.floor(Math.random()*centers.length)];
-      const r = Math.random()*120; const a = Math.random()*Math.PI*2;
-      x = c.x + r*Math.cos(a); y = c.y + r*Math.sin(a);
+      const r = Math.random()*140;
+      const a = Math.random()*Math.PI*2;
+      x = c.x + r*Math.cos(a);
+      y = c.y + r*Math.sin(a);
     } else {
       x = Math.random()*canvas.width; y = Math.random()*canvas.height;
     }
-    // color distribution: 5% red, 3% pink, 2% light blue, rest white
-    const p = Math.random();
+    const rand = Math.random();
     let color = '#ffffff';
-    if(p < 0.05) color = '#ff4d4d'; // red ~5%
-    else if(p < 0.08) color = '#ff99cc'; // pink ~3%
-    else if(p < 0.10) color = '#bfe6ff'; // light blue ~2%
-
+    if(rand<0.05) color='#ff0000';
+    else if(rand<0.08) color='#ff77ff';
+    else if(rand<0.10) color='#00ffff';
     stars.push({
       x, y,
-      size: Math.random()*1.6+0.4,
+      size: Math.random()*1.4+0.3,
       color,
       speed: Math.random()*0.06 + 0.01,
       phase: Math.random()*Math.PI*2,
-      twinkle: Math.random() < 0.22,
-      baseAlpha: 0.75 + Math.random()*0.25
+      twinkle: Math.random() < 0.2,
+      baseAlpha: 0.85 + Math.random()*0.15
     });
   }
 }
 createStars();
-
-let lastBrightTime = 0, nextBrightInterval = 7000 + Math.random()*7000;
 function drawStars(time = 0){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(time - lastBrightTime > nextBrightInterval){
-    lastBrightTime = time;
-    nextBrightInterval = 7000 + Math.random()*7000;
-    for(let i=0;i<2;i++){
-      const s = stars[Math.floor(Math.random()*stars.length)];
-      s.isBright = true;
-      s.brightStart = time;
-      s.brightEnd = time + 1200 + Math.random()*1600;
-    }
-  }
   for(const s of stars){
     let alpha = s.baseAlpha;
-    if(s.twinkle) alpha = 0.45 + 0.45*Math.abs(Math.sin(time*0.002 + s.phase));
-    if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
-    else s.isBright = false;
+    if(s.twinkle) alpha = 0.5 + 0.4*Math.abs(Math.sin(time*0.002 + s.phase));
     ctx.beginPath();
     ctx.globalAlpha = alpha;
     ctx.fillStyle = s.color;
@@ -193,325 +166,87 @@ function drawStars(time = 0){
 }
 requestAnimationFrame(drawStars);
 
-/* ===== FETCH PRICES (CSV) ===== */
-let priceList = {};       // map: normalizedLowerName -> price (integer)
-let canonicalNames = {};  // map normalized -> canonical display name (for nicer display)
-async function fetchPrices(){
-  try {
-    const res = await fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv');
-    const txt = await res.text();
-    const rows = txt.split(/\r?\n/).slice(1); // skip header
-    for(let i=0;i<rows.length;i++){
-      if(i > 500) break; // safety
-      const row = rows[i].trim();
-      if(!row) continue;
-      const cols = row.split(',');
-      const name = cols[0].trim();
-      if(!name) continue;
-      const suggested = parseFloat(cols[cols.length-2]);
-      const normalized = name.toLowerCase().replace(/\s+/g,' ').trim();
-      if(!isNaN(suggested)){
-        priceList[normalized] = Math.round(suggested);
-        canonicalNames[normalized] = name;
-      } else {
-        canonicalNames[normalized] = name;
-      }
-    }
-    buildOreMatcher();
-  } catch(e){
-    console.error('Failed to fetch prices.csv', e);
-  }
-}
-function buildOreMatcher(){
-  oreEntries = Object.keys(canonicalNames || {}).map(k => {
-    return { key: k, tokens: k.split(/\s+/).length, length: k.length };
-  });
-  oreEntries.sort((a,b)=> (b.tokens - a.tokens) || (b.length - a.length));
-}
-let oreEntries = [];
-
-/* ===== HELPERS ===== */
-function formatNumber(n){
-  if(n === null || n === undefined || n === '-') return '-';
-  if(typeof n !== 'number') return String(n);
-  return n.toLocaleString();
-}
-function makeTotalCopyable(el){
-  if(!el) return;
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', async ()=>{
-    try {
-      await navigator.clipboard.writeText(el.innerText.replace(/[^0-9]/g,''));
-      const original = el.innerText;
-      el.innerText = 'Copied';
-      setTimeout(()=> el.innerText = original, 1200);
-    } catch(e){}
-  });
-}
-
-/* ===== PARSER: robust matching + strip 'compressed' for lookup ===== */
-function parseInventoryText(text){
-  const lines = text.split(/\r?\n/);
-  const inventory = [];
-
-  for(const rawLine of lines){
-    const line = rawLine.trim();
-    if(!line) continue;
-
-    const tokens = line.split(/\s+/).filter(Boolean);
-
-    let matched = null;
-    let matchedStart = -1, matchedEnd = -1;
-
-    outer:
-    for(let start = 0; start < tokens.length; start++){
-      for(const entry of oreEntries){
-        const nc = entry.key; // normalized canonical (lower-case)
-        const tokenCount = entry.tokens;
-        if(start + tokenCount -1 >= tokens.length) continue;
-        const candidateRaw = tokens.slice(start, start + tokenCount).join(' ').replace(/,+/g,'').toLowerCase();
-        const candidate = candidateRaw;
-        const candidateStripped = candidate.replace(/^compressed\s+|^comp\.?\s+/i, '').trim();
-        if(candidate === nc || candidateStripped === nc){
-          matched = nc;
-          matchedStart = start;
-          matchedEnd = start + tokenCount - 1;
-          break outer;
-        }
-      }
-    }
-
-    if(!matched){
-      // try simple prefixes up to 4 tokens (strip compressed prefix optionally)
-      for(let len = Math.min(6, tokens.length); len >=1; len--){
-        let pref = tokens.slice(0,len).join(' ').replace(/,+/g,'').toLowerCase();
-        const prefStripped = pref.replace(/^compressed\s+|^comp\.?\s+/i, '').trim();
-        if(priceList[pref] !== undefined || canonicalNames[pref] || priceList[prefStripped] !== undefined || canonicalNames[prefStripped]){
-          matched = priceList[pref] !== undefined ? pref : (priceList[prefStripped] !== undefined ? prefStripped : pref);
-          matchedStart = 0; matchedEnd = len - 1;
-          break;
-        }
-      }
-    }
-
-    if(!matched){
-      const nameGuess = tokens.slice(0,4).join(' ');
-      inventory.push({ name: nameGuess, qty: 0, m3: null, isk: null, unrecognized: true });
-      continue;
-    }
-
-    // matched is normalized key (or pref). Now scan following tokens for qty/m3/isk
-    let qty = null, m3 = null, isk = null;
-    function cleanNumTok(tok){ return tok.replace(/,/g,'').replace(/[^0-9.\-]/g,'').trim(); }
-
-    for(let i = matchedEnd + 1; i < tokens.length; i++){
-      const tok = tokens[i];
-      if(/m3|m³/i.test(tok)){
-        const prev = tokens[i-1] || '';
-        const val = parseFloat(cleanNumTok(prev));
-        if(!isNaN(val) && m3 === null) m3 = val;
-        continue;
-      }
-      if(/isk/i.test(tok)){
-        const prev = tokens[i-1] || '';
-        const val = parseFloat(cleanNumTok(prev));
-        if(!isNaN(val) && isk === null) isk = val;
-        continue;
-      }
-      const numeric = cleanNumTok(tok);
-      if(numeric === '') continue;
-      if(/^\d+$/.test(numeric) && qty === null){ qty = parseInt(numeric,10); continue; }
-      if(/^[\d,]+\.\d+$/.test(tok) || /^[\d,]+\.\d+$/.test(numeric) || /^[\d,]+$/.test(tok)){
-        const val = parseFloat(numeric);
-        const next = tokens[i+1] || '';
-        if(/m3|m³/i.test(next) && m3 === null){ m3 = val; i++; continue; }
-        if(/isk/i.test(next) && isk === null){ isk = val; i++; continue; }
-        if(qty === null && /^\d+$/.test(numeric)){ qty = parseInt(numeric,10); continue; }
-        if((val > 1000 || numeric.indexOf('.') !== -1) && isk === null){ isk = val; continue; }
-        if(qty === null){ qty = parseInt(Math.round(val),10); continue; }
-      }
-    }
-
-    if(qty === null){
-      for(let i=0;i<tokens.length;i++){
-        const numeric = cleanNumTok(tokens[i]);
-        if(/^\d+$/.test(numeric)){ qty = parseInt(numeric,10); break; }
-      }
-    }
-
-    // prepare displayName: use canonicalNames if available, but keep 'Comp.' short form
-    const canonical = canonicalNames[matched] || matched;
-    const displayName = canonical.replace(/^compressed /i, 'Comp. ').replace(/\b([a-z])/g, (m)=>m);
-
-    inventory.push({ name: displayName, qty: qty || 0, m3: m3, isk: isk, unrecognized: false });
-  }
-
-  return inventory;
-}
-
-/* ===== RENDER SUMMARY ===== */
-function renderSummary(items, options = {sharedView:false}){
-  const summaryContainer = document.getElementById('summaryContainer');
-  let rowsHTML = '<table class="summary-table" role="table"><thead><tr><th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
-
-  let grandTotal = 0;
-  items.forEach(it => {
-    if(it.unrecognized){
-      const truncated = (it.name || '').slice(0,10) + (it.name && it.name.length > 10 ? '…' : '');
-      rowsHTML += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
-      return;
-    }
-
-    // lookup: try exact normalized, and also try stripping 'comp' prefix
-    const lookupKeyCandidate = (it.name || '').toLowerCase().replace(/\s+/g,' ').trim();
-    let normalizedKey = Object.keys(canonicalNames).find(k=>k === lookupKeyCandidate) || Object.keys(canonicalNames).find(k=>canonicalNames[k].toLowerCase() === (it.name || '').toLowerCase());
-    if(!normalizedKey){
-      const stripped = lookupKeyCandidate.replace(/^compressed\s+|^comp\.?\s+/i, '').trim();
-      normalizedKey = Object.keys(canonicalNames).find(k=>k === stripped) || Object.keys(canonicalNames).find(k=>canonicalNames[k].toLowerCase() === stripped);
-    }
-    const price = normalizedKey ? (priceList[normalizedKey] || 0) : (priceList[lookupKeyCandidate] || 0);
-    const total = (price && it.qty) ? Math.round(price * it.qty) : 0;
-    grandTotal += total;
-
-    rowsHTML += `<tr><td>${escapeHtml(it.name)}</td><td class="price">${formatNumber(price)}</td><td class="quantity">${formatNumber(it.qty)}</td><td class="total-column">${formatNumber(total)}</td></tr>`;
-  });
-
-  rowsHTML += `<tr class="summary-total"><td colspan="3" style="text-align:left">Total</td><td id="summaryTotal">${formatNumber(grandTotal)}</td></tr></tbody></table>`;
-
-  summaryContainer.innerHTML = rowsHTML;
-  if(options.sharedView){ summaryContainer.classList.add('shared-ledger'); } else { summaryContainer.classList.remove('shared-ledger'); }
-  summaryContainer.style.display = 'flex';
-
-  document.getElementById('leftContainer').style.display = options.sharedView ? 'none' : 'block';
-  document.getElementById('totalCostContainer').style.display = options.sharedView ? 'none' : 'flex';
-  document.getElementById('shareButton').style.display = options.sharedView ? 'none' : 'inline-block';
-
-  const totalTextEl = document.getElementById('totalCostText');
-  totalTextEl.innerText = formatNumber(grandTotal) + ' ISK';
-  if(!options.sharedView){ makeTotalCopyable(totalTextEl); }
-
-  const summaryTotalEl = document.getElementById('summaryTotal');
-  if(summaryTotalEl) makeTotalCopyable(summaryTotalEl);
-
-  attachSorting(summaryContainer);
-}
-
-/* ===== safe escape ===== */
-function escapeHtml(s){ if(s===null || s===undefined) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* ===== SORTING ===== */
-function attachSorting(container){
-  const table = container.querySelector('table');
-  if(!table) return;
-  const headers = table.querySelectorAll('th');
-  headers.forEach((header, index) => {
-    header.style.cursor = 'pointer';
-    header.addEventListener('click', ()=>{
-      const tbody = table.querySelector('tbody');
-      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('summary-total'));
-      const totalRow = tbody.querySelector('.summary-total');
-      const ascending = !header.classList.contains('sorted-asc');
-      headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
-      header.classList.add('sorted'); header.classList.toggle('sorted-asc', ascending); header.classList.toggle('sorted-desc', !ascending);
-      rows.sort((a,b)=>{
-        if(a.classList.contains('unrecognized') && !b.classList.contains('unrecognized')) return 1;
-        if(b.classList.contains('unrecognized') && !a.classList.contains('unrecognized')) return -1;
-        if(index === 0){ return ascending ? a.children[index].innerText.localeCompare(b.children[index].innerText) : b.children[index].innerText.localeCompare(a.children[index].innerText); }
-        const A = a.children[index].innerText.replace(/[^0-9.\-]/g,'');
-        const B = b.children[index].innerText.replace(/[^0-9.\-]/g,'');
-        const nA = parseFloat(A || 0); const nB = parseFloat(B || 0);
-        return ascending ? nA - nB : nB - nA;
-      });
-      rows.forEach(r=>tbody.appendChild(r)); if(totalRow) tbody.appendChild(totalRow);
-    });
-  });
-}
-
-/* ===== SHOW CONTENT FLOW ===== */
-function showContent(prefillText){
-  const t = prefillText || document.getElementById('message').value || '';
-  const parsed = parseInventoryText(t);
-  const isShared = !!prefillText;
-  renderSummary(parsed, { sharedView: isShared });
-  if(!isShared){
-    document.querySelector('.main-container').style.display = 'none';
-    document.getElementById('leftContainer').style.display = 'block';
-    document.getElementById('totalCostContainer').style.display = 'flex';
-    document.getElementById('shareButton').style.display = 'inline-block';
-  } else {
-    document.querySelector('.main-container').style.display = 'none';
-    document.getElementById('leftContainer').style.display = 'none';
-    document.getElementById('totalCostContainer').style.display = 'none';
-    document.getElementById('shareButton').style.display = 'none';
-  }
-}
-
-/* ===== PRICE TAB ICON + Floating Pricelist ===== */
-const priceTab = document.getElementById('priceTab');
-const priceListContainer = document.getElementById('priceListContainer');
-// inject a Z-with-middle-bar svg into priceTab
-priceTab.innerHTML = `
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <g transform="translate(10,10) scale(0.8)" fill="none" stroke="#001100" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
-      <!-- big Z -->
-      <path d="M10 10 L80 10 L20 90 L90 90" stroke="#001100" />
-    </g>
-    <!-- middle short horizontal bar -->
-    <line x1="22" y1="49" x2="58" y2="49" stroke="#001100" stroke-width="8" stroke-linecap="round" />
-  </svg>
-`;
-priceTab.addEventListener('click', ()=> {
-  if(priceListContainer.style.display === 'block'){
-    priceListContainer.style.display = 'none'; priceListContainer.setAttribute('aria-hidden','true');
-  } else {
-    fillPriceList(); priceListContainer.style.display = 'block'; priceListContainer.setAttribute('aria-hidden','false');
-  }
+/* ===== INVENTORY CLEAR ON CLICK ===== */
+const messageBox = document.getElementById('message');
+messageBox.addEventListener('focus', ()=>{
+  messageBox.value='';
+  document.getElementById('submitButton').disabled=true;
 });
-function fillPriceList(){
-  const entries = Object.keys(canonicalNames || {}).map(k => ({ key: k, name: canonicalNames[k], price: priceList[k] || 0 }));
-  entries.sort((a,b)=> a.name.localeCompare(b.name));
-  let html = '<table><thead><tr><th>Ore</th><th>Price</th></tr></thead><tbody>';
-  for(const e of entries){ html += `<tr><td>${escapeHtml(e.name)}</td><td style="text-align:right">${formatNumber(e.price)}</td></tr>`; }
-  html += '</tbody></table>';
+messageBox.addEventListener('input', ()=>{
+  document.getElementById('submitButton').disabled=messageBox.value.trim()==='';
+});
+
+/* ===== SAMPLE PRICES ===== */
+const priceListRaw = {
+  "Ytirium": 4.55,
+  "Gneiss": 1.25,
+  "Obsidian Ochre": 0.89,
+  "Eifyrium": 2.45,
+  "Dark Ochre": 1.12,
+  "Jet Ochre": 0.88,
+  "Prize Mordunium": 6.55,
+  "Pellucid Crokite": 1.01,
+  "Ducinium": 1.55,
+  "Compressed Ytirium": 5,
+  "Compressed Gneiss": 2
+};
+
+/* ===== BASE ORE FILTER & SORT ===== */
+function buildBasePriceList(raw){
+  const baseSet = new Set();
+  Object.keys(raw).forEach(k=>{
+    if(!k.toLowerCase().includes('compressed')) baseSet.add(k);
+  });
+  const baseArray = Array.from(baseSet).sort();
+  const finalList = baseArray.map(base=>{
+    const variants = Object.keys(raw).filter(x=>x.toLowerCase().includes(base.toLowerCase()) && !x.toLowerCase().includes('compressed'));
+    return {base, price: raw[variants[0]] || 0};
+  });
+  return finalList;
+}
+
+/* ===== RENDER PRICE LIST ===== */
+const priceListContainer = document.getElementById('priceListContainer');
+function renderPriceList(){
+  const list = buildBasePriceList(priceListRaw);
+  let html = '<table><tr><th>Ore</th><th>Price</th></tr>';
+  list.forEach(o=>{
+    html += `<tr><td>${o.base}</td><td>${o.price}</td></tr>`;
+  });
+  html += '</table>';
   priceListContainer.innerHTML = html;
 }
+renderPriceList();
 
-/* ===== SUBMIT / SHARE / LOGIC ===== */
-const submitBtn = document.getElementById('submitButton');
-const messageBox = document.getElementById('message');
-
-messageBox.addEventListener('input', ()=>{ submitBtn.disabled = messageBox.value.trim() === ''; });
-
-submitBtn.addEventListener('click', ()=>{ showContent(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-
-document.getElementById('shareButton').addEventListener('click', async ()=>{
-  const msg = document.getElementById('message').value.trim(); if(!msg) return;
-  const compressed = LZString.compressToEncodedURIComponent(msg);
-  const url = `${location.origin}${location.pathname}?s=${compressed}`;
-  try { await navigator.clipboard.writeText(url); const btn = document.getElementById('shareButton'); const orig = btn.innerText; btn.innerText = 'Copied'; setTimeout(()=> btn.innerText = orig, 1400); } catch(e){ alert('Failed to copy URL.'); console.error(e); }
+/* ===== TOGGLE PRICE LIST ===== */
+document.getElementById('priceTab').addEventListener('click', ()=>{
+  if(priceListContainer.style.display==='none') priceListContainer.style.display='block';
+  else priceListContainer.style.display='none';
 });
 
-/* ===== AUTO-LOAD FROM URL (shared view) ===== */
-window.addEventListener('load', ()=>{
-  fetchPrices().then(()=>{
-    const params = new URLSearchParams(window.location.search);
-    const s = params.get('s');
-    if(s){ const text = LZString.decompressFromEncodedURIComponent(s); if(text){ showContent(text); const summaryContainer = document.getElementById('summaryContainer'); summaryContainer.classList.add('shared-ledger'); priceListContainer.style.display = 'none'; } }
+/* ===== RENDER SUMMARY ===== */
+const summaryContainer = document.getElementById('summaryContainer');
+function renderSummary(text){
+  const lines = text.trim().split(/\r?\n/).filter(l=>l.trim()!=='');
+  let total = 0;
+  let html = '<table class="summary-table"><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
+  lines.forEach(line=>{
+    const parts = line.split(/\t+/);
+    if(parts.length<2) return;
+    const name = parts[0].trim(), qty = parseInt(parts[1].replace(/,/g,'')) || 0;
+    const price = priceListRaw[name] || 0;
+    const t = qty*price;
+    total += t;
+    html += `<tr><td>${name}</td><td class="quantity">${qty.toLocaleString()}</td><td class="price">${price.toLocaleString()}</td><td class="total-column">${t.toLocaleString()}</td></tr>`;
   });
-  // ensure submit button initial state
-  submitBtn.disabled = messageBox.value.trim() === '';
-});
+  html += `<tr class="summary-total"><td colspan="3">Total</td><td>${total.toLocaleString()}</td></tr></table>`;
+  summaryContainer.innerHTML = html;
+  summaryContainer.style.display='flex';
+}
 
-/* ===== LOGO CLICK (restore original behavior) ===== */
-document.getElementById('myHeader').addEventListener('click', ()=>{ window.location.href = window.location.origin + window.location.pathname; });
-
-/* ===== LOGO ANIMATION ===== */
-window.addEventListener('load', ()=>{
-  const ore = document.getElementById('ore'), stellar = document.getElementById('stellar');
-  ore.style.animation = 'flickerRapid 0.3s linear forwards';
-  setTimeout(()=> { ore.style.animation = 'softGlow 6s infinite'; }, 300);
-  setTimeout(()=>{ stellar.style.animation = 'flickerRapid 0.3s linear forwards'; setTimeout(()=>{ stellar.style.animation = 'softGlow 6s infinite'; }, 300); },400);
-  setTimeout(()=>{ ore.style.animation = 'flickerQuick 0.3s linear forwards'; stellar.style.animation = 'flickerQuick 0.3s linear forwards'; setTimeout(()=>{ ore.style.animation='softGlow 6s infinite'; stellar.style.animation='softGlow 6s infinite'; },300); },1100);
+/* ===== SUBMIT ACTION ===== */
+document.getElementById('submitButton').addEventListener('click', ()=>{
+  renderSummary(messageBox.value);
 });
 </script>
 </body>
