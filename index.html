@@ -8,11 +8,9 @@
 <!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
-<!-- LZString for URL compression -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
 <style>
-/* ===== BASE ===== */
 html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#000;font-family:monospace;color:#fff;}
 canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
@@ -21,17 +19,15 @@ canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;po
 
 /* Logo */
 #myHeader{display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;width:100%;max-width:650px;margin-bottom:30px;cursor:pointer;z-index:2;}
-#logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
-#logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
+#logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);animation:softGlow 3s infinite alternate;}
+#logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;animation:flickerRapid 1.5s infinite alternate;}
 @keyframes softGlow{0%,100%{text-shadow:0 0 5px #fff;color:rgba(255,255,255,0.75);}50%{text-shadow:0 0 15px #fff;color:rgba(255,255,255,1);}}
 @keyframes flickerRapid{0%,20%,40%,60%,80%,100%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}10%,30%,50%,70%,90%{color: rgba(255,255,255,0.1);text-shadow:none;}}
-@keyframes flickerQuick{0%,50%,100%{color: rgba(255,255,255,0.1);text-shadow:none;}25%,75%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}}
 
 /* Main Container */
 .main-container{width:650px;max-width:90%;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:rgba(20,20,20,0.92);border-radius:15px;z-index:2;}
-.main-container h3#inventoryHeader{font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 12px #fff,0 0 18px #fff,0 0 24px #fff;margin-bottom:12px;}
-.main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:18px;padding:18px;border-radius:10px;resize:vertical;background-color:rgba(17,17,17,0.97);color:#fff;border:1px solid #333;text-align:left;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;}
-.main-container textarea#message::placeholder{color:#fff;opacity:0.6;}
+.main-container h3#inventoryHeader{font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 12px #fff,0 0 18px #fff,0 0 24px #fff;margin-bottom:20px;}
+.main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:14px;color:#999;background-color:rgba(17,17,17,0.97);padding:12px;border-radius:10px;resize:vertical;border:1px solid #333;text-align:left;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;line-height:1.35;}
 textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px #fff,0 0 25px #fff;transition:box-shadow 0.3s ease,border-color 0.3s ease;}
 
 /* Buttons */
@@ -48,8 +44,8 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
 
 /* Price Tab / Icon */
 #priceTab{position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:#00ff00;color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px #00ff00,0 0 30px #00ff00 inset;z-index:30;transition:transform 0.18s ease, right 0.18s ease;font-family:'Orbitron',sans-serif;}
-#priceTab::before{content:"\005A";position:absolute;top:7px;font-size:28px;} /* Z */
-#priceTab::after{content:"";position:absolute;top:21px;width:24px;height:2px;background:#000;} /* horizontal line */
+#priceTab::before{content:"\005A";position:absolute;top:7px;font-size:28px;}
+#priceTab::after{content:"";position:absolute;top:22px;width:18px;height:2px;background:#000;} /* short horizontal, 1px down */
 #priceListContainer{position:fixed;top:18vh;right:78px;width:320px;max-height:60vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid #00ff00;padding:10px;border-radius:10px;display:none;box-shadow:0 0 18px #00ff00;z-index:29;font-family:'Share Tech Mono',monospace;color:#00ff00;}
 #priceListContainer table{width:100%;border-collapse:collapse;}
 #priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.08);font-size:13px;text-align:left;}
@@ -81,17 +77,20 @@ textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px 
   <div class="main-container" id="inventoryContainer">
     <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
     <textarea id="message" rows="8">
-Compressed Ytirium	1304752
-Compressed Gneiss	166047
-Obsidian Ochre	8603
-Eifyrium	8242
-Compressed Dark Ochre	5086
 Compressed Jet Ochre	3750
 Compressed Prize Mordunium	998781
-Pellucid Crokite	2912
+Compressed Pellucid Crokite	2912
 Compressed Ducinium	4985
+Compressed Pristine Jaspet	14237
+Compressed Plunder Mordunium	218348
+Compressed Plum Mordunium	141081
+Hedbergite	3146
+Eifyrium	93
+Jaspet	756
+Gneiss	106
+Glazed Hedbergite	172
     </textarea>
-    <button id="submitButton" class="actionButton" disabled>Submit</button>
+    <button id="submitButton" class="actionButton">Submit</button>
   </div>
 
   <div class="contracts-wrapper">
@@ -119,7 +118,7 @@ function createStars(){
   stars = [];
   const centers = [];
   for(let i=0;i<clusterCount;i++) centers.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height});
-  const total = Math.max(80, Math.floor(canvas.width * canvas.height / 5000)); // spread out
+  const total = Math.max(80, Math.floor(canvas.width * canvas.height / 5000));
   for(let i=0;i<total;i++){
     let x,y;
     if(Math.random() < 0.6){
@@ -166,56 +165,61 @@ function drawStars(time = 0){
 }
 requestAnimationFrame(drawStars);
 
-/* ===== INVENTORY CLEAR ON CLICK ===== */
+/* ===== INVENTORY CLEAR ===== */
 const messageBox = document.getElementById('message');
+const submitBtn = document.getElementById('submitButton');
 messageBox.addEventListener('focus', ()=>{
   messageBox.value='';
-  document.getElementById('submitButton').disabled=true;
+  messageBox.style.color='#ccc';
 });
-messageBox.addEventListener('input', ()=>{
-  document.getElementById('submitButton').disabled=messageBox.value.trim()==='';
+submitBtn.addEventListener('click', ()=>{
+  messageBox.style.color='#999';
+  document.getElementById('inventoryContainer').style.display='none';
+  document.getElementById('leftContainer').style.display='block';
+  document.getElementById('totalCostContainer').style.display='block';
+  renderSummary(messageBox.value);
 });
 
 /* ===== SAMPLE PRICES ===== */
 const priceListRaw = {
-  "Ytirium": 4.55,
-  "Gneiss": 1.25,
-  "Obsidian Ochre": 0.89,
-  "Eifyrium": 2.45,
-  "Dark Ochre": 1.12,
-  "Jet Ochre": 0.88,
-  "Prize Mordunium": 6.55,
-  "Pellucid Crokite": 1.01,
-  "Ducinium": 1.55,
-  "Compressed Ytirium": 5,
-  "Compressed Gneiss": 2
+  "Ytirium":4.55,"Gneiss":1.25,"Obsidian Ochre":0.89,"Eifyrium":2.45,"Dark Ochre":1.12,"Jet Ochre":0.88,
+  "Prize Mordunium":6.55,"Pellucid Crokite":1.01,"Ducinium":1.55,"Pristine Jaspet":1.95,"Plunder Mordunium":5.55,"Plum Mordunium":4.95,
+  "Hedbergite":1.1,"Glazed Hedbergite":1.22,"Jaspet":0.95,
+  "Compressed Ytirium":5,"Compressed Gneiss":2
 };
 
-/* ===== BASE ORE FILTER & SORT ===== */
-function buildBasePriceList(raw){
+/* ===== BASE ORE FILTER & VARIANTS ===== */
+function buildPriceListWithVariants(raw){
   const baseSet = new Set();
   Object.keys(raw).forEach(k=>{
     if(!k.toLowerCase().includes('compressed')) baseSet.add(k);
   });
   const baseArray = Array.from(baseSet).sort();
-  const finalList = baseArray.map(base=>{
+  return baseArray.map(base=>{
     const variants = Object.keys(raw).filter(x=>x.toLowerCase().includes(base.toLowerCase()) && !x.toLowerCase().includes('compressed'));
-    return {base, price: raw[variants[0]] || 0};
+    let price = raw[base] || 0;
+    if(variants.length>0) price = raw[variants[0]] || price;
+    return {base, variants, price};
   });
-  return finalList;
 }
 
 /* ===== RENDER PRICE LIST ===== */
 const priceListContainer = document.getElementById('priceListContainer');
 function renderPriceList(){
-  const list = buildBasePriceList(priceListRaw);
-  let html = '<table><tr><th>Ore</th><th>Price</th></tr>';
+  const list = buildPriceListWithVariants(priceListRaw);
+  let html='<table><tr><th>Ore</th><th>Price</th></tr>';
   list.forEach(o=>{
-    html += `<tr><td>${o.base}</td><td>${o.price}</td></tr>`;
+    html+=`<tr><td>${o.base}</td><td>${o.price}</td></tr>`;
+    if(o.variants.length>1){
+      o.variants.forEach(v=>{
+        if(v!==o.base) html+=`<tr><td> - ${v}</td><td>${rawPrice(v)}</td></tr>`;
+      });
+    }
   });
-  html += '</table>';
-  priceListContainer.innerHTML = html;
+  html+='</table>';
+  priceListContainer.innerHTML=html;
 }
+function rawPrice(name){return priceListRaw[name]||0;}
 renderPriceList();
 
 /* ===== TOGGLE PRICE LIST ===== */
@@ -228,26 +232,22 @@ document.getElementById('priceTab').addEventListener('click', ()=>{
 const summaryContainer = document.getElementById('summaryContainer');
 function renderSummary(text){
   const lines = text.trim().split(/\r?\n/).filter(l=>l.trim()!=='');
-  let total = 0;
-  let html = '<table class="summary-table"><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
+  let total=0;
+  let html='<table class="summary-table"><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
   lines.forEach(line=>{
-    const parts = line.split(/\t+/);
+    const parts=line.split(/\t+/);
     if(parts.length<2) return;
-    const name = parts[0].trim(), qty = parseInt(parts[1].replace(/,/g,'')) || 0;
-    const price = priceListRaw[name] || 0;
-    const t = qty*price;
-    total += t;
-    html += `<tr><td>${name}</td><td class="quantity">${qty.toLocaleString()}</td><td class="price">${price.toLocaleString()}</td><td class="total-column">${t.toLocaleString()}</td></tr>`;
+    const name=parts[0].trim();
+    const qty=parseInt(parts[1].replace(/,/g,''))||0;
+    const price=priceListRaw[name]||0;
+    const t=qty*price;
+    total+=t;
+    html+=`<tr><td>${name}</td><td class="quantity">${qty.toLocaleString()}</td><td class="price">${price.toLocaleString()}</td><td class="total-column">${t.toLocaleString()}</td></tr>`;
   });
-  html += `<tr class="summary-total"><td colspan="3">Total</td><td>${total.toLocaleString()}</td></tr></table>`;
-  summaryContainer.innerHTML = html;
+  html+=`<tr class="summary-total"><td colspan="3">Total</td><td>${total.toLocaleString()}</td></tr></table>`;
+  summaryContainer.innerHTML=html;
   summaryContainer.style.display='flex';
 }
-
-/* ===== SUBMIT ACTION ===== */
-document.getElementById('submitButton').addEventListener('click', ()=>{
-  renderSummary(messageBox.value);
-});
 </script>
 </body>
 </html>
