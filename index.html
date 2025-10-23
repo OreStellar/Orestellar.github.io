@@ -961,16 +961,6 @@ window.addEventListener('load', () => {
     setTimeout(() => setLogo('#ffffff', '0 0 10px #fff, 0 0 20px #fff'), 200);
   }, 1200);
 
-  // Wait 0.4s after the last flicker then one longer flicker
-  setTimeout(() => {
-    setLogo('#ffffff', '0 0 14px #fff, 0 0 28px #fff, 0 0 42px #fff');
-    // then settle into softGlow
-    setTimeout(() => {
-      ore.style.animation = 'softGlow 6s infinite';
-      stellar.style.animation = 'softGlow 6s infinite';
-    }, 300);
-  }, 1600); // 0.6 + 0.6 (two flickers) = 1.2s
-});
 
 </script>
 </body>
