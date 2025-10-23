@@ -319,10 +319,10 @@ function drawStars() {
 function animateStars() {
   const now = performance.now();
   for (const s of stars) {
-    if (Math.random() < 0.002 && !s.isBright) {
+    if (Math.random() < 0.001 && !s.isBright) {
       s.isBright = true;
       s.brightStart = now;
-      s.brightEnd = now + 200 + Math.random() * 300; // twinkle duration
+      s.brightEnd = now + 1500 + Math.random() * 3000; // twinkle duration
     } else if (s.isBright && now > s.brightEnd) {
       s.isBright = false;
     }
