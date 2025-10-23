@@ -586,12 +586,6 @@ function buildPriceGrouping(){
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
   });
 
-  // Sort variants inside groups
-  Object.keys(groupedPriceMap).forEach(base => {
-    groupedPriceMap[base].sort((a,b) => a.name.localeCompare(b.name));
-  });
-}
-
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
