@@ -53,17 +53,23 @@ canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;po
 #logoText{display:inline;font-family:var(--orbitron);font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
 #logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
 
-/* Flicker + soft glow keyframes used via JS sequencing */
-@keyframes softGlowDull {
+@keyframes softGlow {
   0%, 100% {
-    text-shadow: 0 0 8px #bfbfbf, 0 0 16px #bfbfbf, 0 0 24px #bfbfbf;
-    opacity: 1;
+    color: rgba(220,220,220,0.6);
+    text-shadow:
+      0 0 6px #bfbfbf,
+      0 0 12px #bfbfbf,
+      0 0 18px #bfbfbf;
   }
   50% {
-    text-shadow: 0 0 4px #a9a9a9, 0 0 10px #a9a9a9;
-    opacity: 0.8;
+    color: rgba(220,220,220,0.85);
+    text-shadow:
+      0 0 10px #dcdcdc,
+      0 0 18px #dcdcdc,
+      0 0 28px #dcdcdc;
   }
 }
+
 
 /* ================== MAIN PANEL ================== */
 .main-container{
@@ -330,12 +336,6 @@ function drawStars(time = 0){
 }
 requestAnimationFrame(drawStars);
 
-/* ====================== LOGO FLICKER SEQUENCE (DULL WHITE VERSION) ====================== */
-/* Two quick flashes, then one flash, then a soft dull white glow. Controlled via JS for timing accuracy. */
-const logoText = document.getElementById('logoText');
-const oreSpan = document.getElementById('ore');
-const stellarSpan = document.getElementById('stellar');
-
 function setLogoState(color, shadow) {
   logoText.style.color = color;
   logoText.style.textShadow = shadow || 'none';
@@ -343,18 +343,24 @@ function setLogoState(color, shadow) {
 
 /* play the flicker sequence on load */
 function playLogoSequence() {
-  // Start dim and dull
-  setLogoState('rgba(220, 220, 220, 0.15)', 'none');
+  // start dim (dull)
+  setLogoState('rgba(220,220,220,0.15)', 'none');
 
-  // two quick flashes (dull white glow)
-  setTimeout(() => setLogoState('#dcdcdc', '0 0 8px #bfbfbf, 0 0 15px #bfbfbf'), 90);
-  setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 220);
-  setTimeout(() => setLogoState('#dcdcdc', '0 0 8px #bfbfbf, 0 0 15px #bfbfbf'), 340);
-  setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 470);
+  // two quick flashes (dull white)
+  setTimeout(()=> setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 90);
+  setTimeout(()=> setLogoState('rgba(220,220,220,0.15)','none'), 220);
+  setTimeout(()=> setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 340);
+  setTimeout(()=> setLogoState('rgba(220,220,220,0.15)','none'), 470);
 
-  // single longer flash then stay softly glowing
-  setTimeout(() => {
-    setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
+  // single longer flash then softGlow
+  setTimeout(()=>{
+    setLogoState('#dcdcdc','0 0 12px #bfbfbf,0 0 24px #bfbfbf,0 0 36px #bfbfbf');
+    // keep original softGlow animation
+    logoText.style.animation = 'softGlow 6s infinite';
+  }, 620);
+}
+
+window.addEventListener('load', playLogoSequence);
 
 /* clicking logo resets page to base view (like before) */
 document.getElementById('myHeader').addEventListener('click', ()=>{
