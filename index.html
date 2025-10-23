@@ -354,39 +354,40 @@ function setLogoState(color, shadow) {
 document.getElementById('myHeader').addEventListener('click', () => {
   window.location.href = window.location.origin + window.location.pathname;
 });
-
-/* Play flicker sequence on load */
-function playLogoSequence() {
-  // Start fully dim
-  setLogoState('rgba(220,220,220,0.15)', 'none');
-  logoText.style.animation = 'none'; // disable glow initially
-
-  // Stay dim for 1.25 seconds
-  setTimeout(() => {
-    // Two quick flickers (0.2s apart)
-    setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
-    setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
-    setTimeout(() => {
-      setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
-      setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 100);
-    }, 200);
-
-    // After the two flickers, dim for 0.85s, then one single quick flicker
-    setTimeout(() => {
-      setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf');
-      setTimeout(() => setLogoState('rgba(220,220,220,0.15)', 'none'), 120);
-
-      // Finally fade into softGlow forever
-      setTimeout(() => {
-        setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
-        logoText.style.animation = 'softGlow 6s infinite';
-      }, 400);
-    }, 1250); // <-- fixed timing so only one final flicker
-  }, 1250);
+/* ====================== LOGO FLICKER SEQUENCE ====================== */
+function setLogoState(color, shadow) {
+  ore.style.color = color;
+  stellar.style.color = color;
+  ore.style.textShadow = shadow || 'none';
+  stellar.style.textShadow = shadow || 'none';
 }
 
+// flicker sequence: two quick, one single, then soft glow
+function playLogoFlicker() {
+  setLogoState('rgba(255,255,255,0.1)', 'none'); // start dim
+  logoText.style.animation = 'none';
 
-window.addEventListener('load', playLogoSequence);
+  // Two quick flickers
+  setTimeout(() => { setLogoState('#fff', '0 0 10px #fff, 0 0 20px #fff'); }, 1250);
+  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 1350);
+  setTimeout(() => { setLogoState('#fff', '0 0 10px #fff, 0 0 20px #fff'); }, 1450);
+  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 1550);
+
+  // One single flicker
+  setTimeout(() => { setLogoState('#fff', '0 0 12px #fff, 0 0 24px #fff'); }, 2400);
+  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 2520);
+
+  // Fade into softGlow infinite
+  setTimeout(() => {
+    setLogoState('#fff', '0 0 12px #fff, 0 0 24px #fff, 0 0 36px #fff');
+    logoText.style.animation = 'softGlow 6s infinite';
+    ore.style.animation = 'softGlow 6s infinite';
+    stellar.style.animation = 'softGlow 6s infinite';
+  }, 2650);
+}
+
+window.addEventListener('load', playLogoFlicker);
+
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
 /*
