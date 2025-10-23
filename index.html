@@ -968,19 +968,20 @@ function parseIntSafeWithCommas(s){
   if(!m) return 0;
   return parseInt(m[0].replace(/,/g,''),10) || 0;
 }
-document.addEventListener('DOMContentLoaded', () => {
-    const submitButton = document.getElementById('submitButton');
-    const mainContainer = document.getElementById('main-container');
+submitButton.addEventListener('click', ()=>{
+  // double-check we have user content
+  const txt = messageBox.value.trim();
+  if(!txt) return;
+  const parsed = parseInventoryText(txt);
+  renderSummary(parsed);
+  window.scrollTo({ top: 0, behavior:'smooth'});
+  // enable share button
+  shareButton.style.display = 'inline-block';
 
-    if (submitButton && mainContainer) {
-        submitButton.addEventListener('click', () => {
-            mainContainer.style.display = 'none';  // Hide the inventory
-            submitButton.style.display = 'none';   // Hide the submit button
-        });
-    }
+  // HIDE INVENTORY AND SUBMIT
+  document.getElementById('inventoryContainer').style.display = 'none';
+  submitButton.style.display = 'none';
 });
-/* ====================== HOOK UP: price fetch now (already triggered on load) ====================== */
-// fetchPrices();   // fetchPrices is called in the load handler above
 
 </script>
 </body>
