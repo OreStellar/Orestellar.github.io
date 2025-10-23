@@ -242,6 +242,12 @@ Compressed Ducinium	4985
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
+// grab logo elements (important!)
+const logoText = document.getElementById('logoText');
+const ore = document.getElementById('ore');
+const stellar = document.getElementById('stellar');
+
+// resize canvas
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -278,9 +284,9 @@ function createStars() {
 
     const r = Math.random();
     let color = '#ffffff';
-    if (r < 0.005) color = '#ff0000';
-    else if (r < 0.025) color = '#ffb6c1';
-    else if (r < 0.055) color = '#ffff99';
+    if (r < 0.005) color = '#ff0000';      // 0.5% red
+    else if (r < 0.025) color = '#ffb6c1'; // 2% light pink
+    else if (r < 0.055) color = '#ffff99'; // 3% light yellow
 
     stars.push({
       x, y,
@@ -299,15 +305,23 @@ createStars();
 let lastBright = 0, nextBright = 5000 + Math.random() * 7000;
 
 function drawStars(time = 0) {
+  if (!time) time = performance.now();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (const s of stars) {
     let alpha = s.baseAlpha;
 
-    // simple twinkle
-    if (Math.random() < 0.02) alpha = 0.3 + Math.random() * 0.7;
+    // light twinkle (slower, less CPU)
+    if (Math.random() < 0.01) alpha = 0.3 + Math.random() * 0.7;
 
-    // bright star logic
+    // occasional bright flash
+    if (!s.isBright && time > nextBright) {
+      s.isBright = true;
+      s.brightStart = time;
+      s.brightEnd = time + 200 + Math.random() * 200; // bright for 200–400ms
+      nextBright = time + 4000 + Math.random() * 5000; // next flash 4–9s later
+    }
+
     if (s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
     if (s.isBright && time >= s.brightEnd) s.isBright = false;
 
@@ -322,34 +336,39 @@ function drawStars(time = 0) {
 }
 drawStars();
 
+/* ====================== LOGO FLICKER SEQUENCE ====================== */
 function setLogoState(color, shadow) {
-  logoText.style.color = color;
-  logoText.style.textShadow = shadow || 'none';
+  ore.style.color = color;
+  stellar.style.color = color;
+  ore.style.textShadow = shadow || 'none';
+  stellar.style.textShadow = shadow || 'none';
 }
-}
-/* clicking logo resets page to base view (like before) */
-document.getElementById('myHeader').addEventListener('click', ()=>{
-  // reset to base URL (clear query)
+
+/* Clicking the header resets to base view */
+document.getElementById('myHeader').addEventListener('click', () => {
   window.location.href = window.location.origin + window.location.pathname;
 });
-/* play the flicker sequence on load */
+
+/* Play flicker sequence on load */
 function playLogoSequence() {
-  // start dim (dull)
+  // Start dim
   setLogoState('rgba(220,220,220,0.15)', 'none');
 
-  // two quick flashes (dull white)
-  setTimeout(()=> setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 90);
-  setTimeout(()=> setLogoState('rgba(220,220,220,0.15)','none'), 220);
-  setTimeout(()=> setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 340);
-  setTimeout(()=> setLogoState('rgba(220,220,220,0.15)','none'), 470);
+  // Two quick flashes
+  setTimeout(() => setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 90);
+  setTimeout(() => setLogoState('rgba(220,220,220,0.15)','none'), 220);
+  setTimeout(() => setLogoState('#dcdcdc','0 0 10px #bfbfbf,0 0 18px #bfbfbf'), 340);
+  setTimeout(() => setLogoState('rgba(220,220,220,0.15)','none'), 470);
 
-  // single longer flash then softGlow
-  setTimeout(()=>{
+  // One longer flash, then softGlow forever
+  setTimeout(() => {
     setLogoState('#dcdcdc','0 0 12px #bfbfbf,0 0 24px #bfbfbf,0 0 36px #bfbfbf');
-    // keep original softGlow animation
     logoText.style.animation = 'softGlow 6s infinite';
   }, 620);
 }
+
+window.addEventListener('load', playLogoSequence);
+
 /* ====================== CSV PRICES (load & normalize) ====================== */
 /*
   We will:
