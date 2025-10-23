@@ -365,26 +365,19 @@ document.getElementById('myHeader').addEventListener('click', () => {
 });
 
 function flickerLogo() {
-  // Steps: { color, shadow, delay }
   const steps = [
-    // Initial dim for 1.5s
+    // Initial dim for 1.2 seconds
     { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
-
-    // First quick flash (.25s after dim)
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1500 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1700 },
-
-    // Second quick flash (.25s)
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1950 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2200 },
-
-    // Dim for .75s
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2200 }, // start of dim
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 2950 }, // end of dim
-
-    // One final flash
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf', delay: 3000 },
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 3250 }
+    // Two quick flashes, 10ms each
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1200 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1210 },
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1220 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 },
+    // Dim for 0.45 seconds
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 + 450 },
+    // One quick 20ms flash
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 1230 + 450 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1230 + 450 + 20 },
   ];
 
   steps.forEach(step => {
@@ -398,14 +391,15 @@ function flickerLogo() {
     }, step.delay);
   });
 
-  // Start steady softGlow after final step
+  // Start softGlow after final step
   setTimeout(() => {
     const glowAnim = 'softGlow 6s infinite';
     logoText.style.animation = glowAnim;
     ore.style.animation = glowAnim;
     stellar.style.animation = glowAnim;
-  }, 3500); // after last flash
+  }, 1230 + 450 + 20); // end of last step
 }
+
 
 
 
