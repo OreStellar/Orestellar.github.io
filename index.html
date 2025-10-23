@@ -253,7 +253,7 @@ resizeCanvas();
 window.addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
 
 let stars = [];
-let clusterCount = 10;
+let clusterCount = 100;
 
 function createStars(){
   stars = [];
@@ -279,11 +279,14 @@ function createStars(){
     }
 
     // color distribution: red 5%, pink 3%, blue 2%, rest white
-    const r = Math.random();
-    let color = '#ffffff';
-    if(r < 0.05) color = '#ff0000';
-    else if(r < 0.08) color = '#ff77ff';
-    else if(r < 0.10) color = '#00ffff';
+const r = Math.random();
+let color = '#ffffff'; // default white
+
+if(r < 0.0001) color = '#ff0000';         // 0.01% red
+else if(r < 0.0201) color = '#ffb6c1';    // 2% light pink
+else if(r < 0.0301) color = '#add8ff';    // 1% light blue
+else if(r < 0.0801) color = '#ffff99';    // 5% light yellow
+// rest (≈91.98%) will be white
 
     stars.push({
       x, y,
