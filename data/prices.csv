@@ -1,204 +1,204 @@
 Ore Variant,Weight (m³),Compressed Weight (m³),ISK per m³,Refined Value 91%,Hauling Cost,Profit,Return %,Notes,Suggested Buy Price @ 120%,Suggested Buy Price @ 150%,Suggested Buy Price @ 200%
-Arkonor,16.0,0.16,363.83,331,163,5326,11.77,,4714,3771,2828
-Compressed Arkonor,16.0,0.16,363.83,331,163,5326,11.77,,4714,3771,2828
-Crimson Arkonor,16.0,0.16,382.02,347,163,5601,11.96,,4957,3965,2974
-Compressed Crimson Arkonor,16.0,0.16,382.02,347,163,5601,11.96,,4957,3965,2974
-Prime Arkonor,16.0,0.16,400.21,364,163,5875,12.13,,5199,4159,3119
-Compressed Prime Arkonor,16.0,0.16,400.21,364,163,5875,12.13,,5199,4159,3119
-Flawless Arkonor,16.0,0.16,418.4,380,163,6149,12.29, 🏆 Top Performer,5442,4353,3265
-Compressed Flawless Arkonor,16.0,0.16,418.4,380,163,6149,12.29, 🏆 Top Performer,5442,4353,3265
-Bistot,16.0,0.16,269.6,245,162,3905,10.58,,3459,2767,2075
-Compressed Bistot,16.0,0.16,269.6,245,162,3905,10.58,,3459,2767,2075
-Triclinic Bistot,16.0,0.16,283.08,257,162,4109,10.78,,3638,2911,2183
-Compressed Triclinic Bistot,16.0,0.16,283.08,257,162,4109,10.78,,3638,2911,2183
-Monoclinic Bistot,16.0,0.16,296.56,269,162,4312,10.97,,3818,3054,2291
-Compressed Monoclinic Bistot,16.0,0.16,296.56,269,162,4312,10.97,,3818,3054,2291
-Cubic Bistot,16.0,0.16,310.04,282,162,4515,11.15, 🏆 Top Performer,3998,3198,2398
-Compressed Cubic Bistot,16.0,0.16,310.04,282,162,4515,11.15, 🏆 Top Performer,3998,3198,2398
-Crokite,16.0,0.16,651.5,592,165,9665,13.74,,8548,6838,5129
-Compressed Crokite,16.0,0.16,651.5,592,165,9665,13.74,,8548,6838,5129
-Sharp Crokite,16.0,0.16,684.08,622,166,10156,13.88,,8982,7186,5389
-Compressed Sharp Crokite,16.0,0.16,684.08,622,166,10156,13.88,,8982,7186,5389
-Crystalline Crokite,16.0,0.16,716.65,652,166,10647,14.01,,9416,7533,5649
-Compressed Crystalline Crokite,16.0,0.16,716.65,652,166,10647,14.01,,9416,7533,5649
-Pellucid Crokite,16.0,0.16,749.22,681,166,11138,14.13, 🏆 Top Performer,9850,7880,5910
-Compressed Pellucid Crokite,16.0,0.16,749.22,681,166,11138,14.13, 🏆 Top Performer,9850,7880,5910
-Dark Ochre,8.0,0.08,1014.9,923,89,7106,8.02,,6691,5353,4014
-Compressed Dark Ochre,8.0,0.08,1014.9,923,89,7106,8.02,,6691,5353,4014
-Onyx Ochre,8.0,0.08,1065.6,969,89,7465,8.05,,7029,5623,4217
-Compressed Onyx Ochre,8.0,0.08,1065.6,969,89,7465,8.05,,7029,5623,4217
-Obsidian Ochre,8.0,0.08,1116.3,1015,90,7824,8.07,,7366,5893,4420
-Compressed Obsidian Ochre,8.0,0.08,1116.3,1015,90,7824,8.07,,7366,5893,4420
-Jet Ochre,8.0,0.08,1167.1,1062,90,8184,8.1, 🏆 Top Performer,7705,6164,4623
-Compressed Jet Ochre,8.0,0.08,1167.1,1062,90,8184,8.1, 🏆 Top Performer,7705,6164,4623
-Ducinium,16.0,0.16,366.67,333,163,5369,11.8,,4752,3802,2851
-Compressed Ducinium,16.0,0.16,366.67,333,163,5369,11.8,,4752,3802,2851
-Noble Ducinium,16.0,0.16,385.0,350,163,5646,11.99,,4997,3997,2998
-Compressed Noble Ducinium,16.0,0.16,385.0,350,163,5646,11.99,,4997,3997,2998
-Royal Ducinium,16.0,0.16,403.34,367,163,5922,12.16,,5241,4193,3144
-Compressed Royal Ducinium,16.0,0.16,403.34,367,163,5922,12.16,,5241,4193,3144
-Imperial Ducinium,16.0,0.16,421.67,383,163,6199,12.32, 🏆 Top Performer,5485,4388,3291
-Compressed Imperial Ducinium,16.0,0.16,421.67,383,163,6199,12.32, 🏆 Top Performer,5485,4388,3291
-Eifyrium,16.0,0.16,273.65,249,162,3966,10.64,,3513,2810,2107
-Compressed Eifyrium,16.0,0.16,273.65,249,162,3966,10.64,,3513,2810,2107
-Doped Eifyrium,16.0,0.16,287.33,261,162,4173,10.84,,3695,2956,2217
-Compressed Doped Eifyrium,16.0,0.16,287.33,261,162,4173,10.84,,3695,2956,2217
-Boosted Eifyrium,16.0,0.16,301.01,273,162,4379,11.03,,3877,3102,2326
-Compressed Boosted Eifyrium,16.0,0.16,301.01,273,162,4379,11.03,,3877,3102,2326
-Augmented Eifyrium,16.0,0.16,314.69,286,162,4585,11.21, 🏆 Top Performer,4060,3248,2436
-Compressed Augmented Eifyrium,16.0,0.16,314.69,286,162,4585,11.21, 🏆 Top Performer,4060,3248,2436
-Gneiss,5.0,0.05,794.56,723,57,3192,5.09,,3262,2610,1957
-Compressed Gneiss,5.0,0.05,794.56,723,57,3192,5.09,,3262,2610,1957
-Iridescent Gneiss,5.0,0.05,834.29,759,57,3354,5.11,,3428,2742,2056
-Compressed Iridescent Gneiss,5.0,0.05,834.29,759,57,3354,5.11,,3428,2742,2056
-Prismatic Gneiss,5.0,0.05,874.02,795,57,3516,5.12,,3593,2874,2156
-Compressed Prismatic Gneiss,5.0,0.05,874.02,795,57,3516,5.12,,3593,2874,2156
-Brilliant Gneiss,5.0,0.05,913.74,831,58,3678,5.13, 🏆 Top Performer,3758,3006,2255
-Compressed Brilliant Gneiss,5.0,0.05,913.74,831,58,3678,5.13, 🏆 Top Performer,3758,3006,2255
-Griemeer,0.8,0.008,322.41,293,10,-46,0.85,⚠️ Low Return,205,164,123
-Compressed Griemeer,0.8,0.008,322.41,293,10,-46,0.85,⚠️ Low Return,205,164,123
-Clear Griemeer,0.8,0.008,338.53,308,11,-48,0.85,⚠️ Low Return,216,173,129
-Compressed Clear Griemeer,0.8,0.008,338.53,308,11,-48,0.85,⚠️ Low Return,216,173,129
-Inky Griemeer,0.8,0.008,354.65,322,11,-50,0.85,⚠️ Low Return,227,181,136
-Compressed Inky Griemeer,0.8,0.008,354.65,322,11,-50,0.85,⚠️ Low Return,227,181,136
-Opaque Griemeer,0.8,0.008,370.77,337,11,-52,0.85,⚠️ Low Return 🏆 Top Performer,237,190,142
-Compressed Opaque Griemeer,0.8,0.008,370.77,337,11,-52,0.85,⚠️ Low Return 🏆 Top Performer,237,190,142
-Hedbergite,3.0,0.03,494.2,449,34,998,3.06,,1206,965,724
-Compressed Hedbergite,3.0,0.03,494.2,449,34,998,3.06,,1206,965,724
-Vitric Hedbergite,3.0,0.03,518.91,472,34,1049,3.07,,1268,1014,761
-Compressed Vitric Hedbergite,3.0,0.03,518.91,472,34,1049,3.07,,1268,1014,761
-Glazed Hedbergite,3.0,0.03,543.62,494,34,1101,3.08,,1329,1063,797
-Compressed Glazed Hedbergite,3.0,0.03,543.62,494,34,1101,3.08,,1329,1063,797
-Lustrous Hedbergite,3.0,0.03,568.33,517,35,1152,3.09, 🏆 Top Performer,1391,1113,834
-Compressed Lustrous Hedbergite,3.0,0.03,568.33,517,35,1152,3.09, 🏆 Top Performer,1391,1113,834
-Hemorphite,3.0,0.03,584.18,531,35,1185,3.09,,1431,1144,858
-Compressed Hemorphite,3.0,0.03,584.18,531,35,1185,3.09,,1431,1144,858
-Vivid Hemorphite,3.0,0.03,613.39,558,35,1246,3.1,,1503,1203,902
-Compressed Vivid Hemorphite,3.0,0.03,613.39,558,35,1246,3.1,,1503,1203,902
-Radiant Hemorphite,3.0,0.03,642.6,584,35,1307,3.11,,1576,1261,945
-Compressed Radiant Hemorphite,3.0,0.03,642.6,584,35,1307,3.11,,1576,1261,945
-Scintillating Hemorphite,3.0,0.03,671.81,611,36,1367,3.11, 🏆 Top Performer,1649,1319,989
-Compressed Scintillating Hemorphite,3.0,0.03,671.81,611,36,1367,3.11, 🏆 Top Performer,1649,1319,989
-Hezorime,5.0,0.05,288.74,262,52,1128,4.58,,1159,927,695
-Compressed Hezorime,5.0,0.05,288.74,262,52,1128,4.58,,1159,927,695
-Dull Hezorime,5.0,0.05,303.18,275,52,1187,4.61,,1219,975,731
-Compressed Dull Hezorime,5.0,0.05,303.18,275,52,1187,4.61,,1219,975,731
-Serrated Hezorime,5.0,0.05,317.62,289,52,1246,4.64,,1279,1023,767
-Compressed Serrated Hezorime,5.0,0.05,317.62,289,52,1246,4.64,,1279,1023,767
-Sharp Hezorime,5.0,0.05,332.06,302,53,1305,4.67, 🏆 Top Performer,1339,1071,803
-Compressed Sharp Hezorime,5.0,0.05,332.06,302,53,1305,4.67, 🏆 Top Performer,1339,1071,803
-Jaspet,2.0,0.02,325.75,296,22,332,2.04,,523,419,314
-Compressed Jaspet,2.0,0.02,325.75,296,22,332,2.04,,523,419,314
-Pure Jaspet,2.0,0.02,342.04,311,23,349,2.05,,550,440,330
-Compressed Pure Jaspet,2.0,0.02,342.04,311,23,349,2.05,,550,440,330
-Pristine Jaspet,2.0,0.02,358.33,326,23,367,2.05,,577,462,346
-Compressed Pristine Jaspet,2.0,0.02,358.33,326,23,367,2.05,,577,462,346
-Immaculate Jaspet,2.0,0.02,374.61,340,23,384,2.06, 🏆 Top Performer,604,483,362
-Compressed Immaculate Jaspet,2.0,0.02,374.61,340,23,384,2.06, 🏆 Top Performer,604,483,362
-Kernite,1.2,0.012,339.1,308,15,83,1.26,,326,261,195
-Compressed Kernite,1.2,0.012,339.1,308,15,83,1.26,,326,261,195
-Luminous Kernite,1.2,0.012,356.06,324,15,88,1.26,,343,274,206
-Compressed Luminous Kernite,1.2,0.012,356.06,324,15,88,1.26,,343,274,206
-Fiery Kernite,1.2,0.012,373.01,339,15,92,1.26,,360,288,216
-Compressed Fiery Kernite,1.2,0.012,373.01,339,15,92,1.26,,360,288,216
-Resplendant Kernite,1.2,0.012,389.97,354,15,97,1.26, 🏆 Top Performer,377,301,226
-Compressed Resplendant Kernite,1.2,0.012,389.97,354,15,97,1.26, 🏆 Top Performer,377,301,226
-Kylixium,1.2,0.012,335.65,305,15,82,1.26,,323,258,193
-Compressed Kylixium,1.2,0.012,335.65,305,15,82,1.26,,323,258,193
-Kaolin Kylixium,1.2,0.012,352.43,320,15,86,1.26,,339,271,203
-Compressed Kaolin Kylixium,1.2,0.012,352.43,320,15,86,1.26,,339,271,203
-Argil Kylixium,1.2,0.012,369.22,335,15,91,1.26,,356,285,213
-Compressed Argil Kylixium,1.2,0.012,369.22,335,15,91,1.26,,356,285,213
-Adobe Kylixium,1.2,0.012,386.0,351,15,96,1.26, 🏆 Top Performer,373,298,223
-Compressed Adobe Kylixium,1.2,0.012,386.0,351,15,96,1.26, 🏆 Top Performer,373,298,223
-Mercoxit,40.0,0.4,754.25,686,406,29076,27.6,,24802,19842,14881
-Compressed Mercoxit,40.0,0.4,754.25,686,406,29076,27.6,,24802,19842,14881
-Magma Mercoxit,40.0,0.4,791.96,720,407,30550,28.09,,26059,20847,15635
-Compressed Magma Mercoxit,40.0,0.4,791.96,720,407,30550,28.09,,26059,20847,15635
-Vitreous Mercoxit,40.0,0.4,829.68,755,407,32024,28.55, 🏆 Top Performer,27316,21853,16389
-Compressed Vitreous Mercoxit,40.0,0.4,829.68,755,407,32024,28.55, 🏆 Top Performer,27316,21853,16389
-Mordunium,0.1,0.001,252.0,229,3,-207,0.11,⚠️ Low Return,18,14,10
-Compressed Mordunium,0.1,0.001,252.0,229,3,-207,0.11,⚠️ Low Return,18,14,10
-Plum Mordunium,0.1,0.001,264.6,240,3,-217,0.11,⚠️ Low Return,19,15,11
-Compressed Plum Mordunium,0.1,0.001,264.6,240,3,-217,0.11,⚠️ Low Return,19,15,11
-Prize Mordunium,0.1,0.001,277.2,252,3,-228,0.11,⚠️ Low Return,20,16,12
-Compressed Prize Mordunium,0.1,0.001,277.2,252,3,-228,0.11,⚠️ Low Return,20,16,12
-Plunder Mordunium,0.1,0.001,289.8,263,3,-238,0.11,⚠️ Low Return 🏆 Top Performer,21,16,12
-Compressed Plunder Mordunium,0.1,0.001,289.8,263,3,-238,0.11,⚠️ Low Return 🏆 Top Performer,21,16,12
-Nocxite,4.0,0.04,315.62,287,42,932,3.82,,1016,813,609
-Compressed Nocxite,4.0,0.04,315.62,287,42,932,3.82,,1016,813,609
-Fragrant Nocxite,4.0,0.04,331.4,301,43,981,3.85,,1068,855,641
-Compressed Fragrant Nocxite,4.0,0.04,331.4,301,43,981,3.85,,1068,855,641
-Intoxicating Nocxite,4.0,0.04,347.18,315,43,1029,3.87,,1121,897,672
-Compressed Intoxicating Nocxite,4.0,0.04,347.18,315,43,1029,3.87,,1121,897,672
-Ambrosial Nocxite,4.0,0.04,362.97,330,43,1078,3.89, 🏆 Top Performer,1173,939,704
-Compressed Ambrosial Nocxite,4.0,0.04,362.97,330,43,1078,3.89, 🏆 Top Performer,1173,939,704
-Omber,0.6,0.006,431.38,392,9,-143,0.64,⚠️ Low Return,207,165,124
-Compressed Omber,0.6,0.006,431.38,392,9,-143,0.64,⚠️ Low Return,207,165,124
-Silvery Omber,0.6,0.006,452.94,412,10,-150,0.64,⚠️ Low Return,218,174,130
-Compressed Silvery Omber,0.6,0.006,452.94,412,10,-150,0.64,⚠️ Low Return,218,174,130
-Golden Omber,0.6,0.006,474.51,431,10,-157,0.64,⚠️ Low Return,228,182,137
-Compressed Golden Omber,0.6,0.006,474.51,431,10,-157,0.64,⚠️ Low Return,228,182,137
-Platinoid Omber,0.6,0.006,496.08,451,10,-164,0.64,⚠️ Low Return 🏆 Top Performer,239,191,143
-Compressed Platinoid Omber,0.6,0.006,496.08,451,10,-164,0.64,⚠️ Low Return 🏆 Top Performer,239,191,143
-Plagioclase,0.35,0.003,141.3,128,4,-83,0.37,⚠️ Low Return,37,30,22
-Compressed Plagioclase,0.35,0.003,141.3,128,4,-83,0.37,⚠️ Low Return,37,30,22
-Azure Plagioclase,0.35,0.003,148.37,135,4,-87,0.37,⚠️ Low Return,39,31,23
-Compressed Azure Plagioclase,0.35,0.003,148.37,135,4,-87,0.37,⚠️ Low Return,39,31,23
-Rich Plagioclase,0.35,0.003,155.43,141,4,-91,0.37,⚠️ Low Return,41,33,24
-Compressed Rich Plagioclase,0.35,0.003,155.43,141,4,-91,0.37,⚠️ Low Return,41,33,24
-Sparkling Plagioclase,0.35,0.003,162.5,147,4,-95,0.37,⚠️ Low Return 🏆 Top Performer,43,34,26
-Compressed Sparkling Plagioclase,0.35,0.003,162.5,147,4,-95,0.37,⚠️ Low Return 🏆 Top Performer,43,34,26
-Pyroxeres,0.3,0.003,150.0,136,4,-95,0.32,⚠️ Low Return,33,27,20
-Compressed Pyroxeres,0.3,0.003,150.0,136,4,-95,0.32,⚠️ Low Return,33,27,20
-Solid Pyroxeres,0.3,0.003,157.5,143,4,-100,0.32,⚠️ Low Return,35,28,21
-Compressed Solid Pyroxeres,0.3,0.003,157.5,143,4,-100,0.32,⚠️ Low Return,35,28,21
-Viscous Pyroxeres,0.3,0.003,165.0,150,4,-105,0.32,⚠️ Low Return,37,29,22
-Compressed Viscous Pyroxeres,0.3,0.003,165.0,150,4,-105,0.32,⚠️ Low Return,37,29,22
-Opulent Pyroxeres,0.3,0.003,172.5,156,4,-109,0.32,⚠️ Low Return 🏆 Top Performer,39,31,23
-Compressed Opulent Pyroxeres,0.3,0.003,172.5,156,4,-109,0.32,⚠️ Low Return 🏆 Top Performer,39,31,23
-Scordite,0.15,0.002,222.6,202,4,-173,0.16,⚠️ Low Return,24,19,14
-Compressed Scordite,0.15,0.002,222.6,202,4,-173,0.16,⚠️ Low Return,24,19,14
-Condensed Scordite,0.15,0.002,233.73,212,4,-181,0.16,⚠️ Low Return,25,20,15
-Compressed Condensed Scordite,0.15,0.002,233.73,212,4,-181,0.16,⚠️ Low Return,25,20,15
-Massive Scordite,0.15,0.002,244.86,222,4,-190,0.16,⚠️ Low Return,27,21,16
-Compressed Massive Scordite,0.15,0.002,244.86,222,4,-190,0.16,⚠️ Low Return,27,21,16
-Glossy Scordite,0.15,0.002,255.99,232,4,-198,0.16,⚠️ Low Return 🏆 Top Performer,28,22,17
-Compressed Glossy Scordite,0.15,0.002,255.99,232,4,-198,0.16,⚠️ Low Return 🏆 Top Performer,28,22,17
-Ueganite,5.0,0.05,282.9,257,52,1104,4.56,,1134,907,680
-Compressed Ueganite,5.0,0.05,282.9,257,52,1104,4.56,,1134,907,680
-Foggy Ueganite,5.0,0.05,297.04,270,52,1162,4.6,,1193,954,716
-Compressed Foggy Ueganite,5.0,0.05,297.04,270,52,1162,4.6,,1193,954,716
-Overcast Ueganite,5.0,0.05,311.19,283,52,1219,4.63,,1252,1002,751
-Compressed Overcast Ueganite,5.0,0.05,311.19,283,52,1219,4.63,,1252,1002,751
-Stormy Ueganite,5.0,0.05,325.33,296,52,1277,4.66, 🏆 Top Performer,1311,1049,786
-Compressed Stormy Ueganite,5.0,0.05,325.33,296,52,1277,4.66, 🏆 Top Performer,1311,1049,786
-Veldspar,0.1,0.001,170.4,155,2,-140,0.11,⚠️ Low Return,12,9,7
-Compressed Veldspar,0.1,0.001,170.4,155,2,-140,0.11,⚠️ Low Return,12,9,7
-Concentrated Veldspar,0.1,0.001,178.92,162,2,-147,0.11,⚠️ Low Return,12,10,7
-Compressed Concentrated Veldspar,0.1,0.001,178.92,162,2,-147,0.11,⚠️ Low Return,12,10,7
-Dense Veldspar,0.1,0.001,187.44,170,2,-154,0.11,⚠️ Low Return,13,10,8
-Compressed Dense Veldspar,0.1,0.001,187.44,170,2,-154,0.11,⚠️ Low Return,13,10,8
-Stable Veldspar,0.1,0.001,195.96,178,2,-161,0.11,⚠️ Low Return 🏆 Top Performer,14,11,8
-Compressed Stable Veldspar,0.1,0.001,195.96,178,2,-161,0.11,⚠️ Low Return 🏆 Top Performer,14,11,8
-Ytirium,0.6,0.006,1236.4,1125,17,-400,0.65,⚠️ Low Return,603,483,362
-Compressed Ytirium,0.6,0.006,1236.4,1125,17,-400,0.65,⚠️ Low Return,603,483,362
-Bootleg Ytirium,0.6,0.006,1298.2,1181,17,-420,0.65,⚠️ Low Return,634,507,380
-Compressed Bootleg Ytirium,0.6,0.006,1298.2,1181,17,-420,0.65,⚠️ Low Return,634,507,380
-Firewater Ytirium,0.6,0.006,1360.0,1237,18,-439,0.65,⚠️ Low Return,664,531,398
-Compressed Firewater Ytirium,0.6,0.006,1360.0,1237,18,-439,0.65,⚠️ Low Return,664,531,398
-Moonshine Ytirium,0.6,0.006,1421.9,1293,18,-459,0.65,⚠️ Low Return 🏆 Top Performer,695,556,417
-Compressed Moonshine Ytirium,0.6,0.006,1421.9,1293,18,-459,0.65,⚠️ Low Return 🏆 Top Performer,695,556,417
+Arkonor,16.0,0.16,376.51,342,163,5518,11.9,,4883,3907,2930
+Compressed Arkonor,16.0,0.16,376.51,342,163,5518,11.9,,4883,3907,2930
+Crimson Arkonor,16.0,0.16,395.34,359,163,5802,12.09,,5134,4107,3080
+Compressed Crimson Arkonor,16.0,0.16,395.34,359,163,5802,12.09,,5134,4107,3080
+Prime Arkonor,16.0,0.16,414.16,376,163,6085,12.26,,5385,4308,3231
+Compressed Prime Arkonor,16.0,0.16,414.16,376,163,6085,12.26,,5385,4308,3231
+Flawless Arkonor,16.0,0.16,432.99,394,163,6369,12.42, 🏆 Top Performer,5636,4509,3381
+Compressed Flawless Arkonor,16.0,0.16,432.99,394,163,6369,12.42, 🏆 Top Performer,5636,4509,3381
+Bistot,16.0,0.16,278.31,253,162,4037,10.71,,3575,2860,2145
+Compressed Bistot,16.0,0.16,278.31,253,162,4037,10.71,,3575,2860,2145
+Triclinic Bistot,16.0,0.16,292.23,265,162,4247,10.91,,3760,3008,2256
+Compressed Triclinic Bistot,16.0,0.16,292.23,265,162,4247,10.91,,3760,3008,2256
+Monoclinic Bistot,16.0,0.16,306.14,278,162,4456,11.1,,3946,3156,2367
+Compressed Monoclinic Bistot,16.0,0.16,306.14,278,162,4456,11.1,,3946,3156,2367
+Cubic Bistot,16.0,0.16,320.06,291,162,4666,11.28, 🏆 Top Performer,4131,3305,2479
+Compressed Cubic Bistot,16.0,0.16,320.06,291,162,4666,11.28, 🏆 Top Performer,4131,3305,2479
+Crokite,16.0,0.16,695.85,633,166,10334,13.92,,9139,7311,5483
+Compressed Crokite,16.0,0.16,695.85,633,166,10334,13.92,,9139,7311,5483
+Sharp Crokite,16.0,0.16,730.64,664,166,10858,14.06,,9602,7682,5761
+Compressed Sharp Crokite,16.0,0.16,730.64,664,166,10858,14.06,,9602,7682,5761
+Crystalline Crokite,16.0,0.16,765.44,696,166,11383,14.18,,10066,8053,6040
+Compressed Crystalline Crokite,16.0,0.16,765.44,696,166,11383,14.18,,10066,8053,6040
+Pellucid Crokite,16.0,0.16,800.23,728,167,11908,14.3, 🏆 Top Performer,10530,8424,6318
+Compressed Pellucid Crokite,16.0,0.16,800.23,728,167,11908,14.3, 🏆 Top Performer,10530,8424,6318
+Dark Ochre,8.0,0.08,1029.4,936,89,7209,8.03,,6788,5430,4072
+Compressed Dark Ochre,8.0,0.08,1029.4,936,89,7209,8.03,,6788,5430,4072
+Onyx Ochre,8.0,0.08,1080.9,983,89,7573,8.06,,7131,5704,4278
+Compressed Onyx Ochre,8.0,0.08,1080.9,983,89,7573,8.06,,7131,5704,4278
+Obsidian Ochre,8.0,0.08,1132.4,1030,90,7938,8.08,,7474,5979,4484
+Compressed Obsidian Ochre,8.0,0.08,1132.4,1030,90,7938,8.08,,7474,5979,4484
+Jet Ochre,8.0,0.08,1183.9,1077,90,8303,8.11, 🏆 Top Performer,7817,6253,4690
+Compressed Jet Ochre,8.0,0.08,1183.9,1077,90,8303,8.11, 🏆 Top Performer,7817,6253,4690
+Ducinium,16.0,0.16,366.35,333,163,5364,11.8,,4748,3798,2849
+Compressed Ducinium,16.0,0.16,366.35,333,163,5364,11.8,,4748,3798,2849
+Noble Ducinium,16.0,0.16,384.67,350,163,5641,11.98,,4992,3994,2995
+Compressed Noble Ducinium,16.0,0.16,384.67,350,163,5641,11.98,,4992,3994,2995
+Royal Ducinium,16.0,0.16,402.99,366,163,5917,12.16,,5236,4189,3142
+Compressed Royal Ducinium,16.0,0.16,402.99,366,163,5917,12.16,,5236,4189,3142
+Imperial Ducinium,16.0,0.16,421.3,383,163,6193,12.32, 🏆 Top Performer,5480,4384,3288
+Compressed Imperial Ducinium,16.0,0.16,421.3,383,163,6193,12.32, 🏆 Top Performer,5480,4384,3288
+Eifyrium,16.0,0.16,266.67,242,162,3861,10.53,,3420,2736,2052
+Compressed Eifyrium,16.0,0.16,266.67,242,162,3861,10.53,,3420,2736,2052
+Doped Eifyrium,16.0,0.16,280.0,254,162,4062,10.73,,3597,2878,2158
+Compressed Doped Eifyrium,16.0,0.16,280.0,254,162,4062,10.73,,3597,2878,2158
+Boosted Eifyrium,16.0,0.16,293.33,266,162,4263,10.92,,3775,3020,2265
+Compressed Boosted Eifyrium,16.0,0.16,293.33,266,162,4263,10.92,,3775,3020,2265
+Augmented Eifyrium,16.0,0.16,306.66,279,162,4464,11.1, 🏆 Top Performer,3953,3162,2371
+Compressed Augmented Eifyrium,16.0,0.16,306.66,279,162,4464,11.1, 🏆 Top Performer,3953,3162,2371
+Gneiss,5.0,0.05,803.16,730,57,3227,5.1,,3298,2638,1979
+Compressed Gneiss,5.0,0.05,803.16,730,57,3227,5.1,,3298,2638,1979
+Iridescent Gneiss,5.0,0.05,843.32,767,57,3391,5.11,,3465,2772,2079
+Compressed Iridescent Gneiss,5.0,0.05,843.32,767,57,3391,5.11,,3465,2772,2079
+Prismatic Gneiss,5.0,0.05,883.48,803,58,3555,5.12,,3632,2906,2179
+Compressed Prismatic Gneiss,5.0,0.05,883.48,803,58,3555,5.12,,3632,2906,2179
+Brilliant Gneiss,5.0,0.05,923.63,840,58,3719,5.14, 🏆 Top Performer,3799,3039,2279
+Compressed Brilliant Gneiss,5.0,0.05,923.63,840,58,3719,5.14, 🏆 Top Performer,3799,3039,2279
+Griemeer,0.8,0.008,307.89,280,10,-44,0.85,⚠️ Low Return,196,157,117
+Compressed Griemeer,0.8,0.008,307.89,280,10,-44,0.85,⚠️ Low Return,196,157,117
+Clear Griemeer,0.8,0.008,323.28,294,10,-46,0.85,⚠️ Low Return,206,165,123
+Compressed Clear Griemeer,0.8,0.008,323.28,294,10,-46,0.85,⚠️ Low Return,206,165,123
+Inky Griemeer,0.8,0.008,338.68,308,11,-48,0.85,⚠️ Low Return,216,173,129
+Compressed Inky Griemeer,0.8,0.008,338.68,308,11,-48,0.85,⚠️ Low Return,216,173,129
+Opaque Griemeer,0.8,0.008,354.07,322,11,-50,0.85,⚠️ Low Return 🏆 Top Performer,226,181,136
+Compressed Opaque Griemeer,0.8,0.008,354.07,322,11,-50,0.85,⚠️ Low Return 🏆 Top Performer,226,181,136
+Hedbergite,3.0,0.03,531.3,483,34,1075,3.08,,1299,1039,779
+Compressed Hedbergite,3.0,0.03,531.3,483,34,1075,3.08,,1299,1039,779
+Vitric Hedbergite,3.0,0.03,557.87,507,35,1130,3.08,,1365,1092,819
+Compressed Vitric Hedbergite,3.0,0.03,557.87,507,35,1130,3.08,,1365,1092,819
+Glazed Hedbergite,3.0,0.03,584.43,531,35,1186,3.09,,1431,1145,858
+Compressed Glazed Hedbergite,3.0,0.03,584.43,531,35,1186,3.09,,1431,1145,858
+Lustrous Hedbergite,3.0,0.03,611.0,556,35,1241,3.1, 🏆 Top Performer,1497,1198,898
+Compressed Lustrous Hedbergite,3.0,0.03,611.0,556,35,1241,3.1, 🏆 Top Performer,1497,1198,898
+Hemorphite,3.0,0.03,594.86,541,35,1207,3.09,,1457,1166,874
+Compressed Hemorphite,3.0,0.03,594.86,541,35,1207,3.09,,1457,1166,874
+Vivid Hemorphite,3.0,0.03,624.6,568,35,1269,3.1,,1531,1225,919
+Compressed Vivid Hemorphite,3.0,0.03,624.6,568,35,1269,3.1,,1531,1225,919
+Radiant Hemorphite,3.0,0.03,654.35,595,35,1331,3.11,,1605,1284,963
+Compressed Radiant Hemorphite,3.0,0.03,654.35,595,35,1331,3.11,,1605,1284,963
+Scintillating Hemorphite,3.0,0.03,684.09,622,36,1393,3.12, 🏆 Top Performer,1680,1344,1008
+Compressed Scintillating Hemorphite,3.0,0.03,684.09,622,36,1393,3.12, 🏆 Top Performer,1680,1344,1008
+Hezorime,5.0,0.05,280.09,254,52,1093,4.56,,1123,898,673
+Compressed Hezorime,5.0,0.05,280.09,254,52,1093,4.56,,1123,898,673
+Dull Hezorime,5.0,0.05,294.09,267,52,1150,4.59,,1181,945,708
+Compressed Dull Hezorime,5.0,0.05,294.09,267,52,1150,4.59,,1181,945,708
+Serrated Hezorime,5.0,0.05,308.1,280,52,1207,4.62,,1239,991,743
+Compressed Serrated Hezorime,5.0,0.05,308.1,280,52,1207,4.62,,1239,991,743
+Sharp Hezorime,5.0,0.05,322.1,293,52,1264,4.65, 🏆 Top Performer,1297,1038,778
+Compressed Sharp Hezorime,5.0,0.05,322.1,293,52,1264,4.65, 🏆 Top Performer,1297,1038,778
+Jaspet,2.0,0.02,347.16,315,23,355,2.05,,559,447,335
+Compressed Jaspet,2.0,0.02,347.16,315,23,355,2.05,,559,447,335
+Pure Jaspet,2.0,0.02,364.52,331,23,374,2.05,,588,470,352
+Compressed Pure Jaspet,2.0,0.02,364.52,331,23,374,2.05,,588,470,352
+Pristine Jaspet,2.0,0.02,381.88,347,23,392,2.06,,616,493,370
+Compressed Pristine Jaspet,2.0,0.02,381.88,347,23,392,2.06,,616,493,370
+Immaculate Jaspet,2.0,0.02,399.23,363,23,411,2.06, 🏆 Top Performer,645,516,387
+Compressed Immaculate Jaspet,2.0,0.02,399.23,363,23,411,2.06, 🏆 Top Performer,645,516,387
+Kernite,1.2,0.012,326.64,297,14,79,1.26,,314,251,188
+Compressed Kernite,1.2,0.012,326.64,297,14,79,1.26,,314,251,188
+Luminous Kernite,1.2,0.012,342.97,312,15,84,1.26,,330,264,198
+Compressed Luminous Kernite,1.2,0.012,342.97,312,15,84,1.26,,330,264,198
+Fiery Kernite,1.2,0.012,359.3,326,15,88,1.26,,346,277,207
+Compressed Fiery Kernite,1.2,0.012,359.3,326,15,88,1.26,,346,277,207
+Resplendant Kernite,1.2,0.012,375.64,341,15,93,1.26, 🏆 Top Performer,362,290,217
+Compressed Resplendant Kernite,1.2,0.012,375.64,341,15,93,1.26, 🏆 Top Performer,362,290,217
+Kylixium,1.2,0.012,361.67,329,15,89,1.26,,348,279,209
+Compressed Kylixium,1.2,0.012,361.67,329,15,89,1.26,,348,279,209
+Kaolin Kylixium,1.2,0.012,379.75,345,15,94,1.26,,366,293,220
+Compressed Kaolin Kylixium,1.2,0.012,379.75,345,15,94,1.26,,366,293,220
+Argil Kylixium,1.2,0.012,397.83,362,15,99,1.26,,384,307,230
+Compressed Argil Kylixium,1.2,0.012,397.83,362,15,99,1.26,,384,307,230
+Adobe Kylixium,1.2,0.012,415.92,378,15,104,1.27, 🏆 Top Performer,402,322,241
+Compressed Adobe Kylixium,1.2,0.012,415.92,378,15,104,1.27, 🏆 Top Performer,402,322,241
+Mercoxit,40.0,0.4,1003.5,913,409,38817,30.36,,33109,26487,19865
+Compressed Mercoxit,40.0,0.4,1003.5,913,409,38817,30.36,,33109,26487,19865
+Magma Mercoxit,40.0,0.4,1053.6,958,409,40775,30.8,,34778,27822,20867
+Compressed Magma Mercoxit,40.0,0.4,1053.6,958,409,40775,30.8,,34778,27822,20867
+Vitreous Mercoxit,40.0,0.4,1103.8,1004,410,42737,31.21, 🏆 Top Performer,36451,29161,21870
+Compressed Vitreous Mercoxit,40.0,0.4,1103.8,1004,410,42737,31.21, 🏆 Top Performer,36451,29161,21870
+Mordunium,0.1,0.001,294.0,267,3,-241,0.11,⚠️ Low Return,21,17,12
+Compressed Mordunium,0.1,0.001,294.0,267,3,-241,0.11,⚠️ Low Return,21,17,12
+Plum Mordunium,0.1,0.001,308.7,280,3,-253,0.11,⚠️ Low Return,22,18,13
+Compressed Plum Mordunium,0.1,0.001,308.7,280,3,-253,0.11,⚠️ Low Return,22,18,13
+Prize Mordunium,0.1,0.001,323.4,294,3,-265,0.11,⚠️ Low Return,23,18,14
+Compressed Prize Mordunium,0.1,0.001,323.4,294,3,-265,0.11,⚠️ Low Return,23,18,14
+Plunder Mordunium,0.1,0.001,338.1,307,4,-277,0.11,⚠️ Low Return 🏆 Top Performer,24,19,14
+Compressed Plunder Mordunium,0.1,0.001,338.1,307,4,-277,0.11,⚠️ Low Return 🏆 Top Performer,24,19,14
+Nocxite,4.0,0.04,336.83,306,43,997,3.85,,1086,869,652
+Compressed Nocxite,4.0,0.04,336.83,306,43,997,3.85,,1086,869,652
+Fragrant Nocxite,4.0,0.04,353.67,321,43,1049,3.88,,1142,914,685
+Compressed Fragrant Nocxite,4.0,0.04,353.67,321,43,1049,3.88,,1142,914,685
+Intoxicating Nocxite,4.0,0.04,370.52,337,43,1101,3.89,,1198,959,719
+Compressed Intoxicating Nocxite,4.0,0.04,370.52,337,43,1101,3.89,,1198,959,719
+Ambrosial Nocxite,4.0,0.04,387.36,352,43,1153,3.91, 🏆 Top Performer,1254,1003,752
+Compressed Ambrosial Nocxite,4.0,0.04,387.36,352,43,1153,3.91, 🏆 Top Performer,1254,1003,752
+Omber,0.6,0.006,420.88,383,9,-140,0.64,⚠️ Low Return,202,161,121
+Compressed Omber,0.6,0.006,420.88,383,9,-140,0.64,⚠️ Low Return,202,161,121
+Silvery Omber,0.6,0.006,441.92,402,10,-147,0.64,⚠️ Low Return,212,170,127
+Compressed Silvery Omber,0.6,0.006,441.92,402,10,-147,0.64,⚠️ Low Return,212,170,127
+Golden Omber,0.6,0.006,462.96,421,10,-153,0.64,⚠️ Low Return,222,178,133
+Compressed Golden Omber,0.6,0.006,462.96,421,10,-153,0.64,⚠️ Low Return,222,178,133
+Platinoid Omber,0.6,0.006,484.01,440,10,-160,0.64,⚠️ Low Return 🏆 Top Performer,233,186,140
+Compressed Platinoid Omber,0.6,0.006,484.01,440,10,-160,0.64,⚠️ Low Return 🏆 Top Performer,233,186,140
+Plagioclase,0.35,0.003,148.86,135,4,-87,0.37,⚠️ Low Return,39,31,23
+Compressed Plagioclase,0.35,0.003,148.86,135,4,-87,0.37,⚠️ Low Return,39,31,23
+Azure Plagioclase,0.35,0.003,156.3,142,4,-91,0.37,⚠️ Low Return,41,33,25
+Compressed Azure Plagioclase,0.35,0.003,156.3,142,4,-91,0.37,⚠️ Low Return,41,33,25
+Rich Plagioclase,0.35,0.003,163.75,149,4,-96,0.37,⚠️ Low Return,44,35,26
+Compressed Rich Plagioclase,0.35,0.003,163.75,149,4,-96,0.37,⚠️ Low Return,44,35,26
+Sparkling Plagioclase,0.35,0.003,171.19,155,4,-100,0.37,⚠️ Low Return 🏆 Top Performer,46,36,27
+Compressed Sparkling Plagioclase,0.35,0.003,171.19,155,4,-100,0.37,⚠️ Low Return 🏆 Top Performer,46,36,27
+Pyroxeres,0.3,0.003,168.88,153,4,-107,0.32,⚠️ Low Return,38,30,23
+Compressed Pyroxeres,0.3,0.003,168.88,153,4,-107,0.32,⚠️ Low Return,38,30,23
+Solid Pyroxeres,0.3,0.003,177.32,161,4,-112,0.32,⚠️ Low Return,40,32,24
+Compressed Solid Pyroxeres,0.3,0.003,177.32,161,4,-112,0.32,⚠️ Low Return,40,32,24
+Viscous Pyroxeres,0.3,0.003,185.77,169,4,-118,0.32,⚠️ Low Return,42,34,25
+Compressed Viscous Pyroxeres,0.3,0.003,185.77,169,4,-118,0.32,⚠️ Low Return,42,34,25
+Opulent Pyroxeres,0.3,0.003,194.21,176,4,-123,0.32,⚠️ Low Return 🏆 Top Performer,44,35,26
+Compressed Opulent Pyroxeres,0.3,0.003,194.21,176,4,-123,0.32,⚠️ Low Return 🏆 Top Performer,44,35,26
+Scordite,0.15,0.002,252.2,229,4,-195,0.16,⚠️ Low Return,27,22,16
+Compressed Scordite,0.15,0.002,252.2,229,4,-195,0.16,⚠️ Low Return,27,22,16
+Condensed Scordite,0.15,0.002,264.81,240,4,-205,0.16,⚠️ Low Return,29,23,17
+Compressed Condensed Scordite,0.15,0.002,264.81,240,4,-205,0.16,⚠️ Low Return,29,23,17
+Massive Scordite,0.15,0.002,277.42,252,4,-215,0.16,⚠️ Low Return,30,24,18
+Compressed Massive Scordite,0.15,0.002,277.42,252,4,-215,0.16,⚠️ Low Return,30,24,18
+Glossy Scordite,0.15,0.002,290.03,263,4,-225,0.16,⚠️ Low Return 🏆 Top Performer,32,25,19
+Compressed Glossy Scordite,0.15,0.002,290.03,263,4,-225,0.16,⚠️ Low Return 🏆 Top Performer,32,25,19
+Ueganite,5.0,0.05,282.59,257,52,1103,4.56,,1133,906,680
+Compressed Ueganite,5.0,0.05,282.59,257,52,1103,4.56,,1133,906,680
+Foggy Ueganite,5.0,0.05,296.72,270,52,1160,4.6,,1192,953,715
+Compressed Foggy Ueganite,5.0,0.05,296.72,270,52,1160,4.6,,1192,953,715
+Overcast Ueganite,5.0,0.05,310.85,282,52,1218,4.63,,1251,1000,750
+Compressed Overcast Ueganite,5.0,0.05,310.85,282,52,1218,4.63,,1251,1000,750
+Stormy Ueganite,5.0,0.05,324.98,295,52,1276,4.66, 🏆 Top Performer,1309,1047,785
+Compressed Stormy Ueganite,5.0,0.05,324.98,295,52,1276,4.66, 🏆 Top Performer,1309,1047,785
+Veldspar,0.1,0.001,168.8,153,2,-139,0.11,⚠️ Low Return,11,9,7
+Compressed Veldspar,0.1,0.001,168.8,153,2,-139,0.11,⚠️ Low Return,11,9,7
+Concentrated Veldspar,0.1,0.001,177.24,161,2,-146,0.11,⚠️ Low Return,12,10,7
+Compressed Concentrated Veldspar,0.1,0.001,177.24,161,2,-146,0.11,⚠️ Low Return,12,10,7
+Dense Veldspar,0.1,0.001,185.68,168,2,-153,0.11,⚠️ Low Return,13,10,7
+Compressed Dense Veldspar,0.1,0.001,185.68,168,2,-153,0.11,⚠️ Low Return,13,10,7
+Stable Veldspar,0.1,0.001,194.12,176,2,-160,0.11,⚠️ Low Return 🏆 Top Performer,13,11,8
+Compressed Stable Veldspar,0.1,0.001,194.12,176,2,-160,0.11,⚠️ Low Return 🏆 Top Performer,13,11,8
+Ytirium,0.6,0.006,1178.8,1072,16,-382,0.65,⚠️ Low Return,575,460,345
+Compressed Ytirium,0.6,0.006,1178.8,1072,16,-382,0.65,⚠️ Low Return,575,460,345
+Bootleg Ytirium,0.6,0.006,1237.7,1126,17,-400,0.65,⚠️ Low Return,604,483,362
+Compressed Bootleg Ytirium,0.6,0.006,1237.7,1126,17,-400,0.65,⚠️ Low Return,604,483,362
+Firewater Ytirium,0.6,0.006,1296.7,1179,17,-419,0.65,⚠️ Low Return,633,506,380
+Compressed Firewater Ytirium,0.6,0.006,1296.7,1179,17,-419,0.65,⚠️ Low Return,633,506,380
+Moonshine Ytirium,0.6,0.006,1355.6,1233,18,-438,0.65,⚠️ Low Return 🏆 Top Performer,662,530,397
+Compressed Moonshine Ytirium,0.6,0.006,1355.6,1233,18,-438,0.65,⚠️ Low Return 🏆 Top Performer,662,530,397
 
 Top 10 Overall (excluding Triglavians and compressed)
 Ore Variant,Profit,Return %
-Vitreous Mercoxit,32024,28.55
-Magma Mercoxit,30550,28.09
-Mercoxit,29076,27.6
-Pellucid Crokite,11138,14.13
-Crystalline Crokite,10647,14.01
-Sharp Crokite,10156,13.88
-Crokite,9665,13.74
-Jet Ochre,8184,8.1
-Obsidian Ochre,7824,8.07
-Onyx Ochre,7465,8.05
+Vitreous Mercoxit,42737,31.21
+Magma Mercoxit,40775,30.8
+Mercoxit,38817,30.36
+Pellucid Crokite,11908,14.3
+Crystalline Crokite,11383,14.18
+Sharp Crokite,10858,14.06
+Crokite,10334,13.92
+Jet Ochre,8303,8.11
+Obsidian Ochre,7938,8.08
+Onyx Ochre,7573,8.06
