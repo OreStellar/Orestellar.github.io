@@ -335,7 +335,12 @@ function setLogoState(color, shadow) {
   logoText.style.color = color;
   logoText.style.textShadow = shadow || 'none';
 }
-
+}
+/* clicking logo resets page to base view (like before) */
+document.getElementById('myHeader').addEventListener('click', ()=>{
+  // reset to base URL (clear query)
+  window.location.href = window.location.origin + window.location.pathname;
+});
 /* play the flicker sequence on load */
 function playLogoSequence() {
   // start dim (dull)
@@ -353,16 +358,10 @@ function playLogoSequence() {
     // keep original softGlow animation
     logoText.style.animation = 'softGlow 6s infinite';
   }, 620);
-}
+
 
 window.addEventListener('load', playLogoSequence);
 }
-/* clicking logo resets page to base view (like before) */
-document.getElementById('myHeader').addEventListener('click', ()=>{
-  // reset to base URL (clear query)
-  window.location.href = window.location.origin + window.location.pathname;
-});
-
 /* ====================== CSV PRICES (load & normalize) ====================== */
 /*
   We will:
