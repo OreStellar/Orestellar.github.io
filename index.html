@@ -581,8 +581,6 @@ function buildPriceGrouping(){
     const entry = priceList[normKey];
     if(!entry) return;
     const raw = entry.csvValue;
-    // decide if header contained 150% already
-    const priceToShow = entry.headerHas150 ? raw : +(raw * 1.5);
 
     if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
