@@ -304,7 +304,8 @@ function createStars() {
 createStars();
 
 // star twinkle state
-let lastBright = 0, nextBright = 5000 + Math.random() * 7000;
+let lastBright = 0;
+let nextBright = 5000 + Math.random() * 7000;
 
 function drawStars(time = 0) {
   if (!time) time = performance.now();
@@ -313,20 +314,19 @@ function drawStars(time = 0) {
   for (const s of stars) {
     let alpha = s.baseAlpha;
 
-    // light twinkle (slower, less CPU)
-// gentle twinkle — subtle and slow
-if (Math.random() < 0.003) {
-  alpha = s.baseAlpha + (Math.random() - 0.5) * 0.3; 
-  alpha = Math.max(0.3, Math.min(1, alpha));
-}
+    // gentle twinkle — subtle and slow
+    if (Math.random() < 0.003) {
+      alpha = s.baseAlpha + (Math.random() - 0.5) * 0.3; 
+      alpha = Math.max(0.3, Math.min(1, alpha));
+    }
 
-// rare bright star flash (1 every ~10–20s)
-if (!s.isBright && time > nextBright) {
-  s.isBright = true;
-  s.brightStart = time;
-  s.brightEnd = time + 500 + Math.random() * 400; // 0.5–0.9s flash
-  nextBright = time + 10000 + Math.random() * 10000; // 10–20s between bright flashes
-}
+    // rare bright star flash (1 every ~10–20s)
+    if (!s.isBright && time > nextBright) {
+      s.isBright = true;
+      s.brightStart = time;
+      s.brightEnd = time + 500 + Math.random() * 400; // 0.5–0.9s flash
+      nextBright = time + 10000 + Math.random() * 10000; // 10–20s between bright flashes
+    }
 
     if (s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
     if (s.isBright && time >= s.brightEnd) s.isBright = false;
@@ -343,51 +343,59 @@ if (!s.isBright && time > nextBright) {
 drawStars();
 
 /* ====================== LOGO FLICKER SEQUENCE ====================== */
+/* single setLogoState used by flicker sequence */
 function setLogoState(color, shadow) {
   ore.style.color = color;
   stellar.style.color = color;
   ore.style.textShadow = shadow || 'none';
   stellar.style.textShadow = shadow || 'none';
+  // also apply to the grouped logoText to ensure consistent look
+  logoText.style.color = color;
+  logoText.style.textShadow = shadow || 'none';
 }
 
 /* Clicking the header resets to base view */
 document.getElementById('myHeader').addEventListener('click', () => {
   window.location.href = window.location.origin + window.location.pathname;
 });
-/* ====================== LOGO FLICKER SEQUENCE ====================== */
-function setLogoState(color, shadow) {
-  ore.style.color = color;
-  stellar.style.color = color;
-  ore.style.textShadow = shadow || 'none';
-  stellar.style.textShadow = shadow || 'none';
-}
 
-// flicker sequence: two quick, one single, then soft glow
+/* Play flicker sequence on load (two quick flickers, dim, one single flicker, then soft glow) */
 function playLogoFlicker() {
-  setLogoState('rgba(255,255,255,0.1)', 'none'); // start dim
+  // Start fully dim
+  setLogoState('rgba(220,220,220,0.15)', 'none');
   logoText.style.animation = 'none';
 
-  // Two quick flickers
-  setTimeout(() => { setLogoState('#fff', '0 0 10px #fff, 0 0 20px #fff'); }, 1250);
-  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 1350);
-  setTimeout(() => { setLogoState('#fff', '0 0 10px #fff, 0 0 20px #fff'); }, 1450);
-  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 1550);
-
-  // One single flicker
-  setTimeout(() => { setLogoState('#fff', '0 0 12px #fff, 0 0 24px #fff'); }, 2400);
-  setTimeout(() => { setLogoState('rgba(255,255,255,0.1)', 'none'); }, 2520);
-
-  // Fade into softGlow infinite
+  // timings:
+  // stay dim for 1.25s, then two quick flickers 0.1s on/off, then dim for 0.85s then one quick flicker, then softGlow
   setTimeout(() => {
-    setLogoState('#fff', '0 0 12px #fff, 0 0 24px #fff, 0 0 36px #fff');
-    logoText.style.animation = 'softGlow 6s infinite';
-    ore.style.animation = 'softGlow 6s infinite';
-    stellar.style.animation = 'softGlow 6s infinite';
-  }, 2650);
+    // first quick flicker
+    setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
+    setTimeout(() => {
+      setLogoState('rgba(220,220,220,0.15)', 'none');
+      // second quick flicker shortly after
+      setTimeout(() => {
+        setLogoState('#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf');
+        setTimeout(() => {
+          setLogoState('rgba(220,220,220,0.15)', 'none');
+          // after two quick flickers, wait 0.85s then single flicker
+          setTimeout(() => {
+            setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf');
+            setTimeout(() => {
+              setLogoState('rgba(220,220,220,0.15)', 'none');
+              // fade into softGlow forever
+              setTimeout(() => {
+                setLogoState('#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf');
+                logoText.style.animation = 'softGlow 6s infinite';
+                ore.style.animation = 'softGlow 6s infinite';
+                stellar.style.animation = 'softGlow 6s infinite';
+              }, 400);
+            }, 120);
+          }, 850);
+        }, 100);
+      }, 100);
+    }, 100);
+  }, 1250);
 }
-
-window.addEventListener('load', playLogoFlicker);
-
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
 /*
@@ -906,6 +914,9 @@ shareButton.addEventListener('click', async ()=>{
 
 /* Auto-load from URL param ?s= (shared view) */
 window.addEventListener('load', async ()=>{
+  // start logo flicker immediately
+  playLogoFlicker();
+
   // fetch prices first
   await fetchPrices();
 
@@ -958,85 +969,8 @@ function parseIntSafeWithCommas(s){
   return parseInt(m[0].replace(/,/g,''),10) || 0;
 }
 
-/* ====================== HOOK UP: price fetch now ====================== */
-fetchPrices();
-
-window.addEventListener('load', () => {
-  const ore = document.getElementById('ore');
-  const stellar = document.getElementById('stellar');
-
-  const sequence = [
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 1050 },
-    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 75 },
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 200 },
-    { color: '#fff', shadow: '0 0 12px #fff, 0 0 24px #fff', duration: 100 },
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 850 },
-    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 100 },
-  ];
-
-  let step = 0;
-  function nextStep() {
-    if (step >= sequence.length) {
-      ore.style.animation = 'softGlow 6s infinite';
-      stellar.style.animation = 'softGlow 6s infinite';
-      return;
-    }
-    const s = sequence[step];
-    ore.style.color = s.color;
-    stellar.style.color = s.color;
-    ore.style.textShadow = s.shadow;
-    stellar.style.textShadow = s.shadow;
-    step++;
-    setTimeout(nextStep, s.duration);
-  }
-  nextStep();
-});
-/* ====================== INVENTORY SUBMIT BEHAVIOR ====================== */
-submitButton.addEventListener('click', () => {
-  const text = messageBox.value.trim();
-  if (!text) return;
-
-  // Hide inventory input panel
-  document.getElementById('inventoryContainer').style.display = 'none';
-
-  // Generate the summary
-  const parsed = parseInventoryText(text);
-  renderSummary(parsed);
-});
-
-/* Render summary output */
-function renderSummary(items){
-  const summaryContainer = document.getElementById('summaryContainer');
-  let html = `
-    <table class="summary-table">
-      <thead>
-        <tr><th>Ore</th><th class="quantity">Qty</th><th class="price">Price</th><th class="total-column">Total</th></tr>
-      </thead>
-      <tbody>
-  `;
-
-  let totalISK = 0;
-  for(const it of items){
-    const priceStr = it.price ? it.price.toLocaleString() : '-';
-    const totalStr = it.total ? it.total.toLocaleString() : '-';
-    html += `<tr${it.unrecognized ? ' class="unrecognized"' : ''}>
-      <td>${it.name}</td>
-      <td class="quantity">${it.qty.toLocaleString()}</td>
-      <td class="price">${priceStr}</td>
-      <td class="total-column">${totalStr}</td>
-    </tr>`;
-    if(!it.unrecognized) totalISK += it.total;
-  }
-
-  html += `<tr class="summary-total"><td colspan="3">Total</td><td>${totalISK.toLocaleString()} ISK</td></tr></tbody></table>`;
-  summaryContainer.innerHTML = html;
-  summaryContainer.style.display = 'flex';
-
-  // Also show total on contract image
-  const totalCostContainer = document.getElementById('totalCostContainer');
-  const totalText = document.getElementById('totalCostText');
-  totalText.textContent = `${totalISK.toLocaleString()} ISK`;
-  totalCostContainer.styl
+/* ====================== HOOK UP: price fetch now (already triggered on load) ====================== */
+// fetchPrices();   // fetchPrices is called in the load handler above
 
 </script>
 </body>
