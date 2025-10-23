@@ -348,32 +348,38 @@ document.getElementById('myHeader').addEventListener('click', () => {
 });
 
 /* Play flicker sequence on load (two quick flickers, dim, one single flicker, then soft glow) */
-function playLogoFlicker(){
-  const sequence = [
-    [ 'rgba(220,220,220,0.15)', 'none', 1250 ],
-    [ '#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', 100 ],
-    [ 'rgba(220,220,220,0.15)', 'none', 100 ],
-    [ '#dcdcdc', '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', 100 ],
-    [ 'rgba(220,220,220,0.15)', 'none', 850 ],
-    [ '#dcdcdc', '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', 120 ],
-    [ 'rgba(220,220,220,0.15)', 'none', 400 ]
+function flickerLogo() {
+  const steps = [
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 100 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 200 },
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 300 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 400 },
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 1250 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1370 },
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf, 0 0 36px #bfbfbf', delay: 1770 }
   ];
 
-  let i = 0;
-  function next(){
-    if(i < sequence.length){
-      const [color, shadow, delay] = sequence[i++];
-      setLogoState(color, shadow);
-      setTimeout(next, delay);
-    } else {
-      // final soft glow infinite
-      logoText.style.animation = 'softGlow 6s infinite';
-      ore.style.animation = 'softGlow 6s infinite';
-      stellar.style.animation = 'softGlow 6s infinite';
-    }
-  }
-  next();
+  steps.forEach(step => {
+    setTimeout(() => {
+      ore.style.color = step.color;
+      stellar.style.color = step.color;
+      logoText.style.color = step.color;
+      ore.style.textShadow = step.shadow;
+      stellar.style.textShadow = step.shadow;
+      logoText.style.textShadow = step.shadow;
+    }, step.delay);
+  });
+
+  // Start softGlow after final step
+  setTimeout(() => {
+    const glowAnim = 'softGlow 6s infinite';
+    logoText.style.animation = glowAnim;
+    ore.style.animation = glowAnim;
+    stellar.style.animation = glowAnim;
+  }, 2170); // matches end of last step
 }
+
 
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
@@ -957,7 +963,10 @@ submitButton.addEventListener('click', ()=>{
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 });
-
+// call it when the page finishes loading
+window.addEventListener('load', () => {
+    flickerLogo();
+});
 </script>
 </body>
 </html>
