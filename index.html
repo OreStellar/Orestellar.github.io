@@ -943,39 +943,34 @@ window.addEventListener('load', () => {
   const ore = document.getElementById('ore');
   const stellar = document.getElementById('stellar');
 
-  function setLogo(color, shadow) {
-    ore.style.color = color;
-    stellar.style.color = color;
-    ore.style.textShadow = shadow || 'none';
-    stellar.style.textShadow = shadow || 'none';
+  const sequence = [
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 1250 }, // dim 1.25s
+    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 50 }, // flicker 1
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 200 }, // back to dim quickly
+    { color: '#fff', shadow: '0 0 12px #fff, 0 0 24px #fff', duration: 50 }, // flicker 2
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 850 }, // dim 0.85s
+    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 50 }, // final flicker
+  ];
+
+  let step = 0;
+
+  function nextStep() {
+    if (step >= sequence.length) {
+      // start soft glow
+      ore.style.animation = 'softGlow 6s infinite';
+      stellar.style.animation = 'softGlow 6s infinite';
+      return;
+    }
+    const s = sequence[step];
+    ore.style.color = s.color;
+    stellar.style.color = s.color;
+    ore.style.textShadow = s.shadow;
+    stellar.style.textShadow = s.shadow;
+    step++;
+    setTimeout(nextStep, s.duration);
   }
 
-  // Step 0: start dim
-  setLogo('rgba(255,255,255,0.1)');
-
-  // Step 1: two quick flickers after 1.25s
-  setTimeout(() => {
-    setLogo('#fff', '0 0 10px #fff,0 0 20px #fff'); // flicker 1
-    setTimeout(() => {
-      setLogo('#fff', '0 0 12px #fff,0 0 24px #fff'); // flicker 2
-    }, 200); // 0.2s after first flicker
-  }, 1250);
-
-  // Step 2: dim again for 0.85s (starts after second flicker ends)
-  setTimeout(() => {
-    setLogo('rgba(255,255,255,0.1)');
-  }, 1250 + 200); // 1.45s
-
-  // Step 3: final quick flicker after 0.85s of dim
-  setTimeout(() => {
-    setLogo('#fff', '0 0 10px #fff,0 0 20px #fff');
-  }, 1450 + 850); // 2.3s
-
-  // Step 4: soft glow forever (0.2s after final flicker)
-  setTimeout(() => {
-    ore.style.animation = 'softGlow 6s infinite';
-    stellar.style.animation = 'softGlow 6s infinite';
-  }, 2300 + 200); // 2.5s
+  nextStep();
 });
 
 
