@@ -202,15 +202,53 @@ loadPriceListCSV();
 
 /* ===== RENDER PRICE LIST ===== */
 const priceListContainer = document.getElementById('priceListContainer');
-function renderPriceList(){
-    let ores = Object.keys(priceListRaw).sort();
-    let html='<table><tr><th>Ore</th><th>Price</th></tr>';
-    ores.forEach(o=>{
-        html+=`<tr><td>${o}</td><td>${priceListRaw[o]}</td></tr>`;
+/* ===== RENDER PRICE LIST WITH VARIANTS ===== */
+async function renderPriceListWithVariants() {
+    const res = await fetch('data/prices.csv');
+    const text = await res.text();
+    const lines = text.trim().split(/\r?\n/);
+
+    // Parse CSV into raw list
+    const raw = {};
+    lines.forEach(line => {
+        const parts = line.split(',');
+        if(parts.length < 2) return;
+        const name = parts[0].trim();
+        const price = parseFloat(parts[1].trim());
+        if(!isNaN(price)) raw[name] = price;
     });
-    html+='</table>';
+
+    // Build base ores
+    const baseSet = new Set();
+    Object.keys(raw).forEach(name => {
+        if(!name.toLowerCase().includes('compressed')) {
+            const base = name.split(' ')[0]; // first word as base
+            baseSet.add(base);
+        }
+    });
+    const baseArray = Array.from(baseSet).sort();
+
+    // Build HTML table
+    let html = '<table><tr><th>Ore</th><th>Price</th></tr>';
+    baseArray.forEach(base => {
+        // All ores containing the base (case-insensitive), excluding compressed
+        const variants = Object.keys(raw)
+            .filter(k => k.toLowerCase().includes(base.toLowerCase()) && !k.toLowerCase().includes('compressed'))
+            .sort();
+        if(variants.length === 0) return;
+        // Show base as first (if exists)
+        if(raw[base] !== undefined) html += `<tr><td>${base}</td><td>${raw[base]}</td></tr>`;
+        variants.forEach(v => {
+            if(v !== base) html += `<tr><td style="padding-left:12px">- ${v}</td><td>${raw[v]}</td></tr>`;
+        });
+    });
+    html += '</table>';
     priceListContainer.innerHTML = html;
 }
+
+// Use this function instead of the old renderPriceList
+renderPriceListWithVariants();
+
 
 /* ===== TOGGLE PRICE LIST ===== */
 document.getElementById('priceTab').addEventListener('click', ()=>{
