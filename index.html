@@ -927,19 +927,17 @@ window.addEventListener('load', () => {
   const stellar = document.getElementById('stellar');
 
   const sequence = [
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 1050 }, // dim .8s
-    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 75 }, // flicker 1
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 200 }, // back to dim quickly
-    { color: '#fff', shadow: '0 0 12px #fff, 0 0 24px #fff', duration: 100 }, // flicker 2
-    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 850 }, // dim 0.85s
-    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 100 }, // final flicker
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 1050 },
+    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 75 },
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 200 },
+    { color: '#fff', shadow: '0 0 12px #fff, 0 0 24px #fff', duration: 100 },
+    { color: 'rgba(255,255,255,0.1)', shadow: 'none', duration: 850 },
+    { color: '#fff', shadow: '0 0 10px #fff, 0 0 20px #fff', duration: 100 },
   ];
 
   let step = 0;
-
   function nextStep() {
     if (step >= sequence.length) {
-      // start soft glow
       ore.style.animation = 'softGlow 6s infinite';
       stellar.style.animation = 'softGlow 6s infinite';
       return;
@@ -952,7 +950,6 @@ window.addEventListener('load', () => {
     step++;
     setTimeout(nextStep, s.duration);
   }
-
   nextStep();
 });
 
