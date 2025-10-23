@@ -8,291 +8,71 @@
 <!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    font-family: monospace;
-    color: #fff;
-}
-canvas#starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#000;font-family:monospace;color:#fff;}
+canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
 /* Container */
-.container-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    gap: 20px;
-    padding: 20px;
-    z-index: 2;
-    position: relative;
-}
+.container-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;padding:20px;z-index:2;position:relative;}
 
 /* Logo */
-#myHeader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    width: 100%;
-    max-width: 650px;
-    margin-bottom: 30px;
-    cursor: pointer;
-    z-index: 2;
+#myHeader{display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;width:100%;max-width:650px;margin-bottom:30px;cursor:pointer;z-index:2;}
+#logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
+#logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
+.flash1{animation:logoFlash1 0.2s ease forwards;}
+.flash2{animation:logoFlash2 0.2s ease forwards;}
+.stayOn{color:#fff;text-shadow:0 0 10px #fff,0 0 18px #fff;}
+@keyframes logoFlash1{
+  0%{color:rgba(255,255,255,0.1);text-shadow:none;}
+  100%{color:#fff;text-shadow:0 0 10px #fff,0 0 18px #fff;}
 }
-#logoText {
-    display: inline;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    font-size: 4.5rem;
-    letter-spacing: 0;
-    color: rgba(255,255,255,0.1);
-    transform: skewX(-8deg);
-}
-#logoText span {
-    display: inline;
-    color: rgba(255,255,255,0.1);
-    text-shadow: none;
-    animation: logoFlicker 2.5s forwards;
-}
-@keyframes logoFlicker {
-    0%   { color: rgba(255,255,255,0.1); text-shadow:none; }
-    10%  { color: rgba(255,255,255,1); text-shadow:0 0 10px #fff; }
-    20%  { color: rgba(255,255,255,0.1); text-shadow:none; }
-    30%  { color: rgba(255,255,255,1); text-shadow:0 0 10px #fff; }
-    40%  { color: rgba(255,255,255,0.1); text-shadow:none; }
-    60%  { color: rgba(255,255,255,1); text-shadow:0 0 12px #fff; }
-    100% { color: rgba(255,255,255,1); text-shadow:0 0 15px #fff; }
+@keyframes logoFlash2{
+  0%{color:rgba(255,255,255,0.1);text-shadow:none;}
+  100%{color:#fff;text-shadow:0 0 10px #fff,0 0 18px #fff;}
 }
 
 /* Main Container */
-.main-container {
-    width: 650px;
-    max-width: 90%;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(20,20,20,0.92);
-    border-radius: 15px;
-    z-index: 2;
-}
-#inventoryHeader {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 0 12px #fff, 0 0 18px #fff, 0 0 24px #fff;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-}
-textarea#message {
-    display: block;
-    margin: 0 auto;
-    width: 92%;
-    font-size: 13px;
-    color: #777;
-    background-color: rgba(17,17,17,0.97);
-    padding: 10px;
-    border-radius: 10px;
-    resize: vertical;
-    border: 1px solid #333;
-    text-align: left;
-    font-family: 'Share Tech Mono', monospace;
-    box-shadow: inset 0 0 5px #111;
-    line-height: 1.35;
-}
-textarea#message:focus {
-    outline: none;
-    border-color: #fff;
-    box-shadow: inset 0 0 15px #fff,0 0 25px #fff;
-    color: #ccc;
-    transition: all 0.3s ease-in-out;
-}
+.main-container{width:650px;max-width:90%;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:rgba(20,20,20,0.92);border-radius:15px;z-index:2;}
+.main-container h3#inventoryHeader{font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 12px #fff,0 0 18px #fff,0 0 24px #fff;margin-bottom:10px;}
+.main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:13px;color:#999;background-color:rgba(17,17,17,0.97);padding:12px;border-radius:10px;resize:vertical;border:1px solid #333;text-align:left;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;line-height:1.35;}
+textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px #fff,0 0 25px #fff;transition:box-shadow 0.3s ease,border-color 0.3s ease;}
 
 /* Buttons */
-.actionButton {
-    margin-top: 15px;
-    background: linear-gradient(145deg,#161616,#242424);
-    color: #fff;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 12px 26px;
-    font-weight: bold;
-    font-family: 'Orbitron', sans-serif;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-shadow: 0 0 2px #fff;
-    box-shadow: 0 0 6px #ffffff33,0 0 12px #ffffff11 inset;
-    animation: ambientGlow 3.5s ease-in-out infinite alternate;
-    transition: all 0.35s ease;
-}
-.actionButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-@keyframes ambientGlow {
-    0% { box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset; }
-    100% { box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset; }
-}
+.actionButton{margin-top:15px;background:linear-gradient(145deg,#161616,#242424);color:#fff;border:2px solid #ccc;border-radius:10px;padding:12px 26px;font-weight:bold;font-family:'Orbitron',sans-serif;cursor:pointer;position:relative;overflow:hidden;text-shadow:0 0 2px #fff;box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;animation:ambientGlow 3.5s ease-in-out infinite alternate;transition:all 0.35s ease;}
+.actionButton:disabled{opacity:0.5;cursor:not-allowed;}
+@keyframes ambientGlow{0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;}100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;}}
 
 /* Contracts */
-.contracts-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 15px;
-    flex-wrap: wrap;
-    width: 100%;
-}
-.total-cost-container {
-    width: 630px;
-    height: 418px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    display: none;
-}
-#leftContainer {
-    background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');
-    display: none;
-}
-#totalCostContainer {
-    background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');
-    display: none;
-    position: relative;
-}
-#totalCostText {
-    position: absolute;
-    top: 18px;
-    right: 20px;
-    color: #00ff00;
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: bold;
-    font-size: 18px;
-    text-shadow: 0 0 6px #00ff00,0 0 12px #00ff00;
-    cursor: pointer;
-}
+.contracts-wrapper{display:flex;justify-content:center;align-items:flex-start;gap:15px;flex-wrap:wrap;width:100%;}
+.total-cost-container{width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;}
+#leftContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');display:none;}
+#totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');display:none;position:relative;}
+#totalCostText{position:absolute;top:18px;right:20px;color:#00ff00;font-family:'Share Tech Mono',monospace;font-weight:bold;font-size:18px;text-shadow:0 0 6px #00ff00,0 0 12px #00ff00;cursor:pointer;}
 
 /* Price Tab / Icon */
-#priceTab {
-    position: fixed;
-    top: 22vh;
-    right: 18px;
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    background: #00ff00;
-    color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 0 12px #00ff00,0 0 30px #00ff00 inset;
-    z-index: 30;
-    transition: transform 0.18s ease, right 0.18s ease;
-    font-family: 'Orbitron', sans-serif;
-}
-#priceTab::before {
-    content:"\005A";
-    position:absolute;
-    top:7px;
-    font-size:28px;
-}
-#priceTab::after {
-    content:"";
-    position:absolute;
-    top:22px;
-    width:18px;
-    height:2px;
-    background:#000;
-}
-#priceListContainer {
-    position: fixed;
-    top: 18vh;
-    right: 78px;
-    width: 320px;
-    max-height: 60vh;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.95);
-    border: 1px solid #00ff00;
-    padding: 10px;
-    border-radius: 10px;
-    display: none;
-    box-shadow: 0 0 18px #00ff00;
-    z-index: 29;
-    font-family: 'Share Tech Mono', monospace;
-    color: #00ff00;
-}
-#priceListContainer table {
-    width: 100%;
-    border-collapse: collapse;
-}
-#priceListContainer th, #priceListContainer td {
-    padding: 6px 8px;
-    border-bottom:1px solid rgba(0,255,0,0.08);
-    font-size:13px;
-    text-align:left;
-}
-#priceListContainer th { font-weight:700; color:#00ff00; }
+#priceTab{position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:#00ff00;color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px #00ff00,0 0 30px #00ff00 inset;z-index:30;transition:transform 0.18s ease, right 0.18s ease;font-family:'Orbitron',sans-serif;}
+#priceTab::before{content:"\005A";position:absolute;top:7px;font-size:28px;}
+#priceTab::after{content:"";position:absolute;top:22px;width:18px;height:2px;background:#000;} /* short horizontal, 1px down */
+#priceListContainer{position:fixed;top:18vh;right:78px;width:320px;max-height:60vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid #00ff00;padding:10px;border-radius:10px;display:none;box-shadow:0 0 18px #00ff00;z-index:29;font-family:'Share Tech Mono',monospace;color:#00ff00;}
+#priceListContainer table{width:100%;border-collapse:collapse;}
+#priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.08);font-size:13px;text-align:left;}
+#priceListContainer th{font-weight:700;color:#00ff00;}
 
 /* Summary container */
-.summary-container {
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #00ff00;
-    background: rgba(0,10,0,0.95);
-    border: 2px solid #00ff00;
-    border-radius: 12px;
-    padding: 16px 20px;
-    min-width: 420px;
-    max-width: 520px;
-    max-height: 60vh;
-    overflow-y: auto;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 0 18px rgba(0,255,0,0.25);
-    z-index: 3;
-}
-.summary-container::-webkit-scrollbar { width: 8px; }
-.summary-container::-webkit-scrollbar-thumb { background: #00ff00; border-radius: 6px; box-shadow: 0 0 10px #00ff00; }
+.summary-container{display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:'Share Tech Mono',monospace;font-size:14px;line-height:1.4;color:#00ff00;background:rgba(0,10,0,0.95);border:2px solid #00ff00;border-radius:12px;padding:16px 20px;min-width:420px;max-width:520px;max-height:60vh;overflow-y:auto;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(0,255,0,0.25);z-index:3;}
+.summary-container::-webkit-scrollbar{width:8px;}
+.summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:6px;box-shadow:0 0 10px #00ff00;}
 
 /* Summary table */
-.summary-table { width:100%; border-collapse: collapse; table-layout: fixed; }
-.summary-table th, .summary-table td { padding:8px 10px; border-bottom:1px solid rgba(0,255,0,0.06); font-size:13px; white-space:nowrap; }
-.summary-table th:nth-child(1), .summary-table td:nth-child(1) { text-align:left; }
-.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column { text-align:right; font-variant-numeric:tabular-nums; }
-.summary-table th { text-align:right; color:#00ff00; text-shadow:0 0 6px #00ff00; border-bottom:1px solid rgba(0,255,0,0.15); }
-.summary-total td { border-top:2px solid rgba(0,255,0,0.25); font-weight:700; text-align:right; padding-top:10px; }
+.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;white-space:nowrap;}
+.summary-table th:nth-child(1), .summary-table td:nth-child(1){text-align:left;}
+.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column{text-align:right;font-variant-numeric:tabular-nums;}
+.summary-table th{text-align:right;color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.15);}
+.summary-total td{border-top:2px solid rgba(0,255,0,0.25);font-weight:700;text-align:right;padding-top:10px;}
 </style>
 </head>
-<body>
+<body data-show-inventory="true">
 
 <canvas id="starfield"></canvas>
 
@@ -303,7 +83,8 @@ textarea#message:focus {
 
   <div class="main-container" id="inventoryContainer">
     <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
-    <textarea id="message" rows="8">Compressed Jet Ochre	3750
+    <textarea id="message" rows="8">
+Compressed Jet Ochre	3750
 Compressed Prize Mordunium	998781
 Compressed Pellucid Crokite	2912
 Compressed Ducinium	4985
@@ -335,35 +116,25 @@ Glazed Hedbergite	172
 /* ===== STARFIELD ===== */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
-function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas(); addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
 
 let stars = [];
-function createStars() {
+function createStars(){
     stars = [];
-    const total = Math.max(150, Math.floor(canvas.width * canvas.height / 5000));
-    for (let i=0;i<total;i++){
-        let x = Math.random()*canvas.width;
-        let y = Math.random()*canvas.height;
-        const rand = Math.random();
-        let color = '#ffffff';
+    const total = Math.max(150, Math.floor(canvas.width * canvas.height / 5000)); // more stars
+    for(let i=0;i<total;i++){
+        const x = Math.random()*canvas.width;
+        const y = Math.random()*canvas.height;
+        let rand = Math.random();
+        let color='#fff';
         if(rand<0.05) color='#ff0000';
         else if(rand<0.08) color='#ff77ff';
         else if(rand<0.10) color='#00ffff';
-        stars.push({
-            x, y,
-            size: Math.random()*1.4+0.3,
-            color,
-            speed: Math.random()*0.06 + 0.01,
-            phase: Math.random()*Math.PI*2,
-            twinkle: Math.random()<0.2,
-            baseAlpha: 0.85 + Math.random()*0.15
-        });
+        stars.push({x,y,size:Math.random()*1.4+0.3,color,baseAlpha:0.85 + Math.random()*0.15,twinkle:Math.random()<0.2,phase:Math.random()*Math.PI*2});
     }
 }
 createStars();
-
 function drawStars(time=0){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for(const s of stars){
@@ -380,13 +151,28 @@ function drawStars(time=0){
     ctx.globalAlpha=1;
     requestAnimationFrame(drawStars);
 }
-drawStars();
+requestAnimationFrame(drawStars);
+
+/* ===== LOGO ANIMATION ===== */
+const logo = document.getElementById('logoText');
+logo.addEventListener('click', ()=>{
+    logo.classList.remove('flash1','flash2','stayOn');
+    logo.offsetWidth; // force reflow
+    logo.classList.add('flash1');
+    setTimeout(()=>{logo.classList.remove('flash1'); logo.classList.add('flash2');},200);
+    setTimeout(()=>{logo.classList.remove('flash2'); logo.classList.add('stayOn');},400);
+    // reset inventory view
+    document.getElementById('inventoryContainer').style.display='flex';
+    document.getElementById('leftContainer').style.display='none';
+    document.getElementById('totalCostContainer').style.display='none';
+    document.getElementById('summaryContainer').style.display='none';
+});
 
 /* ===== INVENTORY CLEAR ===== */
 const messageBox = document.getElementById('message');
 const submitBtn = document.getElementById('submitButton');
 messageBox.addEventListener('focus', ()=>{
-    messageBox.value='';
+    if(messageBox.value.includes('Compressed')) messageBox.value='';
     messageBox.style.color='#ccc';
 });
 submitBtn.addEventListener('click', ()=>{
@@ -397,33 +183,34 @@ submitBtn.addEventListener('click', ()=>{
     renderSummary(messageBox.value);
 });
 
-/* ===== PRICE LIST FROM CSV ===== */
+/* ===== LOAD PRICES FROM CSV ===== */
+let priceListRaw = {};
 async function loadPriceListCSV(){
     const res = await fetch('data/prices.csv');
     const text = await res.text();
     const lines = text.trim().split(/\r?\n/);
-    const priceList = {};
     lines.forEach(line=>{
-        const [name, price] = line.split(',');
-        if(!name.toLowerCase().includes('compressed')){
-            priceList[name] = parseFloat(price);
-        }
+        const parts = line.split(',');
+        if(parts.length<2) return;
+        const name = parts[0].trim();
+        const price = parseFloat(parts[1].trim());
+        if(!name.toLowerCase().includes('compressed') && !isNaN(price)) priceListRaw[name] = price;
     });
-    return priceList;
+    renderPriceList();
 }
-const priceListContainer = document.getElementById('priceListContainer');
+loadPriceListCSV();
 
-async function renderPriceListFromCSV(){
-    const priceList = await loadPriceListCSV();
-    const ores = Object.keys(priceList).sort();
-    let html = '<table><tr><th>Ore</th><th>Price</th></tr>';
+/* ===== RENDER PRICE LIST ===== */
+const priceListContainer = document.getElementById('priceListContainer');
+function renderPriceList(){
+    let ores = Object.keys(priceListRaw).sort();
+    let html='<table><tr><th>Ore</th><th>Price</th></tr>';
     ores.forEach(o=>{
-        html += `<tr><td>${o}</td><td>${priceList[o]}</td></tr>`;
+        html+=`<tr><td>${o}</td><td>${priceListRaw[o]}</td></tr>`;
     });
-    html += '</table>';
+    html+='</table>';
     priceListContainer.innerHTML = html;
 }
-renderPriceListFromCSV();
 
 /* ===== TOGGLE PRICE LIST ===== */
 document.getElementById('priceTab').addEventListener('click', ()=>{
@@ -433,8 +220,7 @@ document.getElementById('priceTab').addEventListener('click', ()=>{
 
 /* ===== RENDER SUMMARY ===== */
 const summaryContainer = document.getElementById('summaryContainer');
-async function renderSummary(text){
-    const priceList = await loadPriceListCSV();
+function renderSummary(text){
     const lines = text.trim().split(/\r?\n/).filter(l=>l.trim()!=='');
     let total=0;
     let html='<table class="summary-table"><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
@@ -443,12 +229,12 @@ async function renderSummary(text){
         if(parts.length<2) return;
         const name = parts[0].trim();
         const qty = parseInt(parts[1].replace(/,/g,''))||0;
-        const price = priceList[name]||0;
+        const price = priceListRaw[name]||0;
         const t = qty*price;
-        total += t;
-        html += `<tr><td>${name}</td><td class="quantity">${qty.toLocaleString()}</td><td class="price">${price.toLocaleString()}</td><td class="total-column">${t.toLocaleString()}</td></tr>`;
+        total+=t;
+        html+=`<tr><td>${name}</td><td class="quantity">${qty.toLocaleString()}</td><td class="price">${price.toLocaleString()}</td><td class="total-column">${t.toLocaleString()}</td></tr>`;
     });
-    html += `<tr class="summary-total"><td colspan="3">Total</td><td>${total.toLocaleString()}</td></tr></table>`;
+    html+=`<tr class="summary-total"><td colspan="3">Total</td><td>${total.toLocaleString()}</td></tr></table>`;
     summaryContainer.innerHTML = html;
     summaryContainer.style.display='flex';
 }
