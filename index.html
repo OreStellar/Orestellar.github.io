@@ -4,131 +4,934 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>OreStellar</title>
+
 <!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-<!-- LZString for URL compression -->
+
+<!-- LZString for URL compression (share) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
 <style>
-/* ===== BASE ===== */
-html,body{margin:0;padding:0;height:100%;background:#000;font-family:monospace;color:#fff;}
+/* ================== BASE ================== */
+:root{
+  --neon: #00ff00;
+  --bg: #000;
+  --panel: rgba(20,20,20,0.92);
+  --mono: 'Share Tech Mono', monospace;
+  --orbitron: 'Orbitron', sans-serif;
+}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);font-family:monospace;color:#fff;overflow:hidden;}
+/* star canvas sits at z=0 and pointer-events none so overlay works */
 canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-/* Container */
-.container-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;padding:20px;z-index:2;position:relative;}
-/* Logo */
-#myHeader{display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;width:100%;max-width:650px;margin-bottom:30px;cursor:pointer;z-index:2;}
-#logoText{display:inline;font-family:'Orbitron',sans-serif;font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
+
+/* ================== LAYOUT ================== */
+.container-wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  gap:20px;
+  padding:20px;
+  z-index:2;
+  position:relative;
+}
+
+/* ================== LOGO ================== */
+#myHeader{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  text-align:center;
+  width:100%;
+  max-width:650px;
+  margin-bottom:30px;
+  cursor:pointer;
+  z-index:3;
+}
+#logoText{display:inline;font-family:var(--orbitron);font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
 #logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
-@keyframes softGlow{0%,100%{text-shadow:0 0 5px #fff;color:rgba(255,255,255,0.75);}50%{text-shadow:0 0 15px #fff;color:rgba(255,255,255,1);}}
-@keyframes flickerRapid{0%,20%,40%,60%,80%,100%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}10%,30%,50%,70%,90%{color: rgba(255,255,255,0.1);text-shadow:none;}}
-@keyframes flickerQuick{0%,50%,100%{color: rgba(255,255,255,0.1);text-shadow:none;}25%,75%{color: rgba(255,255,255,1);text-shadow:0 0 10px #fff;}}
 
-/* Main Container */
-.main-container{width:650px;max-width:90%;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:rgba(20,20,20,0.92);border-radius:15px;z-index:2;}
-.main-container textarea#message{display:block;margin:0 auto;width:92%;font-size:18px;padding:18px;border-radius:10px;resize:vertical;background-color:rgba(17,17,17,0.97);color:#fff;border:1px solid #333;text-align:left;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 5px #111;transition: all 0.2s ease-in-out;}
-.main-container textarea#message::placeholder{color:#fff;opacity:0.6;}
-textarea#message:focus{outline:none;border-color:#fff;box-shadow:inset 0 0 15px #fff,0 0 25px #fff;transition:box-shadow 0.3s ease,border-color 0.3s ease;}
+/* Flicker + soft glow keyframes used via JS sequencing */
+@keyframes softGlow {0%,100%{text-shadow:0 0 5px #fff;color:rgba(255,255,255,0.75);}50%{text-shadow:0 0 15px #fff;color:rgba(255,255,255,1);}}
 
-/* Buttons */
-.actionButton{margin-top:15px;background:linear-gradient(145deg,#161616,#242424);color:#fff;border:2px solid #ccc;border-radius:10px;padding:12px 26px;font-weight:bold;font-family:'Orbitron',sans-serif;cursor:pointer;position:relative;overflow:hidden;text-shadow:0 0 2px #fff;box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;animation:ambientGlow 3.5s ease-in-out infinite alternate;transition:all 0.35s ease;}
-.actionButton:disabled{opacity:0.5;cursor:not-allowed;}
-@keyframes ambientGlow{0%{box-shadow:0 0 4px #ffffff33,0 0 8px #ffffff11 inset;}100%{box-shadow:0 0 12px #ffffff88,0 0 18px #ffffff33 inset;}}
+/* ================== MAIN PANEL ================== */
+.main-container{
+  width:650px;
+  max-width:92%;
+  padding:30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background-color:var(--panel);
+  border-radius:15px;
+  z-index:2;
+  box-shadow:0 6px 24px rgba(0,0,0,0.6);
+}
 
-/* Contracts */
+/* header above textarea */
+#inventoryHeader{
+  font-family:var(--orbitron);
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 0 8px #fff,0 0 16px #fff,0 0 24px var(--neon);
+  margin:0 0 12px 0;
+  padding-bottom:6px;
+}
+
+/* textarea styling — filler smaller & greyed */
+textarea#message{
+  display:block;
+  margin:0 auto;
+  width:92%;
+  font-size:14px;
+  color:#bfbfbf; /* filler color until user edits */
+  background-color: rgba(17,17,17,0.97);
+  padding:14px;
+  border-radius:10px;
+  resize:vertical;
+  border:1px solid #333;
+  text-align:left;
+  font-family:var(--mono);
+  box-shadow: inset 0 0 6px #111;
+  line-height:1.35;
+  min-height:130px;
+}
+textarea#message.small-filler { font-size:13px; color:#9a9a9a; } /* smaller, greyed filler */
+
+textarea#message:focus{
+  outline:none;
+  border-color:#fff;
+  box-shadow:inset 0 0 15px #fff,0 0 25px #fff;
+  color:#e6e6e6; /* actual typing color */
+}
+
+/* ================== BUTTONS ================== */
+.actionButton{
+  margin-top:15px;
+  background:linear-gradient(145deg,#161616,#242424);
+  color:#fff;
+  border:2px solid #ccc;
+  border-radius:10px;
+  padding:12px 26px;
+  font-weight:bold;
+  font-family:var(--orbitron);
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  text-shadow:0 0 2px #fff;
+  box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;
+  transition:all 0.25s ease;
+}
+.actionButton:disabled{opacity:0.45;cursor:not-allowed;}
+
+/* ================== CONTRACT / SUMMARY / PRICELIST ================== */
 .contracts-wrapper{display:flex;justify-content:center;align-items:flex-start;gap:15px;flex-wrap:wrap;width:100%;}
-.total-cost-container{width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;}
+
+/* contract images */
+.total-cost-container{
+  width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;
+}
 #leftContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');display:none;}
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');display:none;position:relative;}
-#totalCostText{position:absolute;top:18px;right:20px;color:#00ff00;font-family:'Share Tech Mono',monospace;font-weight:bold;font-size:18px;text-shadow:0 0 6px #00ff00,0 0 12px #00ff00;cursor:pointer;}
+#totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
 
-/* Price Tab */
-#priceTab{position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:#00ff00;color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px #00ff00,0 0 30px #00ff00 inset;z-index:30;transition:transform 0.18s ease, right 0.18s ease;}
-#priceTab:hover{transform:translateX(-6px) scale(1.05);}
-
-/* Floating price list */
-#priceListContainer{position:fixed;top:18vh;right:78px;width:320px;max-height:60vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid #00ff00;padding:10px;border-radius:10px;display:none;box-shadow:0 0 18px #00ff00;z-index:29;font-family:'Share Tech Mono',monospace;color:#00ff00;}
-#priceListContainer table{width:100%;border-collapse:collapse;}
-#priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.08);font-size:13px;text-align:left;}
-#priceListContainer th{font-weight:700;color:#00ff00;}
-
-/* Summary container */
-.summary-container{display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:'Share Tech Mono',monospace;font-size:14px;line-height:1.4;color:#00ff00;background:rgba(0,10,0,0.95);border:2px solid #00ff00;border-radius:12px;padding:16px 20px;min-width:420px;max-width:520px;max-height:60vh;overflow-y:auto;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(0,255,0,0.25);z-index:3;}
-.summary-container::-webkit-scrollbar{width:8px;}
-.summary-container::-webkit-scrollbar-thumb{background:#00ff00;border-radius:6px;box-shadow:0 0 10px #00ff00;}
-
-/* Summary table */
-.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;white-space:nowrap;}
-.summary-table th:nth-child(1), .summary-table td:nth-child(1){text-align:left;}
-.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column {text-align:right;font-variant-numeric:tabular-nums;}
-.summary-table tr.unrecognized td {color:#ff4444;font-weight:700;text-shadow:0 0 8px #ff3333;}
-.summary-table th {color:#00ff00;text-shadow:0 0 6px #00ff00;border-bottom:1px solid rgba(0,255,0,0.15);}
-.summary-total td{border-top:2px solid rgba(0,255,0,0.25);font-weight:700;text-align:right;padding-top:10px;}
-
-/* Ledger style when shared */
-.shared-ledger{font-family:'Share Tech Mono',monospace;background:rgba(0,0,0,0.98);border:none;box-shadow:none;padding:10px 14px;border-radius:6px;}
-
-/* ===== SITE MAINTENANCE OVERLAY ===== */
-#maintenanceOverlay {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.95);
-    color:#00ff00;
-    font-family: 'Orbitron', sans-serif;
-    display:flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    z-index:9999;
-    pointer-events:all;
+/* price tab: Z with short horizontal line */
+#priceTab{
+  position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:var(--neon);color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px var(--neon),0 0 30px var(--neon) inset;z-index:30;transition:transform 0.18s ease;
+  font-family:var(--orbitron);
 }
-#maintenanceOverlay h1{font-size:5rem;margin:0 0 20px 0;text-shadow:0 0 12px #00ff00,0 0 24px #00ff00;}
-#maintenanceOverlay p{font-size:1.8rem;max-width:600px;line-height:1.4;text-shadow:0 0 8px #00ff00;}
+#priceTab::before{ content:"\005A"; position:absolute; top:7px; font-size:28px; }
+#priceTab::after{ content:""; position:absolute; top:22px; width:18px; height:2px; background:#000; }
+
+/* floating price list */
+#priceListContainer{
+  position:fixed;top:18vh;right:78px;width:360px;max-height:72vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid var(--neon);padding:12px;border-radius:10px;display:none;box-shadow:0 0 22px var(--neon);z-index:29;font-family:var(--mono);color:var(--neon);
+}
+#priceListContainer table{width:100%;border-collapse:collapse;}
+#priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;text-align:left;}
+#priceListContainer th{font-weight:700;color:var(--neon);}
+
+/* summary container */
+.summary-container{
+  display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:var(--mono);font-size:14px;line-height:1.4;color:var(--neon);background:rgba(0,10,0,0.95);border:2px solid var(--neon);border-radius:12px;padding:16px 20px;min-width:420px;max-width:520px;max-height:72vh;overflow-y:auto;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(0,255,0,0.18);z-index:3;
+}
+.summary-container::-webkit-scrollbar{width:8px;}
+.summary-container::-webkit-scrollbar-thumb{background:var(--neon);border-radius:6px;box-shadow:0 0 10px var(--neon);}
+
+.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.03);font-size:13px;white-space:nowrap;}
+.summary-table th:nth-child(1), .summary-table td:nth-child(1){text-align:left;}
+/* align numeric columns to the right */
+.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column {text-align:right;font-variant-numeric:tabular-nums;}
+/* header numeric alignment: make headers match columns (right) */
+.summary-table th{ text-align:right; color:var(--neon); text-shadow:0 0 6px var(--neon); border-bottom:1px solid rgba(0,255,0,0.1); }
+.summary-table th:first-child{ text-align:left; } /* Name header left */
+.summary-table tr.unrecognized td {color:#ff6666;font-weight:700;text-shadow:0 0 8px #ff5555;}
+.summary-total td{border-top:2px solid rgba(0,255,0,0.18);font-weight:700;padding-top:10px; text-align:right;}
+
+/* small responsive tweaks */
+@media (max-width:720px){
+  #priceListContainer{ right:10px; width:320px; max-height:50vh; }
+  .main-container{padding:20px;}
+  #logoText{font-size:3.2rem;}
+}
 </style>
 </head>
 <body data-show-inventory="true">
 
-<!-- MAINTENANCE OVERLAY -->
-<div id="maintenanceOverlay">
-    <h1>⚠ Site Maintenance ⚠</h1>
-    <p>The OreStellar website is temporarily unavailable for updates.<br>Please check back later. Thank you for your patience.</p>
-</div>
+<!-- MAIN LAYOUT -->
+<canvas id="starfield" aria-hidden="true"></canvas>
 
-<canvas id="starfield"></canvas>
-<div class="container-wrapper">
-<header id="myHeader" title="Return home">
-<h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
-</header>
+<div class="container-wrapper" id="appRoot">
+  <header id="myHeader" title="Return home">
+    <h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
+  </header>
 
-<div class="main-container" id="inventoryContainer">
-<h3 style="font-family:'Orbitron',sans-serif;font-weight:700;color:#fff;text-shadow:0 0 8px #fff,0 0 16px #fff,0 0 24px #00ff00;">Paste Your Inventory Below</h3>
-<textarea id="message" rows="8" placeholder="Compressed Ytirium 1,189,290 Ytirium 7,135.74 m3 658,723,945.20 ISK Compressed Gneiss 143,582 Gneiss 7,179.10 m3 479,780,688.82 ISK"></textarea>
-<button id="submitButton" class="actionButton" disabled>Submit</button>
-</div>
+  <div class="main-container" id="inventoryContainer" role="region" aria-label="Inventory input">
+    <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
 
-<div class="contracts-wrapper">
-<div id="leftContainer" class="total-cost-container"></div>
-<div id="summaryContainer" class="summary-container" aria-live="polite"></div>
-<div id="totalCostContainer" class="total-cost-container">
-<div id="totalCostText">0 ISK</div>
-</div>
-</div>
+    <!-- initial filler text is greyed and smaller -->
+    <textarea id="message" class="small-filler" rows="8" aria-label="Inventory input" >
+Compressed Ytirium	1304752
+Compressed Gneiss	166047
+Obsidian Ochre	8603
+Eifyrium	8242
+Compressed Dark Ochre	5086
+Compressed Jet Ochre	3750
+Compressed Prize Mordunium	998781
+Pellucid Crokite	2912
+Compressed Ducinium	4985
+    </textarea>
 
-<div id="priceTab" title="Open price list">₵</div>
-<div id="priceListContainer" aria-hidden="true"></div>
-<button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
+    <button id="submitButton" class="actionButton" disabled>Submit</button>
+  </div>
+
+  <div class="contracts-wrapper" aria-live="polite">
+    <div id="leftContainer" class="total-cost-container" aria-hidden="true"></div>
+    <div id="summaryContainer" class="summary-container" aria-live="polite"></div>
+    <div id="totalCostContainer" class="total-cost-container" aria-hidden="true">
+      <div id="totalCostText">0 ISK</div>
+    </div>
+  </div>
+
+  <div id="priceTab" title="Open price list" role="button" aria-pressed="false">₵</div>
+  <div id="priceListContainer" aria-hidden="true"></div>
+
+  <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
+</div>
 
 <script>
-// Disable all underlying clicks
-document.body.style.pointerEvents = 'none';
-document.getElementById('maintenanceOverlay').style.pointerEvents = 'all';
+/* ====================== STARFIELD ====================== */
+/* Increase total stars (approx 3x vs earlier baseline),
+   keep cluster distribution but do not increase cluster density.
+   Use the color ratios: red 5%, pink 3%, light-blue 2%. */
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
 
-/* ===== STARFIELD, CSV, parsing, summary, logo animation, etc. ===== */
-/* KEEP ALL YOUR PREVIOUS JS BELOW THIS LINE */
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', ()=>{ resizeCanvas(); createStars(); });
+
+let stars = [];
+let clusterCount = 10;
+
+function createStars(){
+  stars = [];
+  const centers = [];
+  for(let i=0;i<clusterCount;i++){
+    centers.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height });
+  }
+
+  // total scaled to roughly 3x from previous "safe" baseline
+  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 1600));
+
+  for(let i=0;i<total;i++){
+    let x, y;
+    if(Math.random() < 0.6){
+      const c = centers[Math.floor(Math.random()*centers.length)];
+      const r = Math.random()*140;
+      const a = Math.random()*Math.PI*2;
+      x = c.x + r*Math.cos(a);
+      y = c.y + r*Math.sin(a);
+    } else {
+      x = Math.random()*canvas.width;
+      y = Math.random()*canvas.height;
+    }
+
+    // color distribution: red 5%, pink 3%, blue 2%, rest white
+    const r = Math.random();
+    let color = '#ffffff';
+    if(r < 0.05) color = '#ff0000';
+    else if(r < 0.08) color = '#ff77ff';
+    else if(r < 0.10) color = '#00ffff';
+
+    stars.push({
+      x, y,
+      size: Math.random()*1.6 + 0.2,
+      color,
+      phase: Math.random()*Math.PI*2,
+      twinkle: Math.random() < 0.22,
+      baseAlpha: 0.7 + Math.random()*0.25,
+      isBright: false,
+      brightStart: 0,
+      brightEnd: 0
+    });
+  }
+}
+createStars();
+
+let lastBright = 0, nextBright = 5000 + Math.random()*7000;
+
+function drawStars(time = 0){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  if(time - lastBright > nextBright){
+    lastBright = time;
+    nextBright = 5000 + Math.random()*8000;
+    for(let i=0;i<3;i++){
+      const s = stars[Math.floor(Math.random()*stars.length)];
+      s.isBright = true;
+      s.brightStart = time;
+      s.brightEnd = time + 800 + Math.random()*1400;
+    }
+  }
+
+  for(const s of stars){
+    let alpha = s.baseAlpha;
+    if(s.twinkle) alpha = 0.45 + 0.5 * Math.abs(Math.sin(time*0.002 + s.phase));
+    if(s.isBright && time >= s.brightStart && time < s.brightEnd) alpha = 1;
+    if(s.isBright && time >= s.brightEnd) s.isBright = false;
+
+    ctx.beginPath();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = s.color;
+    ctx.shadowBlur = alpha === 1 ? s.size*8 : s.size*3;
+    ctx.shadowColor = s.color;
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
+}
+requestAnimationFrame(drawStars);
+
+/* ====================== LOGO FLICKER SEQUENCE ====================== */
+/* We need two quick flashes, then one flash, then softGlow infinite. We'll
+   use JS sequencing so timing is deterministic across browsers. */
+const logoText = document.getElementById('logoText');
+const oreSpan = document.getElementById('ore');
+const stellarSpan = document.getElementById('stellar');
+
+function setLogoState(color, shadow){
+  logoText.style.color = color;
+  logoText.style.textShadow = shadow || 'none';
+}
+
+/* play the flicker sequence on load */
+function playLogoSequence(){
+  // start dim
+  setLogoState('rgba(255,255,255,0.1)','none');
+
+  // two quick flashes
+  setTimeout(()=> setLogoState('#fff','0 0 12px #fff,0 0 18px #fff'), 90);
+  setTimeout(()=> setLogoState('rgba(255,255,255,0.1)','none'), 220);
+  setTimeout(()=> setLogoState('#fff','0 0 12px #fff,0 0 18px #fff'), 340);
+  setTimeout(()=> setLogoState('rgba(255,255,255,0.1)','none'), 470);
+
+  // single longer flash then stay on (softGlow)
+  setTimeout(()=>{
+    setLogoState('#fff','0 0 12px #fff,0 0 18px #fff,0 0 24px #fff');
+    // apply softGlow via CSS animation for the glowing stage:
+    logoText.style.animation = 'softGlow 6s infinite';
+  }, 620);
+}
+window.addEventListener('load', playLogoSequence);
+
+/* clicking logo resets page to base view (like before) */
+document.getElementById('myHeader').addEventListener('click', ()=>{
+  // reset to base URL (clear query)
+  window.location.href = window.location.origin + window.location.pathname;
+});
+
+/* ====================== CSV PRICES (load & normalize) ====================== */
+/*
+  We will:
+  - fetch the CSV from your GitHub raw URL
+  - detect the header column that looks like "Suggested Buy 150%" or "Suggested Buy"
+  - if header is "Suggested Buy 150%" we use value as-is; if only "Suggested Buy" present we multiply by 1.5
+  - exclude any 'Compressed' names
+  - normalize keys to lowercase single-space form and store canonical display names
+*/
+
+const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+
+let priceList = {};        // normalizedName -> numeric price (number)
+let canonicalNames = {};   // normalizedName -> displayName (exact from CSV)
+let baseNames = [];        // list of non-compressed base candidate names
+let oreEntries = [];       // for matching inventory: sorted list (longest first)
+
+async function fetchPrices(){
+  try {
+    const res = await fetch(CSV_URL);
+    const txt = await res.text();
+    const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+    if(lines.length < 2) return;
+
+    // parse header robustly
+    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
+    // find a column index for "suggested buy 150%" OR "suggested buy" OR "suggested"
+    let suggestedIdx = -1;
+    headerCols.forEach((h, idx) => {
+      if(h.includes('suggested buy 150%') || h.includes('suggested buy 150') || h.includes('suggested buy 150 percent')) suggestedIdx = idx;
+    });
+    if(suggestedIdx === -1){
+      // fallback to generic 'suggested buy' or 'suggested'
+      headerCols.forEach((h, idx) => {
+        if(h.includes('suggested buy') && suggestedIdx === -1) suggestedIdx = idx;
+        if(h.includes('suggested') && suggestedIdx === -1) suggestedIdx = idx;
+      });
+    }
+
+    // if still not found, try second column as a last resort (older CSVs)
+    if(suggestedIdx === -1 && headerCols.length >= 2) suggestedIdx = headerCols.length - 1;
+
+    // parse rows
+    priceList = {};
+    canonicalNames = {};
+    for(let i=1;i<lines.length;i++){
+      const cols = splitCsvLine(lines[i]);
+      if(cols.length < 2) continue;
+      const name = (cols[0] || '').trim();
+      if(!name) continue;
+      // skip compressed variants for price list (we'll still parse them in inventory)
+      if(/compressed/i.test(name)) continue;
+
+      // get suggested value if present
+      let suggestedRaw = undefined;
+      if(suggestedIdx >= 0 && suggestedIdx < cols.length){
+        suggestedRaw = cols[suggestedIdx].trim();
+      }
+      // try parse
+      let suggested = parseNumberSafe(suggestedRaw);
+      // If the header explicitly mentions 150% we use as-is; otherwise we'll multiply by 1.5 later during rendering
+      // To discover that, check header string
+      const headerText = headerCols[suggestedIdx] || '';
+      let headerContains150 = /150/.test(headerText) || headerText.includes('150%') || headerText.includes('1.5');
+      // Compute price to store as baseCSVPrice (we store raw CSV suggested; final displayed price may be multiplied)
+      if(!isFinite(suggested)) {
+        // try fallback: maybe price is second-to-last column as the dataset sometimes uses that
+        const alt = cols[cols.length-2];
+        suggested = parseNumberSafe(alt);
+      }
+      if(!isFinite(suggested)) continue;
+
+      // Normalized key
+      const normalized = normalizeName(name);
+      priceList[normalized] = {
+        csvValue: suggested,   // raw suggested value (from CSV cell)
+        headerHas150: headerContains150
+      };
+      canonicalNames[normalized] = name;
+    }
+
+    // Build base names list (all non-compressed canonical names)
+    baseNames = Object.values(canonicalNames).slice(); // display names
+    // We'll normalize base candidate tokens to allow matching
+    // Build oreEntries for inventory matching: prefer longer multi-word entries first
+    oreEntries = Object.keys(canonicalNames).map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }));
+    oreEntries.sort((a,b) => (b.tokens - a.tokens) || (b.length - a.length));
+
+    // Precompute a map of base -> variants for price list grouping (non-compressed)
+    buildPriceGrouping();
+
+    // Fill the floating price list UI
+    fillPriceList();
+  } catch(err) {
+    console.error('fetchPrices error', err);
+  }
+}
+
+/* helper: split csv line but keep commas in quoted fields -- simple robust split */
+function splitCsvLine(line){
+  // simple parser for CSV without external libs
+  const out = [];
+  let cur = '', inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch === '"' ){
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if(ch === ',' && !inQuotes){
+      out.push(cur);
+      cur = '';
+      continue;
+    }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+
+/* safe parse for numbers with commas and currency characters */
+function parseNumberSafe(str){
+  if(str === undefined || str === null) return NaN;
+  const s = String(str).replace(/[^\d.\-]/g,'').trim();
+  if(s === '') return NaN;
+  const n = parseFloat(s);
+  return isFinite(n) ? n : NaN;
+}
+
+/* normalize names for keys: lowercase, single spaces, trim */
+function normalizeName(name){
+  return (name || '').toString().toLowerCase().replace(/\s+/g,' ').trim();
+}
+
+/* ====================== PRICE GROUPING (for the floating list) ====================== */
+/*
+  We'll group by "base" detection:
+  - For each canonical name, the "base" is chosen as the last word by default, BUT we try to match
+    against any other canonical non-compressed name if that appears as a whole word (case-insensitive)
+    inside this variant's name. This avoids 'Augmented Eifyrium' -> base 'Eifyrium'.
+*/
+let groupedPriceMap = {}; // baseDisplayName -> array of {name, priceToDisplay}
+
+function buildPriceGrouping(){
+  groupedPriceMap = {};
+
+  // prepare an array of candidate base names (display form) and normalized versions
+  const candidateBases = Object.values(canonicalNames).slice(); // display names
+  const normalizedBases = candidateBases.map(b => normalizeName(b));
+
+  // iterate through each canonical name
+  Object.keys(canonicalNames).forEach(normKey => {
+    const display = canonicalNames[normKey];
+    const lower = normalizeName(display);
+
+    // find a matching base among candidateBases that appears in the name as a whole word (prefer exact matches)
+    let chosenBase = null;
+    // prefer base that equals the last word (most common)
+    const lastWord = lower.split(' ').slice(-1)[0];
+    for(let i=0;i<candidateBases.length;i++){
+      if(normalizeName(candidateBases[i]) === lastWord){
+        chosenBase = candidateBases[i];
+        break;
+      }
+    }
+    // fallback: find any base that appears in the name
+    if(!chosenBase){
+      for(let i=0;i<candidateBases.length;i++){
+        const bNorm = normalizedBases[i];
+        // whole-word match using regex boundaries
+        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b','i');
+        if(re.test(lower)){
+          chosenBase = candidateBases[i];
+          break;
+        }
+      }
+    }
+    // final fallback: the display itself
+    if(!chosenBase) chosenBase = display;
+
+    // compute display price: if CSV header already expressed 150% then use csvValue; else multiply by 1.5
+    const entry = priceList[normKey];
+    if(!entry) return;
+    const raw = entry.csvValue;
+    // decide if header contained 150% already
+    const priceToShow = entry.headerHas150 ? raw : +(raw * 1.5);
+
+    if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+    groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+  });
+
+  // Sort variants inside groups
+  Object.keys(groupedPriceMap).forEach(base => {
+    groupedPriceMap[base].sort((a,b) => a.name.localeCompare(b.name));
+  });
+}
+
+/* simple regex escape */
+function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+/* ====================== FILL FLOATING PRICE LIST ====================== */
+const priceListContainer = document.getElementById('priceListContainer');
+
+function fillPriceList(){
+  // produce a table grouped by base (alphabetical by base)
+  const bases = Object.keys(groupedPriceMap).sort((a,b)=> a.localeCompare(b));
+  let html = '<table><thead><tr><th>Ore</th><th>Suggested Buy (150%)</th></tr></thead><tbody>';
+  for(const base of bases){
+    // show the variants sorted
+    const variants = groupedPriceMap[base];
+    variants.forEach((v, idx) => {
+      // if variant name equals base, show normally; else indent with - prefix
+      const displayName = (idx===0 && normalizeName(variants[0].name) === normalizeName(base)) ? variants[0].name : v.name;
+      const prefix = (displayName === base) ? '' : '&nbsp;&nbsp;- ';
+      html += `<tr><td>${prefix}${escapeHtml(displayName)}</td><td style="text-align:right">${formatNumberDecimal(v.price)}</td></tr>`;
+    });
+  }
+  html += '</tbody></table>';
+  priceListContainer.innerHTML = html;
+}
+
+/* number formatting with two decimals when fractional */
+function formatNumberDecimal(n){
+  if(n === null || n === undefined || isNaN(n)) return '-';
+  // if n is effectively integer, show as integer, else show 2 decimals
+  if(Math.abs(Math.round(n) - n) < 0.005) return Math.round(n).toLocaleString();
+  return n.toFixed(2).toLocaleString();
+}
+
+/* ====================== PRICE TAB TOGGLE ====================== */
+const priceTab = document.getElementById('priceTab');
+priceTab.addEventListener('click', ()=>{
+  if(priceListContainer.style.display === 'block'){
+    priceListContainer.style.display = 'none';
+    priceTab.setAttribute('aria-pressed','false');
+    priceListContainer.setAttribute('aria-hidden','true');
+  } else {
+    priceListContainer.style.display = 'block';
+    priceTab.setAttribute('aria-pressed','true');
+    priceListContainer.setAttribute('aria-hidden','false');
+    // ensure price list is up to date
+    if(Object.keys(groupedPriceMap).length === 0) buildPriceGrouping(), fillPriceList();
+  }
+});
+
+/* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
+/* Filler text is present on load. We want:
+   - smaller, greyed filler displayed initially
+   - on first user focus, clear the filler and set normal typing color
+   - while filler remains, Submit button disabled
+*/
+
+const messageBox = document.getElementById('message');
+const submitButton = document.getElementById('submitButton');
+let userHasEdited = false;
+
+// ensure initial filler present and small-filler style
+if(messageBox.value.trim() === ''){
+  messageBox.classList.add('small-filler');
+} else {
+  // if there is prefilled text (we intentionally placed filler), keep small-filler until user focuses
+  messageBox.classList.add('small-filler');
+}
+
+// on input enable submit if non-empty and not filler status
+messageBox.addEventListener('input', ()=>{
+  const txt = messageBox.value.trim();
+  // if user has started typing (non-whitespace) we consider edited
+  if(txt.length > 0 && messageBox.classList.contains('small-filler') === false) {
+    userHasEdited = true;
+  }
+  // enable submit only if user actually edited and not empty
+  submitButton.disabled = !(userHasEdited && txt.length > 0);
+});
+
+// On focus, if small-filler present, clear it for first edit
+messageBox.addEventListener('focus', ()=>{
+  if(messageBox.classList.contains('small-filler')){
+    messageBox.value = '';
+    messageBox.classList.remove('small-filler');
+    messageBox.style.color = '#e6e6e6';
+    userHasEdited = true;
+    submitButton.disabled = true; // keep disabled until user types something
+  }
+});
+
+/* Also on blur, if empty, restore filler text (optional) - but we won't restore automatically to avoid confusion */
+messageBox.addEventListener('blur', ()=>{
+  if(!messageBox.value.trim()){
+    // keep it empty but maintain small-filler class so it's visually empty; user will see blank field
+    messageBox.classList.add('small-filler');
+    messageBox.style.color = '#bfbfbf';
+    userHasEdited = false;
+    submitButton.disabled = true;
+  }
+});
+
+/* ====================== PARSING INVENTORY & SUMMARY ====================== */
+/*
+  parseInventoryText: returns array of items:
+    { name: displayName, qty: integer, price: number (per unit, from priceList), total: qty*price, unrecognized:bool }
+  Behavior:
+    - tries to find the best matching ore name from oreEntries (longest names tried first)
+    - extracts first integer quantity found (handles commas)
+    - looks up the canonical price; if missing, price = 0 and unrecognized style shown
+*/
+function parseInventoryText(text){
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+  const result = [];
+
+  for(const rawLine of lines){
+    // remove obvious 'compressed' prefix for matching but keep display of original
+    const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
+    const lowerLine = lineNoCompressed.toLowerCase();
+
+    // find best matching ore entry (oreEntries are normalized keys)
+    let foundKey = null;
+    for(const entry of oreEntries){
+      const key = entry.key; // normalized key like 'eifyrium' or 'glazed hedbergite'
+      // create a regex for whole word match sequence of tokens to avoid partial wrong matches
+      // allow presence of punctuation around
+      const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
+      if(re.test(lowerLine)){
+        foundKey = key;
+        break;
+      }
+    }
+
+    // extract quantity (first big integer-looking token with commas)
+    let qty = 0;
+    const qtyMatch = rawLine.match(/([\d,]{1,})/);
+    if(qtyMatch){
+      qty = parseInt(qtyMatch[1].replace(/,/g,''), 10) || 0;
+    } else {
+      // try to find integers that might be after the name
+      const alt = lineNoCompressed.match(/\b(\d{1,})\b/);
+      qty = alt ? parseInt(alt[1],10) : 0;
+    }
+
+    if(foundKey){
+      const canonical = canonicalNames[foundKey] || foundKey;
+      const priceEntry = priceList[foundKey];
+      if(priceEntry){
+        // compute final per-unit price: if header had 150 already, use csvValue; else multiply csvValue by 1.5
+        const perUnit = priceEntry.headerHas150 ? priceEntry.csvValue : +(priceEntry.csvValue * 1.5);
+        const total = +(perUnit * qty);
+        result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
+      } else {
+        result.push({ name: canonical, qty, price:0, total:0, unrecognized:false });
+      }
+    } else {
+      // not found: include as unrecognized with original display trimmed
+      // try to use first few words as name
+      const guessName = (lineNoCompressed.split(/\s+/).slice(0,4).join(' ')).trim();
+      result.push({ name: guessName, qty, price:0, total:0, unrecognized:true });
+    }
+  } // end lines
+
+  return result;
+}
+
+/* RENDER SUMMARY: produce table with headers that align with columns */
+const summaryContainer = document.getElementById('summaryContainer');
+
+function renderSummary(parsedItems){
+  // compute grand total
+  let grandTotal = 0;
+  parsedItems.forEach(it => { grandTotal += (it.total || 0); });
+
+  // Build table
+  let html = '<table class="summary-table" role="table"><thead><tr>' +
+    '<th>Name</th>' +
+    '<th>Price</th>' +  // show price (right aligned)
+    '<th>Quantity</th>' +
+    '<th>Total</th>' +
+    '</tr></thead><tbody>';
+
+  parsedItems.forEach(it => {
+    if(it.unrecognized){
+      const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
+      html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
+    } else {
+      html += `<tr><td>${escapeHtml(it.name)}</td>` +
+              `<td class="price">${formatNumberDecimal(it.price)}</td>` +
+              `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
+              `<td class="total-column">${formatNumberDecimal(it.total)}</td></tr>`;
+    }
+  });
+
+  html += `<tr class="summary-total"><td colspan="3" style="text-align:left">Total</td><td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td></tr>`;
+  html += '</tbody></table>';
+
+  summaryContainer.innerHTML = html;
+  summaryContainer.style.display = 'flex';
+
+  // show contract containers
+  document.getElementById('leftContainer').style.display = 'block';
+  document.getElementById('totalCostContainer').style.display = 'flex';
+  document.getElementById('shareButton').style.display = 'inline-block';
+
+  // update top-right contract total copyable
+  const totalText = document.getElementById('totalCostText');
+  totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
+  makeCopyable(totalText);
+
+  // make the summary total copyable
+  const sumEl = document.getElementById('summaryTotal');
+  if(sumEl) makeCopyable(sumEl);
+
+  attachSorting(summaryContainer);
+}
+
+/* helpers for number formatting */
+function formatNumberInteger(n){
+  if(n === null || n === undefined) return '-';
+  return (typeof n === 'number' ? Math.round(n) : n).toLocaleString();
+}
+function formatNumberDecimal(n){
+  if(n === null || n === undefined) return '-';
+  if(typeof n !== 'number') return String(n);
+  // show no decimals when integer, else two decimals
+  if(Math.abs(Math.round(n) - n) < 0.005) return Math.round(n).toLocaleString();
+  return n.toFixed(2).toLocaleString();
+}
+
+function makeCopyable(el){
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', async ()=>{
+    try {
+      const text = el.innerText.replace(/[^\d\.\,]/g,'');
+      await navigator.clipboard.writeText(text);
+      const orig = el.innerText;
+      el.innerText = 'Copied';
+      setTimeout(()=> el.innerText = orig, 1200);
+    } catch(e){
+      // ignore
+    }
+  });
+}
+
+/* safe escape for HTML */
+function escapeHtml(s){
+  if(s===null || s===undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ====================== SORTING FOR SUMMARY ====================== */
+function attachSorting(container){
+  const table = container.querySelector('table');
+  if(!table) return;
+  const headers = table.querySelectorAll('th');
+  headers.forEach((header, index) => {
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', ()=>{
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('summary-total'));
+      const totalRow = tbody.querySelector('.summary-total');
+      const ascending = !header.classList.contains('sorted-asc');
+      headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
+      header.classList.add('sorted');
+      header.classList.toggle('sorted-asc', ascending);
+      header.classList.toggle('sorted-desc', !ascending);
+
+      rows.sort((a,b)=>{
+        // unrecognized to bottom
+        if(a.classList.contains('unrecognized') && !b.classList.contains('unrecognized')) return 1;
+        if(b.classList.contains('unrecognized') && !a.classList.contains('unrecognized')) return -1;
+
+        if(index === 0){
+          // name column: alphabetical
+          return ascending ? a.children[index].innerText.localeCompare(b.children[index].innerText)
+                           : b.children[index].innerText.localeCompare(a.children[index].innerText);
+        } else {
+          // numeric columns
+          const A = parseFloat(a.children[index].innerText.replace(/[^\d.\-]/g,'')) || 0;
+          const B = parseFloat(b.children[index].innerText.replace(/[^\d.\-]/g,'')) || 0;
+          return ascending ? A - B : B - A;
+        }
+      });
+
+      rows.forEach(r => tbody.appendChild(r));
+      if(totalRow) tbody.appendChild(totalRow);
+    });
+  });
+}
+
+/* ====================== SUBMIT / SHARE LOGIC ====================== */
+const shareButton = document.getElementById('shareButton');
+
+submitButton.addEventListener('click', ()=>{
+  // double-check we have user content
+  const txt = messageBox.value.trim();
+  if(!txt) return;
+  const parsed = parseInventoryText(txt);
+  renderSummary(parsed);
+  window.scrollTo({ top: 0, behavior:'smooth'});
+  // enable share button
+  shareButton.style.display = 'inline-block';
+});
+
+shareButton.addEventListener('click', async ()=>{
+  const msg = messageBox.value.trim();
+  if(!msg) return;
+  const compressed = LZString.compressToEncodedURIComponent(msg);
+  const url = `${location.origin}${location.pathname}?s=${compressed}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    const orig = shareButton.innerText;
+    shareButton.innerText = 'Copied';
+    setTimeout(()=> shareButton.innerText = orig, 1400);
+  } catch(e){
+    alert('Failed to copy URL.');
+  }
+});
+
+/* Auto-load from URL param ?s= (shared view) */
+window.addEventListener('load', async ()=>{
+  // fetch prices first
+  await fetchPrices();
+
+  // Check URL param
+  const params = new URLSearchParams(window.location.search);
+  const s = params.get('s');
+  if(s){
+    const text = LZString.decompressFromEncodedURIComponent(s);
+    if(text){
+      // populate message box with the text and render summary in shared view
+      messageBox.value = text;
+      userHasEdited = true;
+      submitButton.disabled = false;
+      const parsed = parseInventoryText(text);
+      renderSummary(parsed);
+      // show shared ledger style
+      summaryContainer.classList.add('shared-ledger');
+      // hide interactive controls visually
+      document.querySelector('.main-container').style.display = 'none';
+      document.getElementById('leftContainer').style.display = 'none';
+      document.getElementById('totalCostContainer').style.display = 'none';
+      shareButton.style.display = 'none';
+      // keep price list hidden
+      priceListContainer.style.display = 'none';
+    }
+  }
+});
+
+/* ====================== UTILITIES & INIT ====================== */
+function buildPriceGroupingIfNeeded(){
+  if(Object.keys(groupedPriceMap).length === 0) buildPriceGrouping();
+}
+
+function init(){
+  // initial state: submit disabled until user edits
+  submitButton.disabled = true;
+
+  // populate price list (fetchPrices is already called on load)
+}
+init();
+
+/* escape regex helper (again accessible) defined earlier */
+function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+/* small helper: when entering numeric strings with commas, convert to number safely */
+function parseIntSafeWithCommas(s){
+  if(!s) return 0;
+  const m = String(s).match(/[\d,]+/);
+  if(!m) return 0;
+  return parseInt(m[0].replace(/,/g,''),10) || 0;
+}
+
+/* ====================== HOOK UP: price fetch now ====================== */
+fetchPrices();
+
+/* ====================== END SCRIPT ====================== */
 </script>
-</div>
 </body>
 </html>
