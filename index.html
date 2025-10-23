@@ -263,8 +263,7 @@ function createStars(){
   }
 
   // total scaled to roughly 3x from previous "safe" baseline
-  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 1600));
-  const total = baseline * 20; // 20x the original baseline
+  const total = Math.max(180, Math.floor(canvas.width * canvas.height / 3200));
   
   for(let i=0;i<total;i++){
     let x, y;
