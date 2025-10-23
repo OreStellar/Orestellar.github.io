@@ -937,9 +937,6 @@ function init(){
 }
 init();
 
-/* escape regex helper (again accessible) defined earlier */
-function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
-
 /* small helper: when entering numeric strings with commas, convert to number safely */
 function parseIntSafeWithCommas(s){
   if(!s) return 0;
