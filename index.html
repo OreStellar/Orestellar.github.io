@@ -307,8 +307,8 @@ createStars();
 let lastBright = 0;
 let nextBright = 5000 + Math.random() * 7000;
 
-function drawStars(time = 0) {
-  if (!time) time = performance.now();
+function drawStars(time) {
+  time = time || performance.now();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (const s of stars) {
