@@ -448,19 +448,24 @@ if (!headerHas150) {
     canonicalNames = {};
 
     // Process all data rows (skip header)
-    lines.slice(1).forEach((line, idx) => {
-      const cols = splitCsvLine(line);
-      const name = cols[0]?.trim();
-      if (!name) return;
+lines.slice(1).forEach((line, idx) => {
+  const cols = splitCsvLine(line);
 
-      const suggestedRaw = cols[suggested150Idx]?.trim();
-      const suggested = parseFloat(suggestedRaw);
+  // skip completely empty lines
+  if (!cols || cols.length === 0) return;
 
-      if (!isFinite(suggested)) return; // skip invalid rows
+  const name = cols[0]?.trim();
+  if (!name) return;
 
-      const normalized = normalizeName(name);
-      priceList[normalized] = { csvValue: suggested, headerHas150 };
-      canonicalNames[normalized] = name;
+  // ensure we have a value in the Suggested Buy column
+  const suggestedRaw = cols[suggested150Idx] || '';
+  const suggested = parseFloat(suggestedRaw);
+  if (!isFinite(suggested)) return;
+
+  const normalized = normalizeName(name);
+  priceList[normalized] = { csvValue: suggested, headerHas150 };
+  canonicalNames[
+
     });
 
     console.log('Prices loaded:', priceList);
@@ -480,10 +485,7 @@ function splitCsvLine(line) {
 
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"') { 
-      inQuotes = !inQuotes; 
-      continue; 
-    }
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
     if (ch === ',' && !inQuotes) {
       out.push(cur);
       cur = '';
@@ -491,14 +493,9 @@ function splitCsvLine(line) {
     }
     cur += ch;
   }
-
-  // push last value
-  out.push(cur);
-
-  // handle trailing commas: ensure array has same length as header
+  out.push(cur); // push last value
   return out;
 }
-
 
 /* Build grouped price structure and apply 150% if header indicates */
 function buildPriceGrouping() {
