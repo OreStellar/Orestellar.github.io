@@ -420,25 +420,30 @@ async function fetchPrices() {
     console.log('CSV fetch status:', res.status);
 
     const text = await res.text();
-    const lines = text.split(/\r?\n/);
+    console.log('CSV first 300 chars:\n', text.slice(0, 300));
+
+    // Split lines and filter out empty ones
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+    if (!lines.length) throw new Error("CSV is empty");
+
+    // Extract header row
+    const header = splitCsvLine(lines[0]);
+    const suggested150Idx = header.indexOf('Suggested Buy Price @ 150%');
+    const headerHas150 = suggested150Idx >= 0;
 
     priceList = {};
     canonicalNames = {};
 
-    // Determine if header uses 150% column
-    const header = lines[0]?.split(',');
-    const headerHas150 = header?.includes('Suggested Buy Price @ 150%');
-
-    lines.forEach((line, idx) => {
-      if (!line.trim() || idx === 0) return; // skip header
-
-      const cols = splitCsvLine(line); // use robust splitter
+    // Process all data rows (skip header)
+    lines.slice(1).forEach((line, idx) => {
+      const cols = splitCsvLine(line);
       const name = cols[0]?.trim();
       if (!name) return;
 
-      const suggestedRaw = cols[10]; // 150% column index
+      const suggestedRaw = cols[suggested150Idx]?.trim();
       const suggested = parseFloat(suggestedRaw);
-      if (!isFinite(suggested)) return;
+
+      if (!isFinite(suggested)) return; // skip invalid rows
 
       const normalized = normalizeName(name);
       priceList[normalized] = { csvValue: suggested, headerHas150 };
@@ -447,14 +452,26 @@ async function fetchPrices() {
 
     console.log('Prices loaded:', priceList);
 
-    const grouped = buildPriceGrouping();
-    console.log('Grouped prices:', grouped);
-
+    buildPriceGrouping();
     fillPriceList();
 
   } catch (err) {
     console.error('fetchPrices error', err);
   }
+}
+
+/* Helper: split CSV line while keeping quoted commas intact */
+function splitCsvLine(line) {
+  const out = [];
+  let cur = '', inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === ',' && !inQuotes) { out.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
 }
 
 /* Build grouped price structure and apply 150% if header indicates */
