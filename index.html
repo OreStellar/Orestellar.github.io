@@ -420,35 +420,36 @@ async function fetchPrices() {
     console.log('CSV fetch status:', res.status);
 
     const text = await res.text();
-    console.log('CSV first 300 chars:\n', text.slice(0, 300));
-
     const lines = text.split(/\r?\n/);
 
     priceList = {};
     canonicalNames = {};
 
-   lines.forEach(line => {
-  if (!line.trim()) return;
+    // Determine if header uses 150% column
+    const header = lines[0]?.split(',');
+    const headerHas150 = header?.includes('Suggested Buy Price @ 150%');
 
-  const cols = line.split(','); // simpler CSV split
-  console.log('Line', lines.indexOf(line), 'cols:', cols);
+    lines.forEach((line, idx) => {
+      if (!line.trim() || idx === 0) return; // skip header
 
-  const name = cols[0]?.trim();
-  if (!name) return;
+      const cols = splitCsvLine(line); // use robust splitter
+      const name = cols[0]?.trim();
+      if (!name) return;
 
-  const suggestedRaw = cols[10]; // 150% column is 10th index (0-based)
-  const suggested = parseFloat(suggestedRaw);
-  if (!isFinite(suggested)) return;
+      const suggestedRaw = cols[10]; // 150% column index
+      const suggested = parseFloat(suggestedRaw);
+      if (!isFinite(suggested)) return;
 
-  const normalized = normalizeName(name);
-  priceList[normalized] = { csvValue: suggested };
-  canonicalNames[normalized] = name;
-});
-
+      const normalized = normalizeName(name);
+      priceList[normalized] = { csvValue: suggested, headerHas150 };
+      canonicalNames[normalized] = name;
+    });
 
     console.log('Prices loaded:', priceList);
 
-    buildPriceGrouping();
+    const grouped = buildPriceGrouping();
+    console.log('Grouped prices:', grouped);
+
     fillPriceList();
 
   } catch (err) {
@@ -468,13 +469,12 @@ function buildPriceGrouping() {
       const entry = priceList[normalized];
       if (!entry) return;
 
-      // Compute display price: multiply by 1.5 if the header is 150%
       const displayPrice = entry.headerHas150 ? entry.csvValue * 1.5 : entry.csvValue;
 
       groupedPrices[base].push({
         name: canonicalNames[normalized],
-        price: displayPrice,  // multiplied only for display
-        rawPrice: entry.csvValue // original CSV value preserved
+        price: displayPrice,
+        rawPrice: entry.csvValue
       });
     });
   }
@@ -482,19 +482,6 @@ function buildPriceGrouping() {
   return groupedPrices;
 }
 
-/* helper: split csv line but keep commas in quoted fields */
-function splitCsvLine(line) {
-  const out = [];
-  let cur = '', inQuotes = false;
-  for(let i=0;i<line.length;i++){
-    const ch = line[i];
-    if(ch === '"') { inQuotes = !inQuotes; continue; }
-    if(ch === ',' && !inQuotes) { out.push(cur); cur = ''; continue; }
-    cur += ch;
-  }
-  out.push(cur);
-  return out;
-}
 
 /* safe parse for numbers with commas and currency characters */
 function parseNumberSafe(str){
