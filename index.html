@@ -424,7 +424,83 @@ const oreVariantMap = {
     "Jet Ochre",
   ]
 };
+/* ====================== PRICE GROUPING (for the floating list) ====================== */
+function cleanName(name){
+  return name.replace(/^Compressed\s+/i, '').trim();
+}
 
+function buildPriceGrouping() {
+  groupedPriceMap = {}; // fresh map
+
+  // Build a set of normalized variant names
+  const allVariants = new Set();
+  Object.values(oreVariantMap).forEach(variants => {
+    variants.forEach(v => allVariants.add(normalizeName(v)));
+  });
+
+  // Only include canonical names that are NOT variants as candidate bases
+  const candidateBases = Object.values(canonicalNames)
+    .map(n => n.replace(/compressed\s+/i,'').trim())
+    .filter(n => !allVariants.has(normalizeName(n)));
+
+  Object.keys(canonicalNames).forEach(normKey => {
+    const rawName = canonicalNames[normKey];
+    if (!rawName) return;
+
+    // Clean the name (remove "Compressed")
+    const display = rawName.replace(/compressed\s+/i,'').trim();
+    const lower = normalizeName(display);
+
+    // Determine the base
+    let chosenBase = null;
+
+    // If it's a variant, map to its base
+    const normalizedDisplay = normalizeName(display);
+    if (variantToBase[normalizedDisplay]) {
+      // variant → normalized base → find canonical display name
+      const baseNormalized = variantToBase[normalizedDisplay];
+      chosenBase = Object.values(canonicalNames).find(n => normalizeName(n) === baseNormalized) || display;
+    } else {
+      // If display is a candidate base, use it
+      if (candidateBases.includes(display)) {
+        chosenBase = display;
+      } else {
+        // fallback: use itself
+        chosenBase = display;
+      }
+    }
+
+    // Grab price
+    const entry = priceList[normKey];
+    if (!entry) return;
+    const priceToShow = entry.csvValue;
+
+    // Ensure parent group exists
+    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+
+    // Deduplicate variants
+    const existingNames = groupedPriceMap[chosenBase].map(v => normalizeName(v.name));
+    if (!existingNames.includes(normalizedDisplay)) {
+      groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+    }
+  });
+}
+function fillPriceList() {
+  const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
+  let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
+
+  for (const base of bases) {
+    const variants = groupedPriceMap[base] || [];
+    html += `<tr><td>${base}</td><td style="text-align:right">${variants[0]?.price || 0}</td></tr>`;
+
+    for (const v of variants.slice(1)) {
+      html += `<tr><td>&nbsp;&nbsp;- ${v.name}</td><td style="text-align:right">${v.price}</td></tr>`;
+    }
+  }
+
+  html += '</tbody></table>';
+  priceListContainer.innerHTML = html;
+}
 // Build reverse map (variant → base)
 const variantToBase = {};
 for (const [base, variants] of Object.entries(oreVariantMap)) {
@@ -516,84 +592,6 @@ function roundDownFlexible(n) {
   if (n >= 1)    return Math.floor(n);
   if (n > 0)     return Math.floor(n * 1) / 1;
   return n;
-}
-
-/* ====================== PRICE GROUPING (for the floating list) ====================== */
-function cleanName(name){
-  return name.replace(/^Compressed\s+/i, '').trim();
-}
-
-function buildPriceGrouping() {
-  groupedPriceMap = {}; // fresh map
-
-  // Build a set of normalized variant names
-  const allVariants = new Set();
-  Object.values(oreVariantMap).forEach(variants => {
-    variants.forEach(v => allVariants.add(normalizeName(v)));
-  });
-
-  // Only include canonical names that are NOT variants as candidate bases
-  const candidateBases = Object.values(canonicalNames)
-    .map(n => n.replace(/compressed\s+/i,'').trim())
-    .filter(n => !allVariants.has(normalizeName(n)));
-
-  Object.keys(canonicalNames).forEach(normKey => {
-    const rawName = canonicalNames[normKey];
-    if (!rawName) return;
-
-    // Clean the name (remove "Compressed")
-    const display = rawName.replace(/compressed\s+/i,'').trim();
-    const lower = normalizeName(display);
-
-    // Determine the base
-    let chosenBase = null;
-
-    // If it's a variant, map to its base
-    const normalizedDisplay = normalizeName(display);
-    if (variantToBase[normalizedDisplay]) {
-      // variant → normalized base → find canonical display name
-      const baseNormalized = variantToBase[normalizedDisplay];
-      chosenBase = Object.values(canonicalNames).find(n => normalizeName(n) === baseNormalized) || display;
-    } else {
-      // If display is a candidate base, use it
-      if (candidateBases.includes(display)) {
-        chosenBase = display;
-      } else {
-        // fallback: use itself
-        chosenBase = display;
-      }
-    }
-
-    // Grab price
-    const entry = priceList[normKey];
-    if (!entry) return;
-    const priceToShow = entry.csvValue;
-
-    // Ensure parent group exists
-    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
-
-    // Deduplicate variants
-    const existingNames = groupedPriceMap[chosenBase].map(v => normalizeName(v.name));
-    if (!existingNames.includes(normalizedDisplay)) {
-      groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
-    }
-  });
-}
-function fillPriceList() {
-  const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
-  let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
-
-  for (const base of bases) {
-    const variants = groupedPriceMap[base] || [];
-    html += `<tr><td>${base}</td><td style="text-align:right">${variants[0]?.price || 0}</td></tr>`;
-
-    for (const v of variants.slice(1)) {
-      html += `<tr><td>&nbsp;&nbsp;- ${v.name}</td><td style="text-align:right">${v.price}</td></tr>`;
-    }
-  }
-
-  html += '</tbody></table>';
-  priceListContainer.innerHTML = html;
 }
 
 const messageBox = document.getElementById('message');
