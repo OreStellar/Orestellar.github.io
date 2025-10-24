@@ -424,6 +424,13 @@ const oreVariantMap = {
     "Jet Ochre",
   ]
 };
+// Build reverse map (variant → base)
+const variantToBase = {};
+for (const [base, variants] of Object.entries(oreVariantMap)) {
+  for (const variant of variants) {
+    variantToBase[normalizeName(variant)] = normalizeName(base);
+  }
+}
 /* ====================== PRICE GROUPING (for the floating list) ====================== */
 function cleanName(name){
   return name.replace(/^Compressed\s+/i, '').trim();
@@ -500,13 +507,6 @@ function fillPriceList() {
 
   html += '</tbody></table>';
   priceListContainer.innerHTML = html;
-}
-// Build reverse map (variant → base)
-const variantToBase = {};
-for (const [base, variants] of Object.entries(oreVariantMap)) {
-  for (const variant of variants) {
-    variantToBase[normalizeName(variant)] = normalizeName(base);
-  }
 }
 async function fetchPrices() {
   try {
