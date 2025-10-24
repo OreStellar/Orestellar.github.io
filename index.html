@@ -686,53 +686,66 @@ function escapeRegex(s){
   return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 }
 
-/* ====================== PARSING INVENTORY & SUMMARY ====================== */
 function parseInventoryText(text){
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
   const result = [];
 
   for(const rawLine of lines){
-    // remove 'compressed' prefix for matching but keep display
-    const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
-    const lowerLine = lineNoCompressed.toLowerCase();
+    const lineTrimmed = rawLine.trim();
+    const lowerLine = lineTrimmed.toLowerCase();
 
-    // find best matching ore entry (oreEntries are normalized keys)
+    // --- MATCHING ---
     let foundKey = null;
-    for(const entry of oreEntries){
-      const key = entry.key; // normalized key
-      const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
-      if(re.test(lowerLine)){
+
+    // 1️⃣ Exact match first
+    for (const entry of oreEntries) {
+      const key = entry.key;
+      const canonical = canonicalNames[key].toLowerCase();
+      if (canonical === lowerLine) {
         foundKey = key;
         break;
       }
     }
 
-    // extract quantity (first integer)
+    // 2️⃣ Fallback: partial match if exact not found
+    if (!foundKey) {
+      for (const entry of oreEntries) {
+        const key = entry.key;
+        const canonical = canonicalNames[key].toLowerCase();
+        if (lowerLine.includes(canonical)) {
+          foundKey = key;
+          break;
+        }
+      }
+    }
+
+    // --- EXTRACT QUANTITY ---
     let qty = 0;
     const qtyMatch = rawLine.match(/([\d,]+)/);
     if(qtyMatch){
       qty = parseInt(qtyMatch[1].replace(/,/g,''),10) || 0;
     }
-if (foundKey) {
-  const canonical = canonicalNames[foundKey] || foundKey;
-  const priceEntry = priceList[foundKey];
-  if (priceEntry) {
-    // Use CSV value directly
-    const perUnit = priceEntry.csvValue;
-    const total = +(perUnit * qty);
-    result.push({ name: canonical, qty, price: perUnit, total, unrecognized: false });
-  } else {
-    result.push({ name: canonical, qty, price: 0, total: 0, unrecognized: false });
-  }
-} else {
-  // not found: include as unrecognized with original display trimmed
-  const guessName = (lineNoCompressed.split(/\s+/).slice(0, 4).join(' ')).trim();
-  result.push({ name: guessName, qty, price: 0, total: 0, unrecognized: true });
-}
+
+    // --- BUILD RESULT ---
+    if (foundKey) {
+      const canonical = canonicalNames[foundKey] || foundKey;
+      const priceEntry = priceList[foundKey];
+      if (priceEntry) {
+        const perUnit = priceEntry.csvValue; // CSV value directly
+        const total = +(perUnit * qty);
+        result.push({ name: canonical, qty, price: perUnit, total, unrecognized: false });
+      } else {
+        result.push({ name: canonical, qty, price: 0, total: 0, unrecognized: false });
+      }
+    } else {
+      // unrecognized
+      const guessName = (lineTrimmed.split(/\s+/).slice(0, 4).join(' ')).trim();
+      result.push({ name: guessName, qty, price: 0, total: 0, unrecognized: true });
+    }
 
   } // end lines
 
-  return result; // <- closes function
+  return result;
 }
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
