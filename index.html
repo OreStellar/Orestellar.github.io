@@ -414,6 +414,16 @@ let priceList = {};        // normalizedName -> numeric price (number)
 let canonicalNames = {};   // normalizedName -> displayName (exact from CSV)
 let baseNames = [];        // list of non-compressed base candidate names
 let oreEntries = [];       // for matching inventory: sorted list (longest first)
+  // Map base ores to their variants
+const oreVariantMap = {
+  "Dark Ochre": [
+    "Onyx Ochre",
+    "Obsidian Ochre",
+    "Jet Ochre",
+    "Charcoal Ochre"
+  ]
+};
+
 
 async function fetchPrices(){
   try {
@@ -465,7 +475,32 @@ let suggestedIdx = headerCols.length - 2;
       };
       canonicalNames[normalized] = name;
     }
+function buildPriceGrouping() {
+  const groupedPrices = {};
 
+  // Iterate base -> variants
+  for (const [base, variants] of Object.entries(oreVariantMap)) {
+    groupedPrices[base] = [];
+
+    // Push each variant that exists in the priceList
+    variants.forEach(v => {
+      const normalized = normalizeName(v);
+      if (priceList[normalized]) {
+        groupedPrices[base].push({
+          name: canonicalNames[normalized],
+          price: priceList[normalized].csvValue,
+          headerHas150: priceList[normalized].headerHas150
+        });
+      }
+    });
+  }
+
+  return groupedPrices;
+}
+
+// Usage
+const groupedOrePrices = buildPriceGrouping();
+console.log(groupedOrePrices);
     // Build base names list (all non-compressed canonical names)
     baseNames = Object.values(canonicalNames).slice(); // display names
     // We'll normalize base candidate tokens to allow matching
