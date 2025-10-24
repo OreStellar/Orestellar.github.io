@@ -429,7 +429,8 @@ async function fetchPrices() {
 // Extract header row safely
 const headerLine = lines[0];
 if (!headerLine) throw new Error("CSV header missing");
-const header = splitCsvLine(headerLine);
+const header = headerLine.split(',').map(h => h.trim());
+
 
 // Find a column containing "150" anywhere
 let suggested150Idx = header.findIndex(h => h.includes('150'));
@@ -498,7 +499,7 @@ function buildPriceGrouping() {
       const entry = priceList[normalized];
       if (!entry) return;
 
-      const displayPrice = entry.headerHas150 ? entry.csvValue * 1.5 : entry.csvValue;
+      const displayPrice = entry.csvValue;
 
       groupedPrices[base].push({
         name: canonicalNames[normalized],
