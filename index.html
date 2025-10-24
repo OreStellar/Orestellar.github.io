@@ -198,7 +198,44 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
+.base-ore {
+  margin-top: 12px;
+  padding: 4px 0;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffffaa;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0,255,255,0.1);
+}
 
+.ore-name {
+  flex: 1;
+}
+
+.ore-price {
+  text-align: right;
+  width: 80px;
+  color: #aef;
+}
+
+.variant-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  color: #9ef;
+  font-family: Orbitron, sans-serif;
+  border-bottom: 1px solid rgba(0,255,255,0.05);
+}
+
+.variant-name {
+  flex: 1;
+}
+
+.variant-price {
+  text-align: right;
+  width: 80px;
+}
 
 </style>
 </head>
@@ -468,19 +505,33 @@ function renderPriceList() {
   container.innerHTML = '';
 
   for (const [base, variants] of Object.entries(groupedPriceMap)) {
+    // Find the base ore entry itself
+    const baseEntry = variants.find(v => normalizeName(v.name) === normalizeName(base));
+
+    // Base ore row (with price)
     const baseDiv = document.createElement('div');
     baseDiv.className = 'base-ore';
-    baseDiv.textContent = base;
+    baseDiv.innerHTML = `
+      <span class="ore-name">${base}</span>
+      <span class="ore-price">${baseEntry ? baseEntry.price : '—'}</span>
+    `;
     container.appendChild(baseDiv);
 
-    variants.forEach(v => {
-      const variantDiv = document.createElement('div');
-      variantDiv.className = 'variant-ore';
-      variantDiv.textContent = `${v.name}: ${v.price}`;
-      baseDiv.appendChild(variantDiv);
-    });
+    // Variant rows (everything except the base)
+    variants
+      .filter(v => normalizeName(v.name) !== normalizeName(base))
+      .forEach(v => {
+        const variantRow = document.createElement('div');
+        variantRow.className = 'variant-row';
+        variantRow.innerHTML = `
+          <span class="variant-name">${v.name}</span>
+          <span class="variant-price">${v.price}</span>
+        `;
+        container.appendChild(variantRow);
+      });
   }
 }
+
 
 async function fetchPrices() {
   try {
