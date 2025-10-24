@@ -423,17 +423,18 @@ async function fetchPrices() {
     priceList = {};
     canonicalNames = {};
 
+    const suggestedIdx = RAW_PRICE_COL; // define once here
+
     lines.forEach(line => {
       if (!line.trim()) return; // skip empty lines
 
-      const cols = splitCsvLine(line); // your helper splits CSV line
+      const cols = splitCsvLine(line);
+      if (!cols || cols.length === 0) return;
 
       const name = cols[0]?.trim();
       if (!name) return; // skip if name missing
 
-      const suggestedIdx = RAW_PRICE_COL; // or whatever index you use
       let suggestedRaw = (suggestedIdx >= 0 && suggestedIdx < cols.length) ? cols[suggestedIdx].trim() : undefined;
-
       let suggested = parseNumberSafe(suggestedRaw);
 
       // fallback: maybe price is second-to-last column
@@ -441,71 +442,27 @@ async function fetchPrices() {
         suggested = parseNumberSafe(cols[cols.length - 2]);
       }
 
-      // skip row if still invalid
-      if (!isFinite(suggested)) return;
+      if (!isFinite(suggested)) return; // skip invalid rows
 
       const normalized = normalizeName(name);
       priceList[normalized] = { csvValue: suggested };
       canonicalNames[normalized] = name;
     });
 
+    // Build grouped prices
     buildPriceGrouping();
     fillPriceList();
 
-  } catch (err) {
-    console.error('fetchPrices error', err);
-  }
-}
-async function fetchPrices() {
-  try {
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-    const lines = text.split(/\r?\n/);
-
-    priceList = {};
-    canonicalNames = {};
-
-    lines.forEach(line => {
-      if (!line.trim()) return;
-
-      const cols = splitCsvLine(line);
-      const name = cols[0]?.trim();
-      if (!name) return;
-
-      // Try suggested price column first
-      let suggestedRaw = cols[suggestedIdx]?.trim();
-      let suggested = parseNumberSafe(suggestedRaw);
-
-      // Fallback: maybe price is second-to-last column
-      if (!isFinite(suggested) && cols.length >= 2) {
-        suggested = parseNumberSafe(cols[cols.length - 2]);
-      }
-
-      if (!isFinite(suggested)) return;
-
-      const normalized = normalizeName(name);
-      priceList[normalized] = { csvValue: suggested };  // raw CSV value
-      canonicalNames[normalized] = name;
-    });
-
-    // Now build grouped prices
-    const groupedOrePrices = buildPriceGrouping();
-    console.log(groupedOrePrices);
-
-    baseNames = Object.values(canonicalNames).slice();
-
+    // Prepare oreEntries for inventory matching
     oreEntries = Object.keys(canonicalNames)
       .map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }))
       .sort((a,b) => (b.tokens - a.tokens) || (b.length - a.length));
 
-    // Fill the floating price list UI
-    fillPriceList();
-
-  } catch(err) {
+    console.log('Prices loaded:', priceList);
+  } catch (err) {
     console.error('fetchPrices error', err);
   }
 }
-
 /* Build grouped price structure and apply 150% if header indicates */
 function buildPriceGrouping() {
   const groupedPrices = {};
