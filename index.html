@@ -474,31 +474,19 @@ const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.
 function buildPriceGrouping() {
   groupedPriceMap = {}; // fresh map
 
+  // Loop through every ore in your priceList
   Object.keys(canonicalNames).forEach(normKey => {
-    const rawName = canonicalNames[normKey];
-    if (!rawName) return;
-
-    // Skip any "Compressed" ores entirely
-    if (/^compressed/i.test(rawName)) return;
-
-    const display = rawName.trim();
-    const normalizedDisplay = normalizeName(display);
-
-    // Determine the base ore: if name contains a variant pattern, extract base
-    // (For now, just treat each ore as its own base unless you define variants in CSV)
-    const chosenBase = display;
+    const displayName = canonicalNames[normKey];
+    if (!displayName) return;
 
     const entry = priceList[normKey];
     if (!entry) return;
-    const priceToShow = entry.csvValue;
 
-    // Ensure parent group exists
-    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
-
-    // Add ore to group
-    groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+    // Each ore gets its own group (so no variants get grouped under base)
+    groupedPriceMap[displayName] = [{ name: displayName, price: entry.csvValue }];
   });
 }
+
 
 // Storage for canonical names and CSV prices
 let canonicalNames = {};
