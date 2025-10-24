@@ -369,23 +369,22 @@ function flickerLogo() {
     // 1. Initial dim (1.2s)
     { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
 
-    // 2. First quick flash (20ms)
+    // 2. First flicker (60ms)
     { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1200 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1220 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
 
-    // 3. Dim pause (0.3s)
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1520 },
+    // 3. Short dim (0.3s)
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1560 },
 
-    // 4. Second quick flash (20ms)
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1520 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1540 },
+    // 4. Second flicker (60ms)
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1560 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1620 },
 
     // 5. Dim for 0.9s
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1540 + 900 },
-
-    // 6. Final quick flash (40ms)
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 2440 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2480 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1620 },
+    // 6. Final flash (40ms)
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 2520 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2560 },
   ];
 
   steps.forEach(step => {
@@ -399,14 +398,15 @@ function flickerLogo() {
     }, step.delay);
   });
 
-  // 7. Begin steady glow
+  // 7. Begin steady glow forever
   setTimeout(() => {
     const glowAnim = 'softGlow 6s infinite';
     logoText.style.animation = glowAnim;
     ore.style.animation = glowAnim;
     stellar.style.animation = glowAnim;
-  }, 2480); // after last dim
+  }, 2560); // after last dim
 }
+
 
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
