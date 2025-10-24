@@ -414,6 +414,9 @@ function flickerLogo() {
     stellar.style.animation = glowAnim;
   }, 2560); // after last dim
 }
+
+    const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
@@ -849,21 +852,8 @@ shareButton.addEventListener('click', async ()=>{
     alert('Failed to copy URL.');
   }
 });
-/* ====================== UTILITIES ====================== */
-function splitCsvLine(line) {
-  // your existing helper (keep this)
-}
-
-function parseNumberSafe(s) {
-  // your existing helper (keep this)
-}
-
-function normalizeName(name) {
-  // your existing helper (keep this)
-}
-
 /* ====================== PRICES & VARIANTS ====================== */
-const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+
 const RAW_PRICE_COL = 10;
 
 // Map base ores to their variants
