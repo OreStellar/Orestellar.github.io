@@ -408,19 +408,6 @@ function flickerLogo() {
     stellar.style.animation = glowAnim;
   }, 2560); // after last dim
 }
-
-
-
-/* ====================== CSV PRICES (load & normalize) ====================== */
-/*
-  We will:
-  - fetch the CSV from your GitHub raw URL
-  - detect the header column that looks like "Suggested Buy 150%" or "Suggested Buy"
-  - if header is "Suggested Buy 150%" we use value as-is; if only "Suggested Buy" present we multiply by 1.5
-  - exclude any 'Compressed' names
-  - normalize keys to lowercase single-space form and store canonical display names
-*/
-
 const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
 let priceList = {};        // normalizedName -> numeric price (number)
@@ -619,7 +606,7 @@ function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 function fillPriceList(){
   // produce a table grouped by base (alphabetical by base)
   const bases = Object.keys(groupedPriceMap).sort((a,b)=> a.localeCompare(b));
-  let html = '<table><thead><tr><th>Ore</th><th>Suggested Buy (150%)</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
   for(const base of bases){
     // show the variants sorted
     const variants = groupedPriceMap[base];
