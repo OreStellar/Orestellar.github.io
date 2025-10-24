@@ -430,84 +430,33 @@ for (const [base, variants] of Object.entries(oreVariantMap)) {
   }
 }
 
-// Storage
-let priceList = {};
-let canonicalNames = {};
+// reset storage
+priceList = {};
+canonicalNames = {};
 
-async function fetchPrices() {
-  try {
-    const res = await fetch(CSV_URL);
-    const txt = await res.text();
-    const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return;
+// parse rows
+for (let i = 1; i < lines.length; i++) {
+  const cols = splitCsvLine(lines[i]);
+  if (cols.length < 2) continue;
+  const name = (cols[0] || '').trim();
+  if (!name) continue;
+  if (/compressed/i.test(name)) continue;
 
-    // Parse header robustly
-    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
+  let suggestedRaw = suggestedIdx >= 0 && suggestedIdx < cols.length ? cols[suggestedIdx].trim() : undefined;
+  let suggested = parseNumberSafe(suggestedRaw);
 
-    // Always use the second-to-last column for prices
-    let suggestedIdx = headerCols.length - 2;
-
-    for (let i = 1; i < lines.length; i++) {
-      const cols = splitCsvLine(lines[i]);
-      if (cols.length <= suggestedIdx) continue;
-      const name = (cols[0] || '').trim();
-      if (!name) continue;
-      if (/compressed/i.test(name)) continue;
-
-      let suggestedRaw = cols[suggestedIdx].trim();
-      let suggested = parseNumberSafe(suggestedRaw);
-      if (!isFinite(suggested)) continue;
-
-      const normalized = normalizeName(name);
-      priceList[normalized] = suggested;
-      canonicalNames[normalized] = name;
-
-      // Handle variants mapping
-      if (variantToBase[normalized]) {
-        const baseNormalized = variantToBase[normalized];
-        // optional: copy base price to variant if needed
-        // priceList[normalized] = priceList[baseNormalized] || suggested;
-      }
-    }
-
-  } catch (e) {
-    console.error("Failed to fetch prices:", e);
+  // fallback if not a number
+  if (!isFinite(suggested)) {
+    const alt = cols[cols.length - 2];
+    suggested = parseNumberSafe(alt);
   }
+  if (!isFinite(suggested)) continue;
+
+  const normalized = normalizeName(name);
+  priceList[normalized] = suggested;
+  canonicalNames[normalized] = name;
 }
 
-    // parse rows
-    priceList = {};
-    canonicalNames = {};
-    for(let i=1;i<lines.length;i++){
-      const cols = splitCsvLine(lines[i]);
-      if(cols.length < 2) continue;
-      const name = (cols[0] || '').trim();
-      if(!name) continue;
-      // skip compressed variants for price list (we'll still parse them in inventory)
-      if(/compressed/i.test(name)) continue;
-
-      // get suggested value if present
-      let suggestedRaw = undefined;
-      if(suggestedIdx >= 0 && suggestedIdx < cols.length){
-        suggestedRaw = cols[suggestedIdx].trim();
-      }
-      // try parse
-      let suggested = parseNumberSafe(suggestedRaw);
-
-      const headerText = headerCols[suggestedIdx] || '';
-      // Compute price to store as baseCSVPrice (we store raw CSV suggested; final displayed price may be multiplied)
-      if(!isFinite(suggested)) {
-        // try fallback: maybe price is second-to-last column as the dataset sometimes uses that
-        const alt = cols[cols.length-2];
-        suggested = parseNumberSafe(alt);
-      }
-      if(!isFinite(suggested)) continue;
-
-      // Normalized key
-      const normalized = normalizeName(name);
-    priceList[normalized] = suggested; // just store the CSV value directly
-            canonicalNames[normalized] = name;
-}
     
 function buildPriceGrouping() {
   const groupedPrices = {};
