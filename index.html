@@ -747,7 +747,7 @@ function parseInventoryText(text){
       const priceEntry = priceList[foundKey];
       if(priceEntry){
         // compute final per-unit price: if header had 150 already, use csvValue; else multiply csvValue by 1.5
-        const perUnit = priceEntry.csvValue; // use CSV value exactly as-is
+        const perUnit = priceEntry.headerHas150 ? priceEntry.csvValue : priceEntry.csvValue * 1.5;
         const total = +(perUnit * qty);
         result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
       } else {
