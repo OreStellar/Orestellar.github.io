@@ -414,108 +414,134 @@ function flickerLogo() {
     stellar.style.animation = glowAnim;
   }, 2560); // after last dim
 }
-async function fetchPrices(){
+async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
-    const txt = await res.text();
-    const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-    if(lines.length < 2) return;
+    const text = await res.text();
+    const lines = text.split(/\r?\n/);
 
-    // parse header robustly
-    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
-    // find a column index for "suggested buy 150%" OR "suggested buy" OR "suggested"
-    let suggestedIdx = -1;
-    headerCols.forEach((h, idx) => {
-      if(h.includes('suggested buy 150%') || h.includes('suggested buy 150') || h.includes('suggested buy 150 percent')) suggestedIdx = idx;
-    });
-    if(suggestedIdx === -1){
-      // fallback to generic 'suggested buy' or 'suggested'
-      headerCols.forEach((h, idx) => {
-        if(h.includes('suggested buy') && suggestedIdx === -1) suggestedIdx = idx;
-        if(h.includes('suggested') && suggestedIdx === -1) suggestedIdx = idx;
-      });
-    }
-
-    // if still not found, try second column as a last resort (older CSVs)
-    if(suggestedIdx === -1 && headerCols.length >= 2) suggestedIdx = headerCols.length - 1;
-
-    // parse rows
     priceList = {};
     canonicalNames = {};
-    for(let i=1;i<lines.length;i++){
-      const cols = splitCsvLine(lines[i]);
-      if(cols.length < 2) continue;
-      const name = (cols[0] || '').trim();
-      if(!name) continue;
-      // skip compressed variants for price list (we'll still parse them in inventory)
-      if(/compressed/i.test(name)) continue;
 
-   // get suggested value if present
-let suggestedRaw = undefined;
-if (suggestedIdx >= 0 && suggestedIdx < cols.length) {
-  suggestedRaw = cols[suggestedIdx].trim();
-}
+    lines.forEach(line => {
+      if (!line.trim()) return; // skip empty lines
 
-// parse number safely
-let suggested = parseNumberSafe(suggestedRaw);
+      const cols = splitCsvLine(line); // your helper splits CSV line
 
-// fallback: maybe price is second-to-last column as the dataset sometimes uses that
-if (!isFinite(suggested)) {
-  const alt = cols[cols.length - 2];
-  suggested = parseNumberSafe(alt);
-}
+      const name = cols[0]?.trim();
+      if (!name) return; // skip if name missing
 
-// skip row if still invalid
-if (!isFinite(suggested)) continue;
+      const suggestedIdx = RAW_PRICE_COL; // or whatever index you use
+      let suggestedRaw = (suggestedIdx >= 0 && suggestedIdx < cols.length) ? cols[suggestedIdx].trim() : undefined;
 
-// store raw CSV
-priceList[normalized] = {
-  csvValue: suggested
-};
+      let suggested = parseNumberSafe(suggestedRaw);
 
-      // Normalized key
+      // fallback: maybe price is second-to-last column
+      if (!isFinite(suggested) && cols.length >= 2) {
+        suggested = parseNumberSafe(cols[cols.length - 2]);
+      }
+
+      // skip row if still invalid
+      if (!isFinite(suggested)) return;
+
       const normalized = normalizeName(name);
-      priceList[normalized] = {
-        csvValue: suggested,   // raw suggested value (from CSV cell)
-        headerHas150: headerContains150
-      };
+      priceList[normalized] = { csvValue: suggested };
       canonicalNames[normalized] = name;
-    }
+    });
 
-    // Build base names list (all non-compressed canonical names)
-    baseNames = Object.values(canonicalNames).slice(); // display names
-    // We'll normalize base candidate tokens to allow matching
-    // Build oreEntries for inventory matching: prefer longer multi-word entries first
-    oreEntries = Object.keys(canonicalNames).map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }));
-    oreEntries.sort((a,b) => (b.tokens - a.tokens) || (b.length - a.length));
-
-    // Precompute a map of base -> variants for price list grouping (non-compressed)
     buildPriceGrouping();
+    fillPriceList();
+
+  } catch (err) {
+    console.error('fetchPrices error', err);
+  }
+}
+
+  return groupedPrices;
+async function fetchPrices() {
+  try {
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    const lines = text.split(/\r?\n/);
+
+    priceList = {};
+    canonicalNames = {};
+
+    lines.forEach(line => {
+      if (!line.trim()) return;
+
+      const cols = splitCsvLine(line);
+      const name = cols[0]?.trim();
+      if (!name) return;
+
+      // Try suggested price column first
+      let suggestedRaw = cols[suggestedIdx]?.trim();
+      let suggested = parseNumberSafe(suggestedRaw);
+
+      // Fallback: maybe price is second-to-last column
+      if (!isFinite(suggested) && cols.length >= 2) {
+        suggested = parseNumberSafe(cols[cols.length - 2]);
+      }
+
+      if (!isFinite(suggested)) return;
+
+      const normalized = normalizeName(name);
+      priceList[normalized] = { csvValue: suggested };  // raw CSV value
+      canonicalNames[normalized] = name;
+    });
+
+    // Now build grouped prices
+    const groupedOrePrices = buildPriceGrouping();
+    console.log(groupedOrePrices);
+
+    baseNames = Object.values(canonicalNames).slice();
+
+    oreEntries = Object.keys(canonicalNames)
+      .map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }))
+      .sort((a,b) => (b.tokens - a.tokens) || (b.length - a.length));
 
     // Fill the floating price list UI
     fillPriceList();
+
   } catch(err) {
     console.error('fetchPrices error', err);
   }
 }
-window.addEventListener('load', fetchPrices);
 
-/* helper: split csv line but keep commas in quoted fields -- simple robust split */
-function splitCsvLine(line){
-  // simple parser for CSV without external libs
+/* Build grouped price structure and apply 150% if header indicates */
+function buildPriceGrouping() {
+  const groupedPrices = {};
+
+  for (const [base, variants] of Object.entries(oreVariantMap)) {
+    groupedPrices[base] = [];
+
+    variants.forEach(v => {
+      const normalized = normalizeName(v);
+      const entry = priceList[normalized];
+      if (!entry) return;
+
+      // Compute display price: multiply by 1.5 if the header is 150%
+      const displayPrice = entry.headerHas150 ? entry.csvValue * 1.5 : entry.csvValue;
+
+      groupedPrices[base].push({
+        name: canonicalNames[normalized],
+        price: displayPrice,  // multiplied only for display
+        rawPrice: entry.csvValue // original CSV value preserved
+      });
+    });
+  }
+
+  return groupedPrices;
+}
+
+/* helper: split csv line but keep commas in quoted fields */
+function splitCsvLine(line) {
   const out = [];
   let cur = '', inQuotes = false;
   for(let i=0;i<line.length;i++){
     const ch = line[i];
-    if(ch === '"' ){
-      inQuotes = !inQuotes;
-      continue;
-    }
-    if(ch === ',' && !inQuotes){
-      out.push(cur);
-      cur = '';
-      continue;
-    }
+    if(ch === '"') { inQuotes = !inQuotes; continue; }
+    if(ch === ',' && !inQuotes) { out.push(cur); cur = ''; continue; }
     cur += ch;
   }
   out.push(cur);
@@ -698,29 +724,19 @@ messageBox.addEventListener('blur', ()=>{
 });
 
 /* ====================== PARSING INVENTORY & SUMMARY ====================== */
-/*
-  parseInventoryText: returns array of items:
-    { name: displayName, qty: integer, price: number (per unit, from priceList), total: qty*price, unrecognized:bool }
-  Behavior:
-    - tries to find the best matching ore name from oreEntries (longest names tried first)
-    - extracts first integer quantity found (handles commas)
-    - looks up the canonical price; if missing, price = 0 and unrecognized style shown
-*/
 function parseInventoryText(text){
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
   const result = [];
 
   for(const rawLine of lines){
-    // remove obvious 'compressed' prefix for matching but keep display of original
+    // remove 'compressed' prefix for matching but keep display
     const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
     const lowerLine = lineNoCompressed.toLowerCase();
 
     // find best matching ore entry (oreEntries are normalized keys)
     let foundKey = null;
     for(const entry of oreEntries){
-      const key = entry.key; // normalized key like 'eifyrium' or 'glazed hedbergite'
-      // create a regex for whole word match sequence of tokens to avoid partial wrong matches
-      // allow presence of punctuation around
+      const key = entry.key; // normalized key
       const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
       if(re.test(lowerLine)){
         foundKey = key;
@@ -728,15 +744,11 @@ function parseInventoryText(text){
       }
     }
 
-    // extract quantity (first big integer-looking token with commas)
+    // extract quantity (first integer)
     let qty = 0;
-    const qtyMatch = rawLine.match(/([\d,]{1,})/);
+    const qtyMatch = rawLine.match(/([\d,]+)/);
     if(qtyMatch){
-      qty = parseInt(qtyMatch[1].replace(/,/g,''), 10) || 0;
-    } else {
-      // try to find integers that might be after the name
-      const alt = lineNoCompressed.match(/\b(\d{1,})\b/);
-      qty = alt ? parseInt(alt[1],10) : 0;
+      qty = parseInt(qtyMatch[1].replace(/,/g,''),10) || 0;
     }
 if (foundKey) {
   const canonical = canonicalNames[foundKey] || foundKey;
@@ -757,7 +769,7 @@ if (foundKey) {
 
   } // end lines
 
-  return result;
+  return result; // <- closes function
 }
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
