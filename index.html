@@ -522,8 +522,6 @@ function buildPriceGrouping() {
     .map(n => n.replace(/compressed\s+/i,'').trim())
     .filter(n => !allVariants.has(normalizeName(n)));
 
-  const normalizedBases = candidateBases.map(b => normalizeName(b));
-
   Object.keys(canonicalNames).forEach(normKey => {
     const rawName = canonicalNames[normKey];
     if (!rawName) return;
@@ -536,14 +534,17 @@ function buildPriceGrouping() {
     let chosenBase = null;
 
     // If it's a variant, map to its base
-    if (variantToBase[normalizeName(display)]) {
-      chosenBase = canonicalNames[normalizeName(variantToBase[normalizeName(display)])] || variantToBase[normalizeName(display)];
+    const normalizedDisplay = normalizeName(display);
+    if (variantToBase[normalizedDisplay]) {
+      // variant → normalized base → find canonical display name
+      const baseNormalized = variantToBase[normalizedDisplay];
+      chosenBase = Object.values(canonicalNames).find(n => normalizeName(n) === baseNormalized) || display;
     } else {
-      // Otherwise, check if display is a candidate base
+      // If display is a candidate base, use it
       if (candidateBases.includes(display)) {
         chosenBase = display;
       } else {
-        // fallback to itself
+        // fallback: use itself
         chosenBase = display;
       }
     }
@@ -558,57 +559,53 @@ function buildPriceGrouping() {
 
     // Deduplicate variants
     const existingNames = groupedPriceMap[chosenBase].map(v => normalizeName(v.name));
-    if (!existingNames.includes(normalizeName(display))) {
+    if (!existingNames.includes(normalizedDisplay)) {
       groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
     }
   });
 }
 
-/* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
-/* Filler text is present on load. We want:
-   - smaller, greyed filler displayed initially
-   - on first user focus, clear the filler and set normal typing color
-   - while filler remains, Submit button disabled
-*/
-
 const messageBox = document.getElementById('message');
 const submitButton = document.getElementById('submitButton');
 let userHasEdited = false;
 
-// ensure initial filler present and small-filler style
-if(messageBox.value.trim() === ''){
+// --- INITIAL SETUP ---
+// If value is empty, show small-filler style
+if (!messageBox.value.trim()) {
   messageBox.classList.add('small-filler');
+  messageBox.style.color = '#bfbfbf';
+  submitButton.disabled = true;
 } else {
-  // if there is prefilled text (we intentionally placed filler), keep small-filler until user focuses
-  messageBox.classList.add('small-filler');
+  // If textarea has pre-filled text, assume it's user content
+  messageBox.classList.remove('small-filler');
+  messageBox.style.color = '#e6e6e6';
+  userHasEdited = true;
+  submitButton.disabled = false;
 }
 
-// on input enable submit if non-empty and not filler status
-messageBox.addEventListener('input', ()=>{
-  const txt = messageBox.value.trim();
-  // if user has started typing (non-whitespace) we consider edited
-  if(txt.length > 0 && messageBox.classList.contains('small-filler') === false) {
-    userHasEdited = true;
-  }
-  // enable submit only if user actually edited and not empty
-  submitButton.disabled = !(userHasEdited && txt.length > 0);
-});
-
-// On focus, if small-filler present, clear it for first edit
-messageBox.addEventListener('focus', ()=>{
-  if(messageBox.classList.contains('small-filler')){
+// --- ON FOCUS --- 
+messageBox.addEventListener('focus', () => {
+  if (messageBox.classList.contains('small-filler')) {
     messageBox.value = '';
     messageBox.classList.remove('small-filler');
     messageBox.style.color = '#e6e6e6';
     userHasEdited = true;
-    submitButton.disabled = true; // keep disabled until user types something
+    submitButton.disabled = true; // still disabled until user types
   }
 });
 
-/* Also on blur, if empty, restore filler text (optional) - but we won't restore automatically to avoid confusion */
-messageBox.addEventListener('blur', ()=>{
-  if(!messageBox.value.trim()){
-    // keep it empty but maintain small-filler class so it's visually empty; user will see blank field
+// --- ON INPUT ---
+messageBox.addEventListener('input', () => {
+  const txt = messageBox.value.trim();
+  // mark edited if user has typed anything
+  if (txt.length > 0) userHasEdited = true;
+  // enable submit only if edited and non-empty
+  submitButton.disabled = !(userHasEdited && txt.length > 0);
+});
+
+// --- ON BLUR ---
+messageBox.addEventListener('blur', () => {
+  if (!messageBox.value.trim()) {
     messageBox.classList.add('small-filler');
     messageBox.style.color = '#bfbfbf';
     userHasEdited = false;
