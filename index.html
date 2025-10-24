@@ -245,6 +245,9 @@ Compressed Ducinium	4985
 </div>
 
 <script>
+const logoText = document.getElementById('logoText');
+const ore = document.getElementById('ore');
+const stellar = document.getElementById('stellar');
 /* ====================== STARFIELD ====================== */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
@@ -986,10 +989,6 @@ function parseIntSafeWithCommas(s){
   if(!m) return 0;
   return parseInt(m[0].replace(/,/g,''),10) || 0;
 }
-// call it when the page finishes loading
-window.addEventListener('load', () => {
-    flickerLogo();
-});
 </script>
 </body>
 </html>
