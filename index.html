@@ -542,6 +542,14 @@ function parseNumberSafe(str){
 function normalizeName(name){
   return (name || '').toString().toLowerCase().replace(/\s+/g,' ').trim();
 }
+function roundDownFlexible(n) {
+  if (n >= 1000) return Math.floor(n / 100) * 100;
+  if (n >= 100)  return Math.floor(n / 10) * 10;
+  if (n >= 10)   return Math.floor(n / 10) * 10;
+  if (n >= 1)    return Math.floor(n);
+  if (n > 0)     return Math.floor(n * 1) / 1;
+  return n;
+}
 
 /* ====================== PRICE GROUPING (for the floating list) ====================== */
 /*
@@ -616,7 +624,8 @@ function fillPriceList(){
       // if variant name equals base, show normally; else indent with - prefix
       const displayName = (idx===0 && normalizeName(variants[0].name) === normalizeName(base)) ? variants[0].name : v.name;
       const prefix = (displayName === base) ? '' : '&nbsp;&nbsp;- ';
-      html += `<tr><td>${prefix}${escapeHtml(displayName)}</td><td style="text-align:right">${formatNumberDecimal(v.price)}</td></tr>`;
+      const roundedPrice = roundDownFlexible(v.price);
+      html += `<tr><td>${prefix}${escapeHtml(displayName)}</td><td style="text-align:right">${formatNumberDecimal(roundedPrice)}</td></tr>`;
     });
   }
   html += '</tbody></table>';
@@ -780,17 +789,21 @@ function renderSummary(parsedItems){
     '<th>Total</th>' +
     '</tr></thead><tbody>';
 
-  parsedItems.forEach(it => {
-    if(it.unrecognized){
-      const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
-      html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
-    } else {
-      html += `<tr><td>${escapeHtml(it.name)}</td>` +
-              `<td class="price">${formatNumberDecimal(it.price)}</td>` +
-              `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
-              `<td class="total-column">${formatNumberDecimal(it.total)}</td></tr>`;
-    }
-  });
+ parsedItems.forEach(it => {
+  if(it.unrecognized){
+    const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
+    html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
+  } else {
+    const roundedPrice = roundDownFlexible(it.price);
+    const roundedTotal = roundDownFlexible(it.total);
+    
+    html += `<tr><td>${escapeHtml(it.name)}</td>` +
+            `<td class="price">${formatNumberDecimal(roundedPrice)}</td>` +
+            `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
+            `<td class="total-column">${formatNumberDecimal(roundedTotal)}</td></tr>`;
+  }
+});
+
 
   html += `<tr class="summary-total"><td colspan="3" style="text-align:left">Total</td><td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td></tr>`;
   html += '</tbody></table>';
