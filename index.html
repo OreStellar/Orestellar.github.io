@@ -880,6 +880,22 @@ for (const [base, variants] of Object.entries(oreVariantMap)) {
     variantToBase[normalizeName(variant)] = normalizeName(base);
   }
 }
+// Price list toggle
+const priceTab = document.getElementById('priceTab');
+const priceListContainer = document.getElementById('priceListContainer');
+
+priceTab.addEventListener('click', () => {
+  if (priceListContainer.style.display !== 'block') {
+    // rebuild price list if empty
+    if (!Object.keys(groupedPriceMap).length) {
+      buildPriceGrouping();
+      fillPriceList();
+    }
+    priceListContainer.style.display = 'block';
+  } else {
+    priceListContainer.style.display = 'none';
+  }
+});
 
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
