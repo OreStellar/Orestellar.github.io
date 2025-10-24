@@ -426,10 +426,22 @@ async function fetchPrices() {
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
     if (!lines.length) throw new Error("CSV is empty");
 
-    // Extract header row
-    const header = splitCsvLine(lines[0]);
-    const suggested150Idx = header.indexOf('Suggested Buy Price @ 150%');
-    const headerHas150 = suggested150Idx >= 0;
+// Extract header row safely
+const headerLine = lines[0];
+if (!headerLine) throw new Error("CSV header missing");
+const header = splitCsvLine(headerLine);
+
+// Find a column containing "150" anywhere
+let suggested150Idx = header.findIndex(h => h.includes('150'));
+if (suggested150Idx < 0) {
+    console.warn("No '150' column found, falling back to first numeric suggestion column");
+    suggested150Idx = header.findIndex(h => h.toLowerCase().includes('suggested buy price'));
+}
+
+const headerHas150 = suggested150Idx >= 0;
+if (!headerHas150) {
+    console.warn("No suitable Suggested Buy Price column found");
+}
 
     priceList = {};
     canonicalNames = {};
