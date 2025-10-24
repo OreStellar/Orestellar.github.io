@@ -509,75 +509,90 @@ function cleanName(name){
 }
 
 function buildPriceGrouping() {
-  groupedPriceMap = {};
+  groupedPriceMap = {}; // fresh map
 
-  const candidateBases = Object.values(canonicalNames).slice();
+  const candidateBases = Object.values(canonicalNames).map(n => n.replace(/compressed\s+/i,'').trim());
   const normalizedBases = candidateBases.map(b => normalizeName(b));
 
   Object.keys(canonicalNames).forEach(normKey => {
-    let display = cleanName(canonicalNames[normKey]);
+    const rawName = canonicalNames[normKey];
+    if (!rawName) return;
+
+    // Clean the name (remove "Compressed")
+    const display = rawName.replace(/compressed\s+/i,'').trim();
     const lower = normalizeName(display);
 
-    // Determine base ore for this variant
+    // Determine the base
     let chosenBase = null;
     const lastWord = lower.split(' ').slice(-1)[0];
 
-    // Check if last word matches any canonical name
+    // First attempt: match last word with any base
     for (let i = 0; i < candidateBases.length; i++) {
-      if (normalizeName(cleanName(candidateBases[i])) === lastWord) {
-        chosenBase = cleanName(candidateBases[i]);
+      if (normalizeName(candidateBases[i]) === lastWord) {
+        chosenBase = candidateBases[i];
         break;
       }
     }
 
-    // Fallback: check if any base appears as a whole word in this ore
+    // Second attempt: regex match against any base
     if (!chosenBase) {
       for (let i = 0; i < candidateBases.length; i++) {
-        const bNorm = normalizeName(cleanName(candidateBases[i]));
-        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b','i');
+        const re = new RegExp('\\b' + escapeRegex(normalizedBases[i]) + '\\b','i');
         if (re.test(lower)) {
-          chosenBase = cleanName(candidateBases[i]);
+          chosenBase = candidateBases[i];
           break;
         }
       }
     }
 
+    // Fallback: use the cleaned display name
     if (!chosenBase) chosenBase = display;
 
+    // Grab price
     const entry = priceList[normKey];
     if (!entry) return;
     const priceToShow = entry.csvValue;
 
+    // Ensure parent group exists
     if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
-    groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
-  });
 
-  // Sort variants alphabetically under each base
-  Object.keys(groupedPriceMap).forEach(base => {
-    groupedPriceMap[base].sort((a, b) => a.name.localeCompare(b.name));
+    // Deduplicate variants
+    const existingNames = groupedPriceMap[chosenBase].map(v => normalizeName(v.name));
+    if (!existingNames.includes(normalizeName(display))) {
+      groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+    }
   });
 }
-
 
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
-function fillPriceList(){
-  const bases = Object.keys(groupedPriceMap).sort((a,b) => a.localeCompare(b));
+function fillPriceList() {
+  // produce a table grouped by base (alphabetical by base)
+  const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
   let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
 
-  for(const base of bases){
+  for (const base of bases) {
     const variants = groupedPriceMap[base];
-    // Show base ore first
-    const baseEntry = variants.find(v => normalizeName(v.name) === normalizeName(base)) || variants[0];
-    const roundedBasePrice = roundDownFlexible(baseEntry.price);
-    html += `<tr><td>${escapeHtml(base)}</td><td style="text-align:right">${formatNumberDecimal(roundedBasePrice)}</td></tr>`;
 
-    // Show other variants (excluding the base itself)
+    // Use a Set to track normalized variant names and avoid duplicates
+    const seen = new Set();
+
+    // first row: base ore (remove "Compressed" prefix)
+    const cleanBase = base.replace(/compressed\s+/i, '').trim();
+    html += `<tr><td>${escapeHtml(cleanBase)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(variants[0].price))}</td></tr>`;
+    seen.add(normalizeName(cleanBase));
+
+    // subsequent rows: variants
     variants.forEach(v => {
-      if(normalizeName(v.name) === normalizeName(base)) return;
-      const roundedPrice = roundDownFlexible(v.price);
-      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(v.name)}</td><td style="text-align:right">${formatNumberDecimal(roundedPrice)}</td></tr>`;
+      const cleanVariant = v.name.replace(/compressed\s+/i, '').trim();
+      const normalized = normalizeName(cleanVariant);
+
+      if (normalized === normalizeName(cleanBase)) return; // skip base itself
+      if (seen.has(normalized)) return; // skip duplicates
+      seen.add(normalized);
+
+      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(cleanVariant)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(v.price))}</td></tr>`;
     });
   }
 
@@ -585,31 +600,6 @@ function fillPriceList(){
   priceListContainer.innerHTML = html;
 }
 
-/* number formatting with two decimals when fractional */
-function formatNumberDecimal(n){
-  if(n === null || n === undefined || isNaN(n)) return '-';
-  // if n is effectively integer, show as integer, else show 2 decimals
-  if(Math.abs(Math.round(n) - n) < 0.005) return Math.round(n).toLocaleString();
-  return n.toFixed(2).toLocaleString();
-}
-
-/* ====================== PRICE TAB TOGGLE ====================== */
-const priceTab = document.getElementById('priceTab');
-const priceListContainer = document.getElementById('priceListContainer');
-
-priceTab.addEventListener('click', () => {
-  // If hidden, show it and make sure it’s updated
-  if (priceListContainer.style.display !== 'block') {
-    if (Object.keys(groupedPriceMap).length === 0) {
-      buildPriceGrouping();
-      fillPriceList();
-    }
-    priceListContainer.style.display = 'block';
-  } else {
-    // Otherwise, hide it
-    priceListContainer.style.display = 'none';
-  }
-});
 /* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
 /* Filler text is present on load. We want:
    - smaller, greyed filler displayed initially
