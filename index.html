@@ -434,12 +434,13 @@ async function fetchPrices() {
 
     lines.slice(1).forEach(line => {
       const cols = splitCsvLine(line);
-      // pad missing columns
       while (cols.length < header.length) cols.push('');
       const name = cols[0].trim();
       if (!name) return;
 
-      const suggestedRaw = cols[suggested150Idx].trim();
+      if (suggested150Idx < 0 || suggested150Idx >= cols.length) return;
+
+      const suggestedRaw = cols[suggested150Idx]?.trim() || '';
       const suggested = parseFloat(suggestedRaw);
       if (!isFinite(suggested)) return;
 
@@ -448,6 +449,9 @@ async function fetchPrices() {
       canonicalNames[normalized] = name;
     });
 
+    // <--- ADD THIS: populate oreEntries
+    oreEntries = Object.keys(priceList).map(key => ({ key }));
+
     buildPriceGrouping();
     fillPriceList();
 
@@ -455,6 +459,7 @@ async function fetchPrices() {
     console.error('fetchPrices error', err);
   }
 }
+
 
 
 /* Helper: split CSV line while keeping quoted commas intact */
