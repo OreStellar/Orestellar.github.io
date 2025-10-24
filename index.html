@@ -556,9 +556,6 @@ async function fetchPrices() {
     console.error('fetchPrices error', err);
   }
 }
-
-window.addEventListener('load', fetchPrices);
-
 /* helper: split csv line but keep commas in quoted fields -- simple robust split */
 function splitCsvLine(line){
   // simple parser for CSV without external libs
@@ -974,14 +971,10 @@ shareButton.addEventListener('click', async ()=>{
   }
 });
 
-/* Auto-load from URL param ?s= (shared view) */
 window.addEventListener('load', async () => {
-    // fetch prices first
-    await fetchPrices();
-
-    // optionally start logo flicker
-    flickerLogo();
-}); // ✅ close both function block and addEventListener call
+  await fetchPrices();
+  flickerLogo();
+});
 
 
   // Check URL param
