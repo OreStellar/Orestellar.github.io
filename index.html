@@ -477,15 +477,28 @@ if (!headerHas150) {
 function splitCsvLine(line) {
   const out = [];
   let cur = '', inQuotes = false;
+
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"') { inQuotes = !inQuotes; continue; }
-    if (ch === ',' && !inQuotes) { out.push(cur); cur = ''; continue; }
+    if (ch === '"') { 
+      inQuotes = !inQuotes; 
+      continue; 
+    }
+    if (ch === ',' && !inQuotes) {
+      out.push(cur);
+      cur = '';
+      continue;
+    }
     cur += ch;
   }
+
+  // push last value
   out.push(cur);
+
+  // handle trailing commas: ensure array has same length as header
   return out;
 }
+
 
 /* Build grouped price structure and apply 150% if header indicates */
 function buildPriceGrouping() {
