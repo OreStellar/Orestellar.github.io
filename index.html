@@ -427,34 +427,24 @@ async function fetchPrices() {
     priceList = {};
     canonicalNames = {};
 
-    lines.forEach((line, i) => {
-      if (!line.trim()) return;
+   lines.forEach(line => {
+  if (!line.trim()) return;
 
-      const cols = splitCsvLine(line);
-      console.log('Line', i, 'cols:', cols);
+  const cols = line.split(','); // simpler CSV split
+  console.log('Line', lines.indexOf(line), 'cols:', cols);
 
-      const name = cols[0]?.trim();
-      if (!name) {
-        console.log('Line', i, 'skipped: missing name');
-        return;
-      }
+  const name = cols[0]?.trim();
+  if (!name) return;
 
-      let suggestedRaw = cols[RAW_PRICE_COL]?.trim();
-      let suggested = parseNumberSafe(suggestedRaw);
+  const suggestedRaw = cols[10]; // 150% column is 10th index (0-based)
+  const suggested = parseFloat(suggestedRaw);
+  if (!isFinite(suggested)) return;
 
-      if (!isFinite(suggested) && cols.length >= 2) {
-        suggested = parseNumberSafe(cols[cols.length - 2]);
-      }
+  const normalized = normalizeName(name);
+  priceList[normalized] = { csvValue: suggested };
+  canonicalNames[normalized] = name;
+});
 
-      if (!isFinite(suggested)) {
-        console.log('Line', i, 'skipped: invalid price', suggestedRaw);
-        return;
-      }
-
-      const normalized = normalizeName(name);
-      priceList[normalized] = { csvValue: suggested };
-      canonicalNames[normalized] = name;
-    });
 
     console.log('Prices loaded:', priceList);
 
