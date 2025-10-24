@@ -897,7 +897,7 @@ priceTab.addEventListener('click', () => {
     // rebuild price list if empty
     if (!Object.keys(groupedPriceMap).length) {
       buildPriceGrouping();
-      fillPriceList();
+      renderPriceList();
     }
     priceListContainer.style.display = 'block';
   } else {
