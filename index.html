@@ -410,28 +410,34 @@ function flickerLogo() {
 }
 
 const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
-// Map base ores to all known variants
-const oreVariantMap = {
-  "Dark Ochre": ["Obsidian Ochre", "Onyx Ochre", "Jet Ochre", "Compressed Dark Ochre"],
-  "Prize Mordunium": ["Compressed Prize Mordunium"],
-  "Gneiss": ["Compressed Gneiss"],
-  "Eifyrium": ["Compressed Eifyrium"],
-  "Pellucid Crokite": ["Compressed Pellucid Crokite"],
-  "Ducinium": ["Compressed Ducinium"],
-  // Add more ores and variants here as needed
-};
 
-// Normalize ore names
-function normalizeName(name) {
-  return (name || '').toString().trim().toLowerCase();
-}
-// Reverse map: variant → base ore
-const variantToBase = {};
-for (const [base, variants] of Object.entries(oreVariantMap)) {
-  const normalizedBase = normalizeName(base);
-  for (const variant of variants) {
-    variantToBase[normalizeName(variant)] = normalizedBase;
-  }
+function buildPriceGrouping() {
+  groupedPriceMap = {}; // fresh map
+
+  Object.keys(canonicalNames).forEach(normKey => {
+    const rawName = canonicalNames[normKey];
+    if (!rawName) return;
+
+    // Skip any "Compressed" ores entirely
+    if (/^compressed/i.test(rawName)) return;
+
+    const display = rawName.trim();
+    const normalizedDisplay = normalizeName(display);
+
+    // Determine the base ore: if name contains a variant pattern, extract base
+    // (For now, just treat each ore as its own base unless you define variants in CSV)
+    const chosenBase = display;
+
+    const entry = priceList[normKey];
+    if (!entry) return;
+    const priceToShow = entry.csvValue;
+
+    // Ensure parent group exists
+    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+
+    // Add ore to group
+    groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+  });
 }
 
 // Storage for canonical names and CSV prices
@@ -454,53 +460,6 @@ function parseCSV(csvText) {
     canonicalNames[key] = row.name; // display name
     priceList[key] = { csvValue: parseFloat(row.price) }; // price value
   }
-}
-
-// Build grouped price map
-function buildPriceGrouping() {
-  groupedPriceMap = {}; // fresh map
-
-  // Build set of all variant normalized names
-  const allVariants = new Set();
-  Object.values(oreVariantMap).forEach(variants => {
-    variants.forEach(v => allVariants.add(normalizeName(v)));
-  });
-
-  // Candidate base ores: CSV names not in variant set
-  const candidateBases = Object.values(canonicalNames)
-    .map(n => n.replace(/compressed\s+/i,'').trim())
-    .filter(n => !allVariants.has(normalizeName(n)));
-
-  Object.keys(canonicalNames).forEach(normKey => {
-    const rawName = canonicalNames[normKey];
-    if (!rawName) return;
-
-    const display = rawName.replace(/compressed\s+/i,'').trim();
-    const normalizedDisplay = normalizeName(display);
-
-    // Determine base ore
-    let chosenBase;
-    if (variantToBase[normalizedDisplay]) {
-      const baseNormalized = variantToBase[normalizedDisplay];
-      chosenBase = Object.values(canonicalNames).find(n => normalizeName(n) === baseNormalized) || display;
-    } else {
-      chosenBase = candidateBases.includes(display) ? display : display;
-    }
-
-    // Grab price
-    const entry = priceList[normKey];
-    if (!entry) return;
-    const priceToShow = entry.csvValue;
-
-    // Ensure parent group exists
-    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
-
-    // Deduplicate
-    const existingNames = groupedPriceMap[chosenBase].map(v => normalizeName(v.name));
-    if (!existingNames.includes(normalizedDisplay)) {
-      groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
-    }
-  });
 }
 
 // Render the floating price list
