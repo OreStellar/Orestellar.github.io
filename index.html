@@ -757,29 +757,19 @@ messageBox.addEventListener('blur', ()=>{
 });
 
 /* ====================== PARSING INVENTORY & SUMMARY ====================== */
-/*
-  parseInventoryText: returns array of items:
-    { name: displayName, qty: integer, price: number (per unit, from priceList), total: qty*price, unrecognized:bool }
-  Behavior:
-    - tries to find the best matching ore name from oreEntries (longest names tried first)
-    - extracts first integer quantity found (handles commas)
-    - looks up the canonical price; if missing, price = 0 and unrecognized style shown
-*/
 function parseInventoryText(text){
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
   const result = [];
 
   for(const rawLine of lines){
-    // remove obvious 'compressed' prefix for matching but keep display of original
+    // remove 'compressed' prefix for matching but keep display
     const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
     const lowerLine = lineNoCompressed.toLowerCase();
 
     // find best matching ore entry (oreEntries are normalized keys)
     let foundKey = null;
     for(const entry of oreEntries){
-      const key = entry.key; // normalized key like 'eifyrium' or 'glazed hedbergite'
-      // create a regex for whole word match sequence of tokens to avoid partial wrong matches
-      // allow presence of punctuation around
+      const key = entry.key; // normalized key
       const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
       if(re.test(lowerLine)){
         foundKey = key;
@@ -787,29 +777,25 @@ function parseInventoryText(text){
       }
     }
 
-    // extract quantity (first big integer-looking token with commas)
+    // extract quantity (first integer)
     let qty = 0;
-    const qtyMatch = rawLine.match(/([\d,]{1,})/);
+    const qtyMatch = rawLine.match(/([\d,]+)/);
     if(qtyMatch){
-      qty = parseInt(qtyMatch[1].replace(/,/g,''), 10) || 0;
-    } else {
-      // try to find integers that might be after the name
-      const alt = lineNoCompressed.match(/\b(\d{1,})\b/);
-      qty = alt ? parseInt(alt[1],10) : 0;
+      qty = parseInt(qtyMatch[1].replace(/,/g,''),10) || 0;
     }
-if(foundKey){
-  const canonical = canonicalNames[foundKey] || foundKey;
-  const perUnit = priceList[foundKey] || 0;  // just the number
-  const total = perUnit * qty;
-  result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
-} else {
-  // not found: include as unrecognized with original display trimmed
-  const guessName = (lineNoCompressed.split(/\s+/).slice(0,4).join(' ')).trim();
-  result.push({ name: guessName, qty, price:0, total:0, unrecognized:true });
-}
 
+    if(foundKey){
+      const canonical = canonicalNames[foundKey] || foundKey;
+      const perUnit = priceList[foundKey] || 0;
+      const total = perUnit * qty;
+      result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
+    } else {
+      const guessName = lineNoCompressed.split(/\s+/).slice(0,4).join(' ').trim();
+      result.push({ name: guessName, qty, price:0, total:0, unrecognized:true });
+    }
+  } // <- closes for loop
 
-  return result;
+  return result; // <- closes function
 }
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
