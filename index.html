@@ -417,52 +417,55 @@ function flickerLogo() {
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
+    console.log('CSV fetch status:', res.status);
+
     const text = await res.text();
+    console.log('CSV first 300 chars:\n', text.slice(0, 300));
+
     const lines = text.split(/\r?\n/);
 
     priceList = {};
     canonicalNames = {};
 
-    const suggestedIdx = RAW_PRICE_COL; // define once here
-
-    lines.forEach(line => {
-      if (!line.trim()) return; // skip empty lines
+    lines.forEach((line, i) => {
+      if (!line.trim()) return;
 
       const cols = splitCsvLine(line);
-      if (!cols || cols.length === 0) return;
+      console.log('Line', i, 'cols:', cols);
 
       const name = cols[0]?.trim();
-      if (!name) return; // skip if name missing
+      if (!name) {
+        console.log('Line', i, 'skipped: missing name');
+        return;
+      }
 
-      let suggestedRaw = (suggestedIdx >= 0 && suggestedIdx < cols.length) ? cols[suggestedIdx].trim() : undefined;
+      let suggestedRaw = cols[RAW_PRICE_COL]?.trim();
       let suggested = parseNumberSafe(suggestedRaw);
 
-      // fallback: maybe price is second-to-last column
       if (!isFinite(suggested) && cols.length >= 2) {
         suggested = parseNumberSafe(cols[cols.length - 2]);
       }
 
-      if (!isFinite(suggested)) return; // skip invalid rows
+      if (!isFinite(suggested)) {
+        console.log('Line', i, 'skipped: invalid price', suggestedRaw);
+        return;
+      }
 
       const normalized = normalizeName(name);
       priceList[normalized] = { csvValue: suggested };
       canonicalNames[normalized] = name;
     });
 
-    // Build grouped prices
+    console.log('Prices loaded:', priceList);
+
     buildPriceGrouping();
     fillPriceList();
 
-    // Prepare oreEntries for inventory matching
-    oreEntries = Object.keys(canonicalNames)
-      .map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }))
-      .sort((a,b) => (b.tokens - a.tokens) || (b.length - a.length));
-
-    console.log('Prices loaded:', priceList);
   } catch (err) {
     console.error('fetchPrices error', err);
   }
 }
+
 /* Build grouped price structure and apply 150% if header indicates */
 function buildPriceGrouping() {
   const groupedPrices = {};
