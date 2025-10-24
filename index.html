@@ -212,11 +212,11 @@ textarea#message:focus{
     <h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
   </header>
 
-  <div class="main-container" id="inventoryContainer" role="region" aria-label="Inventory input">
+  <div class="main-container" id="inventoryContainer" role="region">
     <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
 
     <!-- initial filler text is greyed and smaller -->
-    <textarea id="message" class="small-filler" rows="8" aria-label="Inventory input" >
+    <textarea id="message" class="small-filler" rows="8" >
 Compressed Ytirium	1304752
 Compressed Gneiss	166047
 Obsidian Ochre	8603
@@ -231,16 +231,16 @@ Compressed Ducinium	4985
     <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
-  <div class="contracts-wrapper" aria-live="polite">
-    <div id="leftContainer" class="total-cost-container" aria-hidden="true"></div>
-    <div id="summaryContainer" class="summary-container" aria-live="polite"></div>
-    <div id="totalCostContainer" class="total-cost-container" aria-hidden="true">
+  <div class="contracts-wrapper">
+    <div id="leftContainer" class="total-cost-container"></div>
+    <div id="summaryContainer" class="summary-container"></div>
+    <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
     </div>
   </div>
 
-  <div id="priceTab" title="Open price list" role="button" aria-pressed="false">₵</div>
-  <div id="priceListContainer" aria-hidden="true"></div>
+  <div id="priceTab" title="Open price list" role="button"
+  <div id="priceListContainer"></div>
 
   <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 </div>
@@ -605,9 +605,6 @@ function buildPriceGrouping(){
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
-/* ====================== FILL FLOATING PRICE LIST ====================== */
-const priceListContainer = document.getElementById('priceListContainer');
-
 function fillPriceList(){
   // produce a table grouped by base (alphabetical by base)
   const bases = Object.keys(groupedPriceMap).sort((a,b)=> a.localeCompare(b));
@@ -636,19 +633,23 @@ function formatNumberDecimal(n){
 
 /* ====================== PRICE TAB TOGGLE ====================== */
 const priceTab = document.getElementById('priceTab');
-priceTab.addEventListener('click', ()=>{
-  if(priceListContainer.style.display === 'block'){
-    priceListContainer.style.display = 'none';
-    priceTab.setAttribute('aria-pressed','false');
-    priceListContainer.setAttribute('aria-hidden','true');
-  } else {
+const priceListContainer = document.getElementById('priceListContainer');
+
+priceTab.addEventListener('click', () => {
+  // If hidden, show it and make sure it’s updated
+  if (priceListContainer.style.display !== 'block') {
+    if (Object.keys(groupedPriceMap).length === 0) {
+      buildPriceGrouping();
+      fillPriceList();
+    }
     priceListContainer.style.display = 'block';
-    priceTab.setAttribute('aria-pressed','true');
-    priceListContainer.setAttribute('aria-hidden','false');
-    // ensure price list is up to date
-    if(Object.keys(groupedPriceMap).length === 0) buildPriceGrouping(), fillPriceList();
+  } else {
+    // Otherwise, hide it
+    priceListContainer.style.display = 'none';
   }
 });
+
+};
 
 /* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
 /* Filler text is present on load. We want:
@@ -953,8 +954,7 @@ window.addEventListener('load', async () => {
       // keep price list hidden
       priceListContainer.style.display = 'none';
     }
-  }
-};
+  };
 
 /* ====================== UTILITIES & INIT ====================== */
 function buildPriceGroupingIfNeeded(){
