@@ -538,6 +538,7 @@ function renderPriceList() {
   }
 }
 
+let oreEntries = [];
 
 
 async function fetchPrices() {
@@ -897,13 +898,14 @@ priceTab.addEventListener('click', () => {
     // rebuild price list if empty
     if (!Object.keys(groupedPriceMap).length) {
       buildPriceGrouping();
-      renderPriceList();
     }
+    renderPriceList();
     priceListContainer.style.display = 'block';
   } else {
     priceListContainer.style.display = 'none';
   }
 });
+
 fetchPrices().then(() => renderPriceList());
 
 /* ====================== AUTO LOAD ====================== */
