@@ -198,15 +198,17 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
+<style>
+/* Minimalist base ore */
 .base-ore {
-  margin-top: 12px;
+  margin-top: 10px;
   padding: 4px 0;
-  font-weight: bold;
-  color: #00ffff;
-  text-shadow: 0 0 8px #00ffffaa;
+  font-weight: 600;
+  color: #222; /* dark text */
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(0,255,255,0.1);
+  border-bottom: 1px solid #ddd; /* subtle divider */
+  font-family: Arial, sans-serif;
 }
 
 .ore-name {
@@ -216,16 +218,16 @@ textarea#message:focus{
 .ore-price {
   text-align: right;
   width: 80px;
-  color: #aef;
 }
 
+/* Minimalist variant rows */
 .variant-row {
   display: flex;
   justify-content: space-between;
-  padding: 2px 0;
-  color: #9ef;
-  font-family: Orbitron, sans-serif;
-  border-bottom: 1px solid rgba(0,255,255,0.05);
+  padding: 2px 0 2px 16px; /* indent variants slightly */
+  color: #555; /* slightly lighter text */
+  font-family: Arial, sans-serif;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .variant-name {
@@ -236,6 +238,8 @@ textarea#message:focus{
   text-align: right;
   width: 80px;
 }
+</style>
+
 
 </style>
 </head>
