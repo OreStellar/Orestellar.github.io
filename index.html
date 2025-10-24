@@ -422,23 +422,11 @@ async function fetchPrices(){
     const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
     if(lines.length < 2) return;
 
-    // parse header robustly
-    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
-    // find a column index for "suggested buy 150%" OR "suggested buy" OR "suggested"
-    let suggestedIdx = -1;
-    headerCols.forEach((h, idx) => {
-      if(h.includes('suggested buy 150%') || h.includes('suggested buy 150') || h.includes('suggested buy 150 percent')) suggestedIdx = idx;
-    });
-    if(suggestedIdx === -1){
-      // fallback to generic 'suggested buy' or 'suggested'
-      headerCols.forEach((h, idx) => {
-        if(h.includes('suggested buy') && suggestedIdx === -1) suggestedIdx = idx;
-        if(h.includes('suggested') && suggestedIdx === -1) suggestedIdx = idx;
-      });
-    }
+// Parse header robustly
+const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
 
-    // if still not found, try second column as a last resort (older CSVs)
-    if(suggestedIdx === -1 && headerCols.length >= 2) suggestedIdx = headerCols.length - 1;
+// Always use the second-to-last column for prices
+let suggestedIdx = headerCols.length - 2;
 
     // parse rows
     priceList = {};
