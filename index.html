@@ -504,36 +504,39 @@ function roundDownFlexible(n) {
 }
 
 /* ====================== PRICE GROUPING (for the floating list) ====================== */
-/*
-  We'll group by "base" detection:
-  - For each canonical name, the "base" is chosen as the last word by default, BUT we try to match
-    against any other canonical non-compressed name if that appears as a whole word (case-insensitive)
-    inside this variant's name. This avoids 'Augmented Eifyrium' -> base 'Eifyrium'.
-*/
+function cleanName(name){
+  return name.replace(/^Compressed\s+/i, '').trim();
+}
+
 function buildPriceGrouping() {
   groupedPriceMap = {};
+
   const candidateBases = Object.values(canonicalNames).slice();
   const normalizedBases = candidateBases.map(b => normalizeName(b));
 
   Object.keys(canonicalNames).forEach(normKey => {
-    const display = canonicalNames[normKey];
+    let display = cleanName(canonicalNames[normKey]);
     const lower = normalizeName(display);
 
+    // Determine base ore for this variant
     let chosenBase = null;
     const lastWord = lower.split(' ').slice(-1)[0];
+
+    // Check if last word matches any canonical name
     for (let i = 0; i < candidateBases.length; i++) {
-      if (normalizeName(candidateBases[i]) === lastWord) {
-        chosenBase = candidateBases[i];
+      if (normalizeName(cleanName(candidateBases[i])) === lastWord) {
+        chosenBase = cleanName(candidateBases[i]);
         break;
       }
     }
 
+    // Fallback: check if any base appears as a whole word in this ore
     if (!chosenBase) {
       for (let i = 0; i < candidateBases.length; i++) {
-        const bNorm = normalizedBases[i];
+        const bNorm = normalizeName(cleanName(candidateBases[i]));
         const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b','i');
         if (re.test(lower)) {
-          chosenBase = candidateBases[i];
+          chosenBase = cleanName(candidateBases[i]);
           break;
         }
       }
@@ -548,6 +551,11 @@ function buildPriceGrouping() {
     if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
   });
+
+  // Sort variants alphabetically under each base
+  Object.keys(groupedPriceMap).forEach(base => {
+    groupedPriceMap[base].sort((a, b) => a.name.localeCompare(b.name));
+  });
 }
 
 
@@ -555,20 +563,24 @@ function buildPriceGrouping() {
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
 function fillPriceList(){
-  // produce a table grouped by base (alphabetical by base)
-  const bases = Object.keys(groupedPriceMap).sort((a,b)=> a.localeCompare(b));
+  const bases = Object.keys(groupedPriceMap).sort((a,b) => a.localeCompare(b));
   let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
+
   for(const base of bases){
-    // show the variants sorted
     const variants = groupedPriceMap[base];
-    variants.forEach((v, idx) => {
-      // if variant name equals base, show normally; else indent with - prefix
-      const displayName = (idx===0 && normalizeName(variants[0].name) === normalizeName(base)) ? variants[0].name : v.name;
-      const prefix = (displayName === base) ? '' : '&nbsp;&nbsp;- ';
+    // Show base ore first
+    const baseEntry = variants.find(v => normalizeName(v.name) === normalizeName(base)) || variants[0];
+    const roundedBasePrice = roundDownFlexible(baseEntry.price);
+    html += `<tr><td>${escapeHtml(base)}</td><td style="text-align:right">${formatNumberDecimal(roundedBasePrice)}</td></tr>`;
+
+    // Show other variants (excluding the base itself)
+    variants.forEach(v => {
+      if(normalizeName(v.name) === normalizeName(base)) return;
       const roundedPrice = roundDownFlexible(v.price);
-      html += `<tr><td>${prefix}${escapeHtml(displayName)}</td><td style="text-align:right">${formatNumberDecimal(roundedPrice)}</td></tr>`;
+      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(v.name)}</td><td style="text-align:right">${formatNumberDecimal(roundedPrice)}</td></tr>`;
     });
   }
+
   html += '</tbody></table>';
   priceListContainer.innerHTML = html;
 }
