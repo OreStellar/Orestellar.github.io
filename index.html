@@ -568,37 +568,50 @@ function buildPriceGrouping() {
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
 function fillPriceList() {
-  // produce a table grouped by base (alphabetical by base)
+  // Produce a table grouped by base (alphabetical by base)
   const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
   let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
 
   for (const base of bases) {
     const variants = groupedPriceMap[base];
 
-    // Use a Set to track normalized variant names and avoid duplicates
+    // Track normalized variant names to skip duplicates
     const seen = new Set();
 
-    // first row: base ore (remove "Compressed" prefix)
+    // First row: base ore (always display clean, remove "Compressed")
     const cleanBase = base.replace(/compressed\s+/i, '').trim();
-    html += `<tr><td>${escapeHtml(cleanBase)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(variants[0].price))}</td></tr>`;
+    const basePrice = variants[0]?.price || 0;
+    html += `<tr><td>${escapeHtml(cleanBase)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(basePrice))}</td></tr>`;
     seen.add(normalizeName(cleanBase));
 
-    // subsequent rows: variants
-    variants.forEach(v => {
+    // Check if base has predefined variants
+    const predefinedVariants = oreVariantMap[cleanBase] || [];
+
+    // 1️⃣ Render predefined variants first, if present
+    for (const varName of predefinedVariants) {
+      const normVar = normalizeName(varName);
+      if (seen.has(normVar)) continue;
+      const priceEntry = priceList[normVar];
+      if (!priceEntry) continue;
+      seen.add(normVar);
+      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(varName)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(priceEntry.csvValue))}</td></tr>`;
+    }
+
+    // 2️⃣ Render any other variants in groupedPriceMap that aren’t predefined
+    for (const v of variants) {
       const cleanVariant = v.name.replace(/compressed\s+/i, '').trim();
-      const normalized = normalizeName(cleanVariant);
-
-      if (normalized === normalizeName(cleanBase)) return; // skip base itself
-      if (seen.has(normalized)) return; // skip duplicates
-      seen.add(normalized);
-
+      const normVariant = normalizeName(cleanVariant);
+      if (normVariant === normalizeName(cleanBase)) continue; // skip base itself
+      if (seen.has(normVariant)) continue; // skip duplicates
+      seen.add(normVariant);
       html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(cleanVariant)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(v.price))}</td></tr>`;
-    });
+    }
   }
 
   html += '</tbody></table>';
   priceListContainer.innerHTML = html;
 }
+
 
 /* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
 /* Filler text is present on load. We want:
@@ -866,10 +879,9 @@ const RAW_PRICE_COL = 10;
 // Map base ores to their variants
 const oreVariantMap = {
   "Dark Ochre": [
-    "Onyx Ochre",
     "Obsidian Ochre",
+    "Onyx Ochre",
     "Jet Ochre",
-    "Charcoal Ochre"
   ]
 };
 
