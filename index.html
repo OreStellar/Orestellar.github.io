@@ -416,7 +416,22 @@ function flickerLogo() {
 }
 
     const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+// Map base ores to their variants
+const oreVariantMap = {
+  "Dark Ochre": [
+    "Obsidian Ochre",
+    "Onyx Ochre",
+    "Jet Ochre",
+  ]
+};
 
+// Build reverse map (variant → base)
+const variantToBase = {};
+for (const [base, variants] of Object.entries(oreVariantMap)) {
+  for (const variant of variants) {
+    variantToBase[normalizeName(variant)] = normalizeName(base);
+  }
+}
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
@@ -564,6 +579,22 @@ function buildPriceGrouping() {
     }
   });
 }
+function fillPriceList() {
+  const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
+  let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
+
+  for (const base of bases) {
+    const variants = groupedPriceMap[base] || [];
+    html += `<tr><td>${base}</td><td style="text-align:right">${variants[0]?.price || 0}</td></tr>`;
+
+    for (const v of variants.slice(1)) {
+      html += `<tr><td>&nbsp;&nbsp;- ${v.name}</td><td style="text-align:right">${v.price}</td></tr>`;
+    }
+  }
+
+  html += '</tbody></table>';
+  priceListContainer.innerHTML = html;
+}
 
 const messageBox = document.getElementById('message');
 const submitButton = document.getElementById('submitButton');
@@ -612,6 +643,9 @@ messageBox.addEventListener('blur', () => {
     submitButton.disabled = true;
   }
 });
+function escapeRegex(s){
+  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+}
 
 /* ====================== PARSING INVENTORY & SUMMARY ====================== */
 function parseInventoryText(text){
@@ -824,22 +858,6 @@ shareButton.addEventListener('click', async ()=>{
 
 const RAW_PRICE_COL = 10;
 
-// Map base ores to their variants
-const oreVariantMap = {
-  "Dark Ochre": [
-    "Obsidian Ochre",
-    "Onyx Ochre",
-    "Jet Ochre",
-  ]
-};
-
-// Build reverse map (variant → base)
-const variantToBase = {};
-for (const [base, variants] of Object.entries(oreVariantMap)) {
-  for (const variant of variants) {
-    variantToBase[normalizeName(variant)] = normalizeName(base);
-  }
-}
 // Price list toggle
 const priceTab = document.getElementById('priceTab');
 const priceListContainer = document.getElementById('priceListContainer');
