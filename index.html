@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+f<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -409,12 +409,10 @@ function flickerLogo() {
   }, 2560); // after last dim
 }
 const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+// RAW buy price is always column 10
+const RAW_PRICE_COL = 10;
 
-let priceList = {};        // normalizedName -> numeric price (number)
-let canonicalNames = {};   // normalizedName -> displayName (exact from CSV)
-let baseNames = [];        // list of non-compressed base candidate names
-let oreEntries = [];       // for matching inventory: sorted list (longest first)
-  // Map base ores to their variants
+// Map base ores to their variants
 const oreVariantMap = {
   "Dark Ochre": [
     "Onyx Ochre",
@@ -424,13 +422,62 @@ const oreVariantMap = {
   ]
 };
 
+// Build reverse map so each variant points to its base
+const variantToBase = {};
+for (const [base, variants] of Object.entries(oreVariantMap)) {
+  for (const variant of variants) {
+    variantToBase[normalizeName(variant)] = normalizeName(base);
+  }
+}
 
-async function fetchPrices(){
+// Storage
+let priceList = {};
+let canonicalNames = {};
+
+// fetch and parse CSV
+async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
     const txt = await res.text();
     const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-    if(lines.length < 2) return;
+    if (lines.length < 2) return;
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = splitCsvLine(lines[i]);
+      if (cols.length <= RAW_PRICE_COL) continue;
+      const name = (cols[0] || '').trim();
+      if (!name) continue;
+      if (/compressed/i.test(name)) continue;
+
+      let suggestedRaw = cols[RAW_PRICE_COL].trim();
+      let suggested = parseNumberSafe(suggestedRaw);
+      if (!isFinite(suggested)) continue;
+
+      const normalized = normalizeName(name);
+      priceList[normalized] = suggested;
+      canonicalNames[normalized] = name;
+
+      // Handle variants mapping
+      if (variantToBase[normalized]) {
+        const baseNormalized = variantToBase[normalized];
+        // optional: copy base price to variant if needed
+        // priceList[normalized] = priceList[baseNormalized] || suggested;
+      }
+    }
+
+  } catch (e) {
+    console.error("Failed to fetch prices:", e);
+  }
+}
+
+
+// Build a reverse map so each variant points to its base
+const variantToBase = {};
+for (const [base, variants] of Object.entries(oreVariantMap)) {
+  for (const variant of variants) {
+    variantToBase[normalizeName(variant)] = normalizeName(base);
+  }
+}
 
 // Parse header robustly
 const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
