@@ -482,14 +482,6 @@ function renderPriceList() {
   }
 }
 
-// Load CSV, parse, group, and render
-fetch(CSV_URL)
-  .then(res => res.text())
-  .then(text => {
-    parseCSV(text);
-    buildPriceGrouping();
-    renderPriceList();
-  });
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
