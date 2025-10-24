@@ -505,6 +505,7 @@ async function fetchPrices(){
     console.error('fetchPrices error', err);
   }
 }
+window.addEventListener('load', fetchPrices);
 
 /* helper: split csv line but keep commas in quoted fields -- simple robust split */
 function splitCsvLine(line){
@@ -600,7 +601,7 @@ function buildPriceGrouping(){
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
 
   });
-
+}
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
