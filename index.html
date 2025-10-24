@@ -511,7 +511,17 @@ function cleanName(name){
 function buildPriceGrouping() {
   groupedPriceMap = {}; // fresh map
 
-  const candidateBases = Object.values(canonicalNames).map(n => n.replace(/compressed\s+/i,'').trim());
+  // Build a set of normalized variant names
+  const allVariants = new Set();
+  Object.values(oreVariantMap).forEach(variants => {
+    variants.forEach(v => allVariants.add(normalizeName(v)));
+  });
+
+  // Only include canonical names that are NOT variants as candidate bases
+  const candidateBases = Object.values(canonicalNames)
+    .map(n => n.replace(/compressed\s+/i,'').trim())
+    .filter(n => !allVariants.has(normalizeName(n)));
+
   const normalizedBases = candidateBases.map(b => normalizeName(b));
 
   Object.keys(canonicalNames).forEach(normKey => {
@@ -524,29 +534,19 @@ function buildPriceGrouping() {
 
     // Determine the base
     let chosenBase = null;
-    const lastWord = lower.split(' ').slice(-1)[0];
 
-    // First attempt: match last word with any base
-    for (let i = 0; i < candidateBases.length; i++) {
-      if (normalizeName(candidateBases[i]) === lastWord) {
-        chosenBase = candidateBases[i];
-        break;
+    // If it's a variant, map to its base
+    if (variantToBase[normalizeName(display)]) {
+      chosenBase = canonicalNames[normalizeName(variantToBase[normalizeName(display)])] || variantToBase[normalizeName(display)];
+    } else {
+      // Otherwise, check if display is a candidate base
+      if (candidateBases.includes(display)) {
+        chosenBase = display;
+      } else {
+        // fallback to itself
+        chosenBase = display;
       }
     }
-
-    // Second attempt: regex match against any base
-    if (!chosenBase) {
-      for (let i = 0; i < candidateBases.length; i++) {
-        const re = new RegExp('\\b' + escapeRegex(normalizedBases[i]) + '\\b','i');
-        if (re.test(lower)) {
-          chosenBase = candidateBases[i];
-          break;
-        }
-      }
-    }
-
-    // Fallback: use the cleaned display name
-    if (!chosenBase) chosenBase = display;
 
     // Grab price
     const entry = priceList[normKey];
@@ -563,55 +563,6 @@ function buildPriceGrouping() {
     }
   });
 }
-
-/* simple regex escape */
-function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
-
-function fillPriceList() {
-  // Produce a table grouped by base (alphabetical by base)
-  const bases = Object.keys(groupedPriceMap).sort((a, b) => a.localeCompare(b));
-  let html = '<table><thead><tr><th>Ore</th><th>OreStellar Buy Price</th></tr></thead><tbody>';
-
-  for (const base of bases) {
-    const variants = groupedPriceMap[base];
-
-    // Track normalized variant names to skip duplicates
-    const seen = new Set();
-
-    // First row: base ore (always display clean, remove "Compressed")
-    const cleanBase = base.replace(/compressed\s+/i, '').trim();
-    const basePrice = variants[0]?.price || 0;
-    html += `<tr><td>${escapeHtml(cleanBase)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(basePrice))}</td></tr>`;
-    seen.add(normalizeName(cleanBase));
-
-    // Check if base has predefined variants
-    const predefinedVariants = oreVariantMap[cleanBase] || [];
-
-    // 1️⃣ Render predefined variants first, if present
-    for (const varName of predefinedVariants) {
-      const normVar = normalizeName(varName);
-      if (seen.has(normVar)) continue;
-      const priceEntry = priceList[normVar];
-      if (!priceEntry) continue;
-      seen.add(normVar);
-      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(varName)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(priceEntry.csvValue))}</td></tr>`;
-    }
-
-    // 2️⃣ Render any other variants in groupedPriceMap that aren’t predefined
-    for (const v of variants) {
-      const cleanVariant = v.name.replace(/compressed\s+/i, '').trim();
-      const normVariant = normalizeName(cleanVariant);
-      if (normVariant === normalizeName(cleanBase)) continue; // skip base itself
-      if (seen.has(normVariant)) continue; // skip duplicates
-      seen.add(normVariant);
-      html += `<tr><td>&nbsp;&nbsp;- ${escapeHtml(cleanVariant)}</td><td style="text-align:right">${formatNumberDecimal(roundDownFlexible(v.price))}</td></tr>`;
-    }
-  }
-
-  html += '</tbody></table>';
-  priceListContainer.innerHTML = html;
-}
-
 
 /* ====================== INVENTORY TEXTAREA BEHAVIOR ====================== */
 /* Filler text is present on load. We want:
