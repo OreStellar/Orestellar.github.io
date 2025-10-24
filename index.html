@@ -417,58 +417,33 @@ function flickerLogo() {
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
-    console.log('CSV fetch status:', res.status);
-
     const text = await res.text();
-    console.log('CSV first 300 chars:\n', text.slice(0, 300));
-
-    // Split lines and filter out empty ones
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-    if (!lines.length) throw new Error("CSV is empty");
+    if (!lines.length) throw new Error("CSV empty");
 
-// Extract header row safely
-const headerLine = lines[0];
-if (!headerLine) throw new Error("CSV header missing");
-const header = headerLine.split(',').map(h => h.trim());
-
-
-// Find a column containing "150" anywhere
-let suggested150Idx = header.findIndex(h => h.includes('150'));
-if (suggested150Idx < 0) {
-    console.warn("No '150' column found, falling back to first numeric suggestion column");
-    suggested150Idx = header.findIndex(h => h.toLowerCase().includes('suggested buy price'));
-}
-
-const headerHas150 = suggested150Idx >= 0;
-if (!headerHas150) {
-    console.warn("No suitable Suggested Buy Price column found");
-}
+    const header = lines[0].split(',').map(h => h.trim());
+    let suggested150Idx = header.findIndex(h => h.includes('150'));
+    if (suggested150Idx < 0) suggested150Idx = header.findIndex(h => h.toLowerCase().includes('suggested buy price'));
+    const headerHas150 = suggested150Idx >= 0;
 
     priceList = {};
     canonicalNames = {};
 
-    // Process all data rows (skip header)
-lines.slice(1).forEach((line, idx) => {
-  const cols = splitCsvLine(line);
+    lines.slice(1).forEach(line => {
+      const cols = splitCsvLine(line);
+      // pad missing columns
+      while (cols.length < header.length) cols.push('');
+      const name = cols[0].trim();
+      if (!name) return;
 
-  // skip completely empty lines
-  if (!cols || cols.length === 0) return;
+      const suggestedRaw = cols[suggested150Idx].trim();
+      const suggested = parseFloat(suggestedRaw);
+      if (!isFinite(suggested)) return;
 
-  const name = cols[0]?.trim();
-  if (!name) return;
-
-  // ensure we have a value in the Suggested Buy column
-  const suggestedRaw = cols[suggested150Idx] || '';
-  const suggested = parseFloat(suggestedRaw);
-  if (!isFinite(suggested)) return;
-
-  const normalized = normalizeName(name);
-  priceList[normalized] = { csvValue: suggested, headerHas150 };
-  canonicalNames[
-
+      const normalized = normalizeName(name);
+      priceList[normalized] = { csvValue: suggested, headerHas150 };
+      canonicalNames[normalized] = name;
     });
-
-    console.log('Prices loaded:', priceList);
 
     buildPriceGrouping();
     fillPriceList();
@@ -477,6 +452,7 @@ lines.slice(1).forEach((line, idx) => {
     console.error('fetchPrices error', err);
   }
 }
+
 
 /* Helper: split CSV line while keeping quoted commas intact */
 function splitCsvLine(line) {
@@ -496,32 +472,6 @@ function splitCsvLine(line) {
   out.push(cur); // push last value
   return out;
 }
-
-/* Build grouped price structure and apply 150% if header indicates */
-function buildPriceGrouping() {
-  const groupedPrices = {};
-
-  for (const [base, variants] of Object.entries(oreVariantMap)) {
-    groupedPrices[base] = [];
-
-    variants.forEach(v => {
-      const normalized = normalizeName(v);
-      const entry = priceList[normalized];
-      if (!entry) return;
-
-      const displayPrice = entry.csvValue;
-
-      groupedPrices[base].push({
-        name: canonicalNames[normalized],
-        price: displayPrice,
-        rawPrice: entry.csvValue
-      });
-    });
-  }
-
-  return groupedPrices;
-}
-
 
 /* safe parse for numbers with commas and currency characters */
 function parseNumberSafe(str){
@@ -554,17 +504,13 @@ function roundDownFlexible(n) {
 */
 function buildPriceGrouping() {
   groupedPriceMap = {};
-
-  // prepare an array of candidate base names (display form) and normalized versions
-  const candidateBases = Object.values(canonicalNames).slice(); // display names
+  const candidateBases = Object.values(canonicalNames).slice();
   const normalizedBases = candidateBases.map(b => normalizeName(b));
 
-  // iterate through each canonical name
   Object.keys(canonicalNames).forEach(normKey => {
     const display = canonicalNames[normKey];
     const lower = normalizeName(display);
 
-    // find a matching base among candidateBases that appears in the name as a whole word (prefer exact matches)
     let chosenBase = null;
     const lastWord = lower.split(' ').slice(-1)[0];
     for (let i = 0; i < candidateBases.length; i++) {
@@ -574,11 +520,10 @@ function buildPriceGrouping() {
       }
     }
 
-    // fallback: find any base that appears in the name
     if (!chosenBase) {
       for (let i = 0; i < candidateBases.length; i++) {
         const bNorm = normalizedBases[i];
-        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b', 'i');
+        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b','i');
         if (re.test(lower)) {
           chosenBase = candidateBases[i];
           break;
@@ -586,10 +531,8 @@ function buildPriceGrouping() {
       }
     }
 
-    // final fallback: the display itself
     if (!chosenBase) chosenBase = display;
 
-    // use raw CSV value directly
     const entry = priceList[normKey];
     if (!entry) return;
     const priceToShow = entry.csvValue;
@@ -598,6 +541,7 @@ function buildPriceGrouping() {
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
   });
 }
+
 
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
