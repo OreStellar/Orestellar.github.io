@@ -430,15 +430,14 @@ for (const [base, variants] of Object.entries(oreVariantMap)) {
   }
 }
 
-// reset storage
-priceList = {};
-canonicalNames = {};
-
-async function fetchCSV() {
+async function fetchPrices() {
   try {
-    const response = await fetch(CSV_URL);
-    const csvText = await response.text();
-    const lines = csvText.split(/\r?\n/);
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    const lines = text.split(/\r?\n/);
+
+    priceList = {};
+    canonicalNames = {};
 
     for (let i = 1; i < lines.length; i++) {
       const cols = splitCsvLine(lines[i]);
@@ -450,7 +449,6 @@ async function fetchCSV() {
 
       let suggestedRaw = cols[RAW_PRICE_COL] || '';
       let suggested = parseNumberSafe(suggestedRaw);
-
       if (!isFinite(suggested)) {
         const alt = cols[cols.length - 2];
         suggested = parseNumberSafe(alt);
@@ -466,9 +464,10 @@ async function fetchCSV() {
     fillPriceList();
 
   } catch (err) {
-    console.error('Failed to fetch CSV:', err);
+    console.error('fetchPrices error', err);
   }
-}  
+}
+
 function buildPriceGrouping() {
   const groupedPrices = {};
 
