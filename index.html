@@ -366,18 +366,26 @@ document.getElementById('myHeader').addEventListener('click', () => {
 
 function flickerLogo() {
   const steps = [
-    // Initial dim for 1.2 seconds
+    // 1. Initial dim (1.2s)
     { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
-    // Two quick flashes, 20ms each
+
+    // 2. First quick flash (20ms)
     { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1200 },
     { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1220 },
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1240 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
-    // Dim for 0.9 seconds
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
-    // One quick 40ms flash
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 1260 + 900 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 + 900 + 40 },
+
+    // 3. Dim pause (0.3s)
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1520 },
+
+    // 4. Second quick flash (20ms)
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1520 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1540 },
+
+    // 5. Dim for 0.9s
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1540 + 900 },
+
+    // 6. Final quick flash (40ms)
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 2440 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2480 },
   ];
 
   steps.forEach(step => {
@@ -391,15 +399,14 @@ function flickerLogo() {
     }, step.delay);
   });
 
-  // Start softGlow after final step
+  // 7. Begin steady glow
   setTimeout(() => {
     const glowAnim = 'softGlow 6s infinite';
     logoText.style.animation = glowAnim;
     ore.style.animation = glowAnim;
     stellar.style.animation = glowAnim;
-  }, 1260 + 900 + 40); // end of last step
+  }, 2480); // after last dim
 }
-
 
 
 /* ====================== CSV PRICES (load & normalize) ====================== */
