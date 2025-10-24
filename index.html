@@ -287,6 +287,7 @@ textarea#message:focus{
 </style>
 </head>
 <body data-show-inventory="true">
+<canvas id="starfield"></canvas>
 
 <div class="container-wrapper" id="appRoot">
   <header id="myHeader" title="Return home">
@@ -319,12 +320,12 @@ textarea#message:focus{
   <div id="priceListContainer"></div>
   <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 </div>
+
+
+<script>
 const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
-
-<script>
-
 /* ====================== STARFIELD ====================== */
 /* ====================== STARFIELD ====================== */
 const canvas = document.getElementById('starfield');
