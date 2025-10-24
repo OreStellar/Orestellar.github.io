@@ -469,16 +469,6 @@ async function fetchPrices() {
     console.error("Failed to fetch prices:", e);
   }
 }
-
-
-// Build a reverse map so each variant points to its base
-const variantToBase = {};
-for (const [base, variants] of Object.entries(oreVariantMap)) {
-  for (const variant of variants) {
-    variantToBase[normalizeName(variant)] = normalizeName(base);
-  }
-}
-
 // Parse header robustly
 const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
 
