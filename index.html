@@ -434,28 +434,41 @@ for (const [base, variants] of Object.entries(oreVariantMap)) {
 priceList = {};
 canonicalNames = {};
 
-// parse rows
-for (let i = 1; i < lines.length; i++) {
-  const cols = splitCsvLine(lines[i]);
-  if (cols.length < 2) continue;
-  const name = (cols[0] || '').trim();
-  if (!name) continue;
-  if (/compressed/i.test(name)) continue;
+async function fetchCSV() {
+  try {
+    const response = await fetch(CSV_URL);
+    const csvText = await response.text();
+    const lines = csvText.split(/\r?\n/);
 
-  let suggestedRaw = suggestedIdx >= 0 && suggestedIdx < cols.length ? cols[suggestedIdx].trim() : undefined;
-  let suggested = parseNumberSafe(suggestedRaw);
+    for (let i = 1; i < lines.length; i++) {
+      const cols = splitCsvLine(lines[i]);
+      if (cols.length < 2) continue;
 
-  // fallback if not a number
-  if (!isFinite(suggested)) {
-    const alt = cols[cols.length - 2];
-    suggested = parseNumberSafe(alt);
+      const name = (cols[0] || '').trim();
+      if (!name) continue;
+      if (/compressed/i.test(name)) continue;
+
+      let suggestedRaw = cols[RAW_PRICE_COL] || '';
+      let suggested = parseNumberSafe(suggestedRaw);
+
+      if (!isFinite(suggested)) {
+        const alt = cols[cols.length - 2];
+        suggested = parseNumberSafe(alt);
+      }
+      if (!isFinite(suggested)) continue;
+
+      const normalized = normalizeName(name);
+      priceList[normalized] = suggested;
+      canonicalNames[normalized] = name;
+    }
+
+    buildPriceGrouping();
+    fillPriceList();
+
+  } catch (err) {
+    console.error('Failed to fetch CSV:', err);
   }
-  if (!isFinite(suggested)) continue;
-
-  const normalized = normalizeName(name);
-  priceList[normalized] = suggested;
-  canonicalNames[normalized] = name;
-}    
+}  
 function buildPriceGrouping() {
   const groupedPrices = {};
 
