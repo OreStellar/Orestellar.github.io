@@ -167,9 +167,24 @@ textarea#message:focus{
 #priceTab::after{ content:""; position:absolute; top:22px; width:18px; height:2px; background:#000; }
 
 /* floating price list */
-#priceListContainer{
-  position:fixed;top:18vh;right:78px;width:360px;max-height:72vh;overflow-y:auto;background:rgba(0,0,0,0.95);border:1px solid var(--neon);padding:12px;border-radius:10px;display:none;box-shadow:0 0 22px var(--neon);z-index:29;font-family:var(--mono);color:var(--neon);
+#priceListContainer {
+  position: fixed;
+  top: 18vh;
+  right: 78px;
+  width: 300px;           /* slightly smaller */
+  max-height: 72vh;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.9);
+  border: 1px solid #888;
+  padding: 10px;
+  border-radius: 8px;
+  display: none;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  font-family: var(--mono);
+  color: #eee;
+  z-index: 29;
 }
+
 #priceListContainer table{width:100%;border-collapse:collapse;}
 #priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;text-align:left;}
 #priceListContainer th{font-weight:700;color:var(--neon);}
@@ -199,44 +214,25 @@ textarea#message:focus{
   #logoText{font-size:3.2rem;}
 }
 <style>
-/* Minimalist base ore */
+
+.base-ore, .variant-ore {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 0.9em;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
 .base-ore {
-  margin-top: 10px;
-  padding: 4px 0;
-  font-weight: 600;
-  color: #222; /* dark text */
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #ddd; /* subtle divider */
-  font-family: Arial, sans-serif;
+  font-weight: bold;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+  margin-top: 4px;
 }
 
-.ore-name {
-  flex: 1;
-}
-
-.ore-price {
-  text-align: right;
-  width: 80px;
-}
-
-/* Minimalist variant rows */
-.variant-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 2px 0 2px 16px; /* indent variants slightly */
-  color: #555; /* slightly lighter text */
-  font-family: Arial, sans-serif;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.variant-name {
-  flex: 1;
-}
-
-.variant-price {
-  text-align: right;
-  width: 80px;
+.variant-ore {
+  padding-left: 10px;
+  font-weight: normal;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 </style>
 
@@ -503,38 +499,30 @@ function parseCSV(csvText) {
   }
 }
 
-// Render the floating price list
+// Minimalist price list rendering
 function renderPriceList() {
   const container = document.getElementById('priceListContainer');
   container.innerHTML = '';
 
   for (const [base, variants] of Object.entries(groupedPriceMap)) {
-    // Find the base ore entry itself
-    const baseEntry = variants.find(v => normalizeName(v.name) === normalizeName(base));
+    if (!variants || !variants.length) continue;
 
-    // Base ore row (with price)
+    // Show the base ore first, with its price
     const baseDiv = document.createElement('div');
     baseDiv.className = 'base-ore';
-    baseDiv.innerHTML = `
-      <span class="ore-name">${base}</span>
-      <span class="ore-price">${baseEntry ? baseEntry.price : '—'}</span>
-    `;
+    baseDiv.innerHTML = `<span class="name">${base}</span><span class="price">${variants[0].price}</span>`;
     container.appendChild(baseDiv);
 
-    // Variant rows (everything except the base)
-    variants
-      .filter(v => normalizeName(v.name) !== normalizeName(base))
-      .forEach(v => {
-        const variantRow = document.createElement('div');
-        variantRow.className = 'variant-row';
-        variantRow.innerHTML = `
-          <span class="variant-name">${v.name}</span>
-          <span class="variant-price">${v.price}</span>
-        `;
-        container.appendChild(variantRow);
-      });
+    // Show variant ores (skip first if it's base)
+    variants.slice(1).forEach(v => {
+      const variantDiv = document.createElement('div');
+      variantDiv.className = 'variant-ore';
+      variantDiv.innerHTML = `<span class="name">${v.name}</span><span class="price">${v.price}</span>`;
+      container.appendChild(variantDiv);
+    });
   }
 }
+
 
 
 async function fetchPrices() {
@@ -901,6 +889,7 @@ priceTab.addEventListener('click', () => {
     priceListContainer.style.display = 'none';
   }
 });
+fetchPrices().then(() => renderPriceList());
 
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
