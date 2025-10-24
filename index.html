@@ -163,8 +163,8 @@ textarea#message:focus{
   position: fixed;
   top: 18vh;
   right: 20px;
-  width: 36px; /* Adjust width */
-  height: 36px; /* Adjust height */
+  width: 36px;
+  height: 36px;
   background: rgba(0, 0, 0, 0.8) url('https://orestellar.github.io/isklogo.png') center/contain no-repeat;
   border-radius: 6px;
   display: flex;
@@ -176,11 +176,20 @@ textarea#message:focus{
   z-index: 30;
 }
 
-#priceTab:hover {
-  background: rgba(0, 0, 0, 0.95);
-  transform: scale(1.1);
+/* glowing circle behind button */
+#priceTab::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70px;   /* circle size */
+  height: 70px;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  box-shadow: 0 0 20px 8px rgba(255,255,255,0.4), 0 0 40px 16px rgba(255,255,255,0.2);
+  z-index: -1;  /* behind the button */
 }
-
 
 /* floating price list */
 #priceListContainer {
