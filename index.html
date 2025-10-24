@@ -434,7 +434,6 @@ for (const [base, variants] of Object.entries(oreVariantMap)) {
 let priceList = {};
 let canonicalNames = {};
 
-// fetch and parse CSV
 async function fetchPrices() {
   try {
     const res = await fetch(CSV_URL);
@@ -442,14 +441,20 @@ async function fetchPrices() {
     const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
     if (lines.length < 2) return;
 
+    // Parse header robustly
+    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
+
+    // Always use the second-to-last column for prices
+    let suggestedIdx = headerCols.length - 2;
+
     for (let i = 1; i < lines.length; i++) {
       const cols = splitCsvLine(lines[i]);
-      if (cols.length <= RAW_PRICE_COL) continue;
+      if (cols.length <= suggestedIdx) continue;
       const name = (cols[0] || '').trim();
       if (!name) continue;
       if (/compressed/i.test(name)) continue;
 
-      let suggestedRaw = cols[RAW_PRICE_COL].trim();
+      let suggestedRaw = cols[suggestedIdx].trim();
       let suggested = parseNumberSafe(suggestedRaw);
       if (!isFinite(suggested)) continue;
 
@@ -469,11 +474,6 @@ async function fetchPrices() {
     console.error("Failed to fetch prices:", e);
   }
 }
-// Parse header robustly
-const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase());
-
-// Always use the second-to-last column for prices
-let suggestedIdx = headerCols.length - 2;
 
     // parse rows
     priceList = {};
