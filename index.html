@@ -245,6 +245,12 @@ Compressed Ducinium	4985
 </div>
 
 <script>
+// Main storage
+let priceList = {};
+let canonicalNames = {};
+let groupedPriceMap = {};
+let oreEntries = [];
+
 const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
@@ -408,13 +414,6 @@ function flickerLogo() {
     stellar.style.animation = glowAnim;
   }, 2560); // after last dim
 }
-const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
-
-let priceList = {};        // normalizedName -> numeric price (number)
-let canonicalNames = {};   // normalizedName -> displayName (exact from CSV)
-let baseNames = [];        // list of non-compressed base candidate names
-let oreEntries = [];       // for matching inventory: sorted list (longest first)
-
 async function fetchPrices(){
   try {
     const res = await fetch(CSV_URL);
@@ -451,24 +450,28 @@ async function fetchPrices(){
       // skip compressed variants for price list (we'll still parse them in inventory)
       if(/compressed/i.test(name)) continue;
 
-      // get suggested value if present
-      let suggestedRaw = undefined;
-      if(suggestedIdx >= 0 && suggestedIdx < cols.length){
-        suggestedRaw = cols[suggestedIdx].trim();
-      }
-      // try parse
-      let suggested = parseNumberSafe(suggestedRaw);
-      // If the header explicitly mentions 150% we use as-is; otherwise we'll multiply by 1.5 later during rendering
-      // To discover that, check header string
-      const headerText = headerCols[suggestedIdx] || '';
-      let headerContains150 = /150/.test(headerText) || headerText.includes('150%') || headerText.includes('1.5');
-      // Compute price to store as baseCSVPrice (we store raw CSV suggested; final displayed price may be multiplied)
-      if(!isFinite(suggested)) {
-        // try fallback: maybe price is second-to-last column as the dataset sometimes uses that
-        const alt = cols[cols.length-2];
-        suggested = parseNumberSafe(alt);
-      }
-      if(!isFinite(suggested)) continue;
+   // get suggested value if present
+let suggestedRaw = undefined;
+if (suggestedIdx >= 0 && suggestedIdx < cols.length) {
+  suggestedRaw = cols[suggestedIdx].trim();
+}
+
+// parse number safely
+let suggested = parseNumberSafe(suggestedRaw);
+
+// fallback: maybe price is second-to-last column as the dataset sometimes uses that
+if (!isFinite(suggested)) {
+  const alt = cols[cols.length - 2];
+  suggested = parseNumberSafe(alt);
+}
+
+// skip row if still invalid
+if (!isFinite(suggested)) continue;
+
+// store raw CSV
+priceList[normalized] = {
+  csvValue: suggested
+};
 
       // Normalized key
       const normalized = normalizeName(name);
@@ -548,9 +551,7 @@ function roundDownFlexible(n) {
     against any other canonical non-compressed name if that appears as a whole word (case-insensitive)
     inside this variant's name. This avoids 'Augmented Eifyrium' -> base 'Eifyrium'.
 */
-let groupedPriceMap = {}; // baseDisplayName -> array of {name, priceToDisplay}
-
-function buildPriceGrouping(){
+function buildPriceGrouping() {
   groupedPriceMap = {};
 
   // prepare an array of candidate base names (display form) and normalized versions
@@ -564,42 +565,39 @@ function buildPriceGrouping(){
 
     // find a matching base among candidateBases that appears in the name as a whole word (prefer exact matches)
     let chosenBase = null;
-    // prefer base that equals the last word (most common)
     const lastWord = lower.split(' ').slice(-1)[0];
-    for(let i=0;i<candidateBases.length;i++){
-      if(normalizeName(candidateBases[i]) === lastWord){
+    for (let i = 0; i < candidateBases.length; i++) {
+      if (normalizeName(candidateBases[i]) === lastWord) {
         chosenBase = candidateBases[i];
         break;
       }
     }
+
     // fallback: find any base that appears in the name
-    if(!chosenBase){
-      for(let i=0;i<candidateBases.length;i++){
+    if (!chosenBase) {
+      for (let i = 0; i < candidateBases.length; i++) {
         const bNorm = normalizedBases[i];
-        // whole-word match using regex boundaries
-        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b','i');
-        if(re.test(lower)){
+        const re = new RegExp('\\b' + escapeRegex(bNorm) + '\\b', 'i');
+        if (re.test(lower)) {
           chosenBase = candidateBases[i];
           break;
         }
       }
     }
+
     // final fallback: the display itself
-    if(!chosenBase) chosenBase = display;
+    if (!chosenBase) chosenBase = display;
 
-    // compute display price: if CSV header already expressed 150% then use csvValue; else multiply by 1.5
+    // use raw CSV value directly
     const entry = priceList[normKey];
-    if(!entry) return;
-    const raw = entry.csvValue;
+    if (!entry) return;
+    const priceToShow = entry.csvValue;
 
-    // Determine final price to display
-    let priceToShow = entry.headerHas150 ? raw : raw * 1.5;
-
-    if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+    if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
-
   });
 }
+
 /* simple regex escape */
 function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
@@ -740,24 +738,23 @@ function parseInventoryText(text){
       const alt = lineNoCompressed.match(/\b(\d{1,})\b/);
       qty = alt ? parseInt(alt[1],10) : 0;
     }
+if (foundKey) {
+  const canonical = canonicalNames[foundKey] || foundKey;
+  const priceEntry = priceList[foundKey];
+  if (priceEntry) {
+    // Use CSV value directly
+    const perUnit = priceEntry.csvValue;
+    const total = +(perUnit * qty);
+    result.push({ name: canonical, qty, price: perUnit, total, unrecognized: false });
+  } else {
+    result.push({ name: canonical, qty, price: 0, total: 0, unrecognized: false });
+  }
+} else {
+  // not found: include as unrecognized with original display trimmed
+  const guessName = (lineNoCompressed.split(/\s+/).slice(0, 4).join(' ')).trim();
+  result.push({ name: guessName, qty, price: 0, total: 0, unrecognized: true });
+}
 
-    if(foundKey){
-      const canonical = canonicalNames[foundKey] || foundKey;
-      const priceEntry = priceList[foundKey];
-      if(priceEntry){
-        // compute final per-unit price: if header had 150 already, use csvValue; else multiply csvValue by 1.5
-        const perUnit = priceEntry.headerHas150 ? priceEntry.csvValue : priceEntry.csvValue * 1.5;
-        const total = +(perUnit * qty);
-        result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
-      } else {
-        result.push({ name: canonical, qty, price:0, total:0, unrecognized:false });
-      }
-    } else {
-      // not found: include as unrecognized with original display trimmed
-      // try to use first few words as name
-      const guessName = (lineNoCompressed.split(/\s+/).slice(0,4).join(' ')).trim();
-      result.push({ name: guessName, qty, price:0, total:0, unrecognized:true });
-    }
   } // end lines
 
   return result;
@@ -921,61 +918,50 @@ shareButton.addEventListener('click', async ()=>{
     alert('Failed to copy URL.');
   }
 });
+/* ====================== UTILITIES ====================== */
+function splitCsvLine(line) {
+  // your existing helper (keep this)
+}
 
-/* Auto-load from URL param ?s= (shared view) */
+function parseNumberSafe(s) {
+  // your existing helper (keep this)
+}
+
+function normalizeName(name) {
+  // your existing helper (keep this)
+}
+
+/* ====================== PRICES & VARIANTS ====================== */
+const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+const RAW_PRICE_COL = 10;
+
+// Map base ores to their variants
+const oreVariantMap = {
+  "Dark Ochre": [
+    "Onyx Ochre",
+    "Obsidian Ochre",
+    "Jet Ochre",
+    "Charcoal Ochre"
+  ]
+};
+
+// Build reverse map (variant → base)
+const variantToBase = {};
+for (const [base, variants] of Object.entries(oreVariantMap)) {
+  for (const variant of variants) {
+    variantToBase[normalizeName(variant)] = normalizeName(base);
+  }
+}
+
+/* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
     // fetch prices first
     await fetchPrices();
 
     // optionally start logo flicker
     flickerLogo();
-}); // ✅ close both function block and addEventListener call
+});
 
-
-  // Check URL param
-  const params = new URLSearchParams(window.location.search);
-  const s = params.get('s');
-  if(s){
-    const text = LZString.decompressFromEncodedURIComponent(s);
-    if(text){
-      // populate message box with the text and render summary in shared view
-      messageBox.value = text;
-      userHasEdited = true;
-      submitButton.disabled = false;
-      const parsed = parseInventoryText(text);
-      renderSummary(parsed);
-      // show shared ledger style
-      summaryContainer.classList.add('shared-ledger');
-      // hide interactive controls visually
-      document.querySelector('.main-container').style.display = 'none';
-      document.getElementById('leftContainer').style.display = 'none';
-      document.getElementById('totalCostContainer').style.display = 'none';
-      shareButton.style.display = 'none';
-      // keep price list hidden
-      priceListContainer.style.display = 'none';
-    }
-  };
-
-/* ====================== UTILITIES & INIT ====================== */
-function buildPriceGroupingIfNeeded(){
-  if(Object.keys(groupedPriceMap).length === 0) buildPriceGrouping();
-}
-
-function init(){
-  // initial state: submit disabled until user edits
-  submitButton.disabled = true;
-
-  // populate price list (fetchPrices is already called on load)
-}
-init();
-
-/* small helper: when entering numeric strings with commas, convert to number safely */
-function parseIntSafeWithCommas(s){
-  if(!s) return 0;
-  const m = String(s).match(/[\d,]+/);
-  if(!m) return 0;
-  return parseInt(m[0].replace(/,/g,''),10) || 0;
-}
 </script>
 </body>
 </html>
