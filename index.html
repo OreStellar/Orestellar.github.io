@@ -458,10 +458,9 @@ async function fetchPrices(){
       }
       // try parse
       let suggested = parseNumberSafe(suggestedRaw);
-      // If the header explicitly mentions 150% we use as-is; otherwise we'll multiply by 1.5 later during rendering
-      // To discover that, check header string
+
       const headerText = headerCols[suggestedIdx] || '';
-      let headerContains150 = /150/.test(headerText) || headerText.includes('150%') || headerText.includes('1.5');
+      let headerContains150 = true; // always treat CSV value as final, do not multiply
       // Compute price to store as baseCSVPrice (we store raw CSV suggested; final displayed price may be multiplied)
       if(!isFinite(suggested)) {
         // try fallback: maybe price is second-to-last column as the dataset sometimes uses that
@@ -587,15 +586,12 @@ function buildPriceGrouping(){
     // final fallback: the display itself
     if(!chosenBase) chosenBase = display;
 
-    // compute display price: if CSV header already expressed 150% then use csvValue; else multiply by 1.5
     const entry = priceList[normKey];
     if(!entry) return;
     const raw = entry.csvValue;
 
-    // Determine final price to display
-    let priceToShow = entry.headerHas150 ? raw : raw * 1.5;
-
-    if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+let priceToShow = raw; // use CSV value as-is, no multiplication
+ if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
     groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
 
   });
@@ -745,8 +741,8 @@ function parseInventoryText(text){
       const canonical = canonicalNames[foundKey] || foundKey;
       const priceEntry = priceList[foundKey];
       if(priceEntry){
-        // compute final per-unit price: if header had 150 already, use csvValue; else multiply csvValue by 1.5
-        const perUnit = priceEntry.headerHas150 ? priceEntry.csvValue : priceEntry.csvValue * 1.5;
+     
+        const perUnit = priceEntry.csvValue;
         const total = +(perUnit * qty);
         result.push({ name: canonical, qty, price: perUnit, total, unrecognized:false });
       } else {
