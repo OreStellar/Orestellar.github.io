@@ -458,7 +458,6 @@ let suggestedIdx = headerCols.length - 2;
       let suggested = parseNumberSafe(suggestedRaw);
 
       const headerText = headerCols[suggestedIdx] || '';
-      let headerContains150 = true; // always treat CSV value as final, do not multiply
       // Compute price to store as baseCSVPrice (we store raw CSV suggested; final displayed price may be multiplied)
       if(!isFinite(suggested)) {
         // try fallback: maybe price is second-to-last column as the dataset sometimes uses that
@@ -469,9 +468,7 @@ let suggestedIdx = headerCols.length - 2;
 
       // Normalized key
       const normalized = normalizeName(name);
-      priceList[normalized] = {
-        csvValue: suggested,   // raw suggested value (from CSV cell)
-        headerHas150: headerContains150
+    priceList[normalized] = suggested; // just store the CSV value directly
       };
       canonicalNames[normalized] = name;
     }
@@ -482,17 +479,17 @@ function buildPriceGrouping() {
   for (const [base, variants] of Object.entries(oreVariantMap)) {
     groupedPrices[base] = [];
 
-    // Push each variant that exists in the priceList
-    variants.forEach(v => {
-      const normalized = normalizeName(v);
-      if (priceList[normalized]) {
-        groupedPrices[base].push({
-          name: canonicalNames[normalized],
-          price: priceList[normalized].csvValue,
-          headerHas150: priceList[normalized].headerHas150
-        });
-      }
+// Push each variant that exists in the priceList
+variants.forEach(v => {
+  const normalized = normalizeName(v);
+  if (priceList[normalized]) {
+    groupedPrices[base].push({
+      name: canonicalNames[normalized],
+      price: priceList[normalized]  // just the number now
     });
+  }
+});
+
   }
 
   return groupedPrices;
@@ -609,13 +606,14 @@ function buildPriceGrouping(){
     // final fallback: the display itself
     if(!chosenBase) chosenBase = display;
 
-    const entry = priceList[normKey];
-    if(!entry) return;
-    const raw = entry.csvValue;
+const entry = priceList[normKey];
+if (entry === undefined) return; // handle missing gracefully
 
-let priceToShow = raw; // use CSV value as-is, no multiplication
- if(!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
-    groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+let priceToShow = entry; // CSV value directly
+
+if (!groupedPriceMap[chosenBase]) groupedPriceMap[chosenBase] = [];
+groupedPriceMap[chosenBase].push({ name: display, price: priceToShow });
+
 
   });
 }
