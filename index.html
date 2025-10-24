@@ -159,12 +159,27 @@ textarea#message:focus{
 #totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
 
 /* price tab: Z with short horizontal line */
-#priceTab{
-  position:fixed;top:22vh;right:18px;width:48px;height:48px;border-radius:10px;background:var(--neon);color:#000;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:20px;cursor:pointer;box-shadow:0 0 12px var(--neon),0 0 30px var(--neon) inset;z-index:30;transition:transform 0.18s ease;
-  font-family:var(--orbitron);
+#priceTab {
+  position: fixed;
+  top: 18vh;
+  right: 20px;
+  width: 36px; /* Adjust width */
+  height: 36px; /* Adjust height */
+  background: rgba(0, 0, 0, 0.8) url('https://orestellar.github.io/isklogo.png') center/contain no-repeat;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  transition: background 0.2s, transform 0.2s;
 }
-#priceTab::before{ content:"\005A"; position:absolute; top:7px; font-size:28px; }
-#priceTab::after{ content:""; position:absolute; top:22px; width:18px; height:2px; background:#000; }
+
+#priceTab:hover {
+  background: rgba(0, 0, 0, 0.95);
+  transform: scale(1.1);
+}
+
 
 /* floating price list */
 #priceListContainer {
