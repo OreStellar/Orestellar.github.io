@@ -157,35 +157,28 @@ textarea#message:focus{
 #leftContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');display:none;}
 #totalCostContainer{background-image:url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');display:none;position:relative;}
 #totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
-
-#priceTab {
-  position: fixed;
-  top: 18vh;
-  right: 20px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 30;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Glowing circle behind */
-#priceTab::before {
-  content: '';
+#iskGlow {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 60px; /* slightly bigger than button */
+  width: 60px;
   height: 60px;
   border-radius: 50%;
   background: #fff;
-  opacity: 0.3;
+  opacity: 0.2;
   filter: blur(12px);
-  z-index: -1; /* ensure it stays behind the button */
+  z-index: 1;
+}
+
+#priceTab img {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 8px #fff)
+          drop-shadow(0 0 16px #fff)
+          drop-shadow(0 0 24px #fff);
+  transition: filter 0.2s ease;
 }
 
 
@@ -911,6 +904,27 @@ priceTab.addEventListener('click', () => {
 });
 
 fetchPrices().then(() => renderPriceList());
+
+const logo = document.querySelector('#priceTab img');
+let startTime = null;
+
+function slowPulse(timestamp) {
+  if (!startTime) startTime = timestamp;
+  const elapsed = (timestamp - startTime) / 1000; // seconds
+
+  // Slow pulsation: scale glow 0.8–1.2 over 6 seconds
+  const scale = 1 + 0.2 * Math.sin((Math.PI * 2 / 6) * elapsed);
+
+  logo.style.filter = `
+    drop-shadow(0 0 ${8 * scale}px #fff)
+    drop-shadow(0 0 ${16 * scale}px #fff)
+    drop-shadow(0 0 ${24 * scale}px #fff)
+  `;
+
+  requestAnimationFrame(slowPulse);
+}
+
+requestAnimationFrame(slowPulse);
 
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
