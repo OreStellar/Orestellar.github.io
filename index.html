@@ -256,8 +256,19 @@ textarea#message:focus{
   font-weight: normal;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-</style>
-
+#iskGlow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.3; /* base opacity */
+  filter: blur(12px);
+  z-index: 1;  /* behind the logo */
+  pointer-events: none;
+}
 
 </style>
 </head>
@@ -296,8 +307,10 @@ Compressed Ducinium 4985"></textarea>
     </div>
   </div>
 <div id="priceTab" title="Open price list">
-  <img src="https://orestellar.github.io/isklogo.png" alt="ISK Logo" style="width:24px;height:24px;">
+  <div id="iskGlow"></div>  <!-- glowing circle -->
+  <img src="https://orestellar.github.io/isklogo.png" alt="ISK Logo" style="width:24px;height:24px;position:relative;z-index:2;">
 </div>
+
 
 <div id="priceListContainer"></div>
 
@@ -426,27 +439,15 @@ document.getElementById('myHeader').addEventListener('click', () => {
   window.location.href = window.location.origin + window.location.pathname;
 });
 
+const iskGlow = document.getElementById('iskGlow');
+
 function flickerLogo() {
   const steps = [
-    // 1. Initial dim (1.2s)
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 0 },
-
-    // 2. First flicker (60ms)
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1200 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1260 },
-
-    // 3. Short dim (0.3s)
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1560 },
-
-    // 4. Second flicker (60ms)
-    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', delay: 1560 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1620 },
-
-    // 5. Dim for 0.9s
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 1620 },
-    // 6. Final flash (40ms)
-    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', delay: 2520 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', delay: 2560 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 0 },
+    { color: '#dcdcdc', shadow: '0 0 10px #bfbfbf, 0 0 18px #bfbfbf', glow: 0.5, delay: 1200 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1260 },
+    { color: '#dcdcdc', shadow: '0 0 12px #bfbfbf, 0 0 24px #bfbfbf', glow: 0.6, delay: 1560 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1620 },
   ];
 
   steps.forEach(step => {
@@ -457,17 +458,22 @@ function flickerLogo() {
       ore.style.textShadow = step.shadow;
       stellar.style.textShadow = step.shadow;
       logoText.style.textShadow = step.shadow;
+      iskGlow.style.opacity = step.glow;
     }, step.delay);
   });
 
-  // 7. Begin steady glow forever
+  // steady soft glow after flicker
   setTimeout(() => {
-    const glowAnim = 'softGlow 6s infinite';
-    logoText.style.animation = glowAnim;
-    ore.style.animation = glowAnim;
-    stellar.style.animation = glowAnim;
-  }, 2560); // after last dim
+    ore.style.animation = 'softGlow 6s infinite';
+    stellar.style.animation = 'softGlow 6s infinite';
+    logoText.style.animation = 'softGlow 6s infinite';
+    
+    // make glow pulse slowly too
+    iskGlow.style.transition = 'opacity 3s ease-in-out';
+    iskGlow.style.opacity = 0.3;
+  }, 2560);
 }
+
 
 const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
