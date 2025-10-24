@@ -326,103 +326,101 @@ const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
 /* ====================== STARFIELD ====================== */
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
+/* ====================== STARFIELD ====================== */
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
 
-let stars = [];
-const clusterCount = 25; // your cluster count
+  let stars = [];
+  const clusterCount = 25;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-function createStars() {
-  stars = [];
-  const centers = [];
-  for (let i = 0; i < clusterCount; i++) {
-    centers.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
 
-  const total = Math.max(500, Math.floor(canvas.width * canvas.height / 1000));
-  for (let i = 0; i < total; i++) {
-    let x, y;
-    if (Math.random() < 0.6) {
-      const c = centers[Math.floor(Math.random() * centers.length)];
-      const r = Math.random() * 140;
-      const a = Math.random() * Math.PI * 2;
-      x = c.x + r * Math.cos(a);
-      y = c.y + r * Math.sin(a);
-    } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
+  function createStars() {
+    stars = [];
+    const centers = [];
+    for (let i = 0; i < clusterCount; i++) {
+      centers.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
     }
 
-    const r = Math.random();
-    let color = '#ffffff';
-    if (r < 0.005) color = '#ff0000';
-    else if (r < 0.025) color = '#ffb6c1';
-    else if (r < 0.055) color = '#ffff99';
+    const total = Math.max(500, Math.floor(canvas.width * canvas.height / 1000));
+    for (let i = 0; i < total; i++) {
+      let x, y;
+      if (Math.random() < 0.6) {
+        const c = centers[Math.floor(Math.random() * centers.length)];
+        const r = Math.random() * 140;
+        const a = Math.random() * Math.PI * 2;
+        x = c.x + r * Math.cos(a);
+        y = c.y + r * Math.sin(a);
+      } else {
+        x = Math.random() * canvas.width;
+        y = Math.random() * canvas.height;
+      }
 
-    stars.push({
-      x, y,
-      size: Math.random() * 1.6 + 0.2,
-      color,
-      baseAlpha: 0.7 + Math.random() * 0.25,
-      isBright: false,
-      brightStart: 0,
-      brightEnd: 0
-    });
-  }
-}
+      const r = Math.random();
+      let color = '#ffffff';
+      if (r < 0.005) color = '#ff0000';
+      else if (r < 0.025) color = '#ffb6c1';
+      else if (r < 0.055) color = '#ffff99';
 
-// draw stars
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const now = performance.now();
-  for (const s of stars) {
-    let alpha = s.baseAlpha;
-    if (s.isBright && now >= s.brightStart && now <= s.brightEnd) {
-      alpha = 1;
-    }
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = s.color;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
-// animate stars (twinkle)
-function animateStars() {
-  const now = performance.now();
-  for (const s of stars) {
-    if (Math.random() < 0.001 && !s.isBright) {
-      s.isBright = true;
-      s.brightStart = now;
-      s.brightEnd = now + 1500 + Math.random() * 3000; // twinkle duration
-    } else if (s.isBright && now > s.brightEnd) {
-      s.isBright = false;
+      stars.push({
+        x, y,
+        size: Math.random() * 1.6 + 0.2,
+        color,
+        baseAlpha: 0.7 + Math.random() * 0.25,
+        isBright: false,
+        brightStart: 0,
+        brightEnd: 0
+      });
     }
   }
-  drawStars();
-  requestAnimationFrame(animateStars);
-}
 
-// initial setup
-window.addEventListener('load', () => {
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const now = performance.now();
+    for (const s of stars) {
+      let alpha = s.baseAlpha;
+      if (s.isBright && now >= s.brightStart && now <= s.brightEnd) {
+        alpha = 1;
+      }
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = s.color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function animateStars() {
+    const now = performance.now();
+    for (const s of stars) {
+      if (Math.random() < 0.001 && !s.isBright) {
+        s.isBright = true;
+        s.brightStart = now;
+        s.brightEnd = now + 1500 + Math.random() * 3000;
+      } else if (s.isBright && now > s.brightEnd) {
+        s.isBright = false;
+      }
+    }
+    drawStars();
+    requestAnimationFrame(animateStars);
+  }
+
+  // Initial setup
   resizeCanvas();
   createStars();
   drawStars();
-  animateStars(); // start twinkle loop
-});
+  animateStars();
 
-// handle resizing
-window.addEventListener('resize', () => {
-  resizeCanvas();
-  createStars();
-  drawStars();
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    createStars();
+    drawStars();
+  });
 });
 
 
