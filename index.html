@@ -532,11 +532,15 @@ variants.forEach(v => {
   return groupedPrices;
 }
 
-// Usage
-const groupedOrePrices = buildPriceGrouping();
-console.log(groupedOrePrices);
+async function fetchPrices() {
+  try {
+    // Usage
+    const groupedOrePrices = buildPriceGrouping();
+    console.log(groupedOrePrices);
+
     // Build base names list (all non-compressed canonical names)
     baseNames = Object.values(canonicalNames).slice(); // display names
+
     // We'll normalize base candidate tokens to allow matching
     // Build oreEntries for inventory matching: prefer longer multi-word entries first
     oreEntries = Object.keys(canonicalNames).map(k => ({ key: k, tokens: k.split(/\s+/).length, length: k.length }));
@@ -547,10 +551,12 @@ console.log(groupedOrePrices);
 
     // Fill the floating price list UI
     fillPriceList();
-  catch(err) {
+
+  } catch(err) {
     console.error('fetchPrices error', err);
   }
 }
+
 window.addEventListener('load', fetchPrices);
 
 /* helper: split csv line but keep commas in quoted fields -- simple robust split */
