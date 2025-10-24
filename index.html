@@ -518,7 +518,7 @@ async function fetchPrices() {
     oreEntries = Object.keys(priceList).map(key => ({ key }));
 
     buildPriceGrouping();
-    fillPriceList();
+    renderPriceList();
 
   } catch (err) {
     console.error('fetchPrices error', err);
