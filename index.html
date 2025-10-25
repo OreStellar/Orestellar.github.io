@@ -386,7 +386,24 @@ Mercoxit 25000
     </div>
   </div>
 
-<div id="priceListContainer"></div>
+<div id="priceListContainer" style="display:none;">
+  <!-- Quick Find Bar -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <div style="font-weight:bold; font-size:1.1em; color:white; text-shadow:0 0 6px rgba(255,255,255,0.8);">
+      Price List
+    </div>
+    <input type="text" id="priceSearch" placeholder="Quick find..." 
+           style="padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.3);
+                  background: rgba(20,20,20,0.8); color:white; font-family: 'Orbitron',sans-serif; 
+                  text-shadow:0 0 3px rgba(255,255,255,0.6);">
+  </div>
+
+  <!-- Price table will appear here -->
+  <table class="price-table">
+    <!-- dynamically generated rows -->
+  </table>
+</div>
+
 <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 
 <script>
@@ -990,44 +1007,16 @@ const priceTab = document.getElementById('priceTab');
 // After building the price table:
 const priceListContainer = document.getElementById('priceListContainer');
 
-// Insert Quick Find input into the header row
-const table = priceListContainer.querySelector('table');
-if (table) {
-  const headerRow = table.querySelector('tr'); // first row with headers
-  if (headerRow) {
-    const searchCell = document.createElement('th');
-    searchCell.colSpan = headerRow.children.length; // span entire table width
-    searchCell.innerHTML = `
-      <input type="text" id="priceSearch" placeholder="Quick find..."
-        style="
-          width: 60%;
-          margin: 8px auto;
-          display: block;
-          padding: 6px 10px;
-          border-radius: 6px;
-          border: 1px solid rgba(255,255,255,0.3);
-          background: rgba(20,20,20,0.8);
-          color: white;
-          font-family: 'Orbitron', sans-serif;
-          text-align: center;
-          text-shadow: 0 0 6px rgba(255,255,255,0.8);
-          outline: none;
-        ">`;
-    headerRow.after(searchCell); // put it just below header
-  }
-}
+const priceSearchInput = document.getElementById('priceSearch');
 
-// Add search filtering logic
-document.addEventListener('input', e => {
-  if (e.target.id === 'priceSearch') {
-    const searchValue = e.target.value.toLowerCase();
-    const rows = priceListContainer.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(searchValue) ? '' : 'none';
-    });
-  }
+priceSearchInput.addEventListener('input', () => {
+  const searchValue = priceSearchInput.value.toLowerCase();
+  const rows = priceListContainer.querySelectorAll('tbody tr');
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(searchValue) ? '' : 'none';
+  });
 });
+
 
 // Neon fade toggle for price list
 priceTab.addEventListener('click', (e) => {
