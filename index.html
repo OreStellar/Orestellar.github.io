@@ -665,45 +665,49 @@ function escapeRegex(s){
   return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 }
 
-function parseInventoryText(text){
+function parseInventoryText(text) {
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
   const result = [];
 
-  for(const rawLine of lines){
-    // remove the word "compressed" so matching works
-    const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
+  for (const rawLine of lines) {
+    // Separate quantity (number) from ore name
+    const qtyMatch = rawLine.match(/([\d,]+)$/); // number at end of line
+    const qty = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
+
+    // Remove the quantity from the name portion
+    const namePart = rawLine.replace(/([\d,]+)$/, '').trim();
+
+    // Normalize and strip "Compressed" for matching
+    const lineNoCompressed = namePart.replace(/compressed\s+/i, '').trim();
     const normalizedLine = normalizeName(lineNoCompressed);
 
     let foundKey = null;
     let longestMatchLength = 0;
 
-    if(priceList[normalizedLine]){
+    // 1️⃣ Exact match
+    if (priceList[normalizedLine]) {
       foundKey = normalizedLine;
     } else {
-      for(const entry of oreEntries){
+      // 2️⃣ Fuzzy match (longest match)
+      for (const entry of oreEntries) {
         const key = entry.key;
-        const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
-        if(re.test(normalizedLine) && key.length > longestMatchLength){
+        const re = new RegExp('\\b' + escapeRegex(key) + '\\b', 'i');
+        if (re.test(normalizedLine) && key.length > longestMatchLength) {
           foundKey = key;
           longestMatchLength = key.length;
         }
       }
     }
 
-    let qty = 0;
-    const qtyMatch = rawLine.match(/([\d,]+)/);
-    if(qtyMatch){
-      qty = parseInt(qtyMatch[1].replace(/,/g,''),10) || 0;
-    }
-
-    if(foundKey){
-      const canonical = canonicalNames[foundKey] || foundKey;
+    // --- Build result ---
+    if (foundKey) {
+      const canonical = canonicalNames[foundKey] || namePart; // keep original display
       const priceEntry = priceList[foundKey];
       const perUnit = priceEntry ? priceEntry.csvValue : 0;
       const total = +(perUnit * qty);
-      result.push({ name: rawLine, qty, price: perUnit, total, unrecognized: false });
+      result.push({ name: canonical, qty, price: perUnit, total, unrecognized: false });
     } else {
-      const guessName = rawLine.split(/\s+/).slice(0,4).join(' ').trim();
+      const guessName = namePart.split(/\s+/).slice(0, 4).join(' ').trim();
       result.push({ name: guessName, qty, price: 0, total: 0, unrecognized: true });
     }
   }
