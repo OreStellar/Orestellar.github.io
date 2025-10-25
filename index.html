@@ -293,6 +293,12 @@ textarea#message:focus{
 .summary-table th:first-child{ text-align:left; } /* Name header left */
 .summary-table tr.unrecognized td {color:#ff6666;font-weight:700;text-shadow:0 0 8px #ff5555;}
 .summary-total td{border-top:2px solid rgba(0,255,0,0.18);font-weight:700;padding-top:10px; text-align:right;}
+/* highlight glow for search matches */
+.glow-match td:first-child {
+  color: #ffffff;
+  text-shadow: 0 0 6px #fff, 0 0 12px #fff;
+  font-weight: bold;
+}
 
 /* small responsive tweaks */
 @media (max-width:720px){
@@ -300,6 +306,7 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
+
 </style>
 </head>
 <body data-show-inventory="true">
@@ -340,7 +347,8 @@ Mercoxit 25000
   </div>
 
   <div id="priceListContainer"></div>
-    <!-- 🔍 Quick Find Bar -->
+<div id="priceListContainer">
+  <!-- 🔍 Quick Find Bar -->
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
     <div style="font-weight:bold; font-size:1.1em; color:white; text-shadow:0 0 6px rgba(255,255,255,0.8);">
       Price List
@@ -351,8 +359,9 @@ Mercoxit 25000
                   text-shadow:0 0 3px rgba(255,255,255,0.6);">
   </div>
 
-  <!-- your price table gets injected here by JS -->
+  <!-- your price table will appear here -->
 </div>
+
   <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 </div>
 
@@ -998,9 +1007,20 @@ priceSearchInput.addEventListener('input', () => {
 
   rows.forEach(row => {
     const nameCell = row.querySelector('td:first-child');
-    if (!nameCell) return; // skip headers
+    if (!nameCell) return; // skip header row
+
     const nameText = nameCell.textContent.toLowerCase();
-    row.style.display = nameText.includes(filter) ? '' : 'none';
+
+    if (filter === '') {
+      row.style.display = ''; // reset visibility
+      row.classList.remove('glow-match');
+    } else if (nameText.includes(filter)) {
+      row.style.display = '';
+      row.classList.add('glow-match'); // ✨ glow the match
+    } else {
+      row.style.display = 'none';
+      row.classList.remove('glow-match');
+    }
   });
 });
 
