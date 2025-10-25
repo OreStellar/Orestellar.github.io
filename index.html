@@ -1030,7 +1030,6 @@ const priceTab = document.getElementById('priceTab');
 const priceListContainer = document.getElementById('priceListContainer');
 const mainContent = document.getElementById('mainContent');
 
-// Function to open pricelist
 function openPriceList() {
   // Rebuild pricelist if empty
   if (!Object.keys(groupedPriceMap || {}).length) {
@@ -1062,6 +1061,7 @@ function closePriceList() {
 
   }, 280); // match fade-out duration
 }
+
 
 
 // Toggle on priceTab click
