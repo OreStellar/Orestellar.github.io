@@ -1009,7 +1009,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if (priceBtn) priceBtn.style.display = 'inline-block';
   }
 });
-
+     submitBtn.addEventListener('click', () => {
+          // Show the Share Summary button
+          shareBtn.style.display = 'inline-block';
+      });
 
   // Update total text
   const totalText = document.getElementById('totalCostText');
