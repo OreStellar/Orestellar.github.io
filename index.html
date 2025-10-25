@@ -418,6 +418,13 @@ Mercoxit 25000
 <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 
 <script>
+    // === ADD THIS FUNCTION HERE ===
+  function showSummaryContainers() {
+      document.getElementById('leftContainer').style.display = 'block';
+      document.getElementById('totalCostContainer').style.display = 'block';
+      document.getElementById('totalCostText').style.display = 'block';
+      document.getElementById('shareButton').style.display = 'inline-block';
+  }
 const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
