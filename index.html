@@ -407,16 +407,18 @@ Mercoxit 25000
     <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
-  <!-- CONTRACTS / SUMMARY -->
-  <div class="contracts-wrapper">
-    <div id="leftContainer" class="total-cost-container"></div>
-    <div id="summaryContainer" class="summary-container"></div>
-<div id="summaryContainer" class="summary-container">
-  <!-- JS will insert summary table here -->
+ <!-- CONTRACTS / SUMMARY -->
+<div class="contracts-wrapper">
+  <div id="leftContainer" class="total-cost-container"></div>
 
-  <div class="button-row">
-    <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
-    <button id="priceTab" class="actionButton">Price List</button>
+  <!-- ✅ Only ONE summaryContainer -->
+  <div id="summaryContainer" class="summary-container" style="display: none;">
+    <!-- JS will insert summary table here -->
+
+    <div class="button-row" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center;">
+      <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
+      <button id="priceTab" class="actionButton" style="display:none;">Price List</button>
+    </div>
   </div>
 </div>
 
@@ -1056,8 +1058,6 @@ function attachSorting(container){
   });
 }
 
-/* ====================== SUBMIT / SHARE LOGIC ====================== */
-// ====================== SUBMIT BUTTON HANDLER ======================
 submitButton.addEventListener('click', () => {
   const txt = messageBox.value.trim();
   if (!txt) return;
@@ -1065,38 +1065,17 @@ submitButton.addEventListener('click', () => {
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
   // Hide inventory & submit
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
   // Show summary container
+  const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display = 'flex';
 
-  // Move Share Button into summary container
-  let shareButton = document.getElementById('shareButton');
-  if (!shareButton) {
-    shareButton = document.createElement('button');
-    shareButton.id = 'shareButton';
-    shareButton.className = 'actionButton';
-    shareButton.textContent = 'Share Summary';
-    shareButton.style.marginTop = '14px';
-    summaryContainer.appendChild(shareButton);
-
-    shareButton.addEventListener('click', async () => {
-      const msg = messageBox.value.trim();
-      if (!msg) return;
-      const compressed = LZString.compressToEncodedURIComponent(msg);
-      const url = `${location.origin}${location.pathname}?s=${compressed}`;
-      await navigator.clipboard.writeText(url);
-      shareButton.textContent = 'Copied!';
-      setTimeout(() => (shareButton.textContent = 'Share Summary'), 1500);
-    });
-  } else {
-    summaryContainer.appendChild(shareButton);
-    shareButton.style.display = 'inline-block';
-  }
+  // Show both buttons inside summary
+  document.getElementById('shareButton').style.display = 'inline-block';
+  document.getElementById('priceTab').style.display = 'inline-block';
 });
 
 shareButton.addEventListener('click', async () => {
