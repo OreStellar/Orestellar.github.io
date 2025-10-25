@@ -415,8 +415,41 @@ Mercoxit 25000
     <!-- dynamically generated rows -->
   </table>
 </div>
-
+<!-- This container will be visible ONLY in shared view -->
+<div id="shareViewContainer" style="display:none">
+  <img src="isklogo.png" id="iskLogo" />
+  <img src="orestellarLogo.png" id="orestellarLogo" />
+  <div id="summaryContainer"></div>
+</div>
 <script>
+  window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const sharedData = params.get('s');
+  if(sharedData) {
+    // Hide inventory input and submit button
+    document.getElementById('inventoryContainer')?.remove();
+    document.getElementById('submitButton')?.remove();
+
+    // Hide other unnecessary containers
+    document.getElementById('leftContainer')?.remove();
+    document.getElementById('totalCostContainer')?.remove();
+    document.getElementById('shareButton')?.remove();
+
+    // Make header and price tab visible
+    document.getElementById('myHeader').style.display = 'block';
+    document.getElementById('priceTab').style.display = 'inline-block';
+
+    // Parse inventory text and render summary
+    const parsedText = LZString.decompressFromEncodedURIComponent(sharedData);
+    const parsedItems = parseInventoryText(parsedText);
+    renderSummary(parsedItems);
+
+    // Make sure the summary container is visible
+    const summary = document.getElementById('summaryContainer');
+    summary.style.display = 'flex';
+  }
+});
+
     // === ADD THIS FUNCTION HERE ===
   function showSummaryContainers() {
       document.getElementById('leftContainer').style.display = 'block';
@@ -1021,20 +1054,28 @@ submitButton.addEventListener('click', () => {
 
 
 
-shareButton.addEventListener('click', async ()=>{
-  const msg = messageBox.value.trim();
-  if(!msg) return;
-  const compressed = LZString.compressToEncodedURIComponent(msg);
-  const url = `${location.origin}${location.pathname}?s=${compressed}`;
+shareButton.addEventListener('click', async () => {
+  const txt = messageBox.value.trim();
+  if (!txt) return;
+
+  // Compress the inventory text for URL
+  const compressed = LZString.compressToEncodedURIComponent(txt);
+
+  // Construct URL with ?s= parameter
+  const shareUrl = `${location.origin}${location.pathname}?s=${compressed}`;
+
   try {
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(shareUrl);
+
+    // Give feedback
     const orig = shareButton.innerText;
     shareButton.innerText = 'Copied';
-    setTimeout(()=> shareButton.innerText = orig, 1400);
-  } catch(e){
+    setTimeout(() => shareButton.innerText = orig, 1400);
+  } catch (e) {
     alert('Failed to copy URL.');
   }
 });
+
 /* ====================== PRICES & VARIANTS ====================== */
 
 const RAW_PRICE_COL = 10;
