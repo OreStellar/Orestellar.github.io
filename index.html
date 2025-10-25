@@ -463,9 +463,12 @@ function buildPriceGrouping() {
     const entry = priceList[normKey];
     if (!entry) return;
 
-    groupedPriceMap[displayName] = [{ name: displayName, price: entry.csvValue }];
+    // Check if this ore is a variant (contains spaces or matches another base as substring)
+    const baseName = displayName.split(' ')[0]; // simple heuristic: first word as base
+    if (!groupedPriceMap[baseName]) groupedPriceMap[baseName] = [];
+
+    groupedPriceMap[baseName].push({ name: displayName, price: entry.csvValue });
   });
-}
 
 
 
@@ -496,24 +499,31 @@ function renderPriceList() {
   const container = document.getElementById('priceListContainer');
   container.innerHTML = '';
 
-  for (const [base, variants] of Object.entries(groupedPriceMap)) {
-    if (!variants || !variants.length) continue;
+  Object.entries(groupedPriceMap).forEach(([base, ores]) => {
+    if (!ores || !ores.length) return;
 
-    // Show the base ore first, with its price
+    // Base ore header
     const baseDiv = document.createElement('div');
     baseDiv.className = 'base-ore';
-    baseDiv.innerHTML = `<span class="name">${base}</span><span class="price">${variants[0].price}</span>`;
+    baseDiv.innerHTML = `<strong>${base}</strong>`;
     container.appendChild(baseDiv);
 
-    // Show variant ores (skip first if it's base)
-    variants.slice(1).forEach(v => {
+    // Variant ores under base
+    ores.forEach(ore => {
+      if(ore.name === base) return; // skip duplicate base
       const variantDiv = document.createElement('div');
       variantDiv.className = 'variant-ore';
-      variantDiv.innerHTML = `<span class="name">${v.name}</span><span class="price">${v.price}</span>`;
+      variantDiv.innerHTML = `<span class="name">${ore.name}</span><span class="price">${ore.price}</span>`;
       container.appendChild(variantDiv);
     });
-  }
+
+    // Add spacing / border between groups
+    const spacer = document.createElement('div');
+    spacer.style.height = '8px';
+    container.appendChild(spacer);
+  });
 }
+
 
 let oreEntries = [];
 
