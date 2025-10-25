@@ -932,11 +932,12 @@ function renderSummary(parsedItems, isShared = false){
 
   // -----------------------------
   // Only show extra containers if NOT shared
-  if(!isShared){
-    document.getElementById('leftContainer').style.display = 'block';
-    document.getElementById('totalCostContainer').style.display = 'flex';
-    document.getElementById('shareButton').style.display = 'inline-block';
-  }
+if(!isShared){
+  document.getElementById('leftContainer').style.display = 'block';
+  document.getElementById('totalCostContainer').style.display = 'flex';
+  document.getElementById('shareButton').style.display = 'inline-block';
+}
+
 
   // Update total text
   const totalText = document.getElementById('totalCostText');
