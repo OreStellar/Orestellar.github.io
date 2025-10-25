@@ -465,9 +465,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('summaryContainer').style.display = 'flex';
     document.getElementById('priceTab').style.display = 'inline-block';
   }
+
+  // ==================== START LOGO PULSE ====================
+  requestAnimationFrame(slowPulse); // ✅ safe to start now
 });
-
-
 
     // === ADD THIS FUNCTION HERE ===
   function showSummaryContainers() {
@@ -1195,6 +1196,10 @@ const logo = document.querySelector('#priceTab img');
 let startTime = null;
 
 function slowPulse(timestamp) {
+  // ✅ Find the logo safely
+  const logo = document.getElementById('logoText');
+  if (!logo) return; // stop if logo isn't loaded yet
+
   if (!startTime) startTime = timestamp;
   const elapsed = (timestamp - startTime) / 1000; // seconds
 
@@ -1209,6 +1214,7 @@ function slowPulse(timestamp) {
 
   requestAnimationFrame(slowPulse);
 }
+
 const priceSearchInput = document.getElementById('priceSearch');
 
 priceSearchInput.addEventListener('input', () => {
