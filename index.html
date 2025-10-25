@@ -195,25 +195,65 @@ textarea#message:focus{
 /* floating price list */
 #priceListContainer {
   position: fixed;
-  top: 18vh;
-  right: 78px;
-  width: 300px;           /* slightly smaller */
-  max-height: 72vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10, 10, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  width: 85%;
+  max-width: 900px;
+  max-height: 70vh;
   overflow-y: auto;
-  background: rgba(0,0,0,0.9);
-  border: 1px solid #888;
-  padding: 10px;
-  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(211, 212, 212, 0.3);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
   display: none;
-  box-shadow: 0 0 10px rgba(0,0,0,0.6);
-  font-family: var(--mono);
-  color: #eee;
-  z-index: 29;
+  z-index: 1000;
 }
 
-#priceListContainer table{width:100%;border-collapse:collapse;}
-#priceListContainer th,#priceListContainer td{padding:6px 8px;border-bottom:1px solid rgba(0,255,0,0.06);font-size:13px;text-align:left;}
-#priceListContainer th{font-weight:700;color:var(--neon);}
+/* translucent scrollbars */
+#priceListContainer::-webkit-scrollbar {
+  width: 8px;
+}
+#priceListContainer::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+#priceListContainer::-webkit-scrollbar-track {
+  background: rgba(141, 141, 141, 0.05);
+}
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 14px;
+  color: #e0faff;
+}
+
+.price-table th {
+  background: rgba(0, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.4);
+  padding: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.price-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-table tr:hover {
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.price-table tr.compressed td {
+  color: #00ffaa;
+  text-shadow: 0 0 6px #00ffaa;
+}
 
 /* summary container */
 .summary-container{
@@ -664,6 +704,15 @@ messageBox.addEventListener('blur', () => {
 function escapeRegex(s){
   return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 }
+function getPriceForOre(name) {
+  const normalized = normalizeName(name);
+  const lowerKeys = Object.keys(priceList).reduce((acc, key) => {
+    acc[key.toLowerCase()] = key;
+    return acc;
+  }, {});
+  const matchedKey = lowerKeys[normalized.toLowerCase()];
+  return matchedKey ? priceList[matchedKey].csvValue : 0;
+}
 
 function parseInventoryText(text) {
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
@@ -694,7 +743,7 @@ function parseInventoryText(text) {
     const normalizedName = normalizeName(cleanName);
 
     const priceEntry = priceList[normalizedName];
-    const perUnit = priceEntry ? priceEntry.csvValue : 0;
+    const perUnit = getPriceForOre(lineNoCompressed);
     const total = +(perUnit * qty);
 
     result.push({
