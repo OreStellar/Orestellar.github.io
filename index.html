@@ -996,16 +996,22 @@ function attachSorting(container){
 const shareButton = document.getElementById('shareButton');
 
 submitButton.addEventListener('click', ()=>{
-  // double-check we have user content
   const txt = messageBox.value.trim();
   if(!txt) return;
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
-  window.scrollTo({ top: 0, behavior:'smooth'});
+  window.scrollTo({ top: 0, behavior:'smooth' });
+
   // HIDE INVENTORY AND SUBMIT
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
+
+  // ENSURE summary/contract containers are visible
+  document.querySelectorAll('.contracts-wrapper, #summaryContainer, #totalCostContainer, #shareButton').forEach(el=>{
+    el.style.display = '';
+  });
 });
+
 
 shareButton.addEventListener('click', async ()=>{
   const msg = messageBox.value.trim();
