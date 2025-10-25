@@ -596,18 +596,19 @@ function parseCSV(csvText) {
   }
 }
 
-function renderPriceList() {
-  // Group by base ore, excluding any 'Compressed' types
+function renderPriceList(searchTerm = '') {
   const groups = {};
 
+  // Build groups
   Object.keys(priceList).forEach(key => {
     const name = canonicalNames[key] || key;
-
-    // 🧹 skip anything containing 'Compressed'
     if (/compressed/i.test(name)) return;
 
+    // Filter by search term (case-insensitive)
+    if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase())) return;
+
     const parts = name.trim().split(/\s+/);
-    const base = parts[parts.length - 1]; // last word (e.g. "Arkonor")
+    const base = parts[parts.length - 1];
     if (!groups[base]) groups[base] = [];
     groups[base].push({ name, price: priceList[key].csvValue });
   });
@@ -620,15 +621,16 @@ function renderPriceList() {
     <tbody>`;
 
   for (const base in groups) {
-    html += `
-      <tr class="base-row">
+    const variants = groups[base];
+    if (!variants.length) continue; // skip empty groups
+
+    html += `<tr class="base-row">
         <td colspan="2" class="base-ore">${base}</td>
       </tr>`;
-    
-    groups[base].forEach(entry => {
+
+    variants.forEach(entry => {
       const variant = entry.name === base ? base : entry.name;
-      html += `
-        <tr class="variant-row">
+      html += `<tr class="variant-row">
           <td class="variant-name">${variant}</td>
           <td>${entry.price.toLocaleString()}</td>
         </tr>`;
@@ -636,15 +638,20 @@ function renderPriceList() {
   }
 
   html += `</tbody></table>`;
-  // Only replace the table, keep the search input intact
-let container = document.getElementById('priceListContainer');
-let table = container.querySelector('.price-table');
-if (table) {
-  table.outerHTML = html; // replace existing table
-} else {
-  container.insertAdjacentHTML('beforeend', html); // first render
+
+  let container = document.getElementById('priceListContainer');
+  let table = container.querySelector('.price-table');
+  if (table) {
+    table.outerHTML = html;
+  } else {
+    container.insertAdjacentHTML('beforeend', html);
+  }
 }
-}
+
+// Example search listener
+document.getElementById('priceSearch').addEventListener('input', e => {
+  renderPriceList(e.target.value);
+});
 
 let oreEntries = [];
 
