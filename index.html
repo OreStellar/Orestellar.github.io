@@ -351,6 +351,11 @@ textarea#message:focus{
   filter: blur(6px);
   transition: filter 0.2s ease;
 }
+.price-cell {
+  text-align: right;
+  padding-right: 8px; /* optional spacing */
+}
+
 </style>
 </head>
 <body data-show-inventory="true">
@@ -632,13 +637,14 @@ function renderPriceList(searchTerm = '') {
         <td colspan="2" class="base-ore">${base}</td>
       </tr>`;
 
-    variants.forEach(entry => {
-      const variant = entry.name === base ? base : entry.name;
-      html += `<tr class="variant-row">
-          <td class="variant-name">${variant}</td>
-          <td>${entry.price.toLocaleString()}</td>
-        </tr>`;
-    });
+variants.forEach(entry => {
+  const variant = entry.name === base ? base : entry.name;
+  html += `<tr class="variant-row">
+      <td class="variant-name">${variant}</td>
+      <td class="price-cell">${entry.price.toLocaleString()}</td>
+    </tr>`;
+});
+
   }
 
   html += `</tbody></table>`;
