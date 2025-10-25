@@ -419,9 +419,11 @@ Mercoxit 25000
 
 <script>
 // ==================== SHARE SUMMARY HANDLER ====================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   const sharedData = params.get('s');
+
+  await fetchPrices(); // ✅ wait for priceList to load
 
   if (sharedData) {
     const decoded = LZString.decompressFromEncodedURIComponent(sharedData);
@@ -431,17 +433,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('inventoryContainer').style.display = 'none';
     submitButton.style.display = 'none';
 
-// Show summary container with parsed data
-renderSummary(parsed, true);  // ← pass `true` to indicate this is a shared URL view
+    // Show summary container with parsed data
+    renderSummary(parsed, true);
 
-// Only show summary container and price tab
-document.getElementById('summaryContainer').style.display = 'flex';
-document.getElementById('priceTab').style.display = 'inline-block';
-
-
-    // Optional: disable any code in renderSummary that sets display of other containers
+    document.getElementById('summaryContainer').style.display = 'flex';
+    document.getElementById('priceTab').style.display = 'inline-block';
   }
 });
+
 
 
     // === ADD THIS FUNCTION HERE ===
