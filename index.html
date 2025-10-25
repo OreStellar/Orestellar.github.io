@@ -989,7 +989,12 @@ document.addEventListener('input', e => {
   }
 });
 
-priceTab.addEventListener('click', () => {
+// Toggle price list on tab click
+priceTab.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent triggering the outside-click listener
+
+  const priceListContainer = document.getElementById('priceListContainer');
+
   if (priceListContainer.style.display !== 'block') {
     // rebuild price list if empty
     if (!Object.keys(groupedPriceMap).length) {
@@ -1002,6 +1007,20 @@ priceTab.addEventListener('click', () => {
   }
 });
 
+// Close price list when clicking outside of it
+document.addEventListener('click', function (e) {
+  const priceListContainer = document.getElementById('priceListContainer');
+
+  // Only run if container is visible
+  if (priceListContainer && priceListContainer.style.display === 'block') {
+    // If click was outside container and not on the price tab, close it
+    if (!priceListContainer.contains(e.target) && e.target !== priceTab) {
+      priceListContainer.style.display = 'none';
+    }
+  }
+});
+
+// Build once after prices load
 fetchPrices().then(() => renderPriceList());
 
 const logo = document.querySelector('#priceTab img');
