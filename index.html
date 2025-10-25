@@ -598,27 +598,27 @@ document.getElementById('myHeader').addEventListener('click', () => {
 
 
 const logoCanvas = document.getElementById('logoCanvas');
-const ctx = logoCanvas.getContext('2d');
+const logoctx = logoCanvas.getContext('2d');
 const logoText = "OreStellar";
 
 function drawLogo() {
   const width = logoCanvas.width;
   const height = logoCanvas.height;
   
-  ctx.clearRect(0, 0, width, height);
+  logoctx.clearRect(0, 0, width, height);
   
-  ctx.font = 'bold 48px Orbitron';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  logoctx.font = 'bold 48px Orbitron';
+  logoctx.textAlign = 'center';
+  logoctx.textBaseline = 'middle';
   
-  ctx.shadowColor = '#0ff';
-  ctx.shadowBlur = 6; // smaller glow radius
-  ctx.fillStyle = '#0ff';
+  logoctx.shadowColor = '#0ff';
+  logoctx.shadowBlur = 6; // smaller glow radius
+  logoctx.fillStyle = '#0ff';
   
-  ctx.globalAlpha = 0.85 + Math.random() * 0.15; // subtle flicker
-  ctx.fillText(logoText, width/2, height/2);
+  logoctx.globalAlpha = 0.85 + Math.random() * 0.15; // subtle flicker
+  logoctx.fillText(logoText, width/2, height/2);
   
-  ctx.globalAlpha = 1;
+  logoctx.globalAlpha = 1;
 }
 
 function animateLogo() {
