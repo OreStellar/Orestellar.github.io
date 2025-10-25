@@ -166,30 +166,26 @@ textarea#message:focus{
 #totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
 
 
-#priceTab {
-  position: absolute;  /* float above the panel */
-  top: 50%;            /* vertical center */
-  right: 20px;         /* distance from right edge */
-  transform: translateY(-50%);
-  display: flex;
+#priceTab.actionButton {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transition: all 0.25s ease-in-out;
   cursor: pointer;
-  z-index: 5;
 }
 
-/* Logo image */
-#priceTab img {
-  width: 24px;
-  height: 24px;
-  z-index: 2;
-  filter: drop-shadow(0 0 8px #fff)
-          drop-shadow(0 0 16px #fff)
-          drop-shadow(0 0 24px #fff);
-  transition: filter 0.2s ease;
+#priceTab.actionButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  transform: scale(1.05);
 }
+
 /* Blur effect for background */
 .blur {
   filter: blur(6px);
@@ -384,16 +380,14 @@ Mercoxit 25000
     <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
-  <!-- ISK LOGO BUTTON NEXT TO MAIN -->
-  <div id="priceTab" title="Open price list">
-    <img src="https://orestellar.github.io/isklogo.png" alt="ISK Logo" style="width:24px;height:24px;">
-  </div>
-
   <!-- CONTRACTS / SUMMARY -->
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
     <div id="summaryContainer" class="summary-container"></div>
     <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
+  <div id="priceTab" title="Open price list" class="actionButton" style="margin-top: 14px;">
+    <img src="https://orestellar.github.io/isklogo.png" alt="ISK Logo" style="width: 22px; height: 22px; vertical-align: middle;">
+  </div>
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
     </div>
@@ -1208,6 +1202,25 @@ priceSearchInput.addEventListener('input', () => {
     }
   });
 });
+document.addEventListener('DOMContentLoaded', () => {
+  const priceTab = document.getElementById('priceTab');
+  const priceList = document.getElementById('priceListContainer');
+
+  if (priceTab && priceList) {
+    priceTab.addEventListener('click', () => {
+      const isVisible = priceList.style.display === 'block';
+      priceList.style.display = isVisible ? 'none' : 'block';
+
+      // Optional: toggle glow effect on the button when active
+      if (!isVisible) {
+        priceTab.classList.add('active');
+      } else {
+        priceTab.classList.remove('active');
+      }
+    });
+  }
+});
+
 requestAnimationFrame(slowPulse);
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
