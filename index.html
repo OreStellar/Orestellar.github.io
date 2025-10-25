@@ -672,17 +672,16 @@ function parseInventoryText(text) {
   for (const rawLine of lines) {
     if (!rawLine) continue;
 
-    // Clean up tabs and spacing
+    // Normalize spaces
     let line = rawLine.replace(/\t+/g, ' ').replace(/\s\s+/g, ' ').trim();
 
-    // Remove the word “Compressed” (we’ll track it separately)
+    // Detect and remove “Compressed”
     const isCompressed = /\bcompressed\b/i.test(line);
     line = line.replace(/\bcompressed\b/i, '').trim();
 
-    // Match optional structure: name, qty, m3, ISK
+    // Match pattern: name qty [m³] [ISK]
     const pattern = /^([\w\s'-]+?)\s+([\d,]+)(?:\s+[\w'-]+)?(?:\s+([\d,]*\.?\d*)\s*m3)?(?:\s+([\d,]*\.?\d*)\s*ISK)?/i;
     const match = line.match(pattern);
-
     if (!match) continue;
 
     const name = match[1].trim();
@@ -690,10 +689,10 @@ function parseInventoryText(text) {
     const m3 = match[3] ? parseFloat(match[3].replace(/,/g, '')) : 0;
     const isk = match[4] ? parseFloat(match[4].replace(/,/g, '')) : 0;
 
-    // Normalize ore name to match CSV (remove trailing duplicates)
+    // Normalize name
     const cleanName = name.replace(/\b(\w+)\b\s+\1$/i, '$1').trim();
-
     const normalizedName = normalizeName(cleanName);
+
     const priceEntry = priceList[normalizedName];
     const perUnit = priceEntry ? priceEntry.csvValue : 0;
     const total = +(perUnit * qty);
@@ -712,6 +711,7 @@ function parseInventoryText(text) {
 
   return result;
 }
+
 
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
