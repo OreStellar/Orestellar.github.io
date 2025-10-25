@@ -422,31 +422,29 @@ Mercoxit 25000
   <div id="summaryContainer"></div>
 </div>
 <script>
-  window.addEventListener('DOMContentLoaded', () => {
+// ==================== SHARE SUMMARY HANDLER ====================
+document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const sharedData = params.get('s');
-  if(sharedData) {
-    // Hide inventory input and submit button
-    document.getElementById('inventoryContainer')?.remove();
-    document.getElementById('submitButton')?.remove();
 
-    // Hide other unnecessary containers
-    document.getElementById('leftContainer')?.remove();
-    document.getElementById('totalCostContainer')?.remove();
-    document.getElementById('shareButton')?.remove();
+  if (sharedData) {
+    // Decompress shared inventory text
+    const decoded = LZString.decompressFromEncodedURIComponent(sharedData);
+    const parsed = parseInventoryText(decoded);
 
-    // Make header and price tab visible
-    document.getElementById('myHeader').style.display = 'block';
+    // Hide main inventory textarea & submit button
+    document.getElementById('inventoryContainer').style.display = 'none';
+    document.getElementById('submitButton').style.display = 'none';
+    document.getElementById('totalCostContainer').style.display = 'none';
+    document.getElementById('leftContainer').style.display = 'none';
+    document.getElementById('shareButton').style.display = 'none';
+
+    // Show summary container with parsed data
+    renderSummary(parsed);
+
+    // Only show summary container and price tab
+    document.getElementById('summaryContainer').style.display = 'flex';
     document.getElementById('priceTab').style.display = 'inline-block';
-
-    // Parse inventory text and render summary
-    const parsedText = LZString.decompressFromEncodedURIComponent(sharedData);
-    const parsedItems = parseInventoryText(parsedText);
-    renderSummary(parsedItems);
-
-    // Make sure the summary container is visible
-    const summary = document.getElementById('summaryContainer');
-    summary.style.display = 'flex';
   }
 });
 
