@@ -964,18 +964,21 @@ if (!summaryContainer) {
 
   // -----------------------------
 // Only show extra containers if NOT shared
-// -----------------------------
-// Only show extra containers if NOT shared
-if(!isShared){
-  const left = document.getElementById('leftContainer');
-  if(left) left.style.display = 'flex';
 
-  const shareBtn = document.getElementById('shareButton');
-  if(shareBtn) shareBtn.style.display = 'inline-block';
+window.addEventListener('DOMContentLoaded', () => {
+  if (!isShared) {
+    const left = document.getElementById('leftContainer');
+    if (left) left.style.display = 'flex';
 
-  const priceBtn = document.getElementById('priceTab');
-  if(priceBtn) priceBtn.style.display = 'inline-block';
-}
+    const shareBtn = document.getElementById('shareButton');
+    if (shareBtn) shareBtn.style.display = 'inline-block';
+    else console.warn('shareButton not found in DOM');
+
+    const priceBtn = document.getElementById('priceTab');
+    if (priceBtn) priceBtn.style.display = 'inline-block';
+  }
+});
+
 
   // Update total text
   const totalText = document.getElementById('totalCostText');
