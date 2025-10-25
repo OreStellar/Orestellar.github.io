@@ -180,21 +180,6 @@ textarea#message:focus{
   z-index: 5;
 }
 
-
-/* Glow stays behind the image */
-#iskGlow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0.3;
-  filter: blur(12px);
-  z-index: -1; /* behind image */
-}
-
 /* Logo image */
 #priceTab img {
   width: 24px;
@@ -273,19 +258,6 @@ textarea#message:focus{
   padding-left: 10px;
   font-weight: normal;
   border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-#iskGlow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0.3; /* base opacity */
-  filter: blur(12px);
-  z-index: 1;  /* behind the logo */
-  pointer-events: none;
 }
 
 </style>
@@ -449,7 +421,6 @@ document.getElementById('myHeader').addEventListener('click', () => {
   window.location.href = window.location.origin + window.location.pathname;
 });
 
-const iskGlow = document.getElementById('iskGlow');
 
 function flickerLogo() {
   const steps = [
@@ -468,7 +439,6 @@ function flickerLogo() {
       ore.style.textShadow = step.shadow;
       stellar.style.textShadow = step.shadow;
       logoText.style.textShadow = step.shadow;
-      iskGlow.style.opacity = step.glow;
     }, step.delay);
   });
 
@@ -477,10 +447,6 @@ function flickerLogo() {
     ore.style.animation = 'softGlow 6s infinite';
     stellar.style.animation = 'softGlow 6s infinite';
     logoText.style.animation = 'softGlow 6s infinite';
-    
-    // make glow pulse slowly too
-    iskGlow.style.transition = 'opacity 3s ease-in-out';
-    iskGlow.style.opacity = 0.3;
   }, 2560);
 }
 
