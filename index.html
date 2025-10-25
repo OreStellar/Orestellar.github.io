@@ -166,16 +166,20 @@ textarea#message:focus{
 #totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
 
 
-/* Position the priceTab button next to main container */
 #priceTab {
+  position: absolute;  /* float above the panel */
+  top: 50%;            /* vertical center */
+  right: 20px;         /* distance from right edge */
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   width: 48px;
   height: 48px;
+  cursor: pointer;
   z-index: 5;
 }
+
 
 /* Glow stays behind the image */
 #iskGlow {
