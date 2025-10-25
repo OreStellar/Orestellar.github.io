@@ -483,6 +483,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
+
+// Function to set the glow color
+function setGlow(intensity = 1) {
+  const glowColor = `rgba(0, 255, 255, ${intensity})`; // cyan glow example
+  logoText.style.textShadow = `
+    0 0 ${10 * intensity}px ${glowColor},
+    0 0 ${20 * intensity}px ${glowColor},
+    0 0 ${30 * intensity}px ${glowColor}
+  `;
+}
+
+// Start with dim
+setGlow(0.1); // almost off
+
+// Sequence timing
+setTimeout(() => {
+  setGlow(1); // first flicker ON
+}, 600);
+
+setTimeout(() => {
+  setGlow(0.1); // flicker OFF
+}, 800);
+
+setTimeout(() => {
+  setGlow(1); // second flicker ON
+}, 1000);
+
+setTimeout(() => {
+  setGlow(1); // stay glowing forever
+}, 1200);
+
 /* ====================== STARFIELD ====================== */
 /* ====================== STARFIELD ====================== */
 const canvas = document.getElementById('starfield');
@@ -1076,17 +1107,15 @@ submitButton.addEventListener('click', () => {
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
 
-  // Hide inventory & submit
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  // Show summary container
   const summaryContainer = document.getElementById('summaryContainer');
   summaryContainer.style.display = 'flex';
 
-  // Show both buttons inside summary
   document.getElementById('shareButton').style.display = 'inline-block';
-  document.getElementById('priceTab').style.display = 'inline-block';
+  const priceTabBtn = document.getElementById('priceTab');
+  priceTabBtn.style.display = 'inline-block'; // ensure visible
 });
 
 shareButton.addEventListener('click', async () => {
