@@ -190,6 +190,11 @@ textarea#message:focus{
           drop-shadow(0 0 24px #fff);
   transition: filter 0.2s ease;
 }
+/* Blur effect for background */
+.blur {
+  filter: blur(6px);
+  transition: filter 0.3s;
+}
 
 
 /* === Floating Price List Container === */
@@ -197,8 +202,8 @@ textarea#message:focus{
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(10, 10, 10, 0.85); /* darker and more neutral */
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.95); /* darker and more neutral */
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   padding: 20px;
@@ -346,11 +351,8 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
-/* blur the background when pricelist is open */
-.blur {
-  filter: blur(6px);
-  transition: filter 0.2s ease;
-}
+
+
 .price-cell {
   text-align: right;
   padding-right: 8px; /* optional spacing */
@@ -1023,73 +1025,59 @@ shareButton.addEventListener('click', async ()=>{
 
 const RAW_PRICE_COL = 10;
 
-// Price list toggle
+// Elements
 const priceTab = document.getElementById('priceTab');
-
-// After building the price table:
 const priceListContainer = document.getElementById('priceListContainer');
 const mainContent = document.getElementById('mainContent');
 
-
-// Open pricelist and blur background
-priceTab.addEventListener('click', () => {
-  priceListContainer.style.display = 'block'; // show pricelist
-  mainContent.classList.add('blur');         // blur main content
-});
-
-// Close pricelist when clicking outside the table
-priceListContainer.addEventListener('click', (e) => {
-  if (e.target === priceListContainer) {     // click on background only
-    priceListContainer.style.display = 'none';
-    mainContent.classList.remove('blur');    // remove blur
+// Function to open pricelist
+function openPriceList() {
+  // Rebuild pricelist if empty
+  if (!Object.keys(groupedPriceMap || {}).length) {
+    buildPriceGrouping();
+    renderPriceList();
   }
-});
 
-// optional: close with Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape") {
+  priceListContainer.classList.remove('hide');
+  priceListContainer.classList.add('show');
+  priceListContainer.style.display = 'block';
+  mainContent.classList.add('blur');
+}
+
+// Function to close pricelist
+function closePriceList() {
+  priceListContainer.classList.remove('show');
+  priceListContainer.classList.add('hide');
+  setTimeout(() => {
     priceListContainer.style.display = 'none';
     mainContent.classList.remove('blur');
-  }
-});
-// Neon fade toggle for price list
+  }, 280); // match fade-out duration
+}
+
+// Toggle on priceTab click
 priceTab.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const priceListContainer = document.getElementById('priceListContainer');
-
-  if (!priceListContainer.classList.contains('show')) {
-    // Rebuild price list if empty
-    if (!Object.keys(groupedPriceMap).length) {
-      buildPriceGrouping();
-    }
-    renderPriceList();
-
-    priceListContainer.classList.remove('hide');
-    priceListContainer.classList.add('show');
-    priceListContainer.style.display = 'block';
+  e.stopPropagation(); // prevent immediate document click
+  if (priceListContainer.classList.contains('show')) {
+    closePriceList();
   } else {
-    priceListContainer.classList.remove('show');
-    priceListContainer.classList.add('hide');
-    setTimeout(() => {
-      priceListContainer.style.display = 'none';
-    }, 280); // Wait for fade-out to finish
+    openPriceList();
   }
 });
 
-// Close when clicking outside
-document.addEventListener('click', function (e) {
-  const priceListContainer = document.getElementById('priceListContainer');
-
-  if (priceListContainer && priceListContainer.classList.contains('show')) {
-    if (!priceListContainer.contains(e.target) && e.target !== priceTab) {
-      priceListContainer.classList.remove('show');
-      priceListContainer.classList.add('hide');
-      setTimeout(() => {
-        priceListContainer.style.display = 'none';
-      }, 280);
-    }
+// Close when clicking outside pricelist
+document.addEventListener('click', (e) => {
+  if (priceListContainer.classList.contains('show') && !priceListContainer.contains(e.target) && e.target !== priceTab) {
+    closePriceList();
   }
 });
+
+// Close with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === "Escape" && priceListContainer.classList.contains('show')) {
+    closePriceList();
+  }
+});
+
 
 fetchPrices().then(() => renderPriceList());
 
