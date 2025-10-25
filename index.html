@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('totalCostText').style.display = 'block';
       document.getElementById('shareButton').style.display = 'inline-block';
   }
-const logoElement = document.getElementById('logoText');
+const logoText = document.getElementById('logoText');
 const ore = document.getElementById('ore');
 const stellar = document.getElementById('stellar');
 /* ====================== STARFIELD ====================== */
@@ -597,34 +597,34 @@ document.getElementById('myHeader').addEventListener('click', () => {
 });
 
 
-const logoCanvas = document.getElementById('logoCanvas');
-const logoctx = logoCanvas.getContext('2d');
-const logoString = "OreStellar";
+function flickerLogo() {
+  const steps = [
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 0 },
+    { color: '#ffffff ', shadow: '0 0 10px #ffffff  bfbf, 0 0 18px #ffffff ', glow: 0.5, delay: 1200 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1260 },
+    { color: '#ffffff ', shadow: '0 0 12px #ffffff , 0 0 24px #ffffff ', glow: 0.6, delay: 1560 },
+    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1620 },
+  ];
 
-function drawLogo() {
-  const width = logoCanvas.width;
-  const height = logoCanvas.height;
-  
-  logoctx.clearRect(0, 0, width, height);
-  
-  logoctx.font = 'bold 48px Orbitron';
-  logoctx.textAlign = 'center';
-  logoctx.textBaseline = 'middle';
-  
-  logoctx.shadowColor = '#0ff';
-  logoctx.shadowBlur = 6; // smaller glow radius
-  logoctx.fillStyle = '#0ff';
-  
-  logoctx.globalAlpha = 0.85 + Math.random() * 0.15; // subtle flicker
-  logoctx.fillText(logoText, width/2, height/2);
-  
-  logoctx.globalAlpha = 1;
+  steps.forEach(step => {
+    setTimeout(() => {
+      ore.style.color = step.color;
+      stellar.style.color = step.color;
+      logoText.style.color = step.color;
+      ore.style.textShadow = step.shadow;
+      stellar.style.textShadow = step.shadow;
+      logoText.style.textShadow = step.shadow;
+    }, step.delay);
+  });
+
+  // steady soft glow after flicker
+  setTimeout(() => {
+    ore.style.animation = 'softGlow 6s infinite';
+    stellar.style.animation = 'softGlow 6s infinite';
+    logoText.style.animation = 'softGlow 6s infinite';
+  }, 2560);
 }
 
-function animateLogo() {
-  drawLogo();
-  requestAnimationFrame(animateLogo);
-}
 
 const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
@@ -1256,10 +1256,9 @@ window.addEventListener('load', async () => {
     // fetch prices first
     await fetchPrices();
 
-    // start the updated logo animation
-    animateLogo();
+    // optionally start logo flicker
+    flickerLogo();
 });
-
 
 </script>
 </body>
