@@ -926,6 +926,10 @@ function parseInventoryText(text) {
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
 const summaryContainer = document.getElementById('summaryContainer');
+if (!summaryContainer) {
+  console.error("summaryContainer not found in DOM");
+  return;
+}
 
 function renderSummary(parsedItems, isShared = false){
   // compute grand total
@@ -961,11 +965,15 @@ function renderSummary(parsedItems, isShared = false){
   summaryContainer.style.display = 'flex';
 
   // -----------------------------
-  // Only show extra containers if NOT shared
-if(!isShared){
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'flex';
-  document.getElementById('shareButton').style.display = 'inline-block';
+// Only show extra containers if NOT shared
+if (!isShared) {
+  const left = document.getElementById('leftContainer');
+  const shareButton = document.getElementById('shareButton');
+  const priceTab = document.getElementById('priceTab');
+
+  if (left) left.style.display = 'block';
+  if (shareButton) shareButton.style.display = 'inline-block';
+  if (priceTab) priceTab.style.display = 'inline-block';
 }
 
 
