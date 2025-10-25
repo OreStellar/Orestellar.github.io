@@ -537,24 +537,28 @@ function parseCSV(csvText) {
   }
 }
 
-// Minimalist price list rendering
 function renderPriceList() {
-  // Group by base ore
+  // Group by base ore, excluding any 'Compressed' types
   const groups = {};
 
   Object.keys(priceList).forEach(key => {
     const name = canonicalNames[key] || key;
-    const parts = name.split(' ');
-    const base = parts[parts.length - 1]; // last word
+
+    // 🧹 skip anything containing 'Compressed'
+    if (/compressed/i.test(name)) return;
+
+    const parts = name.trim().split(/\s+/);
+    const base = parts[parts.length - 1]; // last word (e.g. "Arkonor")
     if (!groups[base]) groups[base] = [];
     groups[base].push({ name, price: priceList[key].csvValue });
   });
 
   // Build HTML
   let html = `<table class="price-table">
-    <thead><tr>
-      <th>Ore Type</th><th>Price (ISK/unit)</th>
-    </tr></thead><tbody>`;
+    <thead>
+      <tr><th>Ore Type</th><th>Price (ISK/unit)</th></tr>
+    </thead>
+    <tbody>`;
 
   for (const base in groups) {
     html += `
