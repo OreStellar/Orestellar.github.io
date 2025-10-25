@@ -185,6 +185,33 @@ textarea#message:focus{
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   transform: scale(1.05);
 }
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+#priceTab,
+#shareButton {
+  min-width: 150px;
+  text-align: center;
+}
+
+#priceTab.active {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
 
 /* Blur effect for background */
 .blur {
@@ -384,10 +411,15 @@ Mercoxit 25000
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
     <div id="summaryContainer" class="summary-container"></div>
-    <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
-  <div id="priceTab" title="Open price list" class="actionButton" style="margin-top: 14px;">
-    <img src="https://orestellar.github.io/isklogo.png" alt="ISK Logo" style="width: 22px; height: 22px; vertical-align: middle;">
+<div id="summaryContainer" class="summary-container">
+  <!-- JS will insert summary table here -->
+
+  <div class="button-row">
+    <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
+    <button id="priceTab" class="actionButton">Price List</button>
   </div>
+</div>
+
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
     </div>
