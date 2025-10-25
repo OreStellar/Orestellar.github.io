@@ -392,6 +392,7 @@ Mercoxit 25000
   <div class="contracts-wrapper">
     <div id="leftContainer" class="total-cost-container"></div>
     <div id="summaryContainer" class="summary-container"></div>
+    <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
     <div id="totalCostContainer" class="total-cost-container">
       <div id="totalCostText">0 ISK</div>
     </div>
@@ -414,8 +415,6 @@ Mercoxit 25000
     <!-- dynamically generated rows -->
   </table>
 </div>
-
-<button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 
 <script>
     // === ADD THIS FUNCTION HERE ===
@@ -908,11 +907,6 @@ function renderSummary(parsedItems){
   summaryContainer.innerHTML = html;
   summaryContainer.style.display = 'flex';
 
-  // show contract containers
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'flex';
-  document.getElementById('shareButton').style.display = 'inline-block';
-
   // update top-right contract total copyable
   const totalText = document.getElementById('totalCostText');
   totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
@@ -1000,26 +994,30 @@ function attachSorting(container){
 }
 
 /* ====================== SUBMIT / SHARE LOGIC ====================== */
-const shareButton = document.getElementById('shareButton');
-
-submitButton.addEventListener('click', () => {
+csubmitButton.addEventListener('click', () => {
   const txt = messageBox.value.trim();
   if (!txt) return;
 
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
+
+  // Scroll to top
   window.scrollTo({ top: 0, behavior:'smooth' });
 
-  // Hide inventory and submit button
+  // Hide inventory & submit
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  // Show summary and contract containers explicitly
-  document.getElementById('summaryContainer').style.display = 'flex';       // summary table
-  document.getElementById('leftContainer').style.display = 'block';        // contract 1
-  document.getElementById('totalCostContainer').style.display = 'flex';    // contract 2
-  document.getElementById('shareButton').style.display = 'inline-block';   // share button
+  // Show contracts
+  document.getElementById('leftContainer').style.display = 'block';
+  document.getElementById('totalCostContainer').style.display = 'flex';
+
+  // Move share button below summary and show
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.appendChild(shareButton);
+  shareButton.style.display = 'inline-block';
 });
+
 
 
 
