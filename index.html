@@ -340,6 +340,19 @@ Mercoxit 25000
   </div>
 
   <div id="priceListContainer"></div>
+    <!-- 🔍 Quick Find Bar -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <div style="font-weight:bold; font-size:1.1em; color:white; text-shadow:0 0 6px rgba(255,255,255,0.8);">
+      Price List
+    </div>
+    <input type="text" id="priceSearch" placeholder="Quick find..." 
+           style="padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.3);
+                  background: rgba(20,20,20,0.8); color:white; font-family: 'Orbitron',sans-serif; 
+                  text-shadow:0 0 3px rgba(255,255,255,0.6);">
+  </div>
+
+  <!-- your price table gets injected here by JS -->
+</div>
   <button id="shareButton" class="actionButton" style="display:none;margin-top:14px;">Share Summary</button>
 </div>
 
@@ -978,6 +991,18 @@ function slowPulse(timestamp) {
 }
 
 requestAnimationFrame(slowPulse);
+const priceSearchInput = document.getElementById('priceSearch');
+priceSearchInput.addEventListener('input', () => {
+  const filter = priceSearchInput.value.toLowerCase();
+  const rows = document.querySelectorAll('#priceListContainer .price-table tr');
+
+  rows.forEach(row => {
+    const nameCell = row.querySelector('td:first-child');
+    if (!nameCell) return; // skip headers
+    const nameText = nameCell.textContent.toLowerCase();
+    row.style.display = nameText.includes(filter) ? '' : 'none';
+  });
+});
 
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
