@@ -1002,22 +1002,25 @@ function attachSorting(container){
 /* ====================== SUBMIT / SHARE LOGIC ====================== */
 const shareButton = document.getElementById('shareButton');
 
-submitButton.addEventListener('click', ()=>{
+submitButton.addEventListener('click', () => {
   const txt = messageBox.value.trim();
-  if(!txt) return;
+  if (!txt) return;
+
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
   window.scrollTo({ top: 0, behavior:'smooth' });
 
-  // HIDE INVENTORY AND SUBMIT
+  // Hide inventory and submit button
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  // ENSURE summary/contract containers are visible
-  document.querySelectorAll('.contracts-wrapper, #summaryContainer, #totalCostContainer, #shareButton').forEach(el=>{
-    el.style.display = '';
-  });
+  // Show summary and contract containers explicitly
+  document.getElementById('summaryContainer').style.display = 'flex';       // summary table
+  document.getElementById('leftContainer').style.display = 'block';        // contract 1
+  document.getElementById('totalCostContainer').style.display = 'flex';    // contract 2
+  document.getElementById('shareButton').style.display = 'inline-block';   // share button
 });
+
 
 
 shareButton.addEventListener('click', async ()=>{
