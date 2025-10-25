@@ -192,67 +192,88 @@ textarea#message:focus{
 }
 
 
-/* floating price list */
+/* === Floating Price List Container === */
 #priceListContainer {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(10, 10, 20, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(10, 10, 10, 0.85); /* darker and more neutral */
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   padding: 20px;
   width: 85%;
   max-width: 900px;
   max-height: 70vh;
   overflow-y: auto;
-  box-shadow: 0 0 25px rgba(211, 212, 212, 0.3);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   color: #ffffff;
   font-family: 'Orbitron', sans-serif;
   display: none;
   z-index: 1000;
+  text-shadow: 0 0 6px rgba(255,255,255,0.8);
 }
 
-/* translucent scrollbars */
-#priceListContainer::-webkit-scrollbar {
-  width: 8px;
-}
+/* === Translucent Scrollbars === */
+#priceListContainer::-webkit-scrollbar { width: 8px; }
 #priceListContainer::-webkit-scrollbar-thumb {
-  background: rgba(82, 82, 82, 0.952);
+  background: rgba(255,255,255,0.25);
   border-radius: 4px;
 }
-#priceListContainer::-webkit-scrollbar-track {
-  background: rgba(2, 2, 2, 0.527);
+#priceListContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.45);
 }
+#priceListContainer::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+
+/* === Table Styling === */
 .price-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
   font-size: 14px;
-  color: #e0faff;
+  color: #fff;
+  text-align: left;
+}
+
+.price-table th, .price-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 4px rgba(255,255,255,0.6);
 }
 
 .price-table th {
-  background: rgba(45, 46, 46, 0.767);
-  border-bottom: 1px solid rgba(54, 56, 56, 0.4);
-  padding: 10px;
+  background: rgba(40,40,40,0.8);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.price-table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.price-table tr:hover td {
+  background: rgba(255,255,255,0.05);
 }
 
-.price-table tr:hover {
-  background: rgba(0, 255, 255, 0.05);
+/* === Base Ore Rows === */
+.base-row {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.price-table tr.compressed td {
-  color: #00ffaa;
-  text-shadow: 0 0 6px #00ffaa;
+.base-ore {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.8);
+  padding-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* === Variant Ore Rows === */
+.variant-row td {
+  padding-left: 24px;
+  color: #cccccc;
+  text-shadow: 0 0 4px rgba(255,255,255,0.4);
+}
+
+.variant-row:hover td {
+  background: rgba(255,255,255,0.05);
 }
 
 /* summary container */
@@ -279,30 +300,6 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
-.base-row {
-  background: rgba(0, 255, 255, 0.08);
-}
-
-.base-ore {
-  font-weight: bold;
-  text-align: left;
-  color: #00ffff;
-  padding-top: 10px;
-  font-size: 1.1em;
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 6px #00ffff;
-}
-
-.variant-row td {
-  padding-left: 24px;
-  color: #cceaff;
-}
-
-.variant-row:hover td {
-  background: rgba(0, 255, 255, 0.05);
-}
-
-
 </style>
 </head>
 <body data-show-inventory="true">
