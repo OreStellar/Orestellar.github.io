@@ -1007,17 +1007,6 @@ const priceTab = document.getElementById('priceTab');
 // After building the price table:
 const priceListContainer = document.getElementById('priceListContainer');
 
-const priceSearchInput = document.getElementById('priceSearch');
-
-priceSearchInput.addEventListener('input', () => {
-  const searchValue = priceSearchInput.value.toLowerCase();
-  const rows = priceListContainer.querySelectorAll('tbody tr');
-  rows.forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(searchValue) ? '' : 'none';
-  });
-});
-
-
 // Neon fade toggle for price list
 priceTab.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -1078,9 +1067,8 @@ function slowPulse(timestamp) {
 
   requestAnimationFrame(slowPulse);
 }
-
-requestAnimationFrame(slowPulse);
 const priceSearchInput = document.getElementById('priceSearch');
+
 priceSearchInput.addEventListener('input', () => {
   const filter = priceSearchInput.value.toLowerCase();
   const rows = document.querySelectorAll('#priceListContainer .price-table tr');
@@ -1104,6 +1092,7 @@ priceSearchInput.addEventListener('input', () => {
   });
 });
 
+requestAnimationFrame(slowPulse);
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
     // fetch prices first
