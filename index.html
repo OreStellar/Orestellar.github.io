@@ -456,18 +456,17 @@ const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.
 function buildPriceGrouping() {
   groupedPriceMap = {}; // fresh map
 
-  // Loop through every ore in your priceList
   Object.keys(canonicalNames).forEach(normKey => {
     const displayName = canonicalNames[normKey];
-    if (!displayName) return;
+    if (!displayName || /compressed/i.test(displayName)) return; // skip compressed
 
     const entry = priceList[normKey];
     if (!entry) return;
 
-    // Each ore gets its own group (so no variants get grouped under base)
     groupedPriceMap[displayName] = [{ name: displayName, price: entry.csvValue }];
   });
 }
+
 
 
 // Storage for canonical names and CSV prices
@@ -661,50 +660,47 @@ function parseInventoryText(text){
   const result = [];
 
   for(const rawLine of lines){
+    // remove the word "compressed" so matching works
     const lineNoCompressed = rawLine.replace(/compressed\s+/i, '').trim();
     const normalizedLine = normalizeName(lineNoCompressed);
 
-let foundKey = null;
-let longestMatchLength = 0;
+    let foundKey = null;
+    let longestMatchLength = 0;
 
-// 1️⃣ Exact match first
-if(priceList[normalizedLine]){
-  foundKey = normalizedLine;
-} else {
-  // 2️⃣ substring match: pick the longest match
-  for(const entry of oreEntries){
-    const key = entry.key;
-    const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
-    if(re.test(normalizedLine) && key.length > longestMatchLength){
-      foundKey = key;
-      longestMatchLength = key.length;
+    if(priceList[normalizedLine]){
+      foundKey = normalizedLine;
+    } else {
+      for(const entry of oreEntries){
+        const key = entry.key;
+        const re = new RegExp('\\b' + escapeRegex(key) + '\\b','i');
+        if(re.test(normalizedLine) && key.length > longestMatchLength){
+          foundKey = key;
+          longestMatchLength = key.length;
+        }
+      }
     }
-  }
-}
 
-    // --- QUANTITY ---
     let qty = 0;
     const qtyMatch = rawLine.match(/([\d,]+)/);
     if(qtyMatch){
       qty = parseInt(qtyMatch[1].replace(/,/g,''),10) || 0;
     }
 
-    // --- BUILD RESULT ---
     if(foundKey){
       const canonical = canonicalNames[foundKey] || foundKey;
       const priceEntry = priceList[foundKey];
       const perUnit = priceEntry ? priceEntry.csvValue : 0;
       const total = +(perUnit * qty);
-      result.push({ name: canonical, qty, price: perUnit, total, unrecognized: false });
+      result.push({ name: rawLine, qty, price: perUnit, total, unrecognized: false });
     } else {
-      // not found
-      const guessName = lineNoCompressed.split(/\s+/).slice(0,4).join(' ').trim();
+      const guessName = rawLine.split(/\s+/).slice(0,4).join(' ').trim();
       result.push({ name: guessName, qty, price: 0, total: 0, unrecognized: true });
     }
   }
 
   return result;
 }
+
 
 
 /* RENDER SUMMARY: produce table with headers that align with columns */
