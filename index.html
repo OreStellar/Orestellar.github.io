@@ -1029,39 +1029,47 @@ document.addEventListener('input', e => {
   }
 });
 
-// Toggle price list on tab click
+// Neon fade toggle for price list
 priceTab.addEventListener('click', (e) => {
-  e.stopPropagation(); // prevent triggering the outside-click listener
-
+  e.stopPropagation();
   const priceListContainer = document.getElementById('priceListContainer');
 
-  if (priceListContainer.style.display !== 'block') {
-    // rebuild price list if empty
+  if (!priceListContainer.classList.contains('show')) {
+    // Rebuild price list if empty
     if (!Object.keys(groupedPriceMap).length) {
       buildPriceGrouping();
     }
     renderPriceList();
+
+    priceListContainer.classList.remove('hide');
+    priceListContainer.classList.add('show');
     priceListContainer.style.display = 'block';
   } else {
-    priceListContainer.style.display = 'none';
+    priceListContainer.classList.remove('show');
+    priceListContainer.classList.add('hide');
+    setTimeout(() => {
+      priceListContainer.style.display = 'none';
+    }, 280); // Wait for fade-out to finish
   }
 });
 
-// Close price list when clicking outside of it
+// Close when clicking outside
 document.addEventListener('click', function (e) {
   const priceListContainer = document.getElementById('priceListContainer');
 
-  // Only run if container is visible
-  if (priceListContainer && priceListContainer.style.display === 'block') {
-    // If click was outside container and not on the price tab, close it
+  if (priceListContainer && priceListContainer.classList.contains('show')) {
     if (!priceListContainer.contains(e.target) && e.target !== priceTab) {
-      priceListContainer.style.display = 'none';
+      priceListContainer.classList.remove('show');
+      priceListContainer.classList.add('hide');
+      setTimeout(() => {
+        priceListContainer.style.display = 'none';
+      }, 280);
     }
   }
 });
 
-// Build once after prices load
 fetchPrices().then(() => renderPriceList());
+
 
 const logo = document.querySelector('#priceTab img');
 let startTime = null;
