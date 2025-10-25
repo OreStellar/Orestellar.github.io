@@ -1038,21 +1038,31 @@ function openPriceList() {
     renderPriceList();
   }
 
+  // Hide all main containers except priceTab
+  document.querySelectorAll('.container-wrapper, .contracts-wrapper, #shareButton').forEach(el => {
+    el.style.display = 'none';
+  });
+
   priceListContainer.classList.remove('hide');
   priceListContainer.classList.add('show');
   priceListContainer.style.display = 'block';
-  mainContent.classList.add('blur');
 }
 
-// Function to close pricelist
 function closePriceList() {
   priceListContainer.classList.remove('show');
   priceListContainer.classList.add('hide');
+
   setTimeout(() => {
     priceListContainer.style.display = 'none';
-    mainContent.classList.remove('blur');
+
+    // Restore previously hidden containers
+    document.querySelectorAll('.container-wrapper, .contracts-wrapper, #shareButton').forEach(el => {
+      el.style.display = '';
+    });
+
   }, 280); // match fade-out duration
 }
+
 
 // Toggle on priceTab click
 priceTab.addEventListener('click', (e) => {
