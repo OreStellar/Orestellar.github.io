@@ -279,26 +279,29 @@ textarea#message:focus{
   .main-container{padding:20px;}
   #logoText{font-size:3.2rem;}
 }
-
-.base-ore, .variant-ore {
-  display: flex;
-  justify-content: space-between;
-  padding: 2px 0;
-  font-size: 0.9em;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+.base-row {
+  background: rgba(0, 255, 255, 0.08);
 }
 
 .base-ore {
   font-weight: bold;
-  border-bottom: 2px solid rgba(255,255,255,0.2);
-  margin-top: 4px;
+  text-align: left;
+  color: #00ffff;
+  padding-top: 10px;
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 6px #00ffff;
 }
 
-.variant-ore {
-  padding-left: 10px;
-  font-weight: normal;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+.variant-row td {
+  padding-left: 24px;
+  color: #cceaff;
 }
+
+.variant-row:hover td {
+  background: rgba(0, 255, 255, 0.05);
+}
+
 
 </style>
 </head>
@@ -536,33 +539,43 @@ function parseCSV(csvText) {
 
 // Minimalist price list rendering
 function renderPriceList() {
-  const container = document.getElementById('priceListContainer');
-  container.innerHTML = '';
+  // Group by base ore
+  const groups = {};
 
-  Object.entries(groupedPriceMap).forEach(([base, ores]) => {
-    if (!ores || !ores.length) return;
-
-    // Base ore header
-    const baseDiv = document.createElement('div');
-    baseDiv.className = 'base-ore';
-    baseDiv.innerHTML = `<strong>${base}</strong>`;
-    container.appendChild(baseDiv);
-
-    // Variant ores under base
-    ores.forEach(ore => {
-      if(ore.name === base) return; // skip duplicate base
-      const variantDiv = document.createElement('div');
-      variantDiv.className = 'variant-ore';
-      variantDiv.innerHTML = `<span class="name">${ore.name}</span><span class="price">${ore.price}</span>`;
-      container.appendChild(variantDiv);
-    });
-
-    // Add spacing / border between groups
-    const spacer = document.createElement('div');
-    spacer.style.height = '8px';
-    container.appendChild(spacer);
+  Object.keys(priceList).forEach(key => {
+    const name = canonicalNames[key] || key;
+    const parts = name.split(' ');
+    const base = parts[parts.length - 1]; // last word
+    if (!groups[base]) groups[base] = [];
+    groups[base].push({ name, price: priceList[key].csvValue });
   });
+
+  // Build HTML
+  let html = `<table class="price-table">
+    <thead><tr>
+      <th>Ore Type</th><th>Price (ISK/unit)</th>
+    </tr></thead><tbody>`;
+
+  for (const base in groups) {
+    html += `
+      <tr class="base-row">
+        <td colspan="2" class="base-ore">${base}</td>
+      </tr>`;
+    
+    groups[base].forEach(entry => {
+      const variant = entry.name === base ? base : entry.name;
+      html += `
+        <tr class="variant-row">
+          <td class="variant-name">${variant}</td>
+          <td>${entry.price.toLocaleString()}</td>
+        </tr>`;
+    });
+  }
+
+  html += `</tbody></table>`;
+  document.getElementById('priceListContainer').innerHTML = html;
 }
+
 
 
 let oreEntries = [];
