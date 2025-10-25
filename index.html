@@ -658,7 +658,7 @@ function renderPriceList(searchTerm = '') {
   // Build HTML
   let html = `<table class="price-table">
     <thead>
-      <tr><th>Ore Type</th><th>Price (ISK/unit)</th></tr>
+      <tr><th>Ore Type</th><th>Price (ISK)</th></tr>
     </thead>
     <tbody>`;
 
@@ -897,34 +897,32 @@ function parseInventoryText(text) {
 /* RENDER SUMMARY: produce table with headers that align with columns */
 const summaryContainer = document.getElementById('summaryContainer');
 
-function renderSummary(parsedItems){
+function renderSummary(parsedItems, isShared = false){
   // compute grand total
   let grandTotal = 0;
   parsedItems.forEach(it => { grandTotal += (it.total || 0); });
 
-  // Build table
+  // Build table HTML (same as before)
   let html = '<table class="summary-table" role="table"><thead><tr>' +
     '<th>Name</th>' +
-    '<th>Price</th>' +  // show price (right aligned)
+    '<th>Price</th>' +
     '<th>Quantity</th>' +
     '<th>Total</th>' +
     '</tr></thead><tbody>';
 
- parsedItems.forEach(it => {
-  if(it.unrecognized){
-    const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
-    html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
-  } else {
-    const roundedPrice = roundDownFlexible(it.price);
-    const roundedTotal = roundDownFlexible(it.total);
-    
-    html += `<tr><td>${escapeHtml(it.name)}</td>` +
-            `<td class="price">${formatNumberDecimal(roundedPrice)}</td>` +
-            `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
-            `<td class="total-column">${formatNumberDecimal(roundedTotal)}</td></tr>`;
-  }
-});
-
+  parsedItems.forEach(it => {
+    if(it.unrecognized){
+      const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
+      html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
+    } else {
+      const roundedPrice = roundDownFlexible(it.price);
+      const roundedTotal = roundDownFlexible(it.total);
+      html += `<tr><td>${escapeHtml(it.name)}</td>` +
+              `<td class="price">${formatNumberDecimal(roundedPrice)}</td>` +
+              `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
+              `<td class="total-column">${formatNumberDecimal(roundedTotal)}</td></tr>`;
+    }
+  });
 
   html += `<tr class="summary-total"><td colspan="3" style="text-align:left">Total</td><td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td></tr>`;
   html += '</tbody></table>';
@@ -932,17 +930,28 @@ function renderSummary(parsedItems){
   summaryContainer.innerHTML = html;
   summaryContainer.style.display = 'flex';
 
-  // update top-right contract total copyable
-  const totalText = document.getElementById('totalCostText');
-  totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
-  makeCopyable(totalText);
+  // -----------------------------
+  // Only show extra containers if NOT shared
+  if(!isShared){
+    document.getElementById('leftContainer').style.display = 'block';
+    document.getElementById('totalCostContainer').style.display = 'flex';
+    document.getElementById('shareButton').style.display = 'inline-block';
+  }
 
-  // make the summary total copyable
+  // Update total text
+  const totalText = document.getElementById('totalCostText');
+  if(totalText) {
+    totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
+    makeCopyable(totalText);
+  }
+
+  // Make summary total copyable
   const sumEl = document.getElementById('summaryTotal');
   if(sumEl) makeCopyable(sumEl);
 
   attachSorting(summaryContainer);
 }
+
 
 /* helpers for number formatting */
 function formatNumberInteger(n){
