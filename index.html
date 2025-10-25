@@ -636,10 +636,15 @@ function renderPriceList() {
   }
 
   html += `</tbody></table>`;
-  document.getElementById('priceListContainer').innerHTML = html;
+  // Only replace the table, keep the search input intact
+let container = document.getElementById('priceListContainer');
+let table = container.querySelector('.price-table');
+if (table) {
+  table.outerHTML = html; // replace existing table
+} else {
+  container.insertAdjacentHTML('beforeend', html); // first render
 }
-
-
+}
 
 let oreEntries = [];
 
@@ -819,7 +824,7 @@ function parseInventoryText(text) {
     const normalizedName = normalizeName(cleanName);
 
     const priceEntry = priceList[normalizedName];
-    const perUnit = getPriceForOre(lineNoCompressed);
+    const perUnit = getPriceForOre(normalizedName);
     const total = +(perUnit * qty);
 
     result.push({
@@ -1071,7 +1076,8 @@ const priceSearchInput = document.getElementById('priceSearch');
 
 priceSearchInput.addEventListener('input', () => {
   const filter = priceSearchInput.value.toLowerCase();
-  const rows = document.querySelectorAll('#priceListContainer .price-table tr');
+ const rows = document.querySelectorAll('#priceListContainer .price-table .variant-row');
+
 
   rows.forEach(row => {
     const nameCell = row.querySelector('td:first-child');
