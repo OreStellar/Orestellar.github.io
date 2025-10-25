@@ -430,12 +430,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('inventoryContainer').style.display = 'none';
     submitButton.style.display = 'none';
 
-    // Render summary WITHOUT touching leftContainer / totalCostContainer / shareButton
-    renderSummary(parsed);
+// Show summary container with parsed data
+renderSummary(parsed, true);  // ← pass `true` to indicate this is a shared URL view
 
-    // Only show summary container and price tab
-    document.getElementById('summaryContainer').style.display = 'flex';
-    document.getElementById('priceTab').style.display = 'inline-block';
+// Only show summary container and price tab
+document.getElementById('summaryContainer').style.display = 'flex';
+document.getElementById('priceTab').style.display = 'inline-block';
+
 
     // Optional: disable any code in renderSummary that sets display of other containers
   }
@@ -1034,25 +1035,20 @@ submitButton.addEventListener('click', () => {
   if (!txt) return;
 
   const parsed = parseInventoryText(txt);
-  renderSummary(parsed);
+  renderSummary(parsed); // ✅ this is where you put it
 
-  // Scroll to top
   window.scrollTo({ top: 0, behavior:'smooth' });
 
-  // Hide inventory & submit
+  // Hide inventory and submit button
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  // Show contracts
-  document.getElementById('leftContainer').style.display = 'block';
-  document.getElementById('totalCostContainer').style.display = 'flex';
-
-  // Move share button below summary and show
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.appendChild(shareButton);
-  shareButton.style.display = 'inline-block';
+  // Show summary and contract containers explicitly
+  document.getElementById('summaryContainer').style.display = 'flex';       // summary table
+  document.getElementById('leftContainer').style.display = 'block';        // contract 1
+  document.getElementById('totalCostContainer').style.display = 'flex';    // contract 2
+  document.getElementById('shareButton').style.display = 'inline-block';   // share button
 });
-
 
 
 
