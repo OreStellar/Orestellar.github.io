@@ -423,25 +423,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const sharedData = params.get('s');
 
   if (sharedData) {
-    // Decompress shared inventory text
     const decoded = LZString.decompressFromEncodedURIComponent(sharedData);
     const parsed = parseInventoryText(decoded);
 
-    // Hide main inventory textarea & submit button
+    // Hide inventory & submit
     document.getElementById('inventoryContainer').style.display = 'none';
-    document.getElementById('submitButton').style.display = 'none';
-    document.getElementById('totalCostContainer').style.display = 'none';
-    document.getElementById('leftContainer').style.display = 'none';
-    document.getElementById('shareButton').style.display = 'none';
+    submitButton.style.display = 'none';
 
-    // Show summary container with parsed data
+    // Render summary WITHOUT touching leftContainer / totalCostContainer / shareButton
     renderSummary(parsed);
 
     // Only show summary container and price tab
     document.getElementById('summaryContainer').style.display = 'flex';
     document.getElementById('priceTab').style.display = 'inline-block';
+
+    // Optional: disable any code in renderSummary that sets display of other containers
   }
 });
+
 
     // === ADD THIS FUNCTION HERE ===
   function showSummaryContainers() {
