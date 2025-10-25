@@ -1031,8 +1031,7 @@ function attachSorting(container){
 
 /* ====================== SUBMIT / SHARE LOGIC ====================== */
 // ====================== SUBMIT BUTTON HANDLER ======================
-
-const submitButton = document.getElementById('submitButton');
+c// ====================== SUBMIT BUTTON HANDLER ======================
 const summaryContainer = document.getElementById('summaryContainer');
 
 submitButton.addEventListener('click', () => {
@@ -1054,7 +1053,6 @@ submitButton.addEventListener('click', () => {
   // Move Share Button into summary container
   let shareButton = document.getElementById('shareButton');
   if (!shareButton) {
-    // Create the button if it doesn't exist yet
     shareButton = document.createElement('button');
     shareButton.id = 'shareButton';
     shareButton.className = 'actionButton';
@@ -1062,21 +1060,20 @@ submitButton.addEventListener('click', () => {
     shareButton.style.marginTop = '14px';
     summaryContainer.appendChild(shareButton);
 
-    // Optional: Add share functionality here
-    shareButton.addEventListener('click', () => {
-      const summaryText = summaryContainer.innerText;
-      navigator.clipboard.writeText(summaryText);
-      alert('Summary copied to clipboard!');
+    shareButton.addEventListener('click', async () => {
+      const msg = messageBox.value.trim();
+      if (!msg) return;
+      const compressed = LZString.compressToEncodedURIComponent(msg);
+      const url = `${location.origin}${location.pathname}?s=${compressed}`;
+      await navigator.clipboard.writeText(url);
+      shareButton.textContent = 'Copied!';
+      setTimeout(() => (shareButton.textContent = 'Share Summary'), 1500);
     });
   } else {
-    // Just make sure it’s visible and inside summaryContainer
     summaryContainer.appendChild(shareButton);
     shareButton.style.display = 'inline-block';
   }
 });
-
-
-
 
 shareButton.addEventListener('click', async () => {
   const txt = messageBox.value.trim();
