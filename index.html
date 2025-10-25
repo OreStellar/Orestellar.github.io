@@ -202,7 +202,7 @@ textarea#message:focus{
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   padding: 20px;
-  width: 20%;
+  width: 23%;
   max-width: 900px;
   max-height: 70vh;
   overflow-y: auto;
@@ -595,6 +595,7 @@ function parseCSV(csvText) {
     priceList[key] = { csvValue: parseFloat(row.price) }; // price value
   }
 }
+
 function renderPriceList(searchTerm = '') {
   const groups = {};
 
@@ -621,7 +622,7 @@ function renderPriceList(searchTerm = '') {
 
   for (const base in groups) {
     const variants = groups[base];
-    if (!variants.length) continue;
+    if (!variants.length) continue; // skip empty groups
 
     html += `<tr class="base-row">
         <td colspan="2" class="base-ore">${base}</td>
@@ -645,18 +646,7 @@ function renderPriceList(searchTerm = '') {
   } else {
     container.insertAdjacentHTML('beforeend', html);
   }
-
-  // --- NEW: lock container height on first load ---
-  if (!container.dataset.lockedHeight) {
-    const renderedTable = container.querySelector('.price-table');
-    if (renderedTable) {
-      container.style.height = renderedTable.offsetHeight + 'px';
-      container.style.overflowY = 'auto'; // scroll if needed
-      container.dataset.lockedHeight = 'true'; // only lock once
-    }
-  }
 }
-
 
 // Example search listener
 document.getElementById('priceSearch').addEventListener('input', e => {
