@@ -1030,25 +1030,51 @@ function attachSorting(container){
 }
 
 /* ====================== SUBMIT / SHARE LOGIC ====================== */
+// ====================== SUBMIT BUTTON HANDLER ======================
+const messageBox = document.getElementById('message');
+const submitButton = document.getElementById('submitButton');
+const summaryContainer = document.getElementById('summaryContainer');
+
 submitButton.addEventListener('click', () => {
   const txt = messageBox.value.trim();
   if (!txt) return;
 
   const parsed = parseInventoryText(txt);
-  renderSummary(parsed); // ✅ this is where you put it
+  renderSummary(parsed);
 
-  window.scrollTo({ top: 0, behavior:'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Hide inventory and submit button
+  // Hide inventory & submit
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  // Show summary and contract containers explicitly
-  document.getElementById('summaryContainer').style.display = 'flex';       // summary table
-  document.getElementById('leftContainer').style.display = 'block';        // contract 1
-  document.getElementById('totalCostContainer').style.display = 'flex';    // contract 2
-  document.getElementById('shareButton').style.display = 'inline-block';   // share button
+  // Show summary container
+  summaryContainer.style.display = 'flex';
+
+  // Move Share Button into summary container
+  let shareButton = document.getElementById('shareButton');
+  if (!shareButton) {
+    // Create the button if it doesn't exist yet
+    shareButton = document.createElement('button');
+    shareButton.id = 'shareButton';
+    shareButton.className = 'actionButton';
+    shareButton.textContent = 'Share Summary';
+    shareButton.style.marginTop = '14px';
+    summaryContainer.appendChild(shareButton);
+
+    // Optional: Add share functionality here
+    shareButton.addEventListener('click', () => {
+      const summaryText = summaryContainer.innerText;
+      navigator.clipboard.writeText(summaryText);
+      alert('Summary copied to clipboard!');
+    });
+  } else {
+    // Just make sure it’s visible and inside summaryContainer
+    summaryContainer.appendChild(shareButton);
+    shareButton.style.display = 'inline-block';
+  }
 });
+
 
 
 
