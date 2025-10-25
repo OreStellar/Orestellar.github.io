@@ -1188,22 +1188,6 @@ priceSearchInput.addEventListener('input', () => {
     }
   });
 });
-// Make price tab clickable even in shared summary view
-const priceTab = document.getElementById('priceTab');
-if (priceTab) {
-  priceTab.addEventListener('click', () => {
-    const priceContainer = document.getElementById('priceListContainer');
-    if (!priceContainer) return;
-
-    // Toggle visibility
-    if (priceContainer.style.display === 'block') {
-      priceContainer.style.display = 'none';
-    } else {
-      priceContainer.style.display = 'block';
-    }
-  });
-}
-
 requestAnimationFrame(slowPulse);
 /* ====================== AUTO LOAD ====================== */
 window.addEventListener('load', async () => {
