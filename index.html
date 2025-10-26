@@ -273,19 +273,29 @@ function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 
   for (let i = 0; i < totalStaticStars; i++) {
-    const x = Math.random() * staticCanvas.width;
-    const y = Math.random() * staticCanvas.height;
+    let x, y;
+    if (Math.random() < 0.3) { // 30% chance to be in a cluster
+      const cx = (Math.random() * 0.8 + 0.1) * staticCanvas.width;
+      const cy = (Math.random() * 0.8 + 0.1) * staticCanvas.height;
+      x = cx + (Math.random() - 0.5) * 150;
+      y = cy + (Math.random() - 0.5) * 150;
+    } else {
+      x = Math.random() * staticCanvas.width;
+      y = Math.random() * staticCanvas.height;
+    }
 
-    // subtle color mix (mostly white with a few hints)
+    // color distribution: mostly white, small rare accents
     const roll = Math.random();
     let color = 'rgba(255,255,255,';
-    if (roll < 0.005) color = 'rgba(255,180,180,'; // light pink (0.5%)
-    else if (roll < 0.010) color = 'rgba(255,80,80,'; // red (0.5%)
-    else if (roll < 0.015) color = 'rgba(255,255,180,'; // yellow (0.5%)
+    if (roll < 0.005) color = 'rgba(255,180,180,'; // light pink
+    else if (roll < 0.010) color = 'rgba(255,80,80,'; // red
+    else if (roll < 0.015) color = 'rgba(255,255,180,'; // yellow
 
-    const alpha = 0.05 + Math.random() * 0.25; // faint
+    // increase alpha for more visibility
+    const alpha = 0.15 + Math.random() * 0.35; // 0.15–0.5
+    const size = 1 + Math.random() * 1.5;      // 1–2.5 px size
     sctx.fillStyle = `${color}${alpha})`;
-    sctx.fillRect(x, y, 1, 1);
+    sctx.fillRect(x, y, size, size);
   }
 }
 drawStaticStars();
