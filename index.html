@@ -67,7 +67,7 @@
     resize: vertical;
   }
 
-  #submitButton {
+  #submitButton, #ratesButton {
     display: block;
     margin: 20px auto;
     padding: 12px 30px;
@@ -81,7 +81,7 @@
     text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
   }
 
-  #submitButton:hover {
+  #submitButton:hover, #ratesButton:hover {
     background: rgba(0,255,255,0.1);
     box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
   }
@@ -196,8 +196,10 @@
 
 <div id="inventoryContainer">
   <textarea id="messageBox" placeholder="Enter your ores here..."></textarea>
+<div id="buttonContainer" style="display:flex; justify-content:center; gap:20px; margin-top:20px;">
   <button id="submitButton">Submit</button>
   <button id="ratesButton">OreStellar Rates</button>
+</div>
 </div>
 
 <!-- New Rates Summary Container -->
