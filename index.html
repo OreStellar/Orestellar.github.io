@@ -136,28 +136,55 @@
     overflow-x: auto;
   }
 
-  /* --- Rates Container (scale pop-in) --- */
-  #ratesContainer {
-    display: none;
-    width: 450px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    overflow-x: auto;
-    text-align: center;
+/* --- Rates Tab --- */
+#ratesTab {
+  position: absolute;
+  top: 50%;
+  right: calc(10% - 40px); /* positions relative to inventoryContainer's side */
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right center;
+  background: rgba(0,255,255,0.1);
+  border: 2px solid #0ff;
+  border-radius: 10px 10px 0 0;
+  color: #fff;
+  font-size: 1rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+  box-shadow: 0 0 20px #0ff;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
 
-    transform: scale(0);
-    opacity: 0;
-    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-  }
+#ratesTab:hover {
+  background: rgba(0,255,255,0.2);
+  box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
+}
 
-  #ratesContainer.active {
-    display: block;
-    transform: scale(1);
-    opacity: 1;
-  }
+/* --- Rates Container near the tab --- */
+#ratesContainer {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: calc(10% + 70px);
+  transform: translateY(-50%) scale(0);
+  width: 400px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  overflow-x: auto;
+  opacity: 0;
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+#ratesContainer.active {
+  display: block;
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+}
+
 
   table {
     width: 100%;
@@ -172,11 +199,11 @@
 
   th {
     font-size: 1.1rem;
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+    text-shadow: 0 0 5px rgb(253, 255, 255), 0 0 10px rgb(255, 255, 255);
   }
 
   td {
-    text-shadow: 0 0 2px #0ff;
+    text-shadow: 0 0 2px rgb(238, 238, 238);
   }
 </style>
 </head>
@@ -190,9 +217,13 @@
   <textarea id="messageBox" placeholder="Enter your ores here..."></textarea>
   <div id="buttonContainer">
     <button id="submitButton">Submit</button>
-    <button id="ratesButton">OreStellar Rates</button>
   </div>
 </div>
+
+<!-- New tab on the outside -->
+<div id="ratesTab">Rates</div>
+<div id="ratesContainer" class="neon"></div>
+
 
 <div id="contractsContainer">
   <div id="contract-left" class="contract-container" style="display:none;">
