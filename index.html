@@ -1155,71 +1155,78 @@ function attachSorting(container){
   });
 }
 
-submitButton.addEventListener('click', () => {
-  const txt = messageBox.value.trim();
-  if (!txt) return;
-
-  const parsed = parseInventoryText(txt);
-  renderSummary(parsed);
-
-  document.getElementById('inventoryContainer').style.display = 'none';
-  submitButton.style.display = 'none';
-
 document.addEventListener('DOMContentLoaded', () => {
+  const submitButton = document.getElementById('submitButton');
+  const messageBox = document.getElementById('message');
   const summaryContainer = document.getElementById('summaryContainer');
-  if (!summaryContainer) {
-    console.error("summaryContainer not found in DOM");
+
+  if (!submitButton || !messageBox || !summaryContainer) {
+    console.error("Missing elements in DOM");
     return;
   }
 
-  // Now you can safely render the summary
-  renderSummary(parsedItems);
+  submitButton.addEventListener('click', () => {
+    const txt = messageBox.value.trim();
+    if (!txt) return;
+
+    const parsed = parseInventoryText(txt);
+    renderSummary(parsed);
+
+    document.getElementById('inventoryContainer').style.display = 'none';
+    submitButton.style.display = 'none';
+
+    // Show summary container
+    summaryContainer.style.display = 'flex';
+  });
 });
 
-const submitButton = document.getElementById('submitButton');
-const messageBox = document.getElementById('message'); // your textarea
 
-submitButton.addEventListener('click', () => {
-  // Grab elements safely inside the handler
+document.addEventListener('DOMContentLoaded', () => {
+  const submitButton = document.getElementById('submitButton');
+  const messageBox = document.getElementById('message');
   const summaryContainer = document.getElementById('summaryContainer');
   const shareButton = document.getElementById('shareButton');
   const priceTabBtn = document.getElementById('priceTab');
 
-  if (!summaryContainer || !shareButton || !priceTabBtn) {
+  if (!submitButton || !messageBox || !summaryContainer || !shareButton || !priceTabBtn) {
     console.error("One or more elements not found in DOM");
     return;
   }
 
-  // now safe to use
-  summaryContainer.style.display = 'flex';
-  shareButton.style.display = 'inline-block';
-  priceTabBtn.style.display = 'inline-block';
+  submitButton.addEventListener('click', () => {
+    const txt = messageBox.value.trim();
+    if (!txt) return;
+
+    const parsed = parseInventoryText(txt);
+    renderSummary(parsed);
+
+    document.getElementById('inventoryContainer').style.display = 'none';
+    submitButton.style.display = 'none';
+
+    // Show summary, share button, and price tab
+    summaryContainer.style.display = 'flex';
+    shareButton.style.display = 'inline-block';
+    priceTabBtn.style.display = 'inline-block';
+  });
+
+  shareButton.addEventListener('click', async () => {
+    const txt = messageBox.value.trim();
+    if (!txt) return;
+
+    const compressed = LZString.compressToEncodedURIComponent(txt);
+    const shareUrl = `${location.origin}${location.pathname}?s=${compressed}`;
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      const orig = shareButton.innerText;
+      shareButton.innerText = 'Copied';
+      setTimeout(() => (shareButton.innerText = orig), 1400);
+    } catch (e) {
+      alert('Failed to copy URL.');
+    }
+  });
 });
 
-shareButton.addEventListener('click', async () => {
-  const messageBox = document.getElementById('message');
-  if (!messageBox) return;
-
-  const txt = messageBox.value.trim();
-  if (!txt) return;
-  // Compress the inventory text for URL
-  const compressed = LZString.compressToEncodedURIComponent(txt);
-
-  // Construct URL with ?s= parameter
-  const shareUrl = `${location.origin}${location.pathname}?s=${compressed}`;
-
-  try {
-    await navigator.clipboard.writeText(shareUrl);
-
-    // Give feedback
-    const orig = shareButton.innerText;
-    shareButton.innerText = 'Copied';
-    setTimeout(() => shareButton.innerText = orig, 1400);
-  } catch (e) {
-    alert('Failed to copy URL.');
-  }
-});
-});
 /* ====================== PRICES & VARIANTS ====================== */
 
 const RAW_PRICE_COL = 10;
