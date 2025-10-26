@@ -546,28 +546,31 @@ document.getElementById('submitButton').addEventListener('click', () => {
   if (!input) return;
 
   const lines = input.split('\n').map(l => l.trim()).filter(l => l);
-  let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr>';
+
+  // Add Compressed column
+  let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th><th>Compressed</th></tr>';
   let grandTotal = 0;
 
   lines.forEach(line => {
     const parsed = parseOreLine(line);
     if (!parsed) return;  // skip unrecognized lines
 
-    if (parsed.ore === "Top 10 Overall (excluding Triglavians and compressed)") return;
-
     const unitPrice = priceData[parsed.ore]?.price || 0;
     const total = parsed.quantity * unitPrice;
     grandTotal += total;
+
+    const isCompressed = parsed.ore.startsWith("Compressed ") ? '✅' : '❌';
 
     table += `<tr>
       <td>${parsed.ore}</td>
       <td>${parsed.quantity?.toLocaleString() || 0}</td>
       <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</td>
       <td>${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</td>
+      <td style="text-align:center">${isCompressed}</td>
     </tr>`;
   });
 
-  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</th></tr>`;
+  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</th><th></th></tr>`;
 
   const summary = document.getElementById('summaryContainer');
   summary.innerHTML = table;
@@ -578,6 +581,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
   document.getElementById('contract-left').style.display = 'block';
   document.getElementById('contract-right').style.display = 'block';
 });
+
 
 // --- Rates Tab ---
 const ratesTab = document.getElementById('ratesTab');
