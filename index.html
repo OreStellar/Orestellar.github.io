@@ -6,7 +6,6 @@
 <title>OreStellar</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  /* --- General body --- */
   body {
     margin: 0;
     padding: 0;
@@ -16,7 +15,6 @@
     overflow-x: hidden;
   }
 
-  /* --- Neon text --- */
   .neon {
     color: #fff;
     text-shadow:
@@ -27,7 +25,6 @@
       0 0 80px #0ff;
   }
 
-  /* --- Starfield canvas --- */
   #starfield {
     position: fixed;
     top: 0;
@@ -37,14 +34,12 @@
     z-index: -1;
   }
 
-  /* --- Logo --- */
   #logo {
     text-align: center;
     font-size: 4rem;
     margin-top: 20px;
   }
 
-  /* --- Inventory --- */
   #inventoryContainer {
     width: 80%;
     max-width: 500px;
@@ -68,8 +63,7 @@
     resize: vertical;
   }
 
-  /* --- Buttons --- */
-  #submitButton, #ratesButton {
+  #submitButton {
     padding: 12px 30px;
     background: none;
     border: 2px solid #0ff;
@@ -81,7 +75,7 @@
     text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
   }
 
-  #submitButton:hover, #ratesButton:hover {
+  #submitButton:hover {
     background: rgba(0,255,255,0.1);
     box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
   }
@@ -93,7 +87,6 @@
     margin-top: 20px;
   }
 
-  /* --- Contracts layout --- */
   #contractsContainer {
     display: flex;
     justify-content: center;
@@ -124,7 +117,6 @@
     box-shadow: 0 0 30px rgba(255,255,255,0.3);
   }
 
-  /* --- Summary --- */
   #summaryContainer {
     width: 450px;
     background: rgba(255,255,255,0.05);
@@ -136,55 +128,55 @@
     overflow-x: auto;
   }
 
-/* --- Rates Tab --- */
-#ratesTab {
-  position: absolute;
-  top: 50%;
-  right: calc(10% - 40px); /* positions relative to inventoryContainer's side */
-  transform: translateY(-50%) rotate(90deg);
-  transform-origin: right center;
-  background: rgba(0,255,255,0.1);
-  border: 2px solid #0ff;
-  border-radius: 10px 10px 0 0;
-  color: #fff;
-  font-size: 1rem;
-  padding: 10px 20px;
-  cursor: pointer;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-  box-shadow: 0 0 20px #0ff;
-  transition: all 0.3s ease;
-  z-index: 5;
-}
+  /* --- Shared side tabs --- */
+  .sideTab {
+    position: absolute;
+    right: calc(10% - 40px);
+    transform-origin: right center;
+    transform: rotate(90deg);
+    background: rgba(0,255,255,0.1);
+    border: 2px solid #0ff;
+    border-radius: 10px 10px 0 0;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+    box-shadow: 0 0 20px #0ff;
+    transition: all 0.3s ease;
+    z-index: 5;
+  }
 
-#ratesTab:hover {
-  background: rgba(0,255,255,0.2);
-  box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
-}
+  .sideTab:hover {
+    background: rgba(0,255,255,0.2);
+    box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
+  }
 
-/* --- Rates Container near the tab --- */
-#ratesContainer {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: calc(10% + 70px);
-  transform: translateY(-50%) scale(0);
-  width: 400px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.2);
-  overflow-x: auto;
-  opacity: 0;
-  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-}
+  #ratesTab { top: 45%; }
+  #compareTab { top: 60%; }
 
-#ratesContainer.active {
-  display: block;
-  transform: translateY(-50%) scale(1);
-  opacity: 1;
-}
+  #ratesContainer, #compareContainer {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: calc(10% + 70px);
+    transform: translateY(-50%) scale(0);
+    width: 400px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    overflow-x: auto;
+    opacity: 0;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  }
 
+  #ratesContainer.active, #compareContainer.active {
+    display: block;
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
 
   table {
     width: 100%;
@@ -199,18 +191,17 @@
 
   th {
     font-size: 1.1rem;
-    text-shadow: 0 0 5px rgb(253, 255, 255), 0 0 10px rgb(255, 255, 255);
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
   }
 
   td {
-    text-shadow: 0 0 2px rgb(238, 238, 238);
+    text-shadow: 0 0 2px #0ff;
   }
 </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
-
 <div id="logo" class="neon">OreStellar</div>
 
 <div id="inventoryContainer">
@@ -220,20 +211,19 @@
   </div>
 </div>
 
-<!-- New tab on the outside -->
-<div id="ratesTab">Rates</div>
-<div id="ratesContainer" class="neon"></div>
+<!-- Tabs -->
+<div id="ratesTab" class="sideTab">Rates</div>
+<div id="compareTab" class="sideTab">Compare</div>
 
+<!-- Hidden content -->
+<div id="ratesContainer" class="neon"></div>
+<div id="compareContainer" class="neon"></div>
 
 <div id="contractsContainer">
   <div id="contract-left" class="contract-container" style="display:none;">
     <img src="https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png" alt="Contract Left">
   </div>
-
   <div id="summaryContainer" class="neon"></div>
-
-  <div id="ratesContainer" class="neon"></div>
-
   <div id="contract-right" class="contract-container" style="display:none;">
     <img src="https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png" alt="Contract Right">
   </div>
@@ -323,12 +313,13 @@ document.getElementById('submitButton').addEventListener('click', () => {
   document.getElementById('contract-right').style.display = 'block';
 });
 
-/* --- Rates Button (Scale Pop-in) --- */
-document.getElementById('ratesButton').addEventListener('click', () => {
+/* --- Rates Tab --- */
+document.getElementById('ratesTab').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
   document.getElementById('contract-left').style.display = 'none';
   document.getElementById('contract-right').style.display = 'none';
+  document.getElementById('compareContainer').style.display = 'none';
 
   const ratesContainer = document.getElementById('ratesContainer');
   let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
@@ -341,11 +332,31 @@ document.getElementById('ratesButton').addEventListener('click', () => {
   table += '</table>';
   ratesContainer.innerHTML = table;
 
-  // trigger scale pop-in
-  ratesContainer.classList.remove('active'); // reset
-  setTimeout(() => {
-    ratesContainer.classList.add('active');
-  }, 10);
+  ratesContainer.classList.remove('active');
+  setTimeout(() => ratesContainer.classList.add('active'), 10);
+});
+
+/* --- Compare Tab --- */
+document.getElementById('compareTab').addEventListener('click', () => {
+  document.getElementById('inventoryContainer').style.display = 'none';
+  document.getElementById('summaryContainer').style.display = 'none';
+  document.getElementById('contract-left').style.display = 'none';
+  document.getElementById('contract-right').style.display = 'none';
+  document.getElementById('ratesContainer').style.display = 'none';
+
+  const compareContainer = document.getElementById('compareContainer');
+  // Static comparison table for now
+  let table = `
+    <table>
+      <tr><th>Ore</th><th>Variant A</th><th>Variant B</th><th>Difference</th></tr>
+      <tr><td>Veldspar</td><td>100.00</td><td>110.00</td><td>+10.00</td></tr>
+      <tr><td>Scordite</td><td>90.00</td><td>85.00</td><td>-5.00</td></tr>
+      <tr><td>Pyroxeres</td><td>120.00</td><td>118.00</td><td>-2.00</td></tr>
+    </table>`;
+  compareContainer.innerHTML = table;
+
+  compareContainer.classList.remove('active');
+  setTimeout(() => compareContainer.classList.add('active'), 10);
 });
 </script>
 </body>
