@@ -473,6 +473,11 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
 /* --- Rates Tab --- */
 document.getElementById('ratesTab').addEventListener('click', () => {
+  if (!Object.keys(priceData).length) {
+    alert("⚠️ Price data not loaded yet. Please wait a few seconds and try again.");
+    return;
+  }
+
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
   document.getElementById('contract-left').style.display = 'none';
@@ -493,6 +498,7 @@ document.getElementById('ratesTab').addEventListener('click', () => {
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
 });
+
 
 /* --- Compare Tab --- */
 document.getElementById('compareTab').addEventListener('click', () => {
