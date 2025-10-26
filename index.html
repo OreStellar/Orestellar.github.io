@@ -499,17 +499,46 @@ function extractVolumeAndISK(line) {
   };
 }
 
-// 5. Parse a single line
+// --- Smarter Ore Line Parser ---
 function parseOreLine(line) {
-  const ore = extractOreName(line);
-  if (!ore) return null;
+  line = line.trim();
+  if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-  const quantity = extractQuantity(line, ore);
-  const baseName = getBaseName(ore);
-  const { volume, isk } = extractVolumeAndISK(line);
+  // Match the longest ore name first
+  const oreNames = Object.keys(priceData).sort((a,b) => b.length - a.length);
+  let matchedOre = null;
 
-  return { ore, baseName, quantity, volume, isk };
+  for (const name of oreNames) {
+    if (line.startsWith(name)) {
+      matchedOre = name;
+      break;
+    }
+  }
+
+  if (!matchedOre) return null;
+
+  const remainder = line.slice(matchedOre.length).trim();
+  let quantity = 0;
+  let volume = 0;
+  let isk = 0;
+
+  // Extract quantity (first number)
+  const qtyMatch = remainder.match(/[\d,]+/);
+  if (qtyMatch) quantity = parseFloat(qtyMatch[0].replace(/,/g, ''));
+
+  // Extract m3 volume
+  const volMatch = remainder.match(/([\d,\.]+)\s*m3/i);
+  if (volMatch) volume = parseFloat(volMatch[1].replace(/,/g,''));
+
+  // Extract ISK
+  const iskMatch = remainder.match(/([\d,\.]+)\s*ISK/i);
+  if (iskMatch) isk = parseFloat(iskMatch[1].replace(/,/g,''));
+
+  const baseName = matchedOre.split(' ')[matchedOre.split(' ').length-1]; // last word as base
+
+  return { ore: matchedOre, baseName, quantity, volume, isk };
 }
+
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
