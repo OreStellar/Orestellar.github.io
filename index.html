@@ -454,6 +454,44 @@ fetch(csvUrl)
   })
   .catch(err => console.error('Error loading CSV:', err));
 
+  /* --- Submit Button --- */
+document.getElementById('submitButton').addEventListener('click', () => {
+  console.log("✅ Submit clicked");
+
+  const input = document.getElementById('messageBox').value.trim();
+  if (!input) return console.warn("⚠️ No input provided.");
+
+  const ores = input.split('\n').map(l => l.trim()).filter(l => l);
+  let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
+  let grandTotal = 0;
+
+  ores.forEach(line => {
+    const [ore, qty] = line.split(' ');
+    const quantity = parseFloat(qty);
+    const priceEntry = priceData[ore];
+    console.log(`Checking ore: ${ore}, found:`, priceEntry);
+
+    if (!priceEntry) return; // skip unknown ores
+
+    const perUnit = priceEntry.price;
+    const total = perUnit * quantity;
+    grandTotal += total;
+    table += `<tr><td>${ore}</td><td>${quantity}</td><td>${perUnit.toFixed(2)}</td><td>${total.toFixed(2)}</td></tr>`;
+  });
+
+  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toFixed(2)}</th></tr>`;
+  const summary = document.getElementById('summaryContainer');
+  summary.innerHTML = table;
+  summary.style.display = 'block';
+
+  // hide input, show contracts
+  document.getElementById('inventoryContainer').style.display = 'none';
+  document.getElementById('contract-left').style.display = 'block';
+  document.getElementById('contract-right').style.display = 'block';
+  console.log("✅ Summary shown");
+});
+
+
 /* --- Rates Tab --- */
 document.getElementById('ratesTab').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
