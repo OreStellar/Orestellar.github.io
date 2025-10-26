@@ -6,7 +6,7 @@
 <title>OreStellar</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  /* --- General --- */
+  /* --- General body --- */
   body {
     margin: 0;
     padding: 0;
@@ -16,6 +16,7 @@
     overflow-x: hidden;
   }
 
+  /* --- Neon text --- */
   .neon {
     color: #fff;
     text-shadow:
@@ -26,7 +27,7 @@
       0 0 80px #0ff;
   }
 
-  /* --- Starfield --- */
+  /* --- Starfield canvas --- */
   #starfield {
     position: fixed;
     top: 0;
@@ -67,14 +68,8 @@
     resize: vertical;
   }
 
-  #buttonContainer {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  button {
+  /* --- Buttons --- */
+  #submitButton, #ratesButton {
     padding: 12px 30px;
     background: none;
     border: 2px solid #0ff;
@@ -86,48 +81,88 @@
     text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
   }
 
-  button:hover {
+  #submitButton:hover, #ratesButton:hover {
     background: rgba(0,255,255,0.1);
     box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
   }
 
-  /* --- Contracts and summary --- */
+  #buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  /* --- Contracts layout --- */
   #contractsContainer {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     gap: 20px;
     margin: 40px auto;
-    width: fit-content; /* shrink-wrap to content */
+    width: fit-content;
   }
 
   .contract-container {
-    width: 630px;
-    height: 418px;
+    display: inline-block;
     border-radius: 12px;
     overflow: hidden;
-    display: none; /* hidden on page load */
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .contract-container img {
-    width: 100%;
-    height: 100%;
     display: block;
+    width: 630px;
+    height: 418px;
+    border-radius: 12px;
   }
 
+  .contract-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(255,255,255,0.3);
+  }
+
+  /* --- Summary --- */
   #summaryContainer {
     width: 450px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
     padding: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
     display: none;
     overflow-x: auto;
+  }
+
+  /* --- Rates Container (scale pop-in) --- */
+  #ratesContainer {
+    display: none;
+    width: 450px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    overflow-x: auto;
+    text-align: center;
+
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  }
+
+  #ratesContainer.active {
+    display: block;
+    transform: scale(1);
+    opacity: 1;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
+    text-align: left;
   }
 
   th, td {
@@ -136,34 +171,12 @@
   }
 
   th {
+    font-size: 1.1rem;
     text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
   }
 
   td {
     text-shadow: 0 0 2px #0ff;
-  }
-
-  /* --- Rates Side Tab --- */
-  #ratesContainer {
-    position: fixed;
-    top: 0;
-    right: -400px; /* hidden off-screen */
-    width: 400px;
-    height: 100%;
-    background: rgba(0,0,0,0.95);
-    border-left: 2px solid #0ff;
-    padding: 20px;
-    overflow-y: auto;
-    transition: right 0.3s ease;
-    z-index: 999;
-  }
-
-  #ratesContainer.active {
-    right: 0; /* slide in */
-  }
-
-  #ratesContainer table {
-    width: 100%;
   }
 </style>
 </head>
@@ -182,22 +195,17 @@
 </div>
 
 <div id="contractsContainer">
-  <div id="contract-left" class="contract-container">
+  <div id="contract-left" class="contract-container" style="display:none;">
     <img src="https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png" alt="Contract Left">
   </div>
 
-  <div id="summaryContainer" class="neon">
-    <!-- summary table goes here -->
-  </div>
+  <div id="summaryContainer" class="neon"></div>
 
-  <div id="contract-right" class="contract-container">
+  <div id="ratesContainer" class="neon"></div>
+
+  <div id="contract-right" class="contract-container" style="display:none;">
     <img src="https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png" alt="Contract Right">
   </div>
-</div>
-
-<div id="ratesContainer" class="neon">
-  <h2>OreStellar Rates</h2>
-  <div id="ratesTable"></div>
 </div>
 
 <script>
@@ -205,12 +213,14 @@
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 let stars = [];
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
 for (let i = 0; i < 300; i++) {
   stars.push({
     x: Math.random() * canvas.width,
@@ -220,13 +230,14 @@ for (let i = 0; i < 300; i++) {
     speed: Math.random() * 0.05
   });
 }
+
 function drawStars() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   stars.forEach(s => {
-    const flicker = 0.5 + 0.5*Math.sin(Date.now()*0.005 + s.flicker*Math.PI*2);
+    const flicker = 0.5 + 0.5 * Math.sin(Date.now() * 0.005 + s.flicker * Math.PI * 2);
     ctx.fillStyle = `rgba(255,255,255,${flicker})`;
     ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
     ctx.fill();
     s.y += s.speed;
     if (s.y > canvas.height) s.y = 0;
@@ -238,6 +249,7 @@ drawStars();
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 let priceData = {};
+
 fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
@@ -271,36 +283,39 @@ document.getElementById('submitButton').addEventListener('click', () => {
   });
 
   table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toFixed(2)}</th></tr>`;
-  document.getElementById('summaryContainer').innerHTML = table;
+  const summary = document.getElementById('summaryContainer');
+  summary.innerHTML = table;
+  summary.style.display = 'block';
 
   document.getElementById('inventoryContainer').style.display = 'none';
-  document.getElementById('summaryContainer').style.display = 'block';
-  document.getElementById('contract-left').style.display = 'inline-block';
-  document.getElementById('contract-right').style.display = 'inline-block';
+  document.getElementById('contract-left').style.display = 'block';
+  document.getElementById('contract-right').style.display = 'block';
 });
 
-/* --- Rates Button (Slide-Out Tab) --- */
-const ratesButton = document.getElementById('ratesButton');
-const ratesContainer = document.getElementById('ratesContainer');
-const ratesTable = document.getElementById('ratesTable');
+/* --- Rates Button (Scale Pop-in) --- */
+document.getElementById('ratesButton').addEventListener('click', () => {
+  document.getElementById('inventoryContainer').style.display = 'none';
+  document.getElementById('summaryContainer').style.display = 'none';
+  document.getElementById('contract-left').style.display = 'none';
+  document.getElementById('contract-right').style.display = 'none';
 
-ratesButton.addEventListener('click', () => {
-  // toggle side tab
-  ratesContainer.classList.toggle('active');
+  const ratesContainer = document.getElementById('ratesContainer');
+  let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
+  Object.keys(priceData).forEach(ore => {
+    if (!ore.toLowerCase().includes('compressed')) {
+      const entry = priceData[ore];
+      table += `<tr><td>${ore}</td><td>-</td><td>${entry.price.toFixed(2)}</td></tr>`;
+    }
+  });
+  table += '</table>';
+  ratesContainer.innerHTML = table;
 
-  // populate table if empty
-  if (!ratesTable.innerHTML) {
-    let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
-    Object.keys(priceData).forEach(ore => {
-      if (!ore.toLowerCase().includes('compressed')) {
-        table += `<tr><td>${ore}</td><td>-</td><td>${priceData[ore].price.toFixed(2)}</td></tr>`;
-      }
-    });
-    table += '</table>';
-    ratesTable.innerHTML = table;
-  }
+  // trigger scale pop-in
+  ratesContainer.classList.remove('active'); // reset
+  setTimeout(() => {
+    ratesContainer.classList.add('active');
+  }, 10);
 });
 </script>
-
 </body>
 </html>
