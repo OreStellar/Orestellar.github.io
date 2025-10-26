@@ -140,29 +140,37 @@
     display: none;
     overflow-x: auto;
   }
-
-  /* --- Shared side tabs --- */
+/* --- Modern Side Tabs --- */
 .sideTab {
-  position: absolute;
-  right: 100px;
-  top: 30%;               /* adjust vertical placement */
-  background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
-  border: 2px solid rgb(0, 0, 0);
-  border-left: none;
-  border-radius: 0 12px 12px 0;
-  color: #fff;
-  font-weight: 500;
-  font-size: .95rem;
+  position: fixed;
+  top: 30%;               /* vertical placement */
+  right: -60px;            /* hidden offscreen initially */
+  width: 60px;             /* slimmer width */
+  padding: 10px;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 12px 0 0 12px;
+  color: #0ff;
   font-family: 'Orbitron', sans-serif;
-  padding: 5px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-align: center;
   cursor: pointer;
-  text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
-  box-shadow: 0 0 10px rgb(255, 255, 255);
-  transition: all 0.4s ease;
-  z-index: 10;
-  width: 75px;
-  text-align: right;
-  transform: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+/* Slide-in hover */
+.sideTab:hover {
+  right: 0;               /* slide fully into view */
+  background: rgba(0, 255, 255, 0.25);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+/* Optional active click */
+.sideTab:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
 /* Position each tab vertically along the right side */
@@ -172,20 +180,6 @@
 
 #compareTab {
   top: 30%;
-}
-
-/* Hover glow effect */
-.sideTab:hover {
-  right: 0;
-  background: linear-gradient(145deg, rgba(0,255,255,0.15), rgba(0,255,255,0.25));
-  box-shadow: 0 0 20px rgb(255, 255, 255), 0 0 40px rgb(255, 255, 255);
-  transform: translateX(4px);
-}
-
-/* Optional active click effect */
-.sideTab:active {
-  transform: translateX(2px) scale(0.98);
-  box-shadow: 0 0 15px rgb(224, 224, 224), 0 0 30px rgb(2, 255, 2);
 }
 
   #ratesContainer, #compareContainer {
