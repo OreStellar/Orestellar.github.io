@@ -132,33 +132,37 @@
   /* --- Shared side tabs --- */
 .sideTab {
   position: absolute;
-  right: -60px; /* attaches just outside the right edge */
-  background: rgba(0,255,255,0.1);
-  border: 2px solid rgb(5, 5, 5);
-  border-radius: 10px 10px 0 0;
+  right: -4px; /* almost touching the edge */
+  background: rgba(0,255,255,0.08);
+  border: 2px solid rgb(0, 0, 0);
+  border-left: none;
+  border-radius: 0 10px 10px 0;
   color: #fff;
   font-size: 1rem;
-  padding: 10px 20px;
+  padding: 10px 16px;
   cursor: pointer;
   text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
-  box-shadow: 0 0 20px rgb(255, 255, 255);
-  transform: rotate(90deg);
-  transform-origin: right center;
+  box-shadow: 0 0 10px rgb(255, 255, 255);
   transition: all 0.3s ease;
   z-index: 10;
+  width: 150px;
+  text-align: center;
 }
 
+/* Position each tab vertically along the right side */
 #ratesTab {
-  top: 30%;
+  top: 25%;
 }
 
 #compareTab {
-  top: 60%;
+  top: 50%;
 }
 
+/* Hover glow effect */
 .sideTab:hover {
-  background: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 30px rgb(254, 255, 255), 0 0 60px rgb(255, 255, 255);
+  background: rgba(0,255,255,0.15);
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+  transform: translateX(4px);
 }
 
 
