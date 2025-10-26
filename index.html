@@ -274,53 +274,56 @@ window.addEventListener('resize', resizeStatic);
 
 function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
-  const totalStaticStars = 3000; // number of static stars
+  const totalStaticStars = 3000;
 
-  for (let i = 0; i < totalStars; i++) {
-    let x = Math.random() * staticCanvas.width;
-    let y = Math.random() * staticCanvas.height;
-    let size = 1 + Math.random() * 2;        // small stars
-    let alpha = 0.3 + Math.random() * 0.8;   // visible but subtle
-    let color = '255,255,255';               // white
+  for (let i = 0; i < totalStaticStars; i++) {
+    const x = Math.random() * staticCanvas.width;
+    const y = Math.random() * staticCanvas.height;
 
-        const roll = Math.random();
-        if (roll < 0.005) color = '255,180,180';
-        else if (roll < 0.01) color = '255,80,80';
-        else if (roll < 0.015) color = '255,255,180';
+    // small, visible stars
+    let size = 0.5 + Math.random() * 0.8;
+    let alpha = 0.3 + Math.random() * 0.7;
+    let color = '255,255,255';
 
-        const alpha = 0.05 + Math.random() * 0.15;
-        const size = 0.5 + Math.random() * 0.8;
+    const roll = Math.random();
+    if (roll < 0.005) color = '255,180,180';  // pink
+    else if (roll < 0.01) color = '255,80,80'; // red
+    else if (roll < 0.015) color = '255,255,180'; // yellow
 
-        sctx.fillStyle = `rgba(${color},${alpha})`;
-        sctx.fillRect(x, y, size, size);
+    sctx.fillStyle = `rgba(${color},${alpha})`;
+    sctx.fillRect(x, y, size, size);
   }
 }
-resizeStatic(); // draw once
+resizeStatic();
 
 /* --- Animated Flickering Stars --- */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-const stars = []; // declare FIRST
+const stars = [];
 const totalStars = 300;
 const twinkleChance = 0.05; // only 5% twinkle
 
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateStars();
+}
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function generateStars() {
   stars.length = 0;
   for (let i = 0; i < totalStars; i++) {
-    const isTwinkler = Math.random() < 0.05; // only 5% twinkle
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: 0.5 + Math.random() * 1.5  // small radius
+      r: 0.5 + Math.random() * 1.5,  // small radius
       color: '#ffffff',
-            twinkle: Math.random() < twinkleChance,
-            flickerOffset: Math.random() * Math.PI * 2,
-            flickerSpeed: 0.005 + Math.random() * 0.001, // slower twinkle
-            flickerIntensity: 0.05 + Math.random() * 0.05
+      twinkle: Math.random() < twinkleChance,
+      flickerOffset: Math.random() * Math.PI * 2,
+      flickerSpeed: 0.005 + Math.random() * 0.001,
+      flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
 }
@@ -330,7 +333,7 @@ function drawStars() {
   for (const s of stars) {
     let alpha = 1;
     if (s.twinkle) {
-      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.0005 + s.flickerOffset);
+      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * s.flickerSpeed + s.flickerOffset);
     }
     ctx.beginPath();
     ctx.fillStyle = s.color;
