@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OreStellar</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
@@ -197,6 +198,10 @@
 }
 
 #ratesContainer, #compareContainer {
+    font-family: 'Chivo Mono', monospace;
+    font-weight: 200;   /* regular text */
+    font-size: 0.95rem; /* adjust as needed */
+    color: #fff;
     display: none;
     position: absolute;
     top: 50%;
@@ -222,16 +227,18 @@
     opacity: 1;
 }
 #ratesContainer table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'Orbitron', monospace;
-  font-size: 0.95rem;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    font-family: 'Chivo Mono', monospace;
 }
 
 #ratesContainer th, #ratesContainer td {
-  padding: 4px 6px;            /* tighter spacing */
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 8px;             /* tighter padding */
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    text-align: left;
 }
+
 
 #ratesContainer th {
   text-align: left;
