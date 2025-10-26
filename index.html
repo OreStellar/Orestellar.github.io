@@ -161,7 +161,7 @@
 
 /* Slide-in hover */
 .sideTab:hover {
-  right: 0;               /* slide fully into view */
+  left: 0;               /* slide fully into view */
   background: rgba(0, 255, 255, 0.25);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
   transform: scale(1.05);
@@ -273,7 +273,7 @@ window.addEventListener('resize', resizeStatic);
 
 function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
-  const totalStars = 1000; // number of static stars
+  const totalStars = 3000; // number of static stars
 
   for (let i = 0; i < totalStars; i++) {
     let x = Math.random() * staticCanvas.width;
@@ -296,47 +296,53 @@ resizeStatic(); // draw once
 /* --- Animated Flickering Stars --- */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
-const flickerStars = [];
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  generateFlickerStars();
+  generateStars();
 }
 window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-function generateFlickerStars() {
-  flickerStars.length = 0;
-  const totalStars = 300;
+const stars = [];
+const totalStars = 300;
+
+function generateStars() {
+  stars.length = 0;
   for (let i = 0; i < totalStars; i++) {
-    flickerStars.push({
+    const isTwinkler = Math.random() < 0.05; // only 5% twinkle
+    stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: 0.5 + Math.random() * 1.5,
+      r: 0.5 + Math.random(),   // small radius
       color: '#ffffff',
+      twinkle: isTwinkler,
       flickerOffset: Math.random() * Math.PI * 2,
-      flickerSpeed: 0.002 + Math.random() * 0.004, // subtle speed
-      flickerIntensity: 0.1 + Math.random() * 0.2
+      flickerSpeed: 0.002 + Math.random() * 0.002, // very slow
+      flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
 }
 
-function drawFlickerStars() {
+function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (const s of flickerStars) {
-    const flicker = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.00075 + s.flickerOffset);
+  for (const s of stars) {
+    let alpha = 1;
+    if (s.twinkle) {
+      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.0005 + s.flickerOffset);
+    }
     ctx.beginPath();
     ctx.fillStyle = s.color;
-    ctx.globalAlpha = flicker;
+    ctx.globalAlpha = alpha;
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
-  requestAnimationFrame(drawFlickerStars);
+  requestAnimationFrame(drawStars);
 }
 
-resizeCanvas(); // initialize
-drawFlickerStars();
+drawStars();
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 let priceData = {};
