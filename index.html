@@ -89,31 +89,45 @@
   /* --- Contracts layout --- */
 #contractsContainer {
   display: flex;
-  justify-content: center; /* center everything */
-  width: 90%;
-  max-width: 1300px;
-  margin: 20px auto;
-  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  gap: 30px;
 }
 
 .contract-container {
-  width: 630px; /* fixed width */
-  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  width: 280px; /* scaled down from 630px */
+  height: auto;
+  aspect-ratio: 630 / 418; /* keeps image proportions */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 12px;
-  overflow: hidden;
-  background-color: rgba(0,0,0,0.2);
-  flex-shrink: 0; /* prevent shrinking */
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contract-container:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
 #summaryContainer {
-  flex: 1; /* take remaining space */
-  min-width: 300px; /* optional: prevent it from collapsing */
+  flex: 1;
+  min-width: 400px;
+  max-width: 600px;
   display: none;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  padding: 20px;
-  overflow-x: auto;
+  padding: 20px 30px;
+  color: white;
+  text-shadow: 0 0 8px white;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 
