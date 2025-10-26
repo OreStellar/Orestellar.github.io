@@ -301,8 +301,8 @@ function drawStaticStars() {
     else if (roll < 0.010) color = '(255,80,80'; // red
     else if (roll < 0.015) color = '(255,255,180'; // yellow
 
-const alpha = 0.2 + Math.random() * 0.5;
-    const size = 1.0 + Math.random();  
+const alpha = 0.05 + Math.random() * 0.15; // very faint
+const size = 0.5 + Math.random() * 0.8;    // tiny, ~0.5–1.3px
 sctx.fillStyle = `rgba(${color},${alpha})`;
 sctx.fillRect(x, y, size, size);
   }
