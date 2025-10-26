@@ -20,7 +20,7 @@
     text-shadow:
       0 0 5px #000000,
       0 0 10px #d1d1d1,
-      0 0 20px #ececec,
+      0 0 20px #dadada,
       0 0 40px rgb(245, 245, 245),
       0 0 80px rgb(255, 255, 255);
   }
@@ -51,14 +51,7 @@
     font-size: 4rem;
     margin-top: 20px;
   }
-/* Wrapper masks tabs inside container */
-#inventoryWrapper {
-  position: relative;
-  width: 80%;
-  max-width: 500px;
-  margin: 40px auto;
-  overflow: hidden; /* clips tabs behind the container */
-}
+
   #inventoryContainer {
     width: 80%;
     max-width: 500px;
@@ -69,7 +62,8 @@
     border-radius: 12px;
     position: relative;
     box-sizing: border-box; /* include padding in width */
-    z-index: 5;
+    z-index: 20;
+    overflow: hidden; /* hide anything outside its box */
   }
 
   #inventoryContainer textarea {
@@ -83,6 +77,7 @@
     font-size: 1rem;
     padding: 10px;
     resize: vertical;
+    z-index: 20; /* higher than tabs */
     box-sizing: border-box; /* include padding in width */
   }
 
@@ -247,12 +242,13 @@
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
 <div id="logo" class="neon">OreStellar</div>
-<div id="inventoryWrapper">
+
 <div id="inventoryContainer">
   <textarea id="messageBox" placeholder="Enter your ores here..."></textarea>
   <div id="buttonContainer">
     <button id="submitButton">Submit</button>
   </div>
+
 
 <!-- Side Tabs with Icons -->
 <div id="ratesTab" class="sideTab">
@@ -277,7 +273,8 @@
     <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
   </svg>
 </div>
-</div>
+
+
 
 <!-- Hidden content -->
 <div id="ratesContainer" class="neon"></div>
