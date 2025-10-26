@@ -409,7 +409,7 @@ Mercoxit 25000
   </div>
 
  <!-- CONTRACTS / SUMMARY -->
-<div class="contracts-wrapper">
+<div id="contracts-wrapper" class="contracts-wrapper"></div>
   <div id="leftContainer" class="total-cost-container"></div>
 
   <!-- ✅ Only ONE summaryContainer -->
@@ -1001,8 +1001,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const left = document.getElementById('leftContainer');
     if (left) left.style.display = 'flex';
 
-    const shareBtn = document.getElementById('shareButton');
-    if (shareBtn) shareBtn.style.display = 'inline-block';
+    const ShareButton = document.getElementById('shareButton');
+    if (ShareButton) ShareButton.style.display = 'inline-block';
     else console.warn('shareButton not found in DOM');
 
     const priceBtn = document.getElementById('priceTab');
@@ -1011,9 +1011,31 @@ window.addEventListener('DOMContentLoaded', () => {
 });
      submitBtn.addEventListener('click', () => {
           // Show the Share Summary button
-          shareBtn.style.display = 'inline-block';
+          ShareButton.style.display = 'inline-block';
       });
+  // Show contracts
+  const contractsWrapper = document.getElementById('contracts-wrapper');
+  if (!contractsWrapper) return;
 
+  contractsWrapper.innerHTML = ''; // Clear old contracts
+
+  const contractImages = [
+    'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png',
+    'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png'
+  ];
+
+  contractImages.forEach(src => {
+    const div = document.createElement('div');
+    div.className = 'contract-entry';
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Contract Image';
+    img.className = 'contract-image';
+
+    div.appendChild(img);
+    contractsWrapper.appendChild(div);
+  });
   // Update total text
   const totalText = document.getElementById('totalCostText');
   if(totalText) {
