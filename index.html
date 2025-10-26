@@ -608,10 +608,9 @@ function showRates() {
   let table = tableHeader;
 
   Object.keys(priceData).forEach(ore => {
-    const normalized = ore.trim().toLowerCase();
-
-    // Skip "ore variant" and anything explicitly compressed
-    if (normalized === 'ore variant' || normalized.includes('compressed')) return;
+    // Skip compressed ores and Top 10 Overall
+    if (ore.startsWith("Compressed ")) return;
+    if (ore.includes("Top 10 Overall")) return;
 
     const entry = priceData[ore];
     if (!entry || !entry.price) return; // skip empty prices
@@ -627,11 +626,10 @@ function showRates() {
   const ratesContainer = document.getElementById('ratesContainer');
   ratesContainer.innerHTML = table;
 
-  // Show container with animation
+  // simple fade-in
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
 }
-
 
 
 /* --- Compare Tab --- */
