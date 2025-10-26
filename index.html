@@ -974,8 +974,13 @@ function parseInventoryText(text) {
   return result;
 }
 
-function renderSummary(parsedItems) {
-  // ✅ Grab the container safely
+function renderSummary(parsedItems, isShared) {
+  if (isShared) {
+    // do something special
+  }
+  // rest of code
+}
+
   const summaryContainer = document.getElementById('summaryContainer');
   if (!summaryContainer) {
     console.error("summaryContainer not found in DOM");
@@ -1177,8 +1182,14 @@ submitButton.addEventListener('click', () => {
   submitButton.style.display = 'none';
 
 const summaryContainer = document.getElementById('summaryContainer');
-console.log(summaryContainer); // should not be null
+if (!summaryContainer) {
+  console.error("summaryContainer not found");
+  return;
+}
+
+// now safe to use summaryContainer
 summaryContainer.style.display = 'flex';
+;
 
   document.getElementById('shareButton').style.display = 'inline-block';
   const priceTabBtn = document.getElementById('priceTab');
