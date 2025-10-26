@@ -975,37 +975,57 @@ function parseInventoryText(text) {
 }
 
 function renderSummary(parsedItems) {
+  // ✅ Grab the container safely
   const summaryContainer = document.getElementById('summaryContainer');
   if (!summaryContainer) {
     console.error("summaryContainer not found in DOM");
     return;
   }
 
-  // compute grand total
+  // Validate parsedItems
+  if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
+    summaryContainer.style.display = 'none';
+    summaryContainer.innerHTML = '';
+    return;
+  }
+
+  // Compute grand total
   let grandTotal = 0;
   parsedItems.forEach(it => { grandTotal += (it.total || 0); });
 
-  // Build table HTML
+  // Build HTML table
   let html = '<table class="summary-table" role="table"><thead><tr>' +
-    '<th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
+             '<th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
 
   parsedItems.forEach(it => {
-    if(it.unrecognized){
-      const truncated = (it.name || '').slice(0,28) + (it.name && it.name.length > 28 ? '…' : '');
-      html += `<tr class="unrecognized"><td>${escapeHtml(truncated)}</td><td class="price">---</td><td class="quantity">---</td><td class="total-column">Unrecognized</td></tr>`;
+    if (it.unrecognized) {
+      const truncated = (it.name || '').slice(0, 28) + ((it.name && it.name.length > 28) ? '…' : '');
+      html += `<tr class="unrecognized">
+                 <td>${escapeHtml(truncated)}</td>
+                 <td class="price">---</td>
+                 <td class="quantity">---</td>
+                 <td class="total-column">Unrecognized</td>
+               </tr>`;
     } else {
       const roundedPrice = roundDownFlexible(it.price);
       const roundedTotal = roundDownFlexible(it.total);
-      html += `<tr><td>${escapeHtml(it.name)}</td>` +
-              `<td class="price">${formatNumberDecimal(roundedPrice)}</td>` +
-              `<td class="quantity">${formatNumberInteger(it.qty)}</td>` +
-              `<td class="total-column">${formatNumberDecimal(roundedTotal)}</td></tr>`;
+      html += `<tr>
+                 <td>${escapeHtml(it.name)}</td>
+                 <td class="price">${formatNumberDecimal(roundedPrice)}</td>
+                 <td class="quantity">${formatNumberInteger(it.qty)}</td>
+                 <td class="total-column">${formatNumberDecimal(roundedTotal)}</td>
+               </tr>`;
     }
   });
 
-  html += `<tr class="summary-total"><td colspan="3" style="text-align:left">Total</td><td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td></tr>`;
+  // Add grand total row
+  html += `<tr class="summary-total">
+             <td colspan="3" style="text-align:left">Total</td>
+             <td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td>
+           </tr>`;
   html += '</tbody></table>';
 
+  // Inject HTML
   summaryContainer.innerHTML = html;
   summaryContainer.style.display = 'flex';
 }
