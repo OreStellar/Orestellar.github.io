@@ -974,13 +974,42 @@ function parseInventoryText(text) {
   return result;
 }
 
-function renderSummary(parsedItems, isShared = false){
- const summaryContainer = document.getElementById('summaryContainer');
-if (!summaryContainer) {
-  console.error("summaryContainer not found in DOM");
-  return;
-} 
-  
+function renderSummary(parsedItems, isShared = false) {
+    const summaryContainer = document.getElementById('summaryContainer');
+    if (!summaryContainer) {
+        console.error("summaryContainer not found in DOM");
+        return;
+    }
+
+    // Clear previous content
+    summaryContainer.innerHTML = '';
+
+    // Build the summary table
+    const table = document.createElement('table');
+    table.className = 'summary-table';
+
+    parsedItems.forEach(item => {
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = item.name;
+        const qtyCell = document.createElement('td');
+        qtyCell.textContent = item.quantity;
+        const valueCell = document.createElement('td');
+        valueCell.textContent = item.value;
+
+        row.appendChild(nameCell);
+        row.appendChild(qtyCell);
+        row.appendChild(valueCell);
+        table.appendChild(row);
+    });
+
+    summaryContainer.appendChild(table);
+
+    // Show container
+    summaryContainer.style.display = 'flex';
+}
+
   // compute grand total
   let grandTotal = 0;
   parsedItems.forEach(it => { grandTotal += (it.total || 0); });
@@ -1155,8 +1184,9 @@ submitButton.addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.style.display = 'flex';
+const summaryContainer = document.getElementById('summaryContainer');
+console.log(summaryContainer); // should not be null
+summaryContainer.style.display = 'flex';
 
   document.getElementById('shareButton').style.display = 'inline-block';
   const priceTabBtn = document.getElementById('priceTab');
