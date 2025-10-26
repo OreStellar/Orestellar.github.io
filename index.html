@@ -155,14 +155,18 @@
   overflow-x: auto;
 }
 
-
-  #contract-left, #contract-right {
-    width: 100%;
-    aspect-ratio: 630 / 418; /* maintain image ratio */
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+#contract-left, #contract-right {
+  width: 630px; /* ✅ exact image width */
+  height: 418px; /* ✅ exact image height */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none; /* ✅ hidden on page load */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+  
   table {
     width: 100%;
     border-collapse: collapse;
