@@ -318,9 +318,9 @@ function drawStaticStars() {
     let color = '255,255,255';
 
     const roll = Math.random();
-    if (roll < 0.005) color = '255,180,180';  // pink
-    else if (roll < 0.01) color = '255,80,80'; // red
-    else if (roll < 0.015) color = '255,255,180'; // yellow
+    if (roll < 0.008) color = '255,180,180';  // pink
+    else if (roll < 0.015) color = '255,80,80'; // red
+    else if (roll < 0.02) color = '255,255,180'; // yellow
 
     sctx.fillStyle = `rgba(${color},${alpha})`;
     sctx.fillRect(x, y, size, size);
@@ -351,7 +351,7 @@ function generateStars() {
   for (let i = 0; i < totalStars; i++) {
     // Cluster logic
     let x, y;
-    if (Math.random() < 0.75) { // 30% stars in clusters
+    if (Math.random() < 0.95) { // 30% stars in clusters
       const cx = (Math.random() * 0.8 + 0.1) * canvas.width;
       const cy = (Math.random() * 0.8 + 0.1) * canvas.height;
       x = cx + (Math.random() - 0.5) * 150;
@@ -378,7 +378,7 @@ function generateStars() {
       color: `rgb(${color})`,
       twinkle: Math.random() < twinkleChance,
       flickerOffset: Math.random() * Math.PI * 2,
-      flickerSpeed: 0.005 + Math.random() * 0.001, // slow
+      flickerSpeed: 0.005 + Math.random() * 0.005, // slow
       flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
