@@ -514,6 +514,8 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const parsed = parseOreLine(line);
     if (!parsed) return;  // skip unrecognized lines
 
+    if (parsed.ore === "Top 10 Overall (excluding Triglavians and compressed)") return;
+    
     const unitPrice = priceData[parsed.ore]?.price || 0;
     const total = parsed.quantity * unitPrice;
     grandTotal += total;
@@ -565,11 +567,16 @@ ratesTab.addEventListener('click', () => {
 function showRates() {
   let table = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
 
-  Object.keys(priceData).forEach(ore => {
-    if (ore.toLowerCase() !== 'ore variant') {
-      table += `<tr><td>${ore}</td><td>${priceData[ore].price.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td></tr>`;
+Object.keys(priceData).forEach(ore => {
+    if (
+        ore.toLowerCase() !== 'ore variant' &&
+        ore !== "Top 10 Overall (excluding Triglavians and compressed)" &&
+        !ore.toLowerCase().includes('compressed')   // ✅ skip compressed only here
+    ) {
+        table += `<tr><td>${ore}</td><td>${priceData[ore].price.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td></tr>`;
     }
-  });
+});
+
 
   table += '</table>';
   ratesContainer.innerHTML = table;
