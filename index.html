@@ -150,11 +150,11 @@
   position: absolute;
   flex-direction: row;       /* icon and text in a row */
   align-items: center;       /* vertically center both icon and text */
-  justify-content: center;   /* horizontally center content */
+  justify-content: flex-start;   /* horizontally center content */
   top: 30%;               /* vertical placement */
   right: -20px;            /* hidden offscreen initially */
-  width: 85px;
-  text-align: right;
+  width: 200px;
+  text-align: left;
   background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
   border: 2px solid rgba(0,0,0,0.5);
   border-left: none;
@@ -163,6 +163,7 @@
   font-weight: 500;
   font-size: .95rem;
   padding: 5px;
+  padding-left: 10px;           /* 10px space from left edge */
   cursor: pointer;
   text-shadow: 0 0 5px #fff, 0 0 10px #fff;
   box-shadow: 0 0 10px #fff;
