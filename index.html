@@ -197,28 +197,31 @@
   top: 21.5%;
 }
 
-  #ratesContainer, #compareContainer {
+#ratesContainer, #compareContainer {
     display: none;
     position: absolute;
     top: 50%;
-    right: calc(10% + 70px);
+    right: 10%;                  /* distance from right edge */
     transform: translateY(-50%) scale(0);
-    width: 400px;
+    width: 80vw;                 /* make container responsive to screen width */
+    max-width: 600px;            /* prevent it from getting too wide */
+    max-height: 80vh;            /* max height 80% of viewport */
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    overflow-x: auto;
+    overflow-y: auto;            /* vertical scroll only if needed */
+    overflow-x: hidden;          /* hide horizontal scroll */
     opacity: 0;
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-  }
+}
 
-  #ratesContainer.active, #compareContainer.active {
+#ratesContainer.active, #compareContainer.active {
     display: block;
     transform: translateY(-50%) scale(1);
     opacity: 1;
-  }
+}
 
   table {
     width: 100%;
