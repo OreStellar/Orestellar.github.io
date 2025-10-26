@@ -423,6 +423,26 @@ fetch(csvUrl)
   });
 
 /* --- Submit Button --- */
+// --- CSV Parsing ---
+const csvUrl = 'https://orestellar.github.io/data/prices.csv';
+let priceData = {};
+
+fetch(csvUrl)
+  .then(res => res.text())
+  .then(text => {
+    const lines = text.split('\n');
+    const headers = lines[0].split(',');
+    const col150 = headers.indexOf('150'); // find the 150 column
+
+    lines.slice(1).forEach(line => {
+      const cols = line.split(',');
+      const ore = cols[0];
+      const price150 = col150 >= 0 ? parseFloat(cols[col150]) : parseFloat(cols[1]);
+      priceData[ore] = { price: price150 };
+    });
+  });
+
+// --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
   const input = document.getElementById('messageBox').value.trim();
   if (!input) return;
@@ -436,7 +456,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const quantity = parseFloat(qty);
     const priceEntry = priceData[ore];
     if (!priceEntry) return;
-    const perUnit = priceEntry.price;
+    const perUnit = priceEntry.price;   // now always the 150 column
     const total = perUnit * quantity;
     grandTotal += total;
     table += `<tr><td>${ore}</td><td>${quantity}</td><td>${perUnit.toFixed(2)}</td><td>${total.toFixed(2)}</td></tr>`;
