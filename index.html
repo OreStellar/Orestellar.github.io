@@ -433,7 +433,7 @@ Mercoxit 25000
   <div id="leftContract" class="contract-image"></div>
 
   <!-- Summary appears here -->
-  <div id="summaryContainer" class="summary-container" style="display: none;">
+<div id="summaryContainer" class="summary-container" style="display: none;"></div>
     <!-- JS will insert summary table here -->
     <div class="button-row" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center;">
       <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
@@ -1165,11 +1165,17 @@ submitButton.addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   submitButton.style.display = 'none';
 
-const summaryContainer = document.getElementById('summaryContainer');
-if (!summaryContainer) {
-  console.error("summaryContainer not found");
-  return;
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const summaryContainer = document.getElementById('summaryContainer');
+  if (!summaryContainer) {
+    console.error("summaryContainer not found in DOM");
+    return;
+  }
+
+  // Now you can safely render the summary
+  renderSummary(parsedItems);
+});
+
 
 // now safe to use summaryContainer
 summaryContainer.style.display = 'flex';
