@@ -409,25 +409,6 @@ drawStars();
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 priceData = {};
-
-fetch(csvUrl)
-  .then(res => res.text())
-  .then(text => {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-
-    const col150 = headers.findIndex(h => h.trim().toLowerCase() === 'suggested buy price @ 150%'.toLowerCase());
-    if (col150 === -1) {
-      console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV headers:', headers);
-      return;
-    }
-
-    lines.slice(1).forEach(line => {
-      const cols = line.split(',');
-      const ore = cols[0]?.trim();
-      const price150 = parseFloat(cols[col150]) || 0;
-      if (ore) priceData[ore] = { price: price150 };
-    });
 fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
