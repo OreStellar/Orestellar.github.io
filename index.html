@@ -298,12 +298,13 @@ function drawStaticStars() {
 resizeStatic();
 
 /* --- Animated Flickering Stars --- */
+/* --- Animated Flickering Stars --- */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-const stars = [];
-const totalStars = 300;
-const twinkleChance = 0.05; // only 5% twinkle
+let stars = [];
+const totalStars = 300;           // total animated stars
+const twinkleChance = 0.05;       // only 5% twinkle
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -315,15 +316,38 @@ resizeCanvas();
 
 function generateStars() {
   stars.length = 0;
+
   for (let i = 0; i < totalStars; i++) {
+    // Cluster logic
+    let x, y;
+    if (Math.random() < 0.3) { // 30% stars in clusters
+      const cx = (Math.random() * 0.8 + 0.1) * canvas.width;
+      const cy = (Math.random() * 0.8 + 0.1) * canvas.height;
+      x = cx + (Math.random() - 0.5) * 150;
+      y = cy + (Math.random() - 0.5) * 150;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
+    }
+
+    // Determine color (<2% chance for colored)
+    const roll = Math.random();
+    let color = '255,255,255'; // default white
+    if (roll < 0.006) color = '255,180,180';    // light pink
+    else if (roll < 0.012) color = '255,80,80'; // red
+    else if (roll < 0.018) color = '255,255,180'; // yellow
+
+    // Small radius
+    const r = 0.5 + Math.random() * 1.5;
+
     stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: 0.5 + Math.random() * 1.5,  // small radius
-      color: '#ffffff',
+      x,
+      y,
+      r,
+      color: `rgb(${color})`,
       twinkle: Math.random() < twinkleChance,
       flickerOffset: Math.random() * Math.PI * 2,
-      flickerSpeed: 0.005 + Math.random() * 0.001,
+      flickerSpeed: 0.005 + Math.random() * 0.001, // slow
       flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
@@ -331,17 +355,20 @@ function generateStars() {
 
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   for (const s of stars) {
     let alpha = 1;
     if (s.twinkle) {
-      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * s.flickerSpeed + s.flickerOffset);
+      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.0005 + s.flickerOffset);
     }
+
     ctx.beginPath();
     ctx.fillStyle = s.color;
     ctx.globalAlpha = alpha;
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
     ctx.fill();
   }
+
   ctx.globalAlpha = 1;
   requestAnimationFrame(drawStars);
 }
