@@ -287,7 +287,7 @@ window.addEventListener('resize', resizeStatic);
 
 function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
-  const totalStaticStars = 3000;
+  const totalStaticStars = 3200;
 
   for (let i = 0; i < totalStaticStars; i++) {
     const x = Math.random() * staticCanvas.width;
@@ -315,7 +315,7 @@ const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
 let stars = [];
-const totalStars = 800;           // total animated stars
+const totalStars = 600;           // total animated stars
 const twinkleChance = 0.05;       // only 5% twinkle
 
 function resizeCanvas() {
@@ -371,7 +371,7 @@ function drawStars() {
   for (const s of stars) {
     let alpha = 1;
     if (s.twinkle) {
-      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.0005 + s.flickerOffset);
+      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.001 + s.flickerOffset);
     }
 
     ctx.beginPath();
