@@ -279,7 +279,7 @@ function drawStaticStars() {
     let x = Math.random() * staticCanvas.width;
     let y = Math.random() * staticCanvas.height;
     let size = 1 + Math.random() * 2;        // small stars
-    let alpha = 0.2 + Math.random() * 0.6;   // visible but subtle
+    let alpha = 0.3 + Math.random() * 0.8;   // visible but subtle
     let color = '255,255,255';               // white
 
     // 1-2% chance for colored stars
@@ -297,11 +297,6 @@ resizeStatic(); // draw once
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  generateStars();
-}
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
@@ -323,6 +318,11 @@ function generateStars() {
       flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
+}
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateStars();
 }
 
 function drawStars() {
