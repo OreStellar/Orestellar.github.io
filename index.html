@@ -1063,8 +1063,12 @@ window.addEventListener('DOMContentLoaded', () => {
           shareButton.style.display = 'inline-block';
       });
   // Show contracts
-  const contractsWrapper = document.getElementById('contracts-wrapper');
-  if (!contractsWrapper) return;
+const contractsWrapper = document.getElementById('contracts-wrapper');
+if (!contractsWrapper) {
+    console.error("Contracts wrapper not found in DOM");
+} else {
+    // proceed with code that uses contractsWrapper
+}
 
   contractsWrapper.innerHTML = ''; // Clear old contracts
 
