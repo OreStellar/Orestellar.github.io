@@ -90,46 +90,53 @@
 #contractsContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 40px auto;
   gap: 30px;
+  flex-wrap: wrap;
 }
 
+/* Contract containers */
 .contract-container {
-  flex-shrink: 0;
-  width: 280px; /* scaled down from 630px */
-  height: auto;
-  aspect-ratio: 630 / 418; /* keeps image proportions */
+  width: 220px; /* 👈 smaller, consistent visual size */
+  height: 145px; /* maintains 630x418 aspect ratio (approx 0.66) */
   background-size: contain;
-  background-position: center;
   background-repeat: no-repeat;
+  background-position: center;
   border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .contract-container:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
 }
 
+/* Left & right contract images */
+#contract-left {
+  background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png');
+}
+
+#contract-right {
+  background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png');
+}
+
+/* Summary stays centered and proportional */
 #summaryContainer {
   flex: 1;
   min-width: 400px;
   max-width: 600px;
-  display: none;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.3);
   border-radius: 12px;
-  padding: 20px 30px;
-  color: white;
-  text-shadow: 0 0 8px white;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  display: none;
 }
-
 
   #contract-left, #contract-right {
     width: 100%;
@@ -138,15 +145,6 @@
     background-position: center;
     background-repeat: no-repeat;
   }
-
-  #contract-left {
-    background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png');
-  }
-
-  #contract-right {
-    background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png');
-  }
-
   table {
     width: 100%;
     border-collapse: collapse;
