@@ -265,87 +265,71 @@
 </div>
 
 <script>
-// Static background stars
+/* --- Static Background Stars --- */
+const staticCanvas = document.getElementById('staticStars');
+const sctx = staticCanvas.getContext('2d');
+
 function resizeStatic() {
   staticCanvas.width = window.innerWidth;
   staticCanvas.height = window.innerHeight;
-  drawStaticStars(); // redraw static stars after resizing
+  drawStaticStars();
 }
 window.addEventListener('resize', resizeStatic);
-resizeStatic();
 
-// generate one-time static stars
 function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+  const totalStars = 1000; // number of static stars
 
-  const totalStaticStars = 3000; // denser background
+  for (let i = 0; i < totalStars; i++) {
+    let x = Math.random() * staticCanvas.width;
+    let y = Math.random() * staticCanvas.height;
+    let size = 1 + Math.random() * 2;        // small stars
+    let alpha = 0.2 + Math.random() * 0.6;   // visible but subtle
+    let color = '255,255,255';               // white
 
-  for (let i = 0; i < totalStaticStars; i++) {
-    let x, y;
-    if (Math.random() < 0.3) { // 30% chance for clusters
-      const cx = (Math.random() * 0.8 + 0.1) * staticCanvas.width;
-      const cy = (Math.random() * 0.8 + 0.1) * staticCanvas.height;
-      x = cx + (Math.random() - 0.5) * 150;
-      y = cy + (Math.random() - 0.5) * 150;
-    } else {
-      x = Math.random() * staticCanvas.width;
-      y = Math.random() * staticCanvas.height;
-    }
-
-    // mostly white, rare colored stars
+    // 1-2% chance for colored stars
     const roll = Math.random();
-    let color = '(255,255,255';
-    if (roll < 0.005) color = '(255,180,180'; // light pink
-    else if (roll < 0.010) color = '(255,80,80'; // red
-    else if (roll < 0.015) color = '(255,255,180'; // yellow
+    if (roll < 0.01) color = '255,180,180'; // pink
+    else if (roll < 0.02) color = '255,255,180'; // yellow
 
-const alpha = 0.05 + Math.random() * 0.15; // very faint
-const size = 0.5 + Math.random() * 0.8;    // tiny, ~0.5–1.3px
-sctx.fillStyle = `rgba(${color},${alpha})`;
-sctx.fillRect(x, y, size, size);
+    sctx.fillStyle = `rgba(${color},${alpha})`;
+    sctx.fillRect(x, y, size, size);
   }
 }
-drawStaticStars();
+resizeStatic(); // draw once
 
-
-/* OreStellar Classic Starfield */
+/* --- Animated Flickering Stars --- */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
+const flickerStars = [];
 
-// Animated starfield
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  generateStars(); // regenerate star positions
+  generateFlickerStars();
 }
 window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
 
-
-const stars = [];
-const totalStars = 300;
-
-function generateStars() {
-  stars.length = 0; // clear old stars
-
-/* --- Animated Flickering Stars --- */
-for (let i = 0; i < 300; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: 0.5 + Math.random() * 1.5,
-    color: '#ffffff',
-    flickerOffset: Math.random() * Math.PI * 2,
-    flickerSpeed: 0.02 + Math.random() * 0.01, // very slow
-    flickerIntensity: 0.05 + Math.random() * 0.05 // subtle shimmer
-  });
+function generateFlickerStars() {
+  flickerStars.length = 0;
+  const totalStars = 300;
+  for (let i = 0; i < totalStars; i++) {
+    flickerStars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: 0.5 + Math.random() * 1.5,
+      color: '#ffffff',
+      flickerOffset: Math.random() * Math.PI * 2,
+      flickerSpeed: 0.002 + Math.random() * 0.004, // subtle speed
+      flickerIntensity: 0.1 + Math.random() * 0.3
+    });
+  }
 }
-}
-generateStars();
-function drawStars() {
+
+function drawFlickerStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (const s of stars) {
-    const flicker = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.0003 + s.flickerOffset); 
+  for (const s of flickerStars) {
+    const flicker = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.005 + s.flickerOffset);
     ctx.beginPath();
     ctx.fillStyle = s.color;
     ctx.globalAlpha = flicker;
@@ -353,12 +337,11 @@ function drawStars() {
     ctx.fill();
   }
   ctx.globalAlpha = 1;
-  requestAnimationFrame(drawStars);
+  requestAnimationFrame(drawFlickerStars);
 }
 
-drawStars();
-
-
+resizeCanvas(); // initialize
+drawFlickerStars();
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 let priceData = {};
