@@ -129,9 +129,20 @@
   <button id="submitButton">Submit</button>
 </div>
 
-<div id="summaryContainer" class="neon">
-  <!-- Summary table populated dynamically -->
+<div id="contractsContainer" style="display:flex; justify-content:space-between; width:90%; max-width:1200px; margin:0 auto; gap:20px;">
+  <div id="contract-left" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; color:#fff;">
+    <!-- left contract content -->
+  </div>
+
+  <div id="summaryContainer" class="neon" style="flex:2; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; overflow-x:auto;">
+    <!-- Summary table populated dynamically -->
+  </div>
+
+  <div id="contract-right" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; color:#fff;">
+    <!-- right contract content -->
+  </div>
 </div>
+
 
 <script>
 /* --- Starfield --- */
@@ -207,13 +218,14 @@ document.getElementById('submitButton').addEventListener('click', () => {
     table += `<tr><td>${ore}</td><td>${quantity}</td><td>${perUnit.toFixed(2)}</td><td>${total.toFixed(2)}</td></tr>`;
   });
 
-  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toFixed(2)}</th></tr></table>`;
+  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toFixed(2)}</th></tr>`;
   const summary = document.getElementById('summaryContainer');
   summary.innerHTML = table;
 
   document.getElementById('inventoryContainer').style.display = 'none';
   summary.style.display = 'block';
 });
+
 </script>
 
 </body>
