@@ -224,26 +224,30 @@
 #ratesContainer table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* let the content define column width */
   font-family: 'Orbitron', monospace;
   font-size: 0.95rem;
 }
 
 #ratesContainer th, #ratesContainer td {
-  padding: 6px 8px;            /* tighter padding for snug columns */
+  padding: 4px 6px;            /* tighter spacing */
   border-bottom: 1px solid rgba(255,255,255,0.2);
-  text-align: left;
 }
 
 #ratesContainer th {
+  text-align: left;
   background: rgba(255,255,255,0.05);
   text-shadow: 0 0 2px rgb(255,255,255);
 }
 
 #ratesContainer td {
-  text-shadow: none;            /* cleaner ledger look */
+  text-align: right;            /* right-align numbers */
+  text-shadow: none;            /* cleaner look */
 }
-  
+
+#ratesContainer td:first-child {
+  text-align: left;             /* left-align ore names */
+}
+
 </style>
 </head>
 <body>
@@ -474,8 +478,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
   console.log("✅ Summary shown");
 });
 
-
-/* --- Rates Tab --- */
+// rates tab
 document.getElementById('ratesTab').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
@@ -484,12 +487,13 @@ document.getElementById('ratesTab').addEventListener('click', () => {
   document.getElementById('compareContainer').style.display = 'none';
 
   const ratesContainer = document.getElementById('ratesContainer');
-  let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
+  
+  let table = '<table><tr><th>Ore</th><th>Unit Price</th></tr>'; // removed Variant column
 
   Object.keys(priceData).forEach(ore => {
     if (!ore.toLowerCase().includes('compressed') && ore.toLowerCase() !== 'ore variant') {
       const entry = priceData[ore];
-      table += `<tr><td>${ore}</td><td>-</td><td>${entry.price.toFixed(2)}</td></tr>`;
+      table += `<tr><td>${ore}</td><td>${entry.price.toFixed(2)}</td></tr>`; // removed variant
     }
   });
 
