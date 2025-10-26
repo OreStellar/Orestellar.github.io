@@ -1001,8 +1001,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const left = document.getElementById('leftContainer');
     if (left) left.style.display = 'flex';
 
-    const ShareButton = document.getElementById('shareButton');
-    if (ShareButton) ShareButton.style.display = 'inline-block';
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) shareButton.style.display = 'inline-block';
     else console.warn('shareButton not found in DOM');
 
     const PriceButton = document.getElementById('priceTab');
@@ -1011,7 +1011,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
      submitButton.addEventListener('click', () => {
           // Show the Share Summary button
-          ShareButton.style.display = 'inline-block';
+          shareButton.style.display = 'inline-block';
       });
   // Show contracts
   const contractsWrapper = document.getElementById('contracts-wrapper');
