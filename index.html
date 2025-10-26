@@ -145,17 +145,18 @@
 .sideTab {
   position: absolute;
   right: 50px;
+  top: 30%;               /* adjust vertical placement */
   background: rgba(0,255,255,0.08);
   border: 2px solid rgb(0, 0, 0);
   border-left: none;
   border-radius: 0 10px 10px 0;
   color: #fff;
   font-size: .95rem;
-  padding: 3px 3px;
+  padding: 5px;
   cursor: pointer;
   text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
   box-shadow: 0 0 10px rgb(255, 255, 255);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   z-index: 10;
   width: 75px;
   text-align: right;
@@ -173,6 +174,7 @@
 
 /* Hover glow effect */
 .sideTab:hover {
+  right: 0;
   background: rgba(0, 0, 0, 0.15);
   box-shadow: 0 0 20px rgb(255, 255, 255), 0 0 40px rgb(255, 255, 255);
   transform: translateX(4px);
