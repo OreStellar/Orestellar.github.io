@@ -1290,29 +1290,29 @@ document.addEventListener('keydown', (e) => {
 fetchPrices().then(() => renderPriceList());
 
 
-const logo = document.querySelector('#priceTab img');
 let startTime = null;
 
 function slowPulse(timestamp) {
-  // ✅ Find the logo safely
   const logo = document.getElementById('logoText');
-  if (!logo) return; // stop if logo isn't loaded yet
+  if (!logo) return;
 
   if (!startTime) startTime = timestamp;
   const elapsed = (timestamp - startTime) / 1000; // seconds
 
-  // Slow pulsation: scale glow 0.8–1.2 over 6 seconds
   const scale = 1 + 0.2 * Math.sin((Math.PI * 2 / 6) * elapsed);
 
-logo.style.filter = `
-drop-shadow(0 0 ${2 * scale}px #fff)
-drop-shadow(0 0 ${4 * scale}px #fff)
-drop-shadow(0 0 ${6 * scale}px #fff)
-`;
-
+  logo.style.filter = `
+    drop-shadow(0 0 ${2 * scale}px #fff),
+    drop-shadow(0 0 ${4 * scale}px #fff),
+    drop-shadow(0 0 ${6 * scale}px #fff)
+  `;
 
   requestAnimationFrame(slowPulse);
 }
+
+// start the pulsing
+requestAnimationFrame(slowPulse);
+
 
 const priceSearchInput = document.getElementById('priceSearch');
 
