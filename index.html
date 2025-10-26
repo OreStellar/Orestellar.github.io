@@ -427,6 +427,7 @@ const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 // --- Step 0: Load recognized ores ---
 let recognizedOres = [];  // longest first
 let priceData = {};
+let csvLoaded = false; // <-- flag
 
 fetch(csvUrl)
   .then(res => res.text())
@@ -537,7 +538,34 @@ document.getElementById('submitButton').addEventListener('click', () => {
   document.getElementById('contract-right').style.display = 'block';
 });
 
+// --- Rates Tab ---
+document.getElementById('ratesTab').addEventListener('click', () => {
+  if (!csvLoaded) {
+    alert("CSV is still loading, please wait a moment.");
+    return;
+  }
 
+  document.getElementById('inventoryContainer').style.display = 'none';
+  document.getElementById('summaryContainer').style.display = 'none';
+  document.getElementById('contract-left').style.display = 'none';
+  document.getElementById('contract-right').style.display = 'none';
+  document.getElementById('compareContainer').style.display = 'none';
+
+  const ratesContainer = document.getElementById('ratesContainer');
+  let table = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
+
+  Object.keys(priceData).forEach(ore => {
+    if (ore.toLowerCase() !== 'ore variant') {
+      table += `<tr><td>${ore}</td><td>${priceData[ore].price.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td></tr>`;
+    }
+  });
+
+  table += '</table>';
+  ratesContainer.innerHTML = table;
+
+  ratesContainer.classList.remove('active');
+  setTimeout(() => ratesContainer.classList.add('active'), 10);
+});
 
 /* --- Compare Tab --- */
 document.getElementById('compareTab').addEventListener('click', () => {
