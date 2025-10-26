@@ -268,7 +268,7 @@ resizeStatic();
 
 // generate one-time static stars
 function drawStaticStars() {
-  const totalStaticStars = 800; // faint background density
+  const totalStaticStars = 3000; // faint background density
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 
   for (let i = 0; i < totalStaticStars; i++) {
@@ -314,8 +314,8 @@ function generateStars() {
     if (clustered) {
       const cx = (Math.random() * 0.8 + 0.1) * canvas.width;
       const cy = (Math.random() * 0.8 + 0.1) * canvas.height;
-      x = cx + (Math.random() - 0.5) * 120;
-      y = cy + (Math.random() - 0.5) * 120;
+      x = cx + (Math.random() - 0.5) * 150;
+      y = cy + (Math.random() - 0.5) * 150;
     } else {
       x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
