@@ -155,22 +155,23 @@
   font-size: 0.85rem;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: right 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+   z-index: 10;
 }
 
 /* Slide-in hover */
 .sideTab:hover {
   left: 0;               /* slide fully into view */
   background: rgba(0, 255, 255, 0.25);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 12 rgba(0, 255, 255, 0.6);
   transform: translateX(100%); /* slide fully out */
 }
 
 /* Optional active click */
 .sideTab:active {
-  transform: scale(0.98);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+  transform: scale(0.95);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
 }
 
 /* Position each tab vertically along the right side */
