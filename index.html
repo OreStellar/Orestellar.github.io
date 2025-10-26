@@ -87,22 +87,35 @@
   }
 
   /* --- Contracts layout --- */
-  #contractsContainer {
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 1200px;
-    margin: 20px auto;
-    gap: 20px;
-  }
+#contractsContainer {
+  display: flex;
+  justify-content: center; /* center everything */
+  width: 90%;
+  max-width: 1300px;
+  margin: 20px auto;
+  gap: 20px;
+}
 
-  .contract-container {
-    flex: 1;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: rgba(0,0,0,0.2);
-  }
+.contract-container {
+  width: 630px; /* fixed width */
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgba(0,0,0,0.2);
+  flex-shrink: 0; /* prevent shrinking */
+}
+
+#summaryContainer {
+  flex: 1; /* take remaining space */
+  min-width: 300px; /* optional: prevent it from collapsing */
+  display: none;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
 
   #contract-left, #contract-right {
     width: 100%;
@@ -118,17 +131,6 @@
 
   #contract-right {
     background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png');
-  }
-
-  #summaryContainer {
-    flex: 2;
-    display: none;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 12px;
-    padding: 20px;
-    overflow-x: auto;
-    text-shadow: 0 0 2px #0ff;
   }
 
   table {
