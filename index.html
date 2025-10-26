@@ -145,33 +145,34 @@
   position: absolute;
   top: 30%;               /* vertical placement */
   right: -60px;            /* hidden offscreen initially */
-  width: 60px;             /* slimmer width */
-  padding: 10px;
-  background: rgba(0, 255, 255, 0.1);
-  border-radius: 12px 0 0 12px;
-  color: #0ff;
-  font-family: 'Orbitron', sans-serif;
+width: 75px;
+  text-align: right;
+  background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
+  border: 2px solid rgba(0,0,0,0.5);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  color: #fff;
   font-weight: 500;
-  font-size: 0.85rem;
-  text-align: center;
+  font-size: .95rem;
+  padding: 5px;
   cursor: pointer;
-  transition: right 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-   z-index: 10;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff;
+  box-shadow: 0 0 10px #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: translateX(0); /* start hidden slightly inside */
+  z-index: 10;
 }
 
-/* Slide-in hover */
+/* slide out on hover */
 .sideTab:hover {
-  left: 0;               /* slide fully into view */
-  background: rgba(0, 255, 255, 0.25);
-  box-shadow: 0 0 12 rgba(0, 255, 255, 0.6);
-  transform: translateX(100%); /* slide fully out */
+  transform: translateX(20px);  /* slides to the right */
+  box-shadow: 0 0 20px #fff, 0 0 40px #fff;
 }
 
-/* Optional active click */
+/* optional click effect */
 .sideTab:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  transform: translateX(22px) scale(0.98);  /* tiny press effect */
+  box-shadow: 0 0 15px #fff, 0 0 30px #0ff;
 }
 
 /* Position each tab vertically along the right side */
