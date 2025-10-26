@@ -1,1381 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OreStellar</title>
-
-<!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
-<!-- LZString for URL compression (share) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-
 <style>
-/* ================== BASE ================== */
-:root{
-  --neon: #ffffff;
-  --bg: #000;
-  --panel: rgba(20,20,20,0.92);
-  --mono: 'Share Tech Mono', monospace;
-  --orbitron: 'Orbitron', sans-serif;
-}
-html,body{margin:0;padding:0;height:100%;background:var(--bg);font-family:monospace;color:#fff;overflow:hidden;}
-/* star canvas sits at z=0 and pointer-events none so overlay works */
-canvas#starfield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* ================== LAYOUT ================== */
-.container-wrapper{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;;
-  justify-content:center;
-  min-height:100vh;
-  gap:20px;
-  padding:20px;
-  z-index:2;
-  position:relative;
-}
-
-/* ================== LOGO ================== */
-#myHeader{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-  width:100%;
-  max-width:650px;
-  margin-bottom:30px;
-  cursor:pointer;
-  z-index:3;
-}
-#logoText{display:inline;font-family:var(--orbitron);font-weight:700;font-size:4.5rem;letter-spacing:0;color:rgba(255,255,255,0.1);transform:skewX(-8deg);}
-#logoText span{display:inline;color:rgba(255,255,255,0.1);text-shadow:none;}
-
-@keyframes softGlow {
-  0%,100% { text-shadow: 0 0 1px #cccccca4; }
-  50% { text-shadow: 0 0 3px #ffffff8a; }
-}
-
-
-@keyframes flickerRapid {
-  0%,20%,40%,60%,80%,100% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-  10%,30%,50%,70%,90% { color: rgba(255,255,255,0.1); text-shadow: none; }
-}
-
-@keyframes flickerQuick {
-  0%,50%,100% { color: rgba(255,255,255,0.1); text-shadow: none; }
-  25%,75% { color: rgba(255,255,255,1); text-shadow: 0 0 10px #fff; }
-}
-
-
-
-/* ================== MAIN PANEL ================== */
-.main-container{
-  width:650px;
-  max-width:92%;
-  padding:30px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background-color:var(--panel);
-  border-radius:15px;
-  z-index:2;
-  box-shadow:0 6px 24px rgba(0,0,0,0.6);
-}
-/* Make container-wrapper flex to position main + button */
-.container-wrapper {
-  display: flex;
-  justify-content: center; /* main content centered horizontally */
-  align-items: center;     /* vertically center children */
-  gap: 20px;               /* spacing between main container and button */
-  position: relative;
-}
-/* header above textarea */
-#inventoryHeader{
-  font-family:var(--orbitron);
-  font-weight:700;
-  color:#fff;
-  text-shadow:0 0 8px #fff,0 0 16px #fff,0 0 24px var(--neon);
-  margin:0 0 12px 0;
-  padding-bottom:6px;
-}
-
-/* textarea styling — filler smaller & greyed */
-textarea#message{
-  display:block;
-  margin:0 auto;
-  width:92%;
-  font-size:14px;
-  color:#bfbfbf; /* filler color until user edits */
-  background-color: rgba(17,17,17,0.97);
-  padding:14px;
-  border-radius:10px;
-  resize:vertical;
-  border:1px solid #333;
-  text-align:left;
-  font-family:var(--mono);
-  box-shadow: inset 0 0 6px #111;
-  line-height:1.35;
-  min-height:130px;
-}
-textarea#message.small-filler { font-size:13px; color:#9a9a9a; } /* smaller, greyed filler */
-
-textarea#message:focus{
-  outline:none;
-  border-color:#fff;
-  box-shadow:inset 0 0 15px #fff,0 0 25px #fff;
-  color:#e6e6e6; /* actual typing color */
-}
-
-/* ================== BUTTONS ================== */
-.actionButton{
-  margin-top:15px;
-  background:linear-gradient(145deg,#161616,#242424);
-  color:#fff;
-  border:2px solid #ccc;
-  border-radius:10px;
-  padding:12px 26px;
-  font-weight:bold;
-  font-family:var(--orbitron);
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  text-shadow:0 0 2px #fff;
-  box-shadow:0 0 6px #ffffff33,0 0 12px #ffffff11 inset;
-  transition:all 0.25s ease;
-}
-.actionButton:disabled{opacity:0.45;cursor:not-allowed;}
-
-.contracts-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.contract-image {
-  width: 630;
-  height: 418;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-#leftContract {
-  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');
-}
-
-#rightContract {
-  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');
-}
-
-.summary-container {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
-
-
-#priceTab.actionButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 10px;
-  border-radius: 12px;
-  font-family: 'Orbitron', sans-serif;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-  transition: all 0.25s ease-in-out;
-  cursor: pointer;
-}
-
-#priceTab.actionButton:hover {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  transform: scale(1.05);
-}
-.summary-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.button-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-#priceTab,
-#shareButton {
-  min-width: 150px;
-  text-align: center;
-}
-
-#priceTab.active {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
-  transform: scale(1.05);
-}
-
-
-/* Blur effect for background */
-.blur {
-  filter: blur(6px);
-  transition: filter 0.3s;
-}
-
-
-/* === Floating Price List Container === */
-#priceListContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20, 20, 20, 0.95); /* darker and more neutral */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  padding: 20px;
-  width: 23%;
-  max-width: 900px;
-  max-height: 70vh;
-  overflow-y: auto;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  font-family: 'Orbitron', sans-serif;
-  display: none;
-  z-index: 1000;
-  text-shadow: 0 0 6px rgba(255,255,255,0.8);
-}
-
-/* === Translucent Scrollbars === */
-#priceListContainer::-webkit-scrollbar { width: 8px; }
-#priceListContainer::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.25);
-  border-radius: 4px;
-}
-#priceListContainer::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.45);
-}
-#priceListContainer::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-
-/* === Table Styling === */
-.price-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  color: #fff;
-  text-align: left;
-}
-
-.price-table th, .price-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  text-shadow: 0 0 4px rgba(255,255,255,0.6);
-}
-
-.price-table th {
-  background: rgba(40,40,40,0.8);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.price-table tr:hover td {
-  background: rgba(255,255,255,0.05);
-}
-
-/* === Base Ore Rows === */
-.base-row {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.base-ore {
-  font-weight: bold;
-  font-size: 1.1em;
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255,255,255,0.8);
-  padding-top: 10px;
-  letter-spacing: 0.5px;
-}
-
-/* === Variant Ore Rows === */
-.variant-row td {
-  padding-left: 24px;
-  color: #cccccc;
-  text-shadow: 0 0 4px rgba(255,255,255,0.4);
-}
-
-.variant-row:hover td {
-  background: rgba(255,255,255,0.05);
-}
-
-/* ✨ Neon fade-in / fade-out animation for the price list */
-@keyframes fadeInNeon {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.98);
-    box-shadow: 0 0 0 rgba(255,255,255,0);
+  body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
   }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.774);
+
+  #logoContainer {
+    margin: 20px 0;
+    position: relative;
+    width: 300px;
+    height: 100px;
   }
-}
-@keyframes fadeOutNeon {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    box-shadow: 0 0 25px rgba(253, 253, 253, 0.726);
+
+  #logoContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #fff);
+    animation: flicker 1.5s infinite;
   }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.98);
-    box-shadow: 0 0 0 rgba(255,255,255,0);
+
+  @keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+    }
+    20%, 22%, 24%, 55% {
+      opacity: 0.5;
+    }
   }
-}
 
+  #inventoryContainer {
+    width: 80%;
+    margin-bottom: 20px;
+  }
 
-/* Hidden state with smooth transition */
-#priceListContainer {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-#priceListContainer.show {
-  pointer-events: auto;
-  animation: fadeInNeon 0.35s ease forwards;
-}
-#priceListContainer.hide {
-  animation: fadeOutNeon 0.3s ease forwards;
-}
+  #inventoryContainer textarea {
+    width: 100%;
+    height: 150px;
+    background-color: #111;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+  }
 
-/* summary container */
-.summary-container{
-  display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;font-family:var(--mono);font-size:14px;line-height:1.4;color:var(--neon);background:rgba(0,10,0,0.95);border:2px solid var(--neon);border-radius:12px;padding:16px 20px;min-width:420px;max-width:520px;max-height:72vh;overflow-y:auto;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(0,255,0,0.18);z-index:3;
-}
-.summary-container::-webkit-scrollbar{width:8px;}
-.summary-container::-webkit-scrollbar-thumb{background:var(--neon);border-radius:6px;box-shadow:0 0 10px var(--neon);}
+  #submitButton {
+    background-color: #111;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-shadow: 0 0 5px #fff;
+    transition: all 0.2s;
+  }
 
-.summary-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.summary-table th, .summary-table td {padding:8px 10px;border-bottom:1px solid rgba(0,255,0,0.03);font-size:13px;white-space:nowrap;}
-.summary-table th:nth-child(1), .summary-table td:nth-child(1){text-align:left;}
-/* align numeric columns to the right */
-.summary-table td.price, .summary-table td.quantity, .summary-table td.total-column {text-align:right;font-variant-numeric:tabular-nums;}
-/* header numeric alignment: make headers match columns (right) */
-.summary-table th{ text-align:right; color:var(--neon); text-shadow:0 0 6px var(--neon); border-bottom:1px solid rgba(0,255,0,0.1); }
-.summary-table th:first-child{ text-align:left; } /* Name header left */
-.summary-table tr.unrecognized td {color:#ff6666;font-weight:700;text-shadow:0 0 8px #ff5555;}
-.summary-total td{border-top:2px solid rgba(0,255,0,0.18);font-weight:700;padding-top:10px; text-align:right;}
-/* highlight glow for search matches */
-.glow-match td:first-child {
-  color: #ffffff;
-  text-shadow: 0 0 6px #fff, 0 0 12px #fff;
-  font-weight: bold;
-}
+  #submitButton:hover {
+    box-shadow: 0 0 10px #fff;
+  }
 
-/* small responsive tweaks */
-@media (max-width:720px){
-  #priceListContainer{ right:10px; width:320px; max-height:50vh; }
-  .main-container{padding:20px;}
-  #logoText{font-size:3.2rem;}
-}
+  #summaryContainer {
+    display: none;
+    width: 80%;
+    margin-top: 20px;
+  }
 
+  .contracts {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
 
-.price-cell {
-  text-align: right;
-  padding-right: 8px; /* optional spacing */
-}
+  .contract-left, .contract-right {
+    width: 45%;
+    background-color: #111;
+    border: 1px solid #fff;
+    padding: 10px;
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+  }
 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  table, th, td {
+    border: 1px solid #fff;
+  }
+
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    text-shadow: 0 0 5px #fff;
+  }
+  #summaryContainer table {
+    border: 1px solid #fff;
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff;
+    animation: tableFlicker 2s infinite;
+  }
+
+  #summaryContainer th, #summaryContainer td {
+    border: 1px solid #fff;
+    padding: 8px;
+    text-align: left;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff;
+  }
+
+  #summaryContainer th {
+    background-color: #111;
+  }
+
+  @keyframes tableFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 22%, 24%, 55% { opacity: 0.6; }
+  }
 </style>
 </head>
-<body data-show-inventory="true">
-<canvas id="starfield"></canvas>
-<div id="mainContent"></div>
-<div class="container-wrapper" id="appRoot">
-  <header id="myHeader" title="Return home">
-    <h1 id="logoText"><span id="ore">Ore</span><span id="stellar">Stellar</span></h1>
-  </header>
+<body>
 
-  <!-- MAIN PANEL -->
-  <div class="main-container" id="inventoryContainer" role="region">
-    <h3 id="inventoryHeader">Paste Your Inventory Below</h3>
-
-    <textarea id="message" class="small-filler" rows="8" placeholder="Ducinium	1901
-Compressed Jaspet	10868
-Compressed Hedbergite	116
-Bistot 45006
-Moonshine Ytirium 152450
-Mercoxit 25000
-"></textarea>
-
-    <button id="submitButton" class="actionButton" disabled>Submit</button>
-  </div>
-
-<div id="contracts-wrapper" class="contracts-wrapper">
-  <!-- Left contract -->
-  <div id="leftContract" class="contract-image"></div>
-
-  <!-- Summary appears here -->
-<div id="summaryContainer" class="summary-container" style="display: none;"></div>
-    <!-- JS will insert summary table here -->
-    <div class="button-row" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center;">
-      <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
-      <button id="priceTab" class="actionButton" style="display:none;">Price List</button>
-    </div>
-  </div>
-
-  <!-- Right contract / total cost -->
-  <div id="rightContract" class="contract-image"></div>
+<!-- Logo with neon flicker -->
+<div id="logoContainer">
+  <img src="https://orestellar.github.io/isklogo.png" alt="OreStellar Logo">
 </div>
 
-</div> <!-- closes appRoot -->
-
-<div id="priceListContainer" style="display:none;">
-  <!-- Quick Find Bar -->
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-    <div style="font-weight:bold; font-size:1.1em; color:white; text-shadow:0 0 6px rgba(255,255,255,0.8);">
-      Price List
-    </div>
-    <input type="text" id="priceSearch" placeholder="Quick find..." 
-           style="padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.3);
-                  background: rgba(20,20,20,0.8); color:white; font-family: 'Orbitron',sans-serif; 
-                  text-shadow:0 0 3px rgba(255,255,255,0.6);">
-  </div>
-
-  <!-- Price table will appear here -->
-  <table class="price-table">
-    <!-- dynamically generated rows -->
-  </table>
+<!-- Inventory input -->
+<div id="inventoryContainer">
+  <textarea id="inventoryInput" placeholder="Enter ore data here (Name, Quantity, Price) one per line"></textarea>
 </div>
 
+<!-- Submit button -->
+<button id="submitButton">Submit</button>
+
+<!-- Contracts and summary -->
+<div class="contracts">
+  <div class="contract-left">Contract Left</div>
+  <div id="summaryContainer" class="contract-summary"></div>
+  <div class="contract-right">Contract Right</div>
+</div>
 
 <script>
-// ==================== SHARE SUMMARY HANDLER ====================
-document.addEventListener('DOMContentLoaded', async () => {
-  const params = new URLSearchParams(window.location.search);
-  const sharedData = params.get('s');
-
-  await fetchPrices(); // ✅ wait for priceList to load
-
-  if (sharedData) {
-    const decoded = LZString.decompressFromEncodedURIComponent(sharedData);
-    const parsed = parseInventoryText(decoded);
-
-    // Hide inventory & submit
-    document.getElementById('inventoryContainer').style.display = 'none';
-    submitButton.style.display = 'none';
-
-    // Show summary container with parsed data
-    renderSummary(parsed, true);
-
-    document.getElementById('summaryContainer').style.display = 'flex';
-    document.getElementById('priceTab').style.display = 'inline-block';
-  }
-
-  // ==================== START LOGO PULSE ====================
-  requestAnimationFrame(slowPulse); // ✅ safe to start now
-});
-
-    // === ADD THIS FUNCTION HERE ===
-  function showSummaryContainers() {
-      document.getElementById('leftContainer').style.display = 'block';
-      document.getElementById('totalCostContainer').style.display = 'block';
-      document.getElementById('totalCostText').style.display = 'block';
-      document.getElementById('shareButton').style.display = 'inline-block';
-  }
-const logoText = document.getElementById('logoText');
-const ore = document.getElementById('ore');
-const stellar = document.getElementById('stellar');
-
-// Function to set the glow color
-function setGlow(intensity = 1) {
-  const glowColor = `rgba(0, 255, 255, ${intensity})`; // cyan glow example
-  logoText.style.textShadow = `
-    0 0 ${10 * intensity}px ${glowColor},
-    0 0 ${20 * intensity}px ${glowColor},
-    0 0 ${30 * intensity}px ${glowColor}
-  `;
-}
-
-// Start with dim
-setGlow(0.1); // almost off
-
-// Sequence timing
-setTimeout(() => {
-  setGlow(1); // first flicker ON
-}, 600);
-
-setTimeout(() => {
-  setGlow(0.1); // flicker OFF
-}, 800);
-
-setTimeout(() => {
-  setGlow(1); // second flicker ON
-}, 1000);
-
-setTimeout(() => {
-  setGlow(1); // stay glowing forever
-}, 1200);
-
-/* ====================== STARFIELD ====================== */
-/* ====================== STARFIELD ====================== */
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
-
-
-  let stars = [];
-  const clusterCount = 25;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  function createStars() {
-    stars = [];
-    const centers = [];
-    for (let i = 0; i < clusterCount; i++) {
-      centers.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
-    }
-
-    const total = Math.max(500, Math.floor(canvas.width * canvas.height / 1000));
-    for (let i = 0; i < total; i++) {
-      let x, y;
-      if (Math.random() < 0.6) {
-        const c = centers[Math.floor(Math.random() * centers.length)];
-        const r = Math.random() * 140;
-        const a = Math.random() * Math.PI * 2;
-        x = c.x + r * Math.cos(a);
-        y = c.y + r * Math.sin(a);
-      } else {
-        x = Math.random() * canvas.width;
-        y = Math.random() * canvas.height;
-      }
-
-      const r = Math.random();
-      let color = '#ffffff';
-      if (r < 0.005) color = '#ff0000';
-      else if (r < 0.025) color = '#ffb6c1';
-      else if (r < 0.055) color = '#ffff99';
-
-      stars.push({
-        x, y,
-        size: Math.random() * 1.6 + 0.2,
-        color,
-        baseAlpha: 0.7 + Math.random() * 0.25,
-        isBright: false,
-        brightStart: 0,
-        brightEnd: 0
-      });
-    }
-  }
-
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const now = performance.now();
-    for (const s of stars) {
-      let alpha = s.baseAlpha;
-      if (s.isBright && now >= s.brightStart && now <= s.brightEnd) {
-        alpha = 1;
-      }
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = s.color;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  function animateStars() {
-    const now = performance.now();
-    for (const s of stars) {
-      if (Math.random() < 0.001 && !s.isBright) {
-        s.isBright = true;
-        s.brightStart = now;
-        s.brightEnd = now + 1500 + Math.random() * 3000;
-      } else if (s.isBright && now > s.brightEnd) {
-        s.isBright = false;
-      }
-    }
-    drawStars();
-    requestAnimationFrame(animateStars);
-  }
-
-  // Initial setup
-  resizeCanvas();
-  createStars();
-  drawStars();
-  animateStars();
-
-  window.addEventListener('resize', () => {
-    resizeCanvas();
-    createStars();
-    drawStars();
-  });
-/* ====================== LOGO FLICKER SEQUENCE ====================== */
-/* single setLogoState used by flicker sequence */
-function setLogoState(color, shadow) {
-  ore.style.color = color;
-  stellar.style.color = color;
-  ore.style.textShadow = shadow || 'none';
-  stellar.style.textShadow = shadow || 'none';
-  // also apply to the grouped logoText to ensure consistent look
-  logoText.style.color = color;
-  logoText.style.textShadow = shadow || 'none';
-}
-
-/* Clicking the header resets to base view */
-document.getElementById('myHeader').addEventListener('click', () => {
-  window.location.href = window.location.origin + window.location.pathname;
-});
-
-
-function flickerLogo() {
-  const steps = [
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 0 },
-    { color: '#ffffff ', shadow: '0 0 10px #ffffff  bfbf, 0 0 18px #ffffff ', glow: 0.5, delay: 1200 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1260 },
-    { color: '#ffffff ', shadow: '0 0 12px #ffffff , 0 0 24px #ffffff ', glow: 0.6, delay: 1560 },
-    { color: 'rgba(220,220,220,0.15)', shadow: 'none', glow: 0.2, delay: 1620 },
-  ];
-
-  steps.forEach(step => {
-    setTimeout(() => {
-      ore.style.color = step.color;
-      stellar.style.color = step.color;
-      logoText.style.color = step.color;
-      ore.style.textShadow = step.shadow;
-      stellar.style.textShadow = step.shadow;
-      logoText.style.textShadow = step.shadow;
-    }, step.delay);
-  });
-
-  // steady soft glow after flicker
-  setTimeout(() => {
-    ore.style.animation = 'softGlow 6s infinite';
-    stellar.style.animation = 'softGlow 6s infinite';
-    logoText.style.animation = 'softGlow 6s infinite';
-  }, 2560);
-}
-
-
-const CSV_URL = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
-
-function buildPriceGrouping() {
-  groupedPriceMap = {}; // fresh map
-
-  Object.keys(canonicalNames).forEach(normKey => {
-    const displayName = canonicalNames[normKey];
-    if (!displayName || /compressed/i.test(displayName)) return; // skip compressed
-
-    const entry = priceList[normKey];
-    if (!entry) return;
-
-    // Check if this ore is a variant (contains spaces or matches another base as substring)
-    const baseName = displayName.split(' ')[0]; // simple heuristic: first word as base
-    if (!groupedPriceMap[baseName]) groupedPriceMap[baseName] = [];
-
-    groupedPriceMap[baseName].push({ name: displayName, price: entry.csvValue });
-  });
-}
-
-
-// Storage for canonical names and CSV prices
-let canonicalNames = {};
-let priceList = {};
-let groupedPriceMap = {};
-
-// Parse CSV and populate canonicalNames + priceList
-function parseCSV(csvText) {
-  const lines = csvText.trim().split('\n');
-  const headers = lines[0].split(',');
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
-    const row = {};
-    headers.forEach((h, idx) => row[h.trim()] = values[idx].trim());
-
-    // Use 'name' column as canonical key
-    const key = normalizeName(row.name);
-    canonicalNames[key] = row.name; // display name
-    priceList[key] = { csvValue: parseFloat(row.price) }; // price value
-  }
-}
-
-function renderPriceList(searchTerm = '') {
-  const groups = {};
-
-  // Build groups
-  Object.keys(priceList).forEach(key => {
-    const name = canonicalNames[key] || key;
-    if (/compressed/i.test(name)) return;
-
-    // Filter by search term (case-insensitive)
-    if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase())) return;
-
-    const parts = name.trim().split(/\s+/);
-    const base = parts[parts.length - 1];
-    if (!groups[base]) groups[base] = [];
-    groups[base].push({ name, price: priceList[key].csvValue });
-  });
-
-  // Build HTML
-  let html = `<table class="price-table">
-    <thead>
-      <tr><th>Ore Type</th><th>Price (ISK)</th></tr>
-    </thead>
-    <tbody>`;
-
-  for (const base in groups) {
-    const variants = groups[base];
-    if (!variants.length) continue; // skip empty groups
-
-    html += `<tr class="base-row">
-        <td colspan="2" class="base-ore">${base}</td>
-      </tr>`;
-
-variants.forEach(entry => {
-  const variant = entry.name === base ? base : entry.name;
-  html += `<tr class="variant-row">
-      <td class="variant-name">${variant}</td>
-      <td class="price-cell">${entry.price.toLocaleString()}</td>
-    </tr>`;
-});
-
-  }
-
-  html += `</tbody></table>`;
-
-  let container = document.getElementById('priceListContainer');
-  let table = container.querySelector('.price-table');
-  if (table) {
-    table.outerHTML = html;
-  } else {
-    container.insertAdjacentHTML('beforeend', html);
-  }
-}
-
-// Example search listener
-document.getElementById('priceSearch').addEventListener('input', e => {
-  renderPriceList(e.target.value);
-});
-
-let oreEntries = [];
-
-
-async function fetchPrices() {
-  try {
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-    if (!lines.length) throw new Error("CSV empty");
-
-    const header = lines[0].split(',').map(h => h.trim());
-    let suggested150Idx = header.findIndex(h => h.includes('150'));
-    if (suggested150Idx < 0) suggested150Idx = header.findIndex(h => h.toLowerCase().includes('suggested buy price'));
-    const headerHas150 = suggested150Idx >= 0;
-
-    priceList = {};
-    canonicalNames = {};
-
-    lines.slice(1).forEach(line => {
-      const cols = splitCsvLine(line);
-      while (cols.length < header.length) cols.push('');
-      const name = cols[0].trim();
-      if (!name) return;
-
-      if (suggested150Idx < 0 || suggested150Idx >= cols.length) return;
-
-      const suggestedRaw = cols[suggested150Idx]?.trim() || '';
-      const suggested = parseFloat(suggestedRaw);
-      if (!isFinite(suggested)) return;
-
-      const normalized = normalizeName(name);
-      priceList[normalized] = { csvValue: suggested, headerHas150 };
-      canonicalNames[normalized] = name;
-    });
-
-    // <--- ADD THIS: populate oreEntries
-    oreEntries = Object.keys(priceList).map(key => ({ key }));
-
-    buildPriceGrouping();
-    renderPriceList();
-
-  } catch (err) {
-    console.error('fetchPrices error', err);
-  }
-}
-
-
-
-/* Helper: split CSV line while keeping quoted commas intact */
-function splitCsvLine(line) {
-  const out = [];
-  let cur = '', inQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') { inQuotes = !inQuotes; continue; }
-    if (ch === ',' && !inQuotes) {
-      out.push(cur);
-      cur = '';
-      continue;
-    }
-    cur += ch;
-  }
-  out.push(cur); // push last value
-  return out;
-}
-
-/* safe parse for numbers with commas and currency characters */
-function parseNumberSafe(str){
-  if(str === undefined || str === null) return NaN;
-  const s = String(str).replace(/[^\d.\-]/g,'').trim();
-  if(s === '') return NaN;
-  const n = parseFloat(s);
-  return isFinite(n) ? n : NaN;
-}
-
-/* normalize names for keys: lowercase, single spaces, trim */
-function normalizeName(name){
-  return (name || '').toString().toLowerCase().replace(/\s+/g,' ').trim();
-}
-function roundDownFlexible(n) {
-  if (n >= 1000) return Math.floor(n / 100) * 100;
-  if (n >= 100)  return Math.floor(n / 10) * 10;
-  if (n >= 10)   return Math.floor(n / 10) * 10;
-  if (n >= 1)    return Math.floor(n);
-  if (n > 0)     return Math.floor(n * 1) / 1;
-  return n;
-}
-
-const messageBox = document.getElementById('message');
 const submitButton = document.getElementById('submitButton');
-let userHasEdited = false;
-
-// --- INITIAL SETUP ---
-// If value is empty, show small-filler style
-if (!messageBox.value.trim()) {
-  messageBox.classList.add('small-filler');
-  messageBox.style.color = '#bfbfbf';
-  submitButton.disabled = true;
-} else {
-  // If textarea has pre-filled text, assume it's user content
-  messageBox.classList.remove('small-filler');
-  messageBox.style.color = '#e6e6e6';
-  userHasEdited = true;
-  submitButton.disabled = false;
-}
-
-// --- ON FOCUS --- 
-messageBox.addEventListener('focus', () => {
-  if (messageBox.classList.contains('small-filler')) {
-    messageBox.value = '';
-    messageBox.classList.remove('small-filler');
-    messageBox.style.color = '#e6e6e6';
-    userHasEdited = true;
-    submitButton.disabled = true; // still disabled until user types
-  }
-});
-
-// --- ON INPUT ---
-messageBox.addEventListener('input', () => {
-  const txt = messageBox.value.trim();
-  // mark edited if user has typed anything
-  if (txt.length > 0) userHasEdited = true;
-  // enable submit only if edited and non-empty
-  submitButton.disabled = !(userHasEdited && txt.length > 0);
-});
-
-// --- ON BLUR ---
-messageBox.addEventListener('blur', () => {
-  if (!messageBox.value.trim()) {
-    messageBox.classList.add('small-filler');
-    messageBox.style.color = '#bfbfbf';
-    userHasEdited = false;
-    submitButton.disabled = true;
-  }
-});
-function escapeRegex(s){
-  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-}
-function getPriceForOre(name) {
-  const normalized = normalizeName(name);
-  const lowerKeys = Object.keys(priceList).reduce((acc, key) => {
-    acc[key.toLowerCase()] = key;
-    return acc;
-  }, {});
-  const matchedKey = lowerKeys[normalized.toLowerCase()];
-  return matchedKey ? priceList[matchedKey].csvValue : 0;
-}
+const inventoryInput = document.getElementById('inventoryInput');
+const summaryContainer = document.getElementById('summaryContainer');
+const inventoryContainer = document.getElementById('inventoryContainer');
 
 function parseInventoryText(text) {
-  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+  const lines = text.split('\n');
   const result = [];
-
-  for (const rawLine of lines) {
-    if (!rawLine) continue;
-
-    // Normalize spaces
-    let line = rawLine.replace(/\t+/g, ' ').replace(/\s\s+/g, ' ').trim();
-
-    // Detect and remove “Compressed”
-    const isCompressed = /\bcompressed\b/i.test(line);
-    line = line.replace(/\bcompressed\b/i, '').trim();
-
-    // Match pattern: name qty [m³] [ISK]
-    const pattern = /^([\w\s'-]+?)\s+([\d,]+)(?:\s+[\w'-]+)?(?:\s+([\d,]*\.?\d*)\s*m3)?(?:\s+([\d,]*\.?\d*)\s*ISK)?/i;
-    const match = line.match(pattern);
-    if (!match) continue;
-
-    const name = match[1].trim();
-    const qty = parseInt(match[2].replace(/,/g, ''), 10) || 0;
-    const m3 = match[3] ? parseFloat(match[3].replace(/,/g, '')) : 0;
-    const isk = match[4] ? parseFloat(match[4].replace(/,/g, '')) : 0;
-
-    // Normalize name
-    const cleanName = name.replace(/\b(\w+)\b\s+\1$/i, '$1').trim();
-    const normalizedName = normalizeName(cleanName);
-
-    const priceEntry = priceList[normalizedName];
-    const perUnit = getPriceForOre(normalizedName);
-    const total = +(perUnit * qty);
-
-    result.push({
-      name: cleanName,
-      qty,
-      m3,
-      isk,
-      price: perUnit,
-      total,
-      compressed: isCompressed,
-      unrecognized: !priceEntry
-    });
+  for (let line of lines) {
+    const parts = line.split(',');
+    if (parts.length < 3) continue;
+    const name = parts[0].trim();
+    const quantity = parseFloat(parts[1].trim());
+    const price = parseFloat(parts[2].trim()); // EXACT input, no multipliers
+    const total = quantity * price;
+    result.push({name, quantity, price, total});
   }
-
   return result;
 }
 
-function renderSummary(parsedItems, isShared = false) {
-  // ✅ Get the summary container safely
-  const summaryContainer = document.getElementById('summaryContainer');
-  if (!summaryContainer) {
-    console.error("summaryContainer not found in DOM");
-    return;
-  }
-
-  // Hide and clear if no parsed items
-  if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
-    summaryContainer.style.display = 'none';
-    summaryContainer.innerHTML = '';
-    return;
-  }
-
-  // Compute grand total
+function renderSummary(parsed) {
+  let html = '<table><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
   let grandTotal = 0;
-  parsedItems.forEach(it => { grandTotal += (it.total || 0); });
-
-  // Build summary table HTML
-  let html = '<table class="summary-table" role="table"><thead><tr>' +
-             '<th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
-
-  parsedItems.forEach(it => {
-    if (it.unrecognized) {
-      const truncated = (it.name || '').slice(0, 28) + ((it.name && it.name.length > 28) ? '…' : '');
-      html += `<tr class="unrecognized">
-                 <td>${escapeHtml(truncated)}</td>
-                 <td class="price">---</td>
-                 <td class="quantity">---</td>
-                 <td class="total-column">Unrecognized</td>
-               </tr>`;
-    } else {
-      const roundedPrice = roundDownFlexible(it.price);
-      const roundedTotal = roundDownFlexible(it.total);
-      html += `<tr>
-                 <td>${escapeHtml(it.name)}</td>
-                 <td class="price">${formatNumberDecimal(roundedPrice)}</td>
-                 <td class="quantity">${formatNumberInteger(it.qty)}</td>
-                 <td class="total-column">${formatNumberDecimal(roundedTotal)}</td>
-               </tr>`;
-    }
+  parsed.forEach(item => {
+    html += `<tr>
+               <td>${item.name}</td>
+               <td>${item.quantity}</td>
+               <td>${item.price}</td>
+               <td>${item.total}</td>
+             </tr>`;
+    grandTotal += item.total;
   });
-
-  // Add grand total row
-  html += `<tr class="summary-total">
-             <td colspan="3" style="text-align:left">Total</td>
-             <td id="summaryTotal">${formatNumberDecimal(grandTotal)}</td>
+  html += `<tr>
+             <td colspan="3"><strong>Grand Total</strong></td>
+             <td><strong>${grandTotal}</strong></td>
            </tr>`;
-  html += '</tbody></table>';
-
-  // Inject into DOM
+  html += '</table>';
   summaryContainer.innerHTML = html;
-  summaryContainer.style.display = 'flex';
-
-  // -----------------------------
-  // Show contracts
-  const contractsWrapper = document.getElementById('contracts-wrapper');
-  if (!contractsWrapper) {
-    console.error("Contracts wrapper not found in DOM");
-  } else {
-    contractsWrapper.innerHTML = ''; // Clear old contracts
-    const contractImages = [
-      'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png',
-      'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png'
-    ];
-
-    contractImages.forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'contract-entry';
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Contract Image';
-      img.className = 'contract-image';
-      div.appendChild(img);
-      contractsWrapper.appendChild(div);
-    });
-  }
-
-  // Update total text container
-  const totalText = document.getElementById('totalCostText');
-  if (totalText) {
-    totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
-    makeCopyable(totalText);
-  }
-
-  // Make summary total copyable
-  const sumEl = document.getElementById('summaryTotal');
-  if (sumEl) makeCopyable(sumEl);
-
-  // -----------------------------
-  // Show extra containers/buttons ONLY if not shared
-  if (!isShared) {
-    const left = document.getElementById('leftContainer');
-    if (left) left.style.display = 'flex';
-
-    const shareButton = document.getElementById('shareButton');
-    if (shareButton) shareButton.style.display = 'inline-block';
-
-    const priceButton = document.getElementById('priceTab');
-    if (priceButton) priceButton.style.display = 'inline-block';
-  }
-
-  // -----------------------------
-  attachSorting(summaryContainer); // optional helper
+  summaryContainer.style.display = 'block';
 }
 
-// -----------------------------
-// Helper functions
-
-function formatNumberInteger(n){
-  if(n === null || n === undefined) return '-';
-  return (typeof n === 'number' ? Math.round(n) : n).toLocaleString();
-}
-
-function formatNumberDecimal(n){
-  if(n === null || n === undefined) return '-';
-  if(typeof n !== 'number') return String(n);
-  if(Math.abs(Math.round(n) - n) < 0.005) return Math.round(n).toLocaleString();
-  return n.toFixed(2).toLocaleString();
-}
-
-function makeCopyable(el){
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', async ()=>{
-    try {
-      const text = el.innerText.replace(/[^\d\.\,]/g,'');
-      await navigator.clipboard.writeText(text);
-      const orig = el.innerText;
-      el.innerText = 'Copied';
-      setTimeout(()=> el.innerText = orig, 1200);
-    } catch(e){}
-  });
-}
-
-function escapeHtml(s){
-  if(s===null || s===undefined) return '';
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-
-/* ====================== SORTING FOR SUMMARY ====================== */
-function attachSorting(container){
-  const table = container.querySelector('table');
-  if(!table) return;
-  const headers = table.querySelectorAll('th');
-  headers.forEach((header, index) => {
-    header.style.cursor = 'pointer';
-    header.addEventListener('click', ()=>{
-      const tbody = table.querySelector('tbody');
-      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('summary-total'));
-      const totalRow = tbody.querySelector('.summary-total');
-      const ascending = !header.classList.contains('sorted-asc');
-      headers.forEach(h=>h.classList.remove('sorted','sorted-asc','sorted-desc'));
-      header.classList.add('sorted');
-      header.classList.toggle('sorted-asc', ascending);
-      header.classList.toggle('sorted-desc', !ascending);
-
-      rows.sort((a,b)=>{
-        // unrecognized to bottom
-        if(a.classList.contains('unrecognized') && !b.classList.contains('unrecognized')) return 1;
-        if(b.classList.contains('unrecognized') && !a.classList.contains('unrecognized')) return -1;
-
-        if(index === 0){
-          // name column: alphabetical
-          return ascending ? a.children[index].innerText.localeCompare(b.children[index].innerText)
-                           : b.children[index].innerText.localeCompare(a.children[index].innerText);
-        } else {
-          // numeric columns
-          const A = parseFloat(a.children[index].innerText.replace(/[^\d.\-]/g,'')) || 0;
-          const B = parseFloat(b.children[index].innerText.replace(/[^\d.\-]/g,'')) || 0;
-          return ascending ? A - B : B - A;
-        }
-      });
-
-      rows.forEach(r => tbody.appendChild(r));
-      if(totalRow) tbody.appendChild(totalRow);
-    });
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const submitButton = document.getElementById('submitButton');
-  const messageBox = document.getElementById('message');
-  const summaryContainer = document.getElementById('summaryContainer');
-
-  if (!submitButton || !messageBox || !summaryContainer) {
-    console.error("Missing elements in DOM");
-    return;
-  }
-
-  submitButton.addEventListener('click', () => {
-    const txt = messageBox.value.trim();
-    if (!txt) return;
-
-    const parsed = parseInventoryText(txt);
-    renderSummary(parsed);
-
-    document.getElementById('inventoryContainer').style.display = 'none';
-    submitButton.style.display = 'none';
-
-    // Show summary container
-    summaryContainer.style.display = 'flex';
-  });
+submitButton.addEventListener('click', () => {
+  const txt = inventoryInput.value.trim();
+  if (!txt) return;
+  const parsed = parseInventoryText(txt);
+  renderSummary(parsed);
+  inventoryContainer.style.display = 'none';
+  submitButton.style.display = 'none';
 });
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const submitButton = document.getElementById('submitButton');
-  const messageBox = document.getElementById('message');
-  const summaryContainer = document.getElementById('summaryContainer');
-  const shareButton = document.getElementById('shareButton');
-  const priceTabBtn = document.getElementById('priceTab');
-
-  if (!submitButton || !messageBox || !summaryContainer || !shareButton || !priceTabBtn) {
-    console.error("One or more elements not found in DOM");
-    return;
-  }
-
-  submitButton.addEventListener('click', () => {
-    const txt = messageBox.value.trim();
-    if (!txt) return;
-
-    const parsed = parseInventoryText(txt);
-    renderSummary(parsed);
-
-    document.getElementById('inventoryContainer').style.display = 'none';
-    submitButton.style.display = 'none';
-
-    // Show summary, share button, and price tab
-    summaryContainer.style.display = 'flex';
-    shareButton.style.display = 'inline-block';
-    priceTabBtn.style.display = 'inline-block';
-  });
-
-  shareButton.addEventListener('click', async () => {
-    const txt = messageBox.value.trim();
-    if (!txt) return;
-
-    const compressed = LZString.compressToEncodedURIComponent(txt);
-    const shareUrl = `${location.origin}${location.pathname}?s=${compressed}`;
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      const orig = shareButton.innerText;
-      shareButton.innerText = 'Copied';
-      setTimeout(() => (shareButton.innerText = orig), 1400);
-    } catch (e) {
-      alert('Failed to copy URL.');
-    }
-  });
-});
-
-/* ====================== PRICES & VARIANTS ====================== */
-
-const RAW_PRICE_COL = 10;
-
-// Elements
-const priceTab = document.getElementById('priceTab');
-const priceListContainer = document.getElementById('priceListContainer');
-const mainContent = document.getElementById('mainContent');
-
-function openPriceList() {
-  // Rebuild pricelist if empty
-  if (!Object.keys(groupedPriceMap || {}).length) {
-    buildPriceGrouping();
-    renderPriceList();
-  }
-
-  // Hide all main containers except priceTab
-  document.querySelectorAll('.container-wrapper, .contracts-wrapper, #shareButton').forEach(el => {
-    el.style.display = 'none';
-  });
-
-  priceListContainer.classList.remove('hide');
-  priceListContainer.classList.add('show');
-  priceListContainer.style.display = 'block';
-}
-
-function closePriceList() {
-  priceListContainer.classList.remove('show');
-  priceListContainer.classList.add('hide');
-
-  setTimeout(() => {
-    priceListContainer.style.display = 'none';
-
-    // Restore previously hidden containers
-    document.querySelectorAll('.container-wrapper, .contracts-wrapper, #shareButton').forEach(el => {
-      el.style.display = '';
-    });
-
-  }, 280); // match fade-out duration
-}
-
-
-
-// Toggle on priceTab click
-priceTab.addEventListener('click', (e) => {
-  e.stopPropagation(); // prevent immediate document click
-  if (priceListContainer.classList.contains('show')) {
-    closePriceList();
-  } else {
-    openPriceList();
-  }
-});
-
-// Close when clicking outside pricelist
-document.addEventListener('click', (e) => {
-  if (priceListContainer.classList.contains('show') && !priceListContainer.contains(e.target) && e.target !== priceTab) {
-    closePriceList();
-  }
-});
-
-// Close with Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape" && priceListContainer.classList.contains('show')) {
-    closePriceList();
-  }
-});
-
-
-fetchPrices().then(() => renderPriceList());
-
-
-let startTime = null;
-
-function slowPulse(timestamp) {
-  const logo = document.getElementById('logoText');
-  if (!logo) return;
-
-  if (!startTime) startTime = timestamp;
-  const elapsed = (timestamp - startTime) / 1000; // seconds
-
-  const scale = 1 + 0.2 * Math.sin((Math.PI * 2 / 6) * elapsed);
-
-  logo.style.filter = `
-    drop-shadow(0 0 ${2 * scale}px #fff),
-    drop-shadow(0 0 ${4 * scale}px #fff),
-    drop-shadow(0 0 ${6 * scale}px #fff)
-  `;
-
-  requestAnimationFrame(slowPulse);
-}
-
-// start the pulsing
-requestAnimationFrame(slowPulse);
-
-
-const priceSearchInput = document.getElementById('priceSearch');
-
-priceSearchInput.addEventListener('input', () => {
-  const filter = priceSearchInput.value.toLowerCase();
- const rows = document.querySelectorAll('#priceListContainer .price-table .variant-row');
-
-
-  rows.forEach(row => {
-    const nameCell = row.querySelector('td:first-child');
-    if (!nameCell) return; // skip header row
-
-    const nameText = nameCell.textContent.toLowerCase();
-
-    if (filter === '') {
-      row.style.display = ''; // reset visibility
-      row.classList.remove('glow-match');
-    } else if (nameText.includes(filter)) {
-      row.style.display = '';
-      row.classList.add('glow-match'); // ✨ glow the match
-    } else {
-      row.style.display = 'none';
-      row.classList.remove('glow-match');
-    }
-  });
-});
-document.addEventListener('DOMContentLoaded', () => {
-  const priceTab = document.getElementById('priceTab');
-  const priceList = document.getElementById('priceListContainer');
-
-  if (priceTab && priceList) {
-    priceTab.addEventListener('click', () => {
-      const isVisible = priceList.style.display === 'block';
-      priceList.style.display = isVisible ? 'none' : 'block';
-
-      // Optional: toggle glow effect on the button when active
-      if (!isVisible) {
-        priceTab.classList.add('active');
-      } else {
-        priceTab.classList.remove('active');
-      }
-    });
-  }
-});
-
-requestAnimationFrame(slowPulse);
-/* ====================== AUTO LOAD ====================== */
-window.addEventListener('load', async () => {
-    // fetch prices first
-    await fetchPrices();
-
-    // optionally start logo flicker
-    flickerLogo();
-});
-
 </script>
+
 </body>
 </html>
