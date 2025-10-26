@@ -273,7 +273,7 @@ window.addEventListener('resize', resizeStatic);
 
 function drawStaticStars() {
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
-  const totalStars = 3000; // number of static stars
+  const totalStaticStars = 3000; // number of static stars
 
   for (let i = 0; i < totalStars; i++) {
     let x = Math.random() * staticCanvas.width;
@@ -282,13 +282,17 @@ function drawStaticStars() {
     let alpha = 0.3 + Math.random() * 0.8;   // visible but subtle
     let color = '255,255,255';               // white
 
-    // 1-2% chance for colored stars
-    const roll = Math.random();
-    if (roll < 0.01) color = '255,180,180'; // pink
-    else if (roll < 0.02) color = '255,255,180'; // yellow
+        const roll = Math.random();
+        let color = '255,255,255'; // mostly white
+        if (roll < 0.005) color = '255,180,180';
+        else if (roll < 0.01) color = '255,80,80';
+        else if (roll < 0.015) color = '255,255,180';
 
-    sctx.fillStyle = `rgba(${color},${alpha})`;
-    sctx.fillRect(x, y, size, size);
+        const alpha = 0.05 + Math.random() * 0.15;
+        const size = 0.5 + Math.random() * 0.8;
+
+        sctx.fillStyle = `rgba(${color},${alpha})`;
+        sctx.fillRect(x, y, size, size);
   }
 }
 resizeStatic(); // draw once
@@ -297,11 +301,12 @@ resizeStatic(); // draw once
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
+const stars = []; // declare FIRST
+const totalStars = 300;
+const twinkleChance = 0.05; // only 5% twinkle
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-
-const stars = [];
-const totalStars = 300;
 
 function generateStars() {
   stars.length = 0;
@@ -310,19 +315,14 @@ function generateStars() {
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: 0.5 + Math.random(),   // small radius
+      r: 0.5 + Math.random() * 1.5  // small radius
       color: '#ffffff',
-      twinkle: isTwinkler,
-      flickerOffset: Math.random() * Math.PI * 2,
-      flickerSpeed: 0.002 + Math.random() * 0.002, // very slow
-      flickerIntensity: 0.05 + Math.random() * 0.05
+            twinkle: Math.random() < twinkleChance,
+            flickerOffset: Math.random() * Math.PI * 2,
+            flickerSpeed: 0.005 + Math.random() * 0.001, // slower twinkle
+            flickerIntensity: 0.05 + Math.random() * 0.05
     });
   }
-}
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  generateStars();
 }
 
 function drawStars() {
@@ -343,6 +343,7 @@ function drawStars() {
 }
 
 drawStars();
+
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
 let priceData = {};
