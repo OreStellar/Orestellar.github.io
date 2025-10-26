@@ -427,26 +427,24 @@ Mercoxit 25000
     <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
- <!-- CONTRACTS / SUMMARY -->
-<div id="contracts-wrapper" class="contracts-wrapper"></div>
-  <div id="leftContainer" class="total-cost-container"></div>
+  <!-- CONTRACTS / SUMMARY -->
+  <div id="contracts-wrapper" class="contracts-wrapper"></div>
 
-  <!-- ✅ Only ONE summaryContainer -->
+  <!-- ✅ SUMMARY now appears between contracts and totals -->
   <div id="summaryContainer" class="summary-container" style="display: none;">
     <!-- JS will insert summary table here -->
-
     <div class="button-row" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center;">
       <button id="shareButton" class="actionButton" style="display:none;">Share Summary</button>
       <button id="priceTab" class="actionButton" style="display:none;">Price List</button>
     </div>
   </div>
-</div>
 
-    <div id="totalCostContainer" class="total-cost-container">
-      <div id="totalCostText">0 ISK</div>
-    </div>
+  <!-- ✅ TOTAL COST -->
+  <div id="totalCostContainer" class="total-cost-container">
+    <div id="totalCostText">0 ISK</div>
   </div>
-</div>
+</div> <!-- closes appRoot -->
+
 <div id="priceListContainer" style="display:none;">
   <!-- Quick Find Bar -->
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -464,6 +462,7 @@ Mercoxit 25000
     <!-- dynamically generated rows -->
   </table>
 </div>
+
 
 <script>
 // ==================== SHARE SUMMARY HANDLER ====================
