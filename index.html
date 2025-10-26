@@ -476,11 +476,6 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
 /* --- Rates Tab --- */
 document.getElementById('ratesTab').addEventListener('click', () => {
-  if (!Object.keys(priceData).length) {
-    alert("⚠️ Price data not loaded yet. Please wait a few seconds and try again.");
-    return;
-  }
-
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
   document.getElementById('contract-left').style.display = 'none';
@@ -489,18 +484,21 @@ document.getElementById('ratesTab').addEventListener('click', () => {
 
   const ratesContainer = document.getElementById('ratesContainer');
   let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
+
   Object.keys(priceData).forEach(ore => {
-    if (!ore.toLowerCase().includes('compressed')) {
+    if (!ore.toLowerCase().includes('compressed') && ore.toLowerCase() !== 'ore variant') {
       const entry = priceData[ore];
       table += `<tr><td>${ore}</td><td>-</td><td>${entry.price.toFixed(2)}</td></tr>`;
     }
   });
+
   table += '</table>';
   ratesContainer.innerHTML = table;
 
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
 });
+
 
 
 /* --- Compare Tab --- */
