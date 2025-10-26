@@ -408,35 +408,31 @@ drawStars();
 
 /* --- CSV Parsing --- */
 const csvUrl = 'https://orestellar.github.io/data/prices.csv';
-let priceData = {};
+priceData = {};
+
 fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
-    const lines = text.trim().split('\n');
+    const lines = text.split('\n');
     const headers = lines[0].split(',');
-    
-    // Find the "150" column index
-    const col150 = headers.findIndex(h => h.trim() === '150');
+    const col150 = headers.findIndex(h => h.trim() === 'Suggested Buy Price @ 150%'); // ✅ exact header match
+
     if (col150 === -1) {
-      console.error('❌ Could not find 150 column in CSV headers:', headers);
+      console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV headers:', headers);
       return;
     }
 
-    // Build priceData
     lines.slice(1).forEach(line => {
       const cols = line.split(',');
-      const ore = cols[0]?.trim();
-      const value150 = parseFloat(cols[col150]);
-
-      if (ore && !isNaN(value150)) {
-        priceData[ore] = { price: value150 };
-      }
+      const ore = cols[0];
+      const price150 = parseFloat(cols[col150]);
+      if (!ore || isNaN(price150)) return;
+      priceData[ore] = { price: price150 };
     });
 
-    console.log('✅ Price data loaded:', priceData);
-  })
-  .catch(err => console.error('❌ Error loading CSV:', err));
-  
+    console.log('✅ Loaded price data:', priceData);
+  });
+
 /* --- Rates Tab --- */
 document.getElementById('ratesTab').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
