@@ -265,13 +265,11 @@
 </div>
 
 <script>
-/* --- Static Background Stars --- */
-const staticCanvas = document.getElementById('staticStars');
-const sctx = staticCanvas.getContext('2d');
-
+// Static background stars
 function resizeStatic() {
   staticCanvas.width = window.innerWidth;
   staticCanvas.height = window.innerHeight;
+  drawStaticStars(); // redraw static stars after resizing
 }
 window.addEventListener('resize', resizeStatic);
 resizeStatic();
@@ -314,15 +312,14 @@ drawStaticStars();
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 
+// Animated starfield
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  generateStars(); // regenerate stars to fill canvas
+  generateStars(); // regenerate star positions
 }
-window.addEventListener('resize', () => {
-  resizeStatic();
-  drawStaticStars(); // redraw on resize
-});
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 
 const stars = [];
