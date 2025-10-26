@@ -86,15 +86,49 @@
     box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
   }
 
-  #summaryContainer {
-    display: none;
+  /* --- Contracts layout --- */
+  #contractsContainer {
+    display: flex;
+    justify-content: space-between;
     width: 90%;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 20px auto;
-    padding: 20px;
+    gap: 20px;
+  }
+
+  .contract-container {
+    flex: 1;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.2);
+  }
+
+  #contract-left, #contract-right {
+    width: 100%;
+    aspect-ratio: 630 / 418; /* maintain image ratio */
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  #contract-left {
+    background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png');
+  }
+
+  #contract-right {
+    background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png');
+  }
+
+  #summaryContainer {
+    flex: 2;
+    display: none;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+    text-shadow: 0 0 2px #0ff;
   }
 
   table {
@@ -129,20 +163,11 @@
   <button id="submitButton">Submit</button>
 </div>
 
-<div id="contractsContainer" style="display:flex; justify-content:space-between; width:90%; max-width:1200px; margin:0 auto; gap:20px;">
-  <div id="contract-left" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; color:#fff;">
-    <!-- left contract content -->
-  </div>
-
-  <div id="summaryContainer" class="neon" style="flex:2; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; overflow-x:auto;">
-    <!-- Summary table populated dynamically -->
-  </div>
-
-  <div id="contract-right" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; color:#fff;">
-    <!-- right contract content -->
-  </div>
+<div id="contractsContainer">
+  <div id="contract-left" class="contract-container"></div>
+  <div id="summaryContainer" class="neon"></div>
+  <div id="contract-right" class="contract-container"></div>
 </div>
-
 
 <script>
 /* --- Starfield --- */
@@ -212,7 +237,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const quantity = parseFloat(qty);
     const priceEntry = priceData[ore];
     if (!priceEntry) return;
-    const perUnit = priceEntry.price;
+    const perUnit = priceEntry.price; // no multipliers
     const total = perUnit * quantity;
     grandTotal += total;
     table += `<tr><td>${ore}</td><td>${quantity}</td><td>${perUnit.toFixed(2)}</td><td>${total.toFixed(2)}</td></tr>`;
@@ -225,7 +250,6 @@ document.getElementById('submitButton').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   summary.style.display = 'block';
 });
-
 </script>
 
 </body>
