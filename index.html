@@ -975,13 +975,14 @@ function parseInventoryText(text) {
 }
 
 function renderSummary(parsedItems, isShared = false) {
+  // ✅ Get the summary container safely
   const summaryContainer = document.getElementById('summaryContainer');
   if (!summaryContainer) {
     console.error("summaryContainer not found in DOM");
     return;
   }
 
-  // Validate parsedItems
+  // Hide and clear if no parsed items
   if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
     summaryContainer.style.display = 'none';
     summaryContainer.innerHTML = '';
@@ -992,7 +993,7 @@ function renderSummary(parsedItems, isShared = false) {
   let grandTotal = 0;
   parsedItems.forEach(it => { grandTotal += (it.total || 0); });
 
-  // Build HTML table
+  // Build summary table HTML
   let html = '<table class="summary-table" role="table"><thead><tr>' +
              '<th>Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead><tbody>';
 
@@ -1024,10 +1025,47 @@ function renderSummary(parsedItems, isShared = false) {
            </tr>`;
   html += '</tbody></table>';
 
-  // Inject HTML
+  // Inject into DOM
   summaryContainer.innerHTML = html;
   summaryContainer.style.display = 'flex';
-// Show extra buttons/containers if NOT shared
+
+  // -----------------------------
+  // Show contracts
+  const contractsWrapper = document.getElementById('contracts-wrapper');
+  if (!contractsWrapper) {
+    console.error("Contracts wrapper not found in DOM");
+  } else {
+    contractsWrapper.innerHTML = ''; // Clear old contracts
+    const contractImages = [
+      'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png',
+      'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png'
+    ];
+
+    contractImages.forEach(src => {
+      const div = document.createElement('div');
+      div.className = 'contract-entry';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Contract Image';
+      img.className = 'contract-image';
+      div.appendChild(img);
+      contractsWrapper.appendChild(div);
+    });
+  }
+
+  // Update total text container
+  const totalText = document.getElementById('totalCostText');
+  if (totalText) {
+    totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
+    makeCopyable(totalText);
+  }
+
+  // Make summary total copyable
+  const sumEl = document.getElementById('summaryTotal');
+  if (sumEl) makeCopyable(sumEl);
+
+  // -----------------------------
+  // Show extra containers/buttons ONLY if not shared
   if (!isShared) {
     const left = document.getElementById('leftContainer');
     if (left) left.style.display = 'flex';
@@ -1038,79 +1076,22 @@ function renderSummary(parsedItems, isShared = false) {
     const priceButton = document.getElementById('priceTab');
     if (priceButton) priceButton.style.display = 'inline-block';
   }
-}
 
   // -----------------------------
-// Only show extra containers if NOT shared
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (!isShared) {
-    const left = document.getElementById('leftContainer');
-    if (left) left.style.display = 'flex';
-
-    const shareButton = document.getElementById('shareButton');
-    if (shareButton) shareButton.style.display = 'inline-block';
-    else console.warn('shareButton not found in DOM');
-
-    const PriceButton = document.getElementById('priceTab');
-    if (PriceButton) PriceButton.style.display = 'inline-block';
-  }
-});
-     submitButton.addEventListener('click', () => {
-          // Show the Share Summary button
-          shareButton.style.display = 'inline-block';
-      });
-  // Show contracts
-const contractsWrapper = document.getElementById('contracts-wrapper');
-if (!contractsWrapper) {
-    console.error("Contracts wrapper not found in DOM");
-} else {
-    // proceed with code that uses contractsWrapper
+  attachSorting(summaryContainer); // optional helper
 }
 
-  contractsWrapper.innerHTML = ''; // Clear old contracts
+// -----------------------------
+// Helper functions
 
-  const contractImages = [
-    'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract1.png',
-    'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/images/Contract2.png'
-  ];
-
-  contractImages.forEach(src => {
-    const div = document.createElement('div');
-    div.className = 'contract-entry';
-
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = 'Contract Image';
-    img.className = 'contract-image';
-
-    div.appendChild(img);
-    contractsWrapper.appendChild(div);
-  });
-  // Update total text
-  const totalText = document.getElementById('totalCostText');
-  if(totalText) {
-    totalText.innerText = formatNumberDecimal(grandTotal) + ' ISK';
-    makeCopyable(totalText);
-  }
-
-  // Make summary total copyable
-  const sumEl = document.getElementById('summaryTotal');
-  if(sumEl) makeCopyable(sumEl);
-
-  attachSorting(summaryContainer);
-
-
-
-/* helpers for number formatting */
 function formatNumberInteger(n){
   if(n === null || n === undefined) return '-';
   return (typeof n === 'number' ? Math.round(n) : n).toLocaleString();
 }
+
 function formatNumberDecimal(n){
   if(n === null || n === undefined) return '-';
   if(typeof n !== 'number') return String(n);
-  // show no decimals when integer, else two decimals
   if(Math.abs(Math.round(n) - n) < 0.005) return Math.round(n).toLocaleString();
   return n.toFixed(2).toLocaleString();
 }
@@ -1124,17 +1105,15 @@ function makeCopyable(el){
       const orig = el.innerText;
       el.innerText = 'Copied';
       setTimeout(()=> el.innerText = orig, 1200);
-    } catch(e){
-      // ignore
-    }
+    } catch(e){}
   });
 }
 
-/* safe escape for HTML */
 function escapeHtml(s){
   if(s===null || s===undefined) return '';
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
 
 /* ====================== SORTING FOR SUMMARY ====================== */
 function attachSorting(container){
