@@ -4,209 +4,228 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OreStellar</title>
+
+<!-- Google Font: Orbitron -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
+  /* General body styling */
   body {
-    background-color: #000;
+    margin: 0;
+    background: #000;
     color: #fff;
     font-family: 'Orbitron', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0;
-    padding: 0;
+    overflow-x: hidden;
   }
 
-  #logoContainer {
-    margin: 20px 0;
-    position: relative;
-    width: 300px;
-    height: 100px;
+  /* Logo canvas */
+  #logoCanvas {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
   }
 
-  #logoContainer img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #fff);
-    animation: flicker 1.5s infinite;
-  }
-
-  @keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-      opacity: 1;
-    }
-    20%, 22%, 24%, 55% {
-      opacity: 0.5;
-    }
-  }
-
+  /* Inventory container styling */
   #inventoryContainer {
-    width: 80%;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-top: 20px;
   }
-
   #inventoryContainer textarea {
-    width: 100%;
+    width: 80%;
     height: 150px;
-    background-color: #111;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    padding: 10px;
+  }
+  #submitButton {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #000;
     border: 1px solid #fff;
     color: #fff;
-    padding: 10px;
     font-family: 'Orbitron', sans-serif;
-    font-size: 1rem;
-  }
-
-  #submitButton {
-    background-color: #111;
-    color: #fff;
-    border: 2px solid #fff;
-    padding: 10px 20px;
-    font-size: 1.2rem;
     cursor: pointer;
-    text-shadow: 0 0 5px #fff;
-    transition: all 0.2s;
   }
 
-  #submitButton:hover {
-    box-shadow: 0 0 10px #fff;
-  }
-
+  /* Summary container styling */
   #summaryContainer {
     display: none;
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 80%;
-    margin-top: 20px;
-  }
-
-  .contracts {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .contract-left, .contract-right {
-    width: 45%;
-    background-color: #111;
+    text-align: center;
     border: 1px solid #fff;
-    padding: 10px;
-    color: #fff;
-    text-shadow: 0 0 5px #fff;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-
-  table, th, td {
-    border: 1px solid #fff;
-  }
-
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-
-  th {
-    text-shadow: 0 0 5px #fff;
+    padding: 20px;
+    box-shadow: 0 0 20px #fff;
   }
   #summaryContainer table {
-    border: 1px solid #fff;
+    width: 100%;
+    border-collapse: collapse;
     color: #fff;
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff;
-    animation: tableFlicker 2s infinite;
   }
-
   #summaryContainer th, #summaryContainer td {
     border: 1px solid #fff;
     padding: 8px;
-    text-align: left;
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff;
   }
-
   #summaryContainer th {
-    background-color: #111;
+    background: rgba(255,255,255,0.1);
   }
 
-  @keyframes tableFlicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-    20%, 22%, 24%, 55% { opacity: 0.6; }
+  /* Contract left/right placeholders */
+  #contractLeft, #contractRight {
+    position: absolute;
+    top: 250px;
+    width: 100px;
+    height: 300px;
+    border: 1px solid #fff;
+  }
+  #contractLeft { left: 20px; }
+  #contractRight { right: 20px; }
+
+  /* Neon effect */
+  .neon {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 40px #fff;
   }
 </style>
 </head>
 <body>
 
-<!-- Logo with neon flicker -->
-<div id="logoContainer">
-  <img src="https://orestellar.github.io/isklogo.png" alt="OreStellar Logo">
-</div>
+<!-- Logo Canvas -->
+<canvas id="logoCanvas" width="600" height="150"></canvas>
 
-<!-- Inventory input -->
+<!-- Inventory Input -->
 <div id="inventoryContainer">
-  <textarea id="inventoryInput" placeholder="Enter ore data here (Name, Quantity, Price) one per line"></textarea>
+  <textarea id="messageBox" placeholder="Paste your ore inventory here"></textarea><br>
+  <button id="submitButton">Submit</button>
 </div>
 
-<!-- Submit button -->
-<button id="submitButton">Submit</button>
-
-<!-- Contracts and summary -->
-<div class="contracts">
-  <div class="contract-left">Contract Left</div>
-  <div id="summaryContainer" class="contract-summary"></div>
-  <div class="contract-right">Contract Right</div>
+<!-- Summary Container -->
+<div id="summaryContainer">
+  <h2 class="neon">Ore Summary</h2>
+  <table id="summaryTable">
+    <thead>
+      <tr>
+        <th>Ore</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3">Grand Total</th>
+        <th id="grandTotal">0</th>
+      </tr>
+    </tfoot>
+  </table>
 </div>
+
+<!-- Contract placeholders -->
+<div id="contractLeft"></div>
+<div id="contractRight"></div>
 
 <script>
-const submitButton = document.getElementById('submitButton');
-const inventoryInput = document.getElementById('inventoryInput');
-const summaryContainer = document.getElementById('summaryContainer');
-const inventoryContainer = document.getElementById('inventoryContainer');
+/* ===== STARFIELD LOGO EXACT ===== */
+const canvas = document.getElementById('logoCanvas');
+const ctx = canvas.getContext('2d');
+const stars = [];
+const numStars = 100;
+
+for(let i=0; i<numStars; i++){
+  stars.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    radius: Math.random()*1.5,
+    alpha: Math.random()
+  });
+}
+
+function flickerStars() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#fff";
+  stars.forEach(star=>{
+    star.alpha += (Math.random()-0.5)*0.1;
+    if(star.alpha < 0) star.alpha=0;
+    if(star.alpha > 1) star.alpha=1;
+    ctx.globalAlpha = star.alpha;
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  // Draw OreStellar text
+  ctx.font = "48px Orbitron";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.fillText("OreStellar", canvas.width/2, canvas.height/2 + 16);
+  requestAnimationFrame(flickerStars);
+}
+flickerStars();
+
+/* ===== INVENTORY PARSING & SUMMARY ===== */
+const priceList = {
+  "Tritanium": { "150": 2.5, "other": 2 },
+  "Pyerite": { "150": 3.1, "other": 2.5 },
+  "Mexallon": { "150": 4.0, "other": 3.2 },
+  // Add more ores here
+};
 
 function parseInventoryText(text) {
-  const lines = text.split('\n');
-  const result = [];
-  for (let line of lines) {
-    const parts = line.split(',');
-    if (parts.length < 3) continue;
-    const name = parts[0].trim();
-    const quantity = parseFloat(parts[1].trim());
-    const price = parseFloat(parts[2].trim()); // EXACT input, no multipliers
-    const total = quantity * price;
-    result.push({name, quantity, price, total});
-  }
-  return result;
-}
-
-function renderSummary(parsed) {
-  let html = '<table><tr><th>Ore</th><th>Quantity</th><th>Price</th><th>Total</th></tr>';
-  let grandTotal = 0;
-  parsed.forEach(item => {
-    html += `<tr>
-               <td>${item.name}</td>
-               <td>${item.quantity}</td>
-               <td>${item.price}</td>
-               <td>${item.total}</td>
-             </tr>`;
-    grandTotal += item.total;
+  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l);
+  const items = [];
+  lines.forEach(line=>{
+    const parts = line.split(/\s+/);
+    if(parts.length >= 2){
+      const qty = parseFloat(parts[1]);
+      if(!isNaN(qty)){
+        items.push({ name: parts[0], qty });
+      }
+    }
   });
-  html += `<tr>
-             <td colspan="3"><strong>Grand Total</strong></td>
-             <td><strong>${grandTotal}</strong></td>
-           </tr>`;
-  html += '</table>';
-  summaryContainer.innerHTML = html;
-  summaryContainer.style.display = 'block';
+  return items;
 }
 
-submitButton.addEventListener('click', () => {
-  const txt = inventoryInput.value.trim();
-  if (!txt) return;
+function renderSummary(items) {
+  const tbody = document.querySelector("#summaryTable tbody");
+  tbody.innerHTML = "";
+  let grandTotal = 0;
+  items.forEach(item=>{
+    const priceEntry = priceList[item.name];
+    const price = priceEntry ? (priceEntry["150"] || priceEntry["other"]) : 0;
+    const total = price * item.qty;
+    grandTotal += total;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${item.name}</td>
+                     <td>${item.qty}</td>
+                     <td>${price}</td>
+                     <td>${total.toFixed(2)}</td>`;
+    tbody.appendChild(row);
+  });
+  document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+const submitButton = document.getElementById("submitButton");
+submitButton.addEventListener('click', ()=>{
+  const txt = document.getElementById("messageBox").value.trim();
+  if(!txt) return;
+
   const parsed = parseInventoryText(txt);
   renderSummary(parsed);
-  inventoryContainer.style.display = 'none';
-  submitButton.style.display = 'none';
+
+  document.getElementById("inventoryContainer").style.display = "none";
+  document.getElementById("summaryContainer").style.display = "block";
 });
 </script>
 
