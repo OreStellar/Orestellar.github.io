@@ -450,7 +450,7 @@ fetch(csvUrl)
         priceData[ore] = { price };  // store price
       }
     });
-
+    csvLoaded = true;  // ✅ CSV finished loading
     // Sort longest first for proper matching
     recognizedOres.sort((a,b) => b.length - a.length);
     console.log('✅ Recognized ores loaded:', recognizedOres);
@@ -539,19 +539,30 @@ document.getElementById('submitButton').addEventListener('click', () => {
 });
 
 // --- Rates Tab ---
-document.getElementById('ratesTab').addEventListener('click', () => {
-  if (!csvLoaded) {
-    alert("CSV is still loading, please wait a moment.");
-    return;
-  }
+const ratesTab = document.getElementById('ratesTab');
+const ratesContainer = document.getElementById('ratesContainer');
 
+ratesTab.addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
   document.getElementById('contract-left').style.display = 'none';
   document.getElementById('contract-right').style.display = 'none';
   document.getElementById('compareContainer').style.display = 'none';
 
-  const ratesContainer = document.getElementById('ratesContainer');
+  if (!csvLoaded) {
+    // Wait until CSV loads, then open
+    const waitInterval = setInterval(() => {
+      if (csvLoaded) {
+        clearInterval(waitInterval);
+        showRates();
+      }
+    }, 50); // check every 50ms
+  } else {
+    showRates();
+  }
+});
+
+function showRates() {
   let table = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
 
   Object.keys(priceData).forEach(ore => {
@@ -565,7 +576,8 @@ document.getElementById('ratesTab').addEventListener('click', () => {
 
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
-});
+}
+
 
 /* --- Compare Tab --- */
 document.getElementById('compareTab').addEventListener('click', () => {
