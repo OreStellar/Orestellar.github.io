@@ -301,7 +301,7 @@ function drawStaticStars() {
     else if (roll < 0.010) color = 'rgba(255,80,80,'; // red
     else if (roll < 0.015) color = 'rgba(255,255,180,'; // yellow
 
-    const alpha = 0.1 + Math.random() * 1; // 0.2–0.7
+const alpha = 0.2 + Math.random() * 0.5;
     const size = 1.0 + Math.random();  
 sctx.fillStyle = `rgba(${color},${alpha})`;
 sctx.fillRect(x, y, size, size);
@@ -319,8 +319,10 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
   generateStars(); // regenerate stars to fill canvas
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', () => {
+  resizeStatic();
+  drawStaticStars(); // redraw on resize
+});
 
 
 const stars = [];
