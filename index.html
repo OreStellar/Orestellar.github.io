@@ -1009,7 +1009,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (PriceButton) PriceButton.style.display = 'inline-block';
   }
 });
-     SubmitButton.addEventListener('click', () => {
+     submitButton.addEventListener('click', () => {
           // Show the Share Summary button
           ShareButton.style.display = 'inline-block';
       });
@@ -1251,9 +1251,9 @@ function slowPulse(timestamp) {
   const scale = 1 + 0.2 * Math.sin((Math.PI * 2 / 6) * elapsed);
 
 logo.style.filter = `
-  drop-shadow(0 0 ${4 * scale}px #fff)
-  drop-shadow(0 0 ${8 * scale}px #fff)
-  drop-shadow(0 0 ${12 * scale}px #fff)
+drop-shadow(0 0 ${2 * scale}px #fff)
+drop-shadow(0 0 ${4 * scale}px #fff)
+drop-shadow(0 0 ${6 * scale}px #fff)
 `;
 
 
