@@ -304,6 +304,42 @@ document.getElementById('submitButton').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   summary.style.display = 'block';
 });
+  document.getElementById('ratesButton').addEventListener('click', () => {
+    // Hide inventory and main summary
+    document.getElementById('inventoryContainer').style.display = 'none';
+    document.getElementById('summaryContainer').style.display = 'none';
+
+    // Check if container exists
+    let ratesSummary = document.getElementById('ratesSummaryContainer');
+    if (!ratesSummary) {
+        ratesSummary = document.createElement('div');
+        ratesSummary.id = 'ratesSummaryContainer';
+        ratesSummary.className = 'neon';
+        ratesSummary.style.width = '90%';
+        ratesSummary.style.maxWidth = '800px';
+        ratesSummary.style.margin = '20px auto';
+        ratesSummary.style.padding = '20px';
+        ratesSummary.style.background = 'rgba(255,255,255,0.05)';
+        ratesSummary.style.border = '1px solid rgba(255,255,255,0.2)';
+        ratesSummary.style.borderRadius = '12px';
+        ratesSummary.style.overflowX = 'auto';
+        document.getElementById('contractsContainer').appendChild(ratesSummary);
+    }
+
+    // Populate table
+    let table = '<table><tr><th>Ore</th><th>Variant</th><th>Unit Price</th></tr>';
+    Object.keys(priceData).forEach(ore => {
+        if (!ore.toLowerCase().includes('compressed')) { // exclude compressed
+            const entry = priceData[ore];
+            table += `<tr><td>${ore}</td><td>-</td><td>${entry.price.toFixed(2)}</td></tr>`;
+        }
+    });
+    table += '</table>';
+
+    ratesSummary.innerHTML = table;
+    ratesSummary.style.display = 'block';
+});
+
 </script>
 
 </body>
