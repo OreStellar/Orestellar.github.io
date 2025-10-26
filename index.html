@@ -269,12 +269,13 @@ resizeStatic();
 
 // generate one-time static stars
 function drawStaticStars() {
-  const totalStaticStars = 3000; // faint background density
   sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+
+  const totalStaticStars = 3000; // denser background
 
   for (let i = 0; i < totalStaticStars; i++) {
     let x, y;
-    if (Math.random() < 0.3) { // 30% chance to be in a cluster
+    if (Math.random() < 0.3) { // 30% chance for clusters
       const cx = (Math.random() * 0.8 + 0.1) * staticCanvas.width;
       const cy = (Math.random() * 0.8 + 0.1) * staticCanvas.height;
       x = cx + (Math.random() - 0.5) * 150;
@@ -284,16 +285,15 @@ function drawStaticStars() {
       y = Math.random() * staticCanvas.height;
     }
 
-    // color distribution: mostly white, small rare accents
+    // mostly white, rare colored stars
     const roll = Math.random();
     let color = 'rgba(255,255,255,';
     if (roll < 0.005) color = 'rgba(255,180,180,'; // light pink
     else if (roll < 0.010) color = 'rgba(255,80,80,'; // red
     else if (roll < 0.015) color = 'rgba(255,255,180,'; // yellow
 
-    // increase alpha for more visibility
-    const alpha = 0.15 + Math.random() * 0.35; // 0.15–0.5
-    const size = 1 + Math.random() * 1.5;      // 1–2.5 px size
+    const alpha = 0.2 + Math.random() * 0.5; // 0.2–0.7
+    const size = 1.5 + Math.random() * 2;    // 1.5–3.5 px
     sctx.fillStyle = `${color}${alpha})`;
     sctx.fillRect(x, y, size, size);
   }
