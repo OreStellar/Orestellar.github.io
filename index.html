@@ -51,7 +51,14 @@
     font-size: 4rem;
     margin-top: 20px;
   }
-
+  
+#inventoryWrapper {
+  position: relative;
+  width: 80%;
+  max-width: 500px;
+  margin: 40px auto;
+  overflow: hidden;   /* clips tabs */
+}
   #inventoryContainer {
     width: 80%;
     max-width: 500px;
@@ -243,7 +250,7 @@
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
 <div id="logo" class="neon">OreStellar</div>
-
+<div id="inventoryWrapper">
 <div id="inventoryContainer">
   <textarea id="messageBox" placeholder="Enter your ores here..."></textarea>
   <div id="buttonContainer">
@@ -274,7 +281,7 @@
     <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
   </svg>
 </div>
-
+</div>
 
 
 <!-- Hidden content -->
