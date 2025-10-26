@@ -25,14 +25,26 @@
       0 0 80px #0ff;
   }
 
-  #starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
+/* --- Starfield layers --- */
+#staticStars,
+#starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#staticStars {
+  z-index: -2; /* deepest layer */
+  opacity: 0.4; /* faint background */
+}
+
+#starfield {
+  z-index: -1; /* sits above static stars */
+}
+
 
   #logo {
     text-align: center;
@@ -208,10 +220,11 @@
   td {
     text-shadow: 0 0 2px rgb(255, 255, 255);
   }
+  
 </style>
 </head>
 <body>
-
+<canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
 <div id="logo" class="neon">OreStellar</div>
 
@@ -242,6 +255,39 @@
 </div>
 
 <script>
+/* --- Static Background Stars --- */
+const staticCanvas = document.getElementById('staticStars');
+const sctx = staticCanvas.getContext('2d');
+
+function resizeStatic() {
+  staticCanvas.width = window.innerWidth;
+  staticCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeStatic);
+resizeStatic();
+
+// generate one-time static stars
+function drawStaticStars() {
+  const totalStaticStars = 800; // faint background density
+  sctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+
+  for (let i = 0; i < totalStaticStars; i++) {
+    const x = Math.random() * staticCanvas.width;
+    const y = Math.random() * staticCanvas.height;
+
+    // subtle color mix (mostly white with a few hints)
+    const roll = Math.random();
+    let color = 'rgba(255,255,255,';
+    if (roll < 0.005) color = 'rgba(255,180,180,'; // light pink (0.5%)
+    else if (roll < 0.010) color = 'rgba(255,80,80,'; // red (0.5%)
+    else if (roll < 0.015) color = 'rgba(255,255,180,'; // yellow (0.5%)
+
+    const alpha = 0.05 + Math.random() * 0.25; // faint
+    sctx.fillStyle = `${color}${alpha})`;
+    sctx.fillRect(x, y, 1, 1);
+  }
+}
+drawStaticStars();
 
 
 /* OreStellar Classic Starfield */
