@@ -221,26 +221,28 @@
     transform: translateY(-50%) scale(1);
     opacity: 1;
 }
+#ratesContainer table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* let the content define column width */
+  font-family: 'Orbitron', monospace;
+  font-size: 0.95rem;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-  }
+#ratesContainer th, #ratesContainer td {
+  padding: 6px 8px;            /* tighter padding for snug columns */
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  text-align: left;
+}
 
-  th, td {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-  }
+#ratesContainer th {
+  background: rgba(255,255,255,0.05);
+  text-shadow: 0 0 2px rgb(255,255,255);
+}
 
-  th {
-    font-size: 1.1rem;
-    text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
-  }
-
-  td {
-    text-shadow: 0 0 2px rgb(255, 255, 255);
-  }
+#ratesContainer td {
+  text-shadow: none;            /* cleaner ledger look */
+}
   
 </style>
 </head>
