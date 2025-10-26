@@ -974,13 +974,7 @@ function parseInventoryText(text) {
   return result;
 }
 
-function renderSummary(parsedItems, isShared) {
-  if (isShared) {
-    // do something special
-  }
-  // rest of code
-}
-
+function renderSummary(parsedItems, isShared = false) {
   const summaryContainer = document.getElementById('summaryContainer');
   if (!summaryContainer) {
     console.error("summaryContainer not found in DOM");
@@ -1033,6 +1027,17 @@ function renderSummary(parsedItems, isShared) {
   // Inject HTML
   summaryContainer.innerHTML = html;
   summaryContainer.style.display = 'flex';
+// Show extra buttons/containers if NOT shared
+  if (!isShared) {
+    const left = document.getElementById('leftContainer');
+    if (left) left.style.display = 'flex';
+
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) shareButton.style.display = 'inline-block';
+
+    const priceButton = document.getElementById('priceTab');
+    if (priceButton) priceButton.style.display = 'inline-block';
+  }
 }
 
   // -----------------------------
