@@ -48,6 +48,7 @@
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px;
+    position: relative;
   }
 
   #inventoryContainer textarea {
@@ -129,31 +130,37 @@
   }
 
   /* --- Shared side tabs --- */
-  .sideTab {
-    position: absolute;
-    right: calc(10% - 40px);
-    transform-origin: right center;
-    transform: rotate(90deg);
-    background: rgba(0,255,255,0.1);
-    border: 2px solid #0ff;
-    border-radius: 10px 10px 0 0;
-    color: #fff;
-    font-size: 1rem;
-    padding: 10px 20px;
-    cursor: pointer;
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-    box-shadow: 0 0 20px #0ff;
-    transition: all 0.3s ease;
-    z-index: 5;
-  }
+.sideTab {
+  position: absolute;
+  right: -60px; /* attaches just outside the right edge */
+  background: rgba(0,255,255,0.1);
+  border: 2px solid rgb(5, 5, 5);
+  border-radius: 10px 10px 0 0;
+  color: #fff;
+  font-size: 1rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
+  box-shadow: 0 0 20px rgb(255, 255, 255);
+  transform: rotate(90deg);
+  transform-origin: right center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
 
-  .sideTab:hover {
-    background: rgba(0,255,255,0.2);
-    box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
-  }
+#ratesTab {
+  top: 30%;
+}
 
-  #ratesTab { top: 45%; }
-  #compareTab { top: 60%; }
+#compareTab {
+  top: 60%;
+}
+
+.sideTab:hover {
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 30px rgb(254, 255, 255), 0 0 60px rgb(255, 255, 255);
+}
+
 
   #ratesContainer, #compareContainer {
     display: none;
@@ -191,11 +198,11 @@
 
   th {
     font-size: 1.1rem;
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+    text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
   }
 
   td {
-    text-shadow: 0 0 2px #0ff;
+    text-shadow: 0 0 2px rgb(255, 255, 255);
   }
 </style>
 </head>
@@ -209,11 +216,12 @@
   <div id="buttonContainer">
     <button id="submitButton">Submit</button>
   </div>
-</div>
+
 
 <!-- Tabs -->
 <div id="ratesTab" class="sideTab">Rates</div>
 <div id="compareTab" class="sideTab">Compare</div>
+
 
 <!-- Hidden content -->
 <div id="ratesContainer" class="neon"></div>
