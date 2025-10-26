@@ -604,25 +604,34 @@ ratesTab.addEventListener('click', () => {
 });
 
 function showRates() {
-  let table = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
+  const tableHeader = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
+  let table = tableHeader;
 
-Object.keys(priceData).forEach(ore => {
-    if (
-        ore.toLowerCase() !== 'ore variant' &&
-        ore !== "Top 10 Overall (excluding Triglavians and compressed)" &&
-        !ore.toLowerCase().includes('compressed')   // ✅ skip compressed only here
-    ) {
-        table += `<tr><td>${ore}</td><td>${priceData[ore].price.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td></tr>`;
-    }
-});
+  Object.keys(priceData).forEach(ore => {
+    const normalized = ore.trim().toLowerCase();
 
+    // Skip "ore variant" and anything explicitly compressed
+    if (normalized === 'ore variant' || normalized.includes('compressed')) return;
+
+    const entry = priceData[ore];
+    if (!entry || !entry.price) return; // skip empty prices
+
+    table += `<tr>
+      <td>${ore}</td>
+      <td>${entry.price.toFixed(2)}</td>
+    </tr>`;
+  });
 
   table += '</table>';
+
+  const ratesContainer = document.getElementById('ratesContainer');
   ratesContainer.innerHTML = table;
 
+  // Show container with animation
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
 }
+
 
 
 /* --- Compare Tab --- */
