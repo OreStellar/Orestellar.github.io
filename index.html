@@ -608,27 +608,51 @@ ratesTab.addEventListener('click', () => {
 });
 
 function showRates() {
-  const tableHeader = '<table><tr><th>Ore</th><th>Unit Price</th></tr>';
-  let table = tableHeader;
+  const ratesContainer = document.getElementById('ratesContainer');
+  ratesContainer.innerHTML = ''; // clear old table
 
+  // Create table
+  const table = document.createElement('table');
+
+  // Create table header
+  const headerRow = document.createElement('tr');
+  ['Ore', 'Unit Price', 'Compressed'].forEach(text => {
+    const th = document.createElement('th');
+    th.textContent = text;
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
+
+  // Loop through ores
   Object.keys(priceData).forEach(ore => {
-    // Skip compressed ores and Top 10 Overall
-    if (ore.startsWith("Compressed ")) return;
+    // Skip Top 10 Overall header
     if (ore.includes("Top 10 Overall")) return;
 
     const entry = priceData[ore];
-    if (!entry || !entry.price) return; // skip empty prices
+    if (!entry || !entry.price) return;
 
-    table += `<tr>
-      <td>${ore}</td>
-      <td>${entry.price.toFixed(2)}</td>
-    </tr>`;
+    const row = document.createElement('tr');
+
+    // Ore name
+    const nameCell = document.createElement('td');
+    nameCell.textContent = ore;
+    row.appendChild(nameCell);
+
+    // Unit price
+    const priceCell = document.createElement('td');
+    priceCell.textContent = entry.price.toFixed(2);
+    row.appendChild(priceCell);
+
+    // Compressed status
+    const compressedCell = document.createElement('td');
+    const isCompressed = ore.toLowerCase().startsWith('compressed ');
+    compressedCell.textContent = isCompressed ? '✔️' : '❌'; // green check / red X
+    row.appendChild(compressedCell);
+
+    table.appendChild(row);
   });
 
-  table += '</table>';
-
-  const ratesContainer = document.getElementById('ratesContainer');
-  ratesContainer.innerHTML = table;
+  ratesContainer.appendChild(table);
 
   // simple fade-in
   ratesContainer.classList.remove('active');
