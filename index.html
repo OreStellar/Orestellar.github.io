@@ -94,39 +94,40 @@
   gap: 20px;
   margin: 40px auto;
   width: 100%;
-  max-width: 1400px;
-  flex-wrap: nowrap; /* stay on one line */
+  max-width: 1900px; /* enough space for both 630px contracts + summary */
+  flex-wrap: nowrap; /* stay side-by-side */
 }
 
-/* Contract containers sized to image */
+/* Contract containers match image pixel size exactly */
 .contract-container {
-  width: 280px;   /* scaled-down so both fit beside summary */
-  height: 186px;  /* keeps the 630×418 ratio (~0.66) */
-  background-size: contain;
+  width: 630px;
+  height: 418px;
+  background-size: cover;        /* crop edges, no letterboxing */
   background-position: center;
   background-repeat: no-repeat;
   border-radius: 12px;
   overflow: hidden;
-  flex-shrink: 0;
+  flex-shrink: 0;                /* prevent resizing when summary appears */
   border: 1px solid rgba(255,255,255,0.15);
   box-shadow: 0 0 20px rgba(255,255,255,0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .contract-container:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
   box-shadow: 0 0 30px rgba(255,255,255,0.3);
 }
 
-/* Exact images */
+/* Left and right images */
 #contract-left {
   background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract1.png');
 }
+
 #contract-right {
   background-image: url('https://github.com/OreStellar/Orestellar.github.io/raw/main/images/Contract2.png');
 }
 
-/* Summary centered between contracts */
+/* Center summary */
 #summaryContainer {
   flex: 1;
   max-width: 500px;
@@ -138,6 +139,7 @@
   display: none;
   overflow-x: auto;
 }
+
 
 
   #contract-left, #contract-right {
