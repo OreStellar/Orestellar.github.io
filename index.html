@@ -155,34 +155,35 @@ textarea#message:focus{
 }
 .actionButton:disabled{opacity:0.45;cursor:not-allowed;}
 
-/* ================== CONTRACT / SUMMARY / PRICELIST ================== */
 .contracts-wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
-  gap: 40px;
-  margin-top: 20px;
-  position: relative;
+  gap: 20px;
 }
 
-.contract {
-  width: 300px;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
+.contract-image {
+  width: 630;
+  height: 418;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
-.contract-left {
-  transform: rotate(-1deg);
+#leftContract {
+  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract1.png');
 }
 
-.contract-right {
-  transform: rotate(1deg);
+#rightContract {
+  background-image: url('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/refs/heads/main/images/Contract2.png');
 }
 
-/* contract images */
-.total-cost-container{
-  width:630px;height:418px;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.5);display:none;
+.summary-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 #totalCostText{position:absolute;top:18px;right:20px;color:var(--neon);font-family:var(--mono);font-weight:bold;font-size:18px;text-shadow:0 0 6px var(--neon),0 0 12px var(--neon);cursor:pointer;}
 
 
@@ -427,10 +428,11 @@ Mercoxit 25000
     <button id="submitButton" class="actionButton" disabled>Submit</button>
   </div>
 
-  <!-- CONTRACTS / SUMMARY -->
-  <div id="contracts-wrapper" class="contracts-wrapper"></div>
+<div id="contracts-wrapper" class="contracts-wrapper">
+  <!-- Left contract -->
+  <div id="leftContract" class="contract-image"></div>
 
-  <!-- ✅ SUMMARY now appears between contracts and totals -->
+  <!-- Summary appears here -->
   <div id="summaryContainer" class="summary-container" style="display: none;">
     <!-- JS will insert summary table here -->
     <div class="button-row" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center;">
@@ -439,10 +441,10 @@ Mercoxit 25000
     </div>
   </div>
 
-  <!-- ✅ TOTAL COST -->
-  <div id="totalCostContainer" class="total-cost-container">
-    <div id="totalCostText">0 ISK</div>
-  </div>
+  <!-- Right contract / total cost -->
+  <div id="rightContract" class="contract-image"></div>
+</div>
+
 </div> <!-- closes appRoot -->
 
 <div id="priceListContainer" style="display:none;">
