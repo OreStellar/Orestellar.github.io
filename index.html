@@ -1176,20 +1176,32 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSummary(parsedItems);
 });
 
+const submitButton = document.getElementById('submitButton');
+const messageBox = document.getElementById('message'); // your textarea
 
-// now safe to use summaryContainer
-summaryContainer.style.display = 'flex';
-;
-
-  document.getElementById('shareButton').style.display = 'inline-block';
+submitButton.addEventListener('click', () => {
+  // Grab elements safely inside the handler
+  const summaryContainer = document.getElementById('summaryContainer');
+  const shareButton = document.getElementById('shareButton');
   const priceTabBtn = document.getElementById('priceTab');
-  priceTabBtn.style.display = 'inline-block'; // ensure visible
+
+  if (!summaryContainer || !shareButton || !priceTabBtn) {
+    console.error("One or more elements not found in DOM");
+    return;
+  }
+
+  // now safe to use
+  summaryContainer.style.display = 'flex';
+  shareButton.style.display = 'inline-block';
+  priceTabBtn.style.display = 'inline-block';
 });
 
 shareButton.addEventListener('click', async () => {
+  const messageBox = document.getElementById('message');
+  if (!messageBox) return;
+
   const txt = messageBox.value.trim();
   if (!txt) return;
-
   // Compress the inventory text for URL
   const compressed = LZString.compressToEncodedURIComponent(txt);
 
