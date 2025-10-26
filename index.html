@@ -390,7 +390,7 @@ function drawStars() {
   for (const s of stars) {
     let alpha = 1;
     if (s.twinkle) {
-      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.001 + s.flickerOffset);
+      alpha = 0.7 + s.flickerIntensity * Math.sin(Date.now() * 0.005 + s.flickerOffset);
     }
 
     ctx.beginPath();
