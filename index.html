@@ -144,14 +144,16 @@
   /* --- Shared side tabs --- */
 .sideTab {
   position: absolute;
-  right: 50px;
+  right: 65px;
   top: 30%;               /* adjust vertical placement */
-  background: rgba(0,255,255,0.08);
+  background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
   border: 2px solid rgb(0, 0, 0);
   border-left: none;
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 12px 12px 0;
   color: #fff;
+  font-weight: 500;
   font-size: .95rem;
+  font-family: 'Orbitron', sans-serif;
   padding: 5px;
   cursor: pointer;
   text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
@@ -175,11 +177,16 @@
 /* Hover glow effect */
 .sideTab:hover {
   right: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: linear-gradient(145deg, rgba(0,255,255,0.15), rgba(0,255,255,0.25));
   box-shadow: 0 0 20px rgb(255, 255, 255), 0 0 40px rgb(255, 255, 255);
   transform: translateX(4px);
 }
 
+/* Optional active click effect */
+.sideTab:active {
+  transform: translateX(2px) scale(0.98);
+  box-shadow: 0 0 15px rgb(224, 224, 224), 0 0 30px rgb(2, 255, 2);
+}
 
   #ratesContainer, #compareContainer {
     display: none;
