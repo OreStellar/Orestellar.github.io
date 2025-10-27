@@ -138,7 +138,6 @@
     width: 630px;
     height: 418px;
     border-radius: 12px;
-    transform: scale(0.95);
     transform-origin: center;
   }
 
@@ -319,10 +318,22 @@
   opacity: 0;
   animation: fadeInRow 0.4s ease forwards;
 }
+.summary-table {
+  width: 100%;            /* fill the container */
+  table-layout: fixed;    /* evenly distribute columns */
+  border-collapse: collapse; /* remove spacing between cells */
+}
+
+.summary-table th, 
+.summary-table td {
+  padding: 8px;
+  text-align: center;     /* center text horizontally */
+  word-wrap: break-word;  /* handle long text */
+}
 
 
 </style>
-</head>
+</head>how 
 <body>
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
