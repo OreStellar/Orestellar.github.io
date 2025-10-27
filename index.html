@@ -823,8 +823,8 @@ document.getElementById('submitButton').addEventListener('click', () => {
         <th>Ore</th>
         <th>Quantity</th>
         <th>Unit Price</th>
-        <th>Total</th>
         <th>Compressed</th>
+        <th>Total</th>
     </tr>`;
     table.appendChild(thead);
 
@@ -885,7 +885,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     console.log("Adding Grand Total row");
 const totalRow = document.createElement('tr');
 totalRow.innerHTML = `
-    <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
+    <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
     <td style="text-align:right;font-weight:bold;">0.00</td>
     <td></td>
 `;
@@ -893,7 +893,7 @@ tbody.appendChild(totalRow);
 
 // Grab the actual cell containing the number (0.00)
 // It is the second <td>, so index = 1
-const grandCell = totalRow.cells[1];
+const grandCell = totalRow.cells[4];
 
 console.log("Animating Grand Total cell:", grandCell); // debugging
 setTimeout(() => {
