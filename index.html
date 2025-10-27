@@ -615,55 +615,40 @@ document.getElementById('submitButton').addEventListener('click', () => {
     let delay = 0;
     const animationDelay = 200;
 
-    parsedLines.forEach((item, index) => {
-        const displayName = item.ore.replace(/^Compressed\s+/i, '');
-        const lookupName = displayName; // use displayName for price lookup
-        const unitPrice = priceData[lookupName]?.price || 0;
-        const total = item.quantity * unitPrice;
-        grandTotal += total;
-        const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+parsedLines.forEach((item, index) => {
+    const displayName = item.ore.replace(/^Compressed\s+/i, '');
+    const lookupName = displayName;
+    const unitPrice = priceData[lookupName]?.price || 0;
+    const total = item.quantity * unitPrice;
+    grandTotal += total;
+    const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
-        // Create row with placeholders for animation
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td style="text-align:center;">${displayName}</td>
-          <td style="text-align:right;">0</td> <!-- Quantity -->
-          <td style="text-align:right;">0.00</td> <!-- Unit Price -->
-          <td style="text-align:center;">${isCompressed}</td> <!-- Compressed -->
-          <td style="text-align:right;">0.00</td> <!-- Total -->
-        `;
+    // Create row with placeholders
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td style="text-align:center;">${displayName}</td>
+        <td style="text-align:right;">0</td>  <!-- Quantity -->
+        <td style="text-align:right;">0.00</td> <!-- Unit Price -->
+        <td style="text-align:center;">${isCompressed}</td>
+        <td style="text-align:right;">0.00</td> <!-- Total -->
+    `;
 
-        // Animate row appearance and numbers
-        setTimeout(() => {
-            tbody.appendChild(row);
-            row.style.animation = `fadeInRow 0.4s ease forwards`;
+    // Append row immediately so it’s visible
+    tbody.appendChild(row);
+    row.style.display = ''; // ensure it’s not hidden
+    row.style.animation = `fadeInRow 0.4s ease forwards`;
+    row.style.animationDelay = `${index * 0.15}s`;
 
-            const qtyCell = row.children[1];
-            const priceCell = row.children[2];
-            const totalCell = row.children[4];
+    // Animate the numbers
+    const qtyCell = row.children[1];
+    const priceCell = row.children[2];
+    const totalCell = row.children[4];
 
-            animateValue(qtyCell, 0, item.quantity, 500);
-            animateValue(priceCell, 0, unitPrice, 500, true);
-            animateValue(totalCell, 0, total, 500, true);
-        }, delay);
-
-        delay += animationDelay;
-    });
-
-    // Animate grand total after all rows
     setTimeout(() => {
-        const tfoot = document.createElement('tfoot');
-        tfoot.innerHTML = `
-          <tr>
-            <th colspan="4" style="text-align:right;">Grand Total</th>
-            <th style="text-align:right;">0.00</th>
-          </tr>
-        `;
-        tbody.parentElement.appendChild(tfoot);
-
-        const grandTotalCell = tfoot.querySelector('th:last-child');
-        animateValue(grandTotalCell, 0, grandTotal, 600, true);
-    }, delay + 200);
+        animateValue(qtyCell, 0, item.quantity, 500);
+        animateValue(priceCell, 0, unitPrice, 500, true);
+        animateValue(totalCell, 0, total, 500, true);
+    }, index * 150); // stagger the counting animation
 });
 
 
