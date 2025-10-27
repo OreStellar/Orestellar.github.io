@@ -116,13 +116,22 @@
   }
 
   .contract-container {
-    display: inline-block;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow: 0 0 20px rgba(255,255,255,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Hide contracts on small screens */
+  .contract-container {
+    display: none; /* default hidden on small screens */
+}
   }
+/* Show contracts on screens wider than 1024px */
+@media (min-width: 1024px) {
+    .contract-container {
+        display: inline-block;  /* or block/flex depending on layout */
+    }
+}
 
   .contract-container img {
     display: block;
@@ -141,7 +150,8 @@
 
   #summaryContainer {
     font-family: 'Chivo Mono', monospace;
-    width: 450px;
+    width: 80%;             /* wider on most screens */
+    max-width: 800px;       /* cap the max width */
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
@@ -909,5 +919,24 @@ function showRates() {
 
 
 </script>
+<div id="pxRuler" style="
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1024px;
+  height: 40px;
+  background: rgba(0, 255, 255, 0.2);
+  border: 2px solid cyan;
+  text-align: center;
+  font-family: monospace;
+  font-weight: bold;
+  color: cyan;
+  line-height: 40px;
+  z-index: 9999;
+  pointer-events: none;
+">
+1024 px wide
+</div>
 </body>
 </html>
