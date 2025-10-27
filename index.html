@@ -583,7 +583,6 @@ function animateValue(cell, start, end, duration = 500, isFloat = false) {
 }
 
 // --- Submit Button ---
-// --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
@@ -604,20 +603,18 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
     const parsedLines = parseInventoryText(input);
 
-    // Build table
+    // Build table and tbody
     const table = document.createElement('table');
     table.classList.add('summary-table');
-
     const thead = document.createElement('thead');
-    thead.innerHTML = `
-        <tr>
-            <th>Ore</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Compressed</th>
-            <th>Total</th>
-        </tr>
-    `;
+    // Swap Compressed and Total columns
+    thead.innerHTML = `<tr>
+        <th>Ore</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Total</th>
+        <th>Compressed</th>
+    </tr>`;
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
@@ -628,7 +625,8 @@ document.getElementById('submitButton').addEventListener('click', () => {
     let delay = 0;
     const animationDelay = 200; // ms between each row
 
-    parsedLines.forEach((item, index) => {
+    // First create all rows and append them so cells exist
+    const rows = parsedLines.map(item => {
         const displayName = item.ore.replace(/^Compressed\s+/i, '');
         const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
         const unitPrice = priceData[item.ore]?.price || 0;
@@ -640,18 +638,21 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <td style="text-align:center;">${displayName}</td>
             <td style="text-align:right;">0</td>
             <td style="text-align:right;">0.00</td>
-            <td style="text-align:center;">${isCompressed}</td>
             <td style="text-align:right;">0.00</td>
+            <td style="text-align:center;">${isCompressed}</td>
         `;
         tbody.appendChild(row);
+        return { row, quantity: item.quantity, unitPrice, total };
+    });
 
-        // Animate numbers
+    // Animate each row
+    rows.forEach(({ row, quantity, unitPrice, total }, index) => {
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
-        const totalCell = row.cells[4];
+        const totalCell = row.cells[3];
 
         setTimeout(() => {
-            animateValue(qtyCell, 0, item.quantity, 500);
+            animateValue(qtyCell, 0, quantity, 500);
             animateValue(priceCell, 0, unitPrice, 500, true);
             animateValue(totalCell, 0, total, 500, true);
             row.style.animation = `fadeInRow 0.4s ease forwards`;
@@ -660,17 +661,19 @@ document.getElementById('submitButton').addEventListener('click', () => {
         delay += animationDelay;
     });
 
-    // Add grand total row
+    // Add Grand Total row after all ore rows
     const totalRow = document.createElement('tr');
     totalRow.innerHTML = `
-        <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
+        <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
         <td style="text-align:right;font-weight:bold;">0.00</td>
+        <td></td>
     `;
     tbody.appendChild(totalRow);
 
-    // Animate grand total after all rows
+    // Animate grand total
+    const grandCell = totalRow.cells[3];
     setTimeout(() => {
-        animateValue(totalRow.cells[4], 0, grandTotal, 800, true);
+        animateValue(grandCell, 0, grandTotal, 800, true);
     }, delay + 200);
 });
 
@@ -686,9 +689,7 @@ function animateValue(cell, start, end, duration, isFloat = false) {
         cell.textContent = isFloat
             ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             : Math.round(value).toLocaleString();
-        if (progress < 1) {
-            requestAnimationFrame(step);
-        }
+        if (progress < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
 }
