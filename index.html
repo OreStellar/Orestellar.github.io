@@ -1065,6 +1065,27 @@ function showRatesGrid() {
             }
         });
     });
+    // Create close button
+const closeBtn = document.createElement('div');
+closeBtn.innerHTML = '✕'; // Unicode white X
+closeBtn.style.position = 'absolute';
+closeBtn.style.top = '10px';
+closeBtn.style.right = '10px';
+closeBtn.style.cursor = 'pointer';
+closeBtn.style.fontSize = '1.2rem';
+closeBtn.style.color = 'rgba(255,255,255,0.8)'; // semi-transparent white
+closeBtn.style.transition = 'color 0.2s';
+closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
+closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
+ratesContainer.appendChild(closeBtn);
+
+// Add click event to close
+closeBtn.addEventListener('click', () => {
+    ratesContainer.classList.remove('active');
+    overlay.classList.remove('visible');
+    setTimeout(() => { ratesContainer.style.display = 'none'; }, 400);
+});
+
 }
 
 
