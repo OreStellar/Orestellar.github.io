@@ -348,16 +348,7 @@
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
   z-index: 50;
 }
-#ratesContainer.centered {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-  transform-origin: center center; /* end centered */
-  transition: transform 0.4s ease, opacity 0.4s ease;
-  z-index: 60;
-}
+
 
 #compareTab {
     top: calc(30% + 25px); /* move it 25px lower than other tabs */
@@ -982,9 +973,10 @@ function showPanel(panel, tab) {
   // Show the panel
   panel.style.display = 'block';
   panel.style.transformOrigin = 'center center';
+  // force reflow to trigger transition
+  panel.offsetHeight; 
+  panel.classList.add('active');
 
-  // Trigger animation
-  setTimeout(() => panel.classList.add('active'), 10);
 }
 
 // --- Hide all panels ---
