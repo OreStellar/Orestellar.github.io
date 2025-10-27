@@ -560,13 +560,14 @@ parsedLines.forEach(item => {
     // ✅ Strip "Compressed" for display only
     const displayName = item.ore.replace(/^Compressed\s+/i, '');
 
-    table += `<tr>
-        <td>${displayName}</td>
-        <td>${item.quantity.toLocaleString()}</td>
-        <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-        <td>${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-        <td style="text-align:center">${isCompressed}</td>
-    </tr>`;
+table += `<tr>
+  <td style="text-align:center;">${displayName}</td>
+  <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
+  <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+  <td style="text-align:right;">${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+  <td style="text-align:center;">${isCompressed}</td>
+</tr>`;
+
 });
 
 
