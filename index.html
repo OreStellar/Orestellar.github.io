@@ -795,8 +795,9 @@ function animateValue(cell, start, end, duration = 500, isFloat = false) {
 }
 
 // --- Submit Button ---
-document.getElementById('submitButton').addEventListener('click', () => {
-    console.log("=== Submit Button Clicked ===");
+    const submitButton = document.getElementById('submitButton');
+      submitButton.addEventListener('click', () => {
+        console.log("Submit clicked");
 
     const input = document.getElementById('messageBox').value.trim();
     console.log("Input text:", input);
