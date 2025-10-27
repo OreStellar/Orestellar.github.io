@@ -698,23 +698,23 @@ document.getElementById('submitButton').addEventListener('click', () => {
     });
 
     console.log("Adding Grand Total row");
-    const totalRow = document.createElement('tr');
-    totalRow.innerHTML = `
-        <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
-        <td style="text-align:right;font-weight:bold;">0.00</td>
-        <td></td>
-    `;
-    tbody.appendChild(totalRow);
-    console.log("Grand Total row added:", totalRow.innerHTML);
+const totalRow = document.createElement('tr');
+totalRow.innerHTML = `
+    <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
+    <td style="text-align:right;font-weight:bold;">0.00</td>
+    <td></td>
+`;
+tbody.appendChild(totalRow);
 
-    // Animate grand total
-    const grandCell = totalRow.cells[3];
-    console.log("Animating Grand Total cell:", grandCell);
+// Grab the actual cell containing the number (0.00)
+// It is the second <td>, so index = 1
+const grandCell = totalRow.cells[1];
 
-    setTimeout(() => {
-        animateValue(grandCell, 0, grandTotal, 800, true);
-        console.log("Grand Total animation started:", grandTotal);
-    }, delay + 200);
+console.log("Animating Grand Total cell:", grandCell); // debugging
+setTimeout(() => {
+    animateValue(grandCell, 0, grandTotal, 800, true);
+}, delay + 200);
+
 
     console.log("=== Submit Button Finished Setup ===");
 });
