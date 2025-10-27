@@ -582,75 +582,106 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
 
-    const inventory = document.getElementById('inventoryContainer');
+    const inventoryContainer = document.getElementById('inventoryContainer');
+    const summary = document.getElementById('summaryContainer');
     const contractLeft = document.getElementById('contract-left');
     const contractRight = document.getElementById('contract-right');
-    const summary = document.getElementById('summaryContainer');
 
-    // Hide inventory, show contracts
-    inventory.style.display = 'none';
+    // Hide inventory, show contracts and summary
+    inventoryContainer.style.display = 'none';
     contractLeft.style.display = 'block';
     contractRight.style.display = 'block';
-
-    // Clear previous table
-    summary.innerHTML = `
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th style="text-align:center;">Ore</th>
-            <th style="text-align:right;">Quantity</th>
-            <th style="text-align:right;">Unit Price</th>
-            <th style="text-align:center;">Compressed</th>
-            <th style="text-align:right;">Total</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    `;
-    const tbody = summary.querySelector('tbody');
     summary.style.display = 'block';
 
+    // Clear previous table
+    summary.innerHTML = '';
+
     const parsedLines = parseInventoryText(input);
+
+    // Build table and tbody
+    const table = document.createElement('table');
+    table.classList.add('summary-table');
+    const thead = document.createElement('thead');
+    thead.innerHTML = `<tr>
+        <th>Ore</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Compressed</th>
+        <th>Total</th>
+    </tr>`;
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    summary.appendChild(table);
+
     let grandTotal = 0;
     let delay = 0;
-    const animationDelay = 200;
+    const animationDelay = 200; // ms between each row
 
-parsedLines.forEach((item, index) => {
-    const displayName = item.ore.replace(/^Compressed\s+/i, '');
-    const lookupName = displayName;
-    const unitPrice = priceData[lookupName]?.price || 0;
-    const total = item.quantity * unitPrice;
-    grandTotal += total;
-    const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+    parsedLines.forEach((item, index) => {
+        const displayName = item.ore.replace(/^Compressed\s+/i, '');
+        const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+        const unitPrice = priceData[item.ore]?.price || 0;
+        const total = item.quantity * unitPrice;
+        grandTotal += total;
 
-    // Create row with placeholders
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td style="text-align:center;">${displayName}</td>
-        <td style="text-align:right;">0</td>  <!-- Quantity -->
-        <td style="text-align:right;">0.00</td> <!-- Unit Price -->
-        <td style="text-align:center;">${isCompressed}</td>
-        <td style="text-align:right;">0.00</td> <!-- Total -->
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td style="text-align:center;">${displayName}</td>
+            <td style="text-align:right;">0</td>
+            <td style="text-align:right;">0.00</td>
+            <td style="text-align:center;">${isCompressed}</td>
+            <td style="text-align:right;">0.00</td>
+        `;
+        tbody.appendChild(row);
+
+        // Animate numbers
+        const qtyCell = row.cells[1];
+        const priceCell = row.cells[2];
+        const totalCell = row.cells[4];
+
+        setTimeout(() => {
+            animateValue(qtyCell, 0, item.quantity, 500);
+            animateValue(priceCell, 0, unitPrice, 500, true);
+            animateValue(totalCell, 0, total, 500, true);
+            row.style.animation = `fadeInRow 0.4s ease forwards`;
+        }, delay);
+
+        delay += animationDelay;
+    });
+
+    // Grand total row
+    const grandRow = document.createElement('tr');
+    grandRow.innerHTML = `
+        <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total:</td>
+        <td style="text-align:right;">0.00</td>
     `;
+    tbody.appendChild(grandRow);
 
-    // Append row immediately so it’s visible
-    tbody.appendChild(row);
-    row.style.display = ''; // ensure it’s not hidden
-    row.style.animation = `fadeInRow 0.4s ease forwards`;
-    row.style.animationDelay = `${index * 0.15}s`;
-
-    // Animate the numbers
-    const qtyCell = row.children[1];
-    const priceCell = row.children[2];
-    const totalCell = row.children[4];
-
+    // Animate grand total after all rows
     setTimeout(() => {
-        animateValue(qtyCell, 0, item.quantity, 500);
-        animateValue(priceCell, 0, unitPrice, 500, true);
-        animateValue(totalCell, 0, total, 500, true);
-    }, index * 150); // stagger the counting animation
+        animateValue(grandRow.cells[1], 0, grandTotal, 800, true);
+    }, delay + 200);
 });
-});
+
+// Helper function for counting animation
+function animateValue(cell, start, end, duration, isFloat = false) {
+    const range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const value = start + range * progress;
+        cell.textContent = isFloat ? value.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) : Math.round(value).toLocaleString();
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+    requestAnimationFrame(step);
+}
+
 
 // --- Button Tabs ---
 const ratesTab = document.getElementById('ratesTab');
