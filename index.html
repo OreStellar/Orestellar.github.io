@@ -49,19 +49,16 @@
 /* Overlay to dim the background */
 #overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease;
-  z-index: 40;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  z-index: 50;
 }
 
-/* Show overlay */
-#overlay.active {
+#overlay.visible {
   opacity: 1;
   visibility: visible;
 }
@@ -284,11 +281,16 @@
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
   z-index: 50;
 }
-  /* Active state: centered and fully visible */
-#ratesContainer.active {
+#ratesContainer.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  z-index: 60;
 }
+
 #compareTab {
     top: calc(30% + 25px); /* move it 25px lower than other tabs */
 }
@@ -396,9 +398,10 @@
 </style>
 </head>
 <body>
-<div id="overlay"></div>
+
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
+<div id="overlay">
 <div id="logo" class="neon">OreStellar</div>
 <div id="inventoryContainer">
 
@@ -435,12 +438,6 @@
   </svg>
 </div>
 </div>
-
-
-<!-- Hidden content -->
-<div id="ratesContainer" class="neon"></div>
-<div id="compareContainer" class="neon"></div>
-
 <div id="contractsContainer">
   <div id="contract-left" class="contract-container" style="display:none;">
     <table class="contract-table">
@@ -482,7 +479,10 @@
     </table>
   </div>
 </div>
-
+</div>
+<!-- Hidden content -->
+<div id="ratesContainer" class="neon"></div>
+<div id="compareContainer" class="neon"></div>
 
 <script>
 /* --- Static Background Stars --- */
@@ -919,6 +919,25 @@ ratesTab.addEventListener('click', (e) => {
         }, 50);
     } else {
         showRates();
+    }
+});
+// --- Overlay + Center Animation ---
+const overlay = document.getElementById('overlay');
+
+ratesTab.addEventListener('click', () => {
+    // Show overlay and fade it in
+    overlay.classList.add('visible');
+
+    // Center and fade in rates container
+    ratesContainer.classList.add('centered');
+});
+
+document.addEventListener('click', (e) => {
+    // Close overlay if clicking outside
+    if (!ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) {
+        overlay.classList.remove('visible');
+        ratesContainer.classList.remove('centered');
+        closePanels();
     }
 });
 
