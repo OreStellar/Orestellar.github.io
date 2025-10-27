@@ -561,12 +561,13 @@ function parseInventoryText(text) {
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
-    const input = document.getElementById('messageBox').value.trim();
-    if (!input) return;
+  const input = document.getElementById('messageBox').value.trim();
+  if (!input) return;
 
-  // Clear previous table content
-  const summaryContainer = document.getElementById('summaryContainer');
-  summaryContainer.innerHTML = `
+  const summary = document.getElementById('summaryContainer');
+
+  // Clear previous table
+  summary.innerHTML = `
     <table class="summary-table neon">
       <thead>
         <tr>
@@ -582,41 +583,45 @@ document.getElementById('submitButton').addEventListener('click', () => {
     <div id="totalISK" class="neonTotal" style="margin-top:10px; text-align:right;"></div>
   `;
 
-    const tbody = document.createElement('tbody');
-    document.querySelector('.summary-table').appendChild(tbody);
-    const parsedLines = parseInventoryText(input);
-    let grandTotal = 0;
-    const animationDelay = 200; // ms between rows
-    parsedLines.forEach(item => {
+  const tbody = summary.querySelector('tbody');
+  const parsedLines = parseInventoryText(input);
+
+  // Show summary container **after clearing and setting up table**
+  summary.style.display = 'block';
+
+  // Now animate rows...
+  let delay = 0;
+  let grandTotal = 0;
+  const animationDelay = 200;
+  
+  parsedLines.forEach((item, index) => {
     const unitPrice = priceData[item.ore]?.price || 0;
     const total = item.quantity * unitPrice;
     grandTotal += total;
+
     const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
-    // ✅ Strip "Compressed" for display only
     const displayName = item.ore.replace(/^Compressed\s+/i, '');
 
-  // Create row element
-  const row = document.createElement('tr');
-  row.innerHTML = `
-  <td style="text-align:center;">${displayName}</td>
-  <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
-  <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-  <td style="text-align:center;">${isCompressed}</td>
-  <td style="text-align:right;">${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-</tr>`;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td style="text-align:center;">${displayName}</td>
+      <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
+      <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td style="text-align:center;">${isCompressed}</td>
+      <td style="text-align:right;">${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+    `;
 
-  // Staggered appearance
-  setTimeout(() => {
-    tbody.appendChild(row);
-    row.style.animationDelay = `${index * 0.15}s`;
-  }, delay);
-  
-  delay += animationDelay;
-});
+    setTimeout(() => {
+      tbody.appendChild(row);
+      row.style.animation = `fadeInRow 0.4s ease forwards`;
+      row.style.animationDelay = `${index * 0.15}s`;
+    }, delay);
 
-// After all rows load, animate total ISK
-setTimeout(() => animateTotalISK(grandTotal), delay + 200);
+    delay += animationDelay;
+  });
 
+  // Animate total ISK after all rows appear
+  setTimeout(() => animateTotalISK(grandTotal), delay + 200);
 });
 
 
