@@ -440,12 +440,11 @@ drawStars();
 /* --- CSV Parsing --- */
 /* ========== FORM B PARSER CORE ========== */
 
-// 🔹 Stores ore → price data from CSV
+/* --- CSV Parsing --- */
 let priceData = {};
 let recognizedOres = [];
 let csvLoaded = false;
 
-// 🔹 Load your CSV data from GitHub
 const csvUrl = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
 fetch(csvUrl)
@@ -453,21 +452,21 @@ fetch(csvUrl)
   .then(text => {
     const lines = text.trim().split('\n');
 
-    // Determine which column has the price
+    // Only consider rows 2–191 (slice indexes 1–190)
+    const oreLines = lines.slice(1, 191);
+
     const headers = lines[0].split(',');
     const colPrice = headers.length - 2; // second-to-last column
 
-    // Only read rows 2–191 (1-based indexing, slice is 0-based)
-    const oreLines = lines.slice(1, 191);
-
     oreLines.forEach(line => {
+      // Handle quoted CSV values safely
       const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-      if (!match) return; // skip bad lines
+      if (!match) return;
 
       const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
       const ore = cols[0];
 
-      // Skip lines without a price
+      // Skip if the price column is empty
       if (!cols[colPrice]) {
         console.warn('Skipping bad CSV line:', line);
         return;
@@ -479,24 +478,15 @@ fetch(csvUrl)
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
-    console.log('✅ CSV loaded', recognizedOres.length, 'ores');
-  });
 
-
-    recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
-    csvLoaded = true;
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
-    console.log('colPrice index:', colPrice);
     console.log('priceData:', priceData);
-
+  })
+  .catch(err => console.error('Error loading CSV:', err));
 
     // Sort recognized ores by length (longest first)
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
-
-    console.log('✅ CSV loaded', recognizedOres.length, 'ores');
-    console.log('priceData:', priceData);
-
 
 // Main ore line parser
 function parseOreLine(line) {
