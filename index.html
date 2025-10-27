@@ -455,14 +455,18 @@ fetch(csvUrl)
     const headers = lines[0].split(',');
     const colPrice = headers.length - 2; // always second-to-last column
 
-    lines.slice(1).forEach(line => {
-      // handle quoted CSV values safely
-      const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(c => c.replace(/^"|"$/g, '').trim());
-      const ore = cols[0];
-      const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
+lines.slice(1).forEach(line => {
+    // handle quoted CSV values safely
+    const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+    if (!match) return; // skip bad/empty line
 
-      if (ore) priceData[ore] = { price };
-    });
+    const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
+    const ore = cols[0];
+    const price = parseFloat(cols[ colPrice ].replace(/,/g, '')) || 0;
+
+    if (ore) priceData[ore] = { price };
+});
+
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
