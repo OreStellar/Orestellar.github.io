@@ -453,20 +453,27 @@ fetch(csvUrl)
   .then(text => {
     const lines = text.trim().split('\n');
 
+    // Determine which column has the price
     const headers = lines[0].split(',');
     const colPrice = headers.length - 2; // second-to-last column
 
-    // Only read lines 2–191
+    // Only read rows 2–191 (1-based indexing, slice is 0-based)
     const oreLines = lines.slice(1, 191);
 
     oreLines.forEach(line => {
       const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-      if (!match) return;
+      if (!match) return; // skip bad lines
 
       const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
       const ore = cols[0];
-      const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
 
+      // Skip lines without a price
+      if (!cols[colPrice]) {
+        console.warn('Skipping bad CSV line:', line);
+        return;
+      }
+
+      const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
       if (ore) priceData[ore] = { price };
     });
 
@@ -474,6 +481,7 @@ fetch(csvUrl)
     csvLoaded = true;
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
   });
+
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
