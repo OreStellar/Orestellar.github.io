@@ -560,12 +560,8 @@ function parseInventoryText(text) {
 
 
 // --- Submit Button ---
-document.addEventListener('DOMContentLoaded', () => {
-  // Make sure summary is hidden initially
-  const summary = document.getElementById('summaryContainer');
-  summary.style.display = 'none';
-
-  document.getElementById('submitButton').addEventListener('click', () => {
+// --- Submit Button ---
+document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
 
@@ -576,76 +572,68 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('contract-left').style.display = 'block';
     document.getElementById('contract-right').style.display = 'block';
 
-    // Clear previous summary content
+    const summary = document.getElementById('summaryContainer');
+
+    // Clear previous table content
     summary.innerHTML = '';
-    summary.style.display = 'block';
+
+    // Build table with headers (Compressed after Unit Price, Total last)
+    let tableHTML = `<table class="summary-table">
+        <tr>
+            <th style="text-align:center;">Ore</th>
+            <th style="text-align:right;">Quantity</th>
+            <th style="text-align:right;">Unit Price</th>
+            <th style="text-align:center;">Compressed</th>
+            <th style="text-align:right;">Total</th>
+        </tr>
+    </table>`;
+    summary.innerHTML = tableHTML;
+    const tbody = summary.querySelector('table');
 
     const parsedLines = parseInventoryText(input);
-    const tbody = document.createElement('tbody');
-    const table = document.createElement('table');
-    table.classList.add('summary-table');
-    table.appendChild(tbody);
-
-    // Add header row
-    const header = document.createElement('tr');
-    ['Ore', 'Quantity', 'Unit Price', 'Compressed', 'Total'].forEach((text) => {
-      const th = document.createElement('th');
-      th.textContent = text;
-      if (text === 'Ore') th.style.textAlign = 'center';
-      else th.style.textAlign = 'right';
-      header.appendChild(th);
-    });
-    tbody.appendChild(header);
-
-    let grandTotal = 0;
     let delay = 0;
-    const animationDelay = 150; // ms between row animations
+    const animationDelay = 200;
+    let grandTotal = 0;
 
     parsedLines.forEach((item, index) => {
-      const displayName = item.ore.replace(/^Compressed\s+/i, '');
-      const lookupName = displayName; // price lookup
-      const unitPrice = priceData[lookupName]?.price || 0;
-      const total = item.quantity * unitPrice;
-      grandTotal += total;
-      const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+        const displayName = item.ore.replace(/^Compressed\s+/i, '');
+        const unitPrice = priceData[item.ore]?.price || 0;
+        const total = item.quantity * unitPrice;
+        grandTotal += total;
+        const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td style="text-align:center;">${displayName}</td>
-        <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
-        <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-        <td style="text-align:center;">${isCompressed}</td>
-        <td style="text-align:right;">0</td>
-      `;
-      row.style.opacity = 0;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td style="text-align:center;">${displayName}</td>
+            <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
+            <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+            <td style="text-align:center;">${isCompressed}</td>
+            <td style="text-align:right;">${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+        `;
 
-      // Staggered appearance with animation
-      setTimeout(() => {
-        tbody.appendChild(row);
-        row.style.display = '';
-        row.style.animation = `fadeInRow 0.4s ease forwards`;
+        setTimeout(() => {
+            tbody.appendChild(row);
+            row.style.animation = `fadeInRow 0.4s ease forwards`;
+            row.style.animationDelay = `${index * 0.15}s`;
+        }, delay);
 
-        // Animate the total column
-        animateCellValue(row.cells[4], 0, total, 600);
-      }, delay);
-
-      delay += animationDelay;
+        delay += animationDelay;
     });
 
-    // Animate grand total after all rows
+    // Add Grand Total row after all rows
     setTimeout(() => {
-      const footerRow = document.createElement('tr');
-      footerRow.innerHTML = `
-        <td colspan="4" style="text-align:right;"><strong>Grand Total</strong></td>
-        <td style="text-align:right;">0</td>
-      `;
-      tbody.appendChild(footerRow);
-      animateCellValue(footerRow.cells[1], 0, grandTotal, 800); // animate total
-    }, delay + 200);
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `
+            <td colspan="4" style="text-align:right; font-weight:bold;">Grand Total</td>
+            <td style="text-align:right; font-weight:bold;">${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+        `;
+        tbody.appendChild(totalRow);
+    }, delay + 100);
 
-    summary.appendChild(table);
-  });
+    // Show summary container
+    summary.style.display = 'block';
 });
+
 
 /**
  * Animate a numeric value in a table cell from start to end over duration (ms)
