@@ -454,20 +454,37 @@ fetch(csvUrl)
   .then(text => {
     const lines = text.trim().split('\n');
     const headers = lines[0].split(',');
+    
+    // find the column with 150% prices
     const colPrice = headers.findIndex(h => h.trim().toLowerCase().includes('150'));
+    
     lines.slice(1).forEach(line => {
       const cols = line.split(',');
       const ore = cols[0]?.trim();
-      const price = parseFloat(cols[colPrice]) || 0;
-      if (ore) priceData[ore.toLowerCase()] = { price };
+      let price = parseFloat(cols[colPrice]) || 0;
 
+      if (!ore) return;
+
+      // Store base ore
+      priceData[ore] = { price };
+
+      // If it's a compressed ore, also map the base name if price exists
+      if (ore.toLowerCase().startsWith('compressed ')) {
+        const baseOre = ore.replace(/^Compressed\s+/i, '');
+        if (!priceData[baseOre] || priceData[baseOre].price === 0) {
+          priceData[baseOre] = { price };
+        }
+      }
     });
-    console.log('colPrice index:', colPrice);
-    console.log('priceData:', priceData);
+
+    // Sort recognized ores by length (longest first)
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
+
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
+    console.log('priceData:', priceData);
   });
+
 
 /* --- FORM B PARSER (Improved) --- */
 
