@@ -7,6 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  /* For WebKit browsers (Chrome, Edge, Safari) */
+#ratesContainer::-webkit-scrollbar {
+    width: 8px;              /* scrollbar width */
+    background: transparent;  /* make the scrollbar track transparent */
+}
+
+#ratesContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* optional: faint thumb */
+    border-radius: 4px;
+}
+
+#ratesContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4); /* slightly brighter on hover */
+}
+
+/* For Firefox */
+#ratesContainer {
+    scrollbar-width: thin;       /* thinner scrollbar */
+    scrollbar-color: rgba(255,255,255,0.2) transparent;  /* thumb / track */
+}
   body {
     margin: 0;
     padding: 0;
@@ -312,7 +332,7 @@
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     width: 70vw;                 /* make container responsive to screen width */
-    max-width: 600px;            /* prevent it from getting too wide */
+    max-width: 900px;            /* prevent it from getting too wide */
     max-height: 70vh;            /* max height 80% of viewport */
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
