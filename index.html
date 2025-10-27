@@ -963,7 +963,7 @@ panel.style.transformOrigin = 'center center';
   panel.style.display = 'block';
   setTimeout(() => panel.classList.add('active'), 10);
 }
-
+}
 // --- Hide all panels ---
 function hidePanels() {
   overlay.classList.remove('visible');
@@ -1020,6 +1020,8 @@ function showRatesGrid() {
     ratesContainer.appendChild(grid);
 
     Object.keys(priceData).forEach((ore, index) => {
+          // Skip "Compressed" ores in the rates tab
+    if (ore.toLowerCase().startsWith('compressed ')) return;
         const entry = priceData[ore];
         const cell = document.createElement('div');
         cell.className = 'grid-item neon';
