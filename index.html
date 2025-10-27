@@ -997,36 +997,93 @@ document.addEventListener('click', e => {
   ) hidePanels();
 });
 
-function showRates() {
-    // Clear previous content
-    ratesContainer.innerHTML = '';
+// --- Build Neon Grid for Prices ---
+function showRatesGrid() {
+    ratesContainer.innerHTML = ''; // clear previous
 
-    // Build table
-    const table = document.createElement('table');
-    
-    // Header row
-    const header = document.createElement('tr');
-    ['Ore', 'Price'].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        header.appendChild(th);
-    });
-    table.appendChild(header);
+    // Optional: search box
+    const searchInput = document.createElement('input');
+    searchInput.placeholder = "Search Ore...";
+    searchInput.style.width = "100%";
+    searchInput.style.marginBottom = "10px";
+    searchInput.style.padding = "5px";
+    searchInput.style.borderRadius = "6px";
+    searchInput.style.border = "1px solid rgba(255,255,255,0.2)";
+    searchInput.style.background = "rgba(0,0,0,0.3)";
+    searchInput.style.color = "#0ff";
+    searchInput.style.fontFamily = "'Chivo Mono', monospace";
+    ratesContainer.appendChild(searchInput);
 
-    // Loop through priceData
-    Object.keys(priceData).forEach(ore => {
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    ratesContainer.appendChild(grid);
+
+    Object.keys(priceData).forEach((ore, index) => {
         const entry = priceData[ore];
-        const row = document.createElement('tr');
-        
-        row.innerHTML = `
-            <td>${ore}</td>
-            <td>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-        `;
-        table.appendChild(row);
+        const cell = document.createElement('div');
+        cell.className = 'grid-item neon';
+        cell.style.opacity = 0;
+        cell.innerHTML = `<strong>${ore}</strong><br>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        grid.appendChild(cell);
+
+        // Fade-in animation sequentially
+        setTimeout(() => {
+            cell.style.transition = "opacity 0.4s ease, transform 0.3s ease";
+            cell.style.opacity = 1;
+            cell.style.transform = "translateY(0)";
+        }, index * 20); // stagger animation
     });
 
-    ratesContainer.appendChild(table);
+    // Filter function
+    searchInput.addEventListener('input', () => {
+        const filter = searchInput.value.toLowerCase();
+        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+            item.style.display = item.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
 }
+
+// --- CSS injection for grid ---
+const style = document.createElement('style');
+style.innerHTML = `
+#ratesContainer {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px;
+}
+#ratesContainer .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+#ratesContainer .grid-item {
+  background: rgba(0,255,255,0.05);
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.85rem;
+  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+  transform: translateY(10px);
+  transition: transform 0.2s;
+}
+#ratesContainer .grid-item:hover {
+  transform: scale(1.05);
+}
+`;
+document.head.appendChild(style);
+
+// --- Call it after CSV is loaded ---
+if (csvLoaded) showRatesGrid();
+else {
+    const checkCsv = setInterval(() => {
+        if (csvLoaded) {
+            showRatesGrid();
+            clearInterval(checkCsv);
+        }
+    }, 100);
+}
+
 
 </script>
 </div>
