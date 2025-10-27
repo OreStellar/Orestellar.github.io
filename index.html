@@ -714,6 +714,36 @@ console.log("Animating Grand Total cell:", grandCell); // debugging
 setTimeout(() => {
     animateValue(grandCell, 0, grandTotal, 800, true);
 }, delay + 200);
+// --- Debug container positions ---
+function debugContainers() {
+    const containers = [
+        { name: 'Summary', el: summary },
+        { name: 'Compare', el: compareContainer }
+    ];
+
+    containers.forEach(c => {
+        // Temporarily make visible if hidden
+        const wasHidden = c.el.style.display === 'none';
+        if (wasHidden) {
+            c.el.style.display = 'block';
+            c.el.style.position = 'absolute';
+            c.el.style.visibility = 'hidden';
+        }
+
+        const rect = c.el.getBoundingClientRect();
+        console.log(`${c.name} container rect:`, rect);
+
+        // Restore previous state
+        if (wasHidden) {
+            c.el.style.display = 'none';
+            c.el.style.visibility = 'visible';
+            c.el.style.position = '';
+        }
+    });
+}
+
+// Call the debug function
+debugContainers();
 
 
     console.log("=== Submit Button Finished Setup ===");
