@@ -952,12 +952,9 @@ function showPanel(panel, tab) {
  if (panel === ratesContainer) {
     panel.style.transformOrigin = 'center center';
 } else {
-    // keep default behavior for other panels like compareContainer
-    const rect = tab.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2;
-    const originY = rect.top + rect.height / 2;
-    panel.style.transformOrigin = `${originX}px ${originY}px`;
-}
+
+
+panel.style.transformOrigin = 'center center';
 
   // show overlay
   overlay.classList.add('visible');
