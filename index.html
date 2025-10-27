@@ -611,125 +611,70 @@ const unitPrice = priceData[baseOre]?.price || 0; // no toLowerCase()
 });
 
 
-// --- Rates Tab ---
+// --- Button Tabs ---
 const ratesTab = document.getElementById('ratesTab');
+const compareTab = document.getElementById('compareTab');
 const ratesContainer = document.getElementById('ratesContainer');
+const compareContainer = document.getElementById('compareContainer');
 
-ratesTab.addEventListener('click', () => {
-  document.getElementById('inventoryContainer').style.display = 'none';
-  document.getElementById('summaryContainer').style.display = 'none';
-  document.getElementById('contract-left').style.display = 'none';
-  document.getElementById('contract-right').style.display = 'none';
-  document.getElementById('compareContainer').style.display = 'none';
-
-  if (!csvLoaded) {
-    // Wait until CSV loads, then open
-    const waitInterval = setInterval(() => {
-      if (csvLoaded) {
-        clearInterval(waitInterval);
-        showRates();
-      }
-    }, 50); // check every 50ms
-  } else {
-    showRates();
-  }
-});
-
-function showRates() {
-  const ratesContainer = document.getElementById('ratesContainer');
-
-  // Create table
-  const table = document.createElement('table');
-
-  // Add headers
-  const headerRow = document.createElement('tr');
-  ['Ore', 'Unit Price', 'Quantity', 'Total ISK', 'Compressed'].forEach(text => {
-    const th = document.createElement('th');
-    th.textContent = text;
-    headerRow.appendChild(th);
-  });
-  table.appendChild(headerRow);
-
-  // Object to store totals per ore
-  const totals = {};
-
-  // Loop through input data
-  Object.keys(priceData).forEach(ore => {
-    const entry = priceData[ore];
-    if (!entry || !entry.price) return; // skip empty prices
-
-    // Extract quantity if included in the ore string (e.g., "Crokite 1694")
-    let [oreName, qtyStr] = ore.split(/\s+(\d+)$/); // splits at last number
-    oreName = oreName || ore; // fallback
-    const quantity = qtyStr ? parseInt(qtyStr, 10) : 1; // default 1 if no number
-
-    // Keep totals per ore name (variant separate)
-    if (!totals[oreName]) totals[oreName] = { unitPrice: entry.price, quantity: 0, compressed: false };
-    totals[oreName].quantity += quantity;
-
-    // Mark if compressed
-    if (oreName.startsWith('Compressed')) totals[oreName].compressed = true;
-  });
-
-  // Populate table
-  Object.keys(totals).forEach(oreName => {
-    const row = document.createElement('tr');
-
-    const nameCell = document.createElement('td');
-    nameCell.textContent = oreName;
-    row.appendChild(nameCell);
-
-    const priceCell = document.createElement('td');
-    priceCell.textContent = totals[oreName].unitPrice.toFixed(2);
-    row.appendChild(priceCell);
-
-    const qtyCell = document.createElement('td');
-    qtyCell.textContent = totals[oreName].quantity;
-    row.appendChild(qtyCell);
-
-    const totalCell = document.createElement('td');
-    totalCell.textContent = (totals[oreName].unitPrice * totals[oreName].quantity).toFixed(2);
-    row.appendChild(totalCell);
-
-    const compressedCell = document.createElement('td');
-    compressedCell.textContent = totals[oreName].compressed ? '✅' : '❌';
-    row.appendChild(compressedCell);
-
-    table.appendChild(row);
-  });
-
-  // Clear and add table
-  ratesContainer.innerHTML = '';
-  ratesContainer.appendChild(table);
-
-  // optional fade-in
-  ratesContainer.classList.remove('active');
-  setTimeout(() => ratesContainer.classList.add('active'), 10);
+function closePanels() {
+    ratesContainer.classList.remove('active');
+    compareContainer.classList.remove('active');
+    setTimeout(() => {
+        ratesContainer.style.display = 'none';
+        compareContainer.style.display = 'none';
+    }, 400); // matches transition
 }
 
+ratesTab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Hide compare panel
+    compareContainer.classList.remove('active');
+    compareContainer.style.display = 'none';
 
+    ratesContainer.style.display = 'block';
+    setTimeout(() => ratesContainer.classList.add('active'), 10);
 
-document.getElementById('compareTab').addEventListener('click', () => {
-  document.getElementById('inventoryContainer').style.display = 'none';
-  document.getElementById('summaryContainer').style.display = 'none';
-  document.getElementById('contract-left').style.display = 'none';
-  document.getElementById('contract-right').style.display = 'none';
-  document.getElementById('ratesContainer').style.display = 'none';
-
-  const compareContainer = document.getElementById('compareContainer');
-  // Static comparison table for now
-  let table = `
-    <table>
-      <tr><th>Ore</th><th>Variant A</th><th>Variant B</th><th>Difference</th></tr>
-      <tr><td>Veldspar</td><td>100.00</td><td>110.00</td><td>+10.00</td></tr>
-      <tr><td>Scordite</td><td>90.00</td><td>85.00</td><td>-5.00</td></tr>
-      <tr><td>Pyroxeres</td><td>120.00</td><td>118.00</td><td>-2.00</td></tr>
-    </table>`;
-  compareContainer.innerHTML = table;
-
-  compareContainer.classList.remove('active');
-  setTimeout(() => compareContainer.classList.add('active'), 10);
+    if (!csvLoaded) {
+        const waitInterval = setInterval(() => {
+            if (csvLoaded) {
+                clearInterval(waitInterval);
+                showRates();
+            }
+        }, 50);
+    } else {
+        showRates();
+    }
 });
+
+compareTab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Hide rates panel
+    ratesContainer.classList.remove('active');
+    ratesContainer.style.display = 'none';
+
+    compareContainer.style.display = 'block';
+    setTimeout(() => compareContainer.classList.add('active'), 10);
+
+    // populate static table
+    compareContainer.innerHTML = `
+        <table>
+            <tr><th>Ore</th><th>Variant A</th><th>Variant B</th><th>Difference</th></tr>
+            <tr><td>Veldspar</td><td>100.00</td><td>110.00</td><td>+10.00</td></tr>
+            <tr><td>Scordite</td><td>90.00</td><td>85.00</td><td>-5.00</td></tr>
+            <tr><td>Pyroxeres</td><td>120.00</td><td>118.00</td><td>-2.00</td></tr>
+        </table>
+    `;
+});
+
+// Close panels when clicking outside
+document.addEventListener('click', (e) => {
+    if (!ratesContainer.contains(e.target) && !compareContainer.contains(e.target) &&
+        !ratesTab.contains(e.target) && !compareTab.contains(e.target)) {
+        closePanels();
+    }
+});
+
 
 </script>
 </body>
