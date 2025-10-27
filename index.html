@@ -462,15 +462,17 @@ lines.slice(1).forEach(line => {
 
     const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
     const ore = cols[0];
-    const price = parseFloat(cols[ colPrice ].replace(/,/g, '')) || 0;
+
+    if (!cols[colPrice]) {
+        console.warn('Skipping bad CSV line:', line);
+        return; // skip lines missing a price column
+    }
+
+    const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
 
     if (ore) priceData[ore] = { price };
-    if (!cols[colPrice]) {
-    console.warn('Skipping bad CSV line:', line);
-    return;
-}
-
 });
+
 
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
