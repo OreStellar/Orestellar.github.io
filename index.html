@@ -203,7 +203,7 @@
   box-shadow: 0 0 15px #fff, 0 0 30px rgb(255, 255, 255);
 }
 
-#ratesContainer, #compareContainer {
+#ratesContainer{
     font-family: 'Chivo Mono', monospace;
     font-weight: 200;   /* regular text */
     font-size: 0.95rem; /* adjust as needed */
@@ -225,6 +225,31 @@
     overflow-x: hidden;          /* hide horizontal scroll */
     opacity: 0;
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+#compareContainer {
+    font-family: 'Chivo Mono', monospace;
+    font-weight: 200;   /* regular text */
+    font-size: 0.95rem; /* adjust as needed */
+    color: #fff;
+    display: none;
+    position: fixed;         /* keep it on screen relative to viewport */
+    top: 50%;                /* vertical center */
+    right: 50%;              /* horizontal center logic */
+    transform: translate(50%, -50%); /* center container on both axes */
+    width: 50vw;
+    max-width: 350px;
+    max-height: 60vh;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    overflow-y: auto;
+    overflow-x: hidden;
+    opacity: 0;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    z-index: 15; /* make sure it's above other elements */
 }
 
 #ratesContainer.active {
@@ -285,10 +310,7 @@
   display: none;
 }
 
-#compareContainer {
-    top: 25%; /* starts 25% from top */
-    transform: translateY(0); /* don’t offset by half height */
-}
+
 </style>
 </head>
 <body>
