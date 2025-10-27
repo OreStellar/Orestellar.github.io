@@ -465,8 +465,8 @@
   top: calc(30% + 40px); /* 40px below ratesTab */
 }
 /* Force the Total column to not wrap */
-.summary-table td:nth-child(4),
-.summary-table th:nth-child(4) {
+.summary-table td:nth-child(5),
+.summary-table th:nth-child(5) {
     white-space: nowrap;   /* never wrap */
     min-width: 80px;       /* optional: ensure some width */
 }
@@ -858,8 +858,8 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <td style="text-align:center;">${displayName}</td>
             <td style="text-align:right;">0</td>
             <td style="text-align:right;">0.00</td>
-            <td style="text-align:right;">0.00</td>
-            <td style="text-align:center;">${isCompressed}</td>
+            <td style="text-align:center;">${isCompressed}</td> 
+            <td style="text-align:right;">0.00</td>              
         `;
         tbody.appendChild(row);
 
