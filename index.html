@@ -484,7 +484,7 @@ fetch(csvUrl)
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
     console.log('colPrice index:', colPrice);
     console.log('priceData:', priceData);
-  });
+
 
     // Sort recognized ores by length (longest first)
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
