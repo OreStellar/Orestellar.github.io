@@ -560,7 +560,6 @@ function parseInventoryText(text) {
 
 
 // --- Submit Button ---
-// --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
@@ -574,11 +573,13 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
     const summary = document.getElementById('summaryContainer');
 
-    // Clear previous table content
+    // Clear previous content
     summary.innerHTML = '';
 
-    // Build table with headers (Compressed after Unit Price, Total last)
-    let tableHTML = `<table class="summary-table">
+    // Create table with headers
+    const table = document.createElement('table');
+    table.className = 'summary-table';
+    table.innerHTML = `
         <tr>
             <th style="text-align:center;">Ore</th>
             <th style="text-align:right;">Quantity</th>
@@ -586,21 +587,20 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <th style="text-align:center;">Compressed</th>
             <th style="text-align:right;">Total</th>
         </tr>
-    </table>`;
-    summary.innerHTML = tableHTML;
-    const tbody = summary.querySelector('table');
+    `;
+    summary.appendChild(table);
 
+    let grandTotal = 0;
     const parsedLines = parseInventoryText(input);
     let delay = 0;
     const animationDelay = 200;
-    let grandTotal = 0;
 
     parsedLines.forEach((item, index) => {
         const displayName = item.ore.replace(/^Compressed\s+/i, '');
         const unitPrice = priceData[item.ore]?.price || 0;
         const total = item.quantity * unitPrice;
         grandTotal += total;
-        const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+        const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -612,25 +612,25 @@ document.getElementById('submitButton').addEventListener('click', () => {
         `;
 
         setTimeout(() => {
-            tbody.appendChild(row);
-            row.style.animation = `fadeInRow 0.4s ease forwards`;
+            table.appendChild(row);
+            row.style.animation = 'fadeInRow 0.4s ease forwards';
             row.style.animationDelay = `${index * 0.15}s`;
         }, delay);
 
         delay += animationDelay;
     });
 
-    // Add Grand Total row after all rows
+    // Add Grand Total row after all rows appear
     setTimeout(() => {
         const totalRow = document.createElement('tr');
         totalRow.innerHTML = `
             <td colspan="4" style="text-align:right; font-weight:bold;">Grand Total</td>
             <td style="text-align:right; font-weight:bold;">${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
         `;
-        tbody.appendChild(totalRow);
+        table.appendChild(totalRow);
     }, delay + 100);
 
-    // Show summary container
+    // Show summary
     summary.style.display = 'block';
 });
 
