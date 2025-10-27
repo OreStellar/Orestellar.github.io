@@ -150,15 +150,27 @@
     display: none;
     overflow-x: auto;
   }
+  
+#sideTabsContainer {
+  position: fixed;
+  top: 10%;             /* starting offset from top */
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* distributes tabs evenly */
+  height: 80%;           /* total vertical space for tabs */
+  pointer-events: none;   /* outside clicks pass through */
+}
 /* --- Modern Side Tabs --- */
 .sideTab {
   display: flex;
-  position: absolute;
+  position: relative;
   flex-direction: row;       /* icon and text in a row */
   align-items: center;       /* vertically center both icon and text */
   justify-content: flex-start;   /* horizontally center content */
   top: 30%;               /* vertical placement */
-  right: -175px;            /* hidden offscreen initially */
+  right: 0;            /* hidden offscreen initially */
+  margin: 0;
   width: 200px;
   text-align: left;
   background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
@@ -188,15 +200,6 @@
 .sideTab:active {
   transform: translateX(22px) scale(0.98);  /* tiny press effect */
   box-shadow: 0 0 15px #fff, 0 0 30px rgb(255, 255, 255);
-}
-
-/* Position each tab vertically along the right side */
-#ratesTab {
-  top: 17%;
-}
-
-#compareTab {
-  top: 21.5%;
 }
 
 #ratesContainer, #compareContainer {
@@ -280,6 +283,7 @@
   </div>
 
 </div>
+  <div id="sideTabsContainer">
 <!-- Side Tabs with Icons -->
 <div id="ratesTab" class="sideTab">
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="cyan" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -302,6 +306,7 @@
     <path d="M12 3v18"/>
     <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
   </svg>
+</div>
 </div>
 
 
