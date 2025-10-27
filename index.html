@@ -459,24 +459,40 @@ fetch(csvUrl)
         console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
     }
 
+fetch(csvUrl)
+  .then(res => res.text())
+  .then(text => {
+    const lines = text.trim().split('\n');
+    const oreLines = lines.slice(1, 191); // rows 2–191
+    const headers = lines[0].split(',');
+
+    // Find the index of the "Suggested Buy Price @ 150%" column
+    const colPrice = headers.findIndex(h => h.trim() === "Suggested Buy Price @ 150%");
+    if (colPrice === -1) {
+        console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
+        return;
+    }
+
+    // Clear previous priceData
+    priceData = {};
+
     oreLines.forEach(line => {
+        // Split CSV line properly
         const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
         if (!match) return;
 
         const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
-        const ore = cols[0]; // Ore Variant
+        const oreVariant = cols[0]; // full variant name
 
-        if (!cols[colPrice]) {
+        if (!oreVariant || !cols[colPrice]) {
             console.warn('Skipping bad CSV line:', line);
             return;
         }
 
         const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
+        priceData[oreVariant] = { price };
 
-        if (ore) {
-            priceData[ore] = { price };
-            console.log('Added to priceData:', ore, '->', price);
-        }
+        console.log('Added to priceData:', oreVariant, '->', price);
     });
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
@@ -487,14 +503,14 @@ fetch(csvUrl)
   })
   .catch(err => console.error('Error loading CSV:', err));
 
-// Main ore line parser
+
+// --- Parse one line of inventory text ---
 function parseOreLine(line) {
     line = line.trim();
     if (!line) return null;
 
-    // Sort all keys descending by length so longer variants are matched first
+    // Match longest variant first
     const sortedOres = Object.keys(priceData).sort((a,b) => b.length - a.length);
-
     let matchedOre = null;
     for (const oreName of sortedOres) {
         if (line.toLowerCase().includes(oreName.toLowerCase())) {
@@ -512,31 +528,27 @@ function parseOreLine(line) {
 }
 
 
+// --- Parse full inventory text ---
 function parseInventoryText(text) {
-    // Split input into non-empty trimmed lines
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
     const result = [];
 
-    // Sort ore names by length descending to match variants first
     const sortedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
 
     for (const line of lines) {
-        // Skip lines that don't contain a recognized ore
         let matchedOre = null;
         for (const oreName of sortedOres) {
             if (line.toLowerCase().includes(oreName.toLowerCase())) {
                 matchedOre = oreName;
-                break; // stop at first (longest) match
+                break;
             }
         }
 
         if (!matchedOre) continue;
 
-        // Extract quantity (first number found)
         const qtyMatch = line.match(/([\d,]+)/);
         const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
 
-        // Add parsed ore + quantity
         result.push({ ore: matchedOre, quantity });
     }
 
