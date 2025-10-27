@@ -434,42 +434,49 @@ function drawStars() {
 drawStars();
 
 /* --- CSV Parsing --- */
-const csvUrl = 'https://orestellar.github.io/data/prices.csv';
-// --- Step 0: Load recognized ores ---
-let recognizedOres = [];  // longest first
+/* ========== FORM B PARSER CORE ========== */
+
+// 🔹 Stores ore → price data from CSV
 let priceData = {};
-let csvLoaded = false; // <-- flag
+let recognizedOres = [];
+let csvLoaded = false;
+
+// 🔹 Load your CSV data from GitHub
+const csvUrl = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
 fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
     const lines = text.trim().split('\n');
     const headers = lines[0].split(',');
-    const colPrice = headers.findIndex(h => h.trim().toLowerCase() === 'suggested buy price @ 150%'.toLowerCase());
-    
-    if (colPrice === -1) {
-      console.error('❌ Could not find price column');
-      return;
-    }
-
+    const colPrice = headers.findIndex(h => h.trim().toLowerCase().includes('150'));
     lines.slice(1).forEach(line => {
       const cols = line.split(',');
       const ore = cols[0]?.trim();
       const price = parseFloat(cols[colPrice]) || 0;
-      if (ore) {
-        recognizedOres.push(ore);
-        priceData[ore] = { price };  // store price
-      }
+      if (ore) priceData[ore] = { price };
     });
-    csvLoaded = true;  // ✅ CSV finished loading
-    // Sort longest first for proper matching
-    recognizedOres.sort((a,b) => b.length - a.length);
-    console.log('✅ Recognized ores loaded:', recognizedOres);
+    recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
+    csvLoaded = true;
+    console.log('✅ CSV loaded', recognizedOres.length, 'ores');
   });
 
-// --- Helper Functions ---
+// 🔹 Helper: extract volume + ISK from lines
+function extractVolumeAndISK(line) {
+  const volumeMatch = line.match(/([\d,]+)\s*m3/i);
+  const iskMatch = line.match(/([\d,]+\.\d+)\s*ISK/i);
+  return {
+    volume: volumeMatch ? parseFloat(volumeMatch[1].replace(/,/g, '')) : null,
+    isk: iskMatch ? parseFloat(iskMatch[1].replace(/,/g, '')) : null
+  };
+}
 
-// 1. Extract ore name (longest match first)
+// 🔹 Helper: remove “Compressed” prefix
+function getBaseName(ore) {
+  return ore.replace(/^Compressed\s+/i, '');
+}
+
+// 🔹 Helper: find ore name that matches start of line
 function extractOreName(line) {
   for (const ore of recognizedOres) {
     if (line.startsWith(ore)) return ore;
@@ -477,69 +484,35 @@ function extractOreName(line) {
   return null;
 }
 
-// 2. Extract quantity (next number after ore)
-function extractQuantity(line, ore) {
-  const rest = line.slice(ore.length).trim();
-  const match = rest.match(/[\d,]+/);
-  return match ? parseFloat(match[0].replace(/,/g, '')) : null;
-}
-
-// 3. Base ore name (for internal grouping)
-function getBaseName(ore) {
-  return ore.replace(/^Compressed\s+/i, '');
-}
-
-// 4. Extract volume (m3) and ISK (Form B)
-function extractVolumeAndISK(line) {
-  const volumeMatch = line.match(/([\d,]+)\s*m3/i);
-  const iskMatch = line.match(/([\d,]+\.\d+)\s*ISK/i);
-
-  return {
-    volume: volumeMatch ? parseFloat(volumeMatch[1].replace(/,/g, '')) : null,
-    isk: iskMatch ? parseFloat(iskMatch[1].replace(/,/g, '')) : null
-  };
-}
-
-// --- Smarter Ore Line Parser ---
+// 🔹 Parse one ore line
 function parseOreLine(line) {
-  line = line.trim();
-  if (!line || line.toLowerCase().includes('top 10 overall')) return null;
+  const name = extractOreName(line);
+  if (!name) return null;
 
-  // Match the longest ore name first
-  const oreNames = Object.keys(priceData).sort((a,b) => b.length - a.length);
-  let matchedOre = null;
+  const qtyMatch = line.match(/x\s*([\d,]+)/i);
+  const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, '')) : 0;
 
-  for (const name of oreNames) {
-    if (line.startsWith(name)) {
-      matchedOre = name;
-      break;
-    }
-  }
+  const { volume, isk } = extractVolumeAndISK(line);
+  const unitPrice = priceData[name]?.price || 0;
+  const total = unitPrice * quantity;
 
-  if (!matchedOre) return null;
-
-  const remainder = line.slice(matchedOre.length).trim();
-  let quantity = 0;
-  let volume = 0;
-  let isk = 0;
-
-  // Extract quantity (first number)
-  const qtyMatch = remainder.match(/[\d,]+/);
-  if (qtyMatch) quantity = parseFloat(qtyMatch[0].replace(/,/g, ''));
-
-  // Extract m3 volume
-  const volMatch = remainder.match(/([\d,\.]+)\s*m3/i);
-  if (volMatch) volume = parseFloat(volMatch[1].replace(/,/g,''));
-
-  // Extract ISK
-  const iskMatch = remainder.match(/([\d,\.]+)\s*ISK/i);
-  if (iskMatch) isk = parseFloat(iskMatch[1].replace(/,/g,''));
-
-  const baseName = matchedOre.split(' ')[matchedOre.split(' ').length-1]; // last word as base
-
-  return { ore: matchedOre, baseName, quantity, volume, isk };
+  return { ore: name, quantity, volume, isk, unitPrice, total };
 }
 
+// 🔹 Parse entire inventory text
+function parseInventoryText(input) {
+  if (!csvLoaded) {
+    alert('Prices still loading, please wait a moment.');
+    return [];
+  }
+  const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
+  const parsed = [];
+  for (const line of lines) {
+    const p = parseOreLine(line);
+    if (p) parsed.push(p);
+  }
+  return parsed;
+}
 
 
 // --- Submit Button ---
