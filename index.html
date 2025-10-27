@@ -889,7 +889,6 @@ function animateValue(cell, start, end, duration, isFloat = false) {
     requestAnimationFrame(step);
 }
 
-// --- Button Tabs ---
 // --- Tab Containers ---
 const ratesTab = document.getElementById('ratesTab');
 const compareTab = document.getElementById('compareTab');
@@ -897,43 +896,60 @@ const ratesContainer = document.getElementById('ratesContainer');
 const compareContainer = document.getElementById('compareContainer');
 const overlay = document.getElementById('overlay');
 
-// --- Animation helpers ---
-function showPanel(panel) {
+// --- Show Panel with zoom-from-button animation ---
+function showPanel(panel, tab) {
   // hide any open panels first
   [ratesContainer, compareContainer].forEach(el => {
     el.classList.remove('active');
     el.style.display = 'none';
   });
 
-  // activate overlay
+  // set transform origin to the center of the clicked tab
+  const rect = tab.getBoundingClientRect();
+  const originX = rect.left + rect.width / 2;
+  const originY = rect.top + rect.height / 2;
+  panel.style.transformOrigin = `${originX}px ${originY}px`;
+
+  // show overlay
   overlay.classList.add('visible');
 
-  // show panel with animation
+  // show panel
   panel.style.display = 'block';
   setTimeout(() => panel.classList.add('active'), 10);
 }
 
+// --- Hide all panels ---
 function hidePanels() {
   overlay.classList.remove('visible');
   [ratesContainer, compareContainer].forEach(el => el.classList.remove('active'));
 
   setTimeout(() => {
     [ratesContainer, compareContainer].forEach(el => (el.style.display = 'none'));
-  }, 400); // matches CSS transition
+  }, 400); // match CSS transition
 }
 
 // --- Event Listeners ---
 ratesTab.addEventListener('click', e => {
   e.stopPropagation();
-  showPanel(ratesContainer);
+  showPanel(ratesContainer, ratesTab);
 });
 
 compareTab.addEventListener('click', e => {
   e.stopPropagation();
-  showPanel(compareContainer);
+  showPanel(compareContainer, compareTab);
 });
 
 overlay.addEventListener('click', hidePanels);
+
+// --- Optional: click outside panel closes ---
+document.addEventListener('click', e => {
+  if (
+    !ratesContainer.contains(e.target) &&
+    !compareContainer.contains(e.target) &&
+    !ratesTab.contains(e.target) &&
+    !compareTab.contains(e.target)
+  ) hidePanels();
+});
 
 function showRates() {
     // Clear previous content
