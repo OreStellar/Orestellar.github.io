@@ -583,6 +583,7 @@ function animateValue(cell, start, end, duration = 500, isFloat = false) {
 }
 
 // --- Submit Button ---
+// --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
@@ -606,24 +607,26 @@ document.getElementById('submitButton').addEventListener('click', () => {
     // Build table
     const table = document.createElement('table');
     table.classList.add('summary-table');
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Ore</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Compressed</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th>Ore</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Compressed</th>
+            <th>Total</th>
+        </tr>
     `;
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
     summary.appendChild(table);
-    const tbody = table.querySelector('tbody');
 
     let grandTotal = 0;
     let delay = 0;
-    const animationDelay = 200;
+    const animationDelay = 200; // ms between each row
 
     parsedLines.forEach((item, index) => {
         const displayName = item.ore.replace(/^Compressed\s+/i, '');
@@ -641,7 +644,8 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <td style="text-align:right;">0.00</td>
         `;
         tbody.appendChild(row);
-        console.log("Cells in row:", row.cells.length, row.innerHTML);
+
+        // Animate numbers
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
         const totalCell = row.cells[4];
@@ -656,7 +660,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
         delay += animationDelay;
     });
 
-    // Grand total row
+    // Add grand total row
     const totalRow = document.createElement('tr');
     totalRow.innerHTML = `
         <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
@@ -664,13 +668,30 @@ document.getElementById('submitButton').addEventListener('click', () => {
     `;
     tbody.appendChild(totalRow);
 
-    const grandTotalCell = totalRow.cells[4];
-
     // Animate grand total after all rows
     setTimeout(() => {
-        animateValue(grandTotalCell, 0, grandTotal, 800, true);
+        animateValue(totalRow.cells[4], 0, grandTotal, 800, true);
     }, delay + 200);
 });
+
+// Helper function for counting animation
+function animateValue(cell, start, end, duration, isFloat = false) {
+    const range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const value = start + range * progress;
+        cell.textContent = isFloat
+            ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            : Math.round(value).toLocaleString();
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+    requestAnimationFrame(step);
+}
 
 // --- Button Tabs ---
 const ratesTab = document.getElementById('ratesTab');
