@@ -325,8 +325,8 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    width: calc(100% - 60px);   /* full width minus 30px margin each side */
-    height: calc(100% - 60px);  /* full height minus 30px top/bottom */
+    width: calc((100% - 60px) * 0.85);   /* 85% of full width minus 30px margins */
+    height: calc((100% - 60px) * 0.85);  /* 85% of full height minus 30px margins */
     max-width: none;
     max-height: none;
     transform: translate(-50%, -50%) scale(0);  /* center & hidden initially */
@@ -347,6 +347,7 @@
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
     z-index: 50;
 }
+
 
 #compareTab {
     top: calc(30% + 25px); /* move it 25px lower than other tabs */
