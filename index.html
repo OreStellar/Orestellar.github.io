@@ -488,33 +488,18 @@ function parseOreLine(line) {
     line = line.trim();
     if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-    const oreNames = Object.keys(priceData);
-
-    let matchedOre = null;
-
-    // Handle compressed first
-    const isCompressed = line.toLowerCase().startsWith('compressed ');
-    const checkLine = isCompressed ? line.slice(10).trim() : line;
-
-    // 1️⃣ Try exact match
-    matchedOre = oreNames.find(name => name.toLowerCase() === checkLine.toLowerCase());
-
-    // 2️⃣ Fallback: starts-with match
-    if (!matchedOre) {
-        matchedOre = oreNames.find(name => checkLine.toLowerCase().startsWith(name.toLowerCase()));
-    }
+    // Exact CSV match first
+    let matchedOre = recognizedOres.find(name => line.toLowerCase().startsWith(name.toLowerCase()));
 
     if (!matchedOre) return null;
 
-    // Restore "Compressed" if applicable
-    if (isCompressed) matchedOre = "Compressed " + matchedOre;
-
-    // Extract quantity
+    // Extract quantity: grab first number in line
     const qtyMatch = line.match(/([\d,]+)/);
     const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
 
     return { ore: matchedOre, quantity };
 }
+
 
 
 
@@ -547,7 +532,7 @@ lines.forEach(line => {
   const parsed = parseOreLine(line);
   if (!parsed || !parsed.ore) return; // skip unrecognized lines
 
-  const unitPrice = priceData[parsed.ore]?.price || 0;
+  const unitPrice = parsed.ore && priceData[parsed.ore] ? priceData[parsed.ore].price : 0;
   const total = parsed.quantity * unitPrice;
   grandTotal += total;
 
