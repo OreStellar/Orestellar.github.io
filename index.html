@@ -453,14 +453,13 @@ fetch(csvUrl)
   .then(text => {
     const lines = text.trim().split('\n');
 
-    // Only read lines 2–191 (0-indexed: slice 1 to 191)
-    const oreLines = lines.slice(1, 191);
-
     const headers = lines[0].split(',');
     const colPrice = headers.length - 2; // second-to-last column
 
+    // Only read lines 2–191
+    const oreLines = lines.slice(1, 191);
+
     oreLines.forEach(line => {
-      // handle quoted CSV values safely
       const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
       if (!match) return;
 
@@ -475,9 +474,6 @@ fetch(csvUrl)
     csvLoaded = true;
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
   });
-
-
-
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
