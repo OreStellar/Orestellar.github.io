@@ -159,7 +159,6 @@
   flex-direction: column;
   justify-content: space-between; /* distributes tabs evenly */
   height: 80%;           /* total vertical space for tabs */
-  pointer-events: none;   /* outside clicks pass through */
 }
 /* --- Modern Side Tabs --- */
 .sideTab {
@@ -710,7 +709,6 @@ function showRates() {
 
 
 
-/* --- Compare Tab --- */
 document.getElementById('compareTab').addEventListener('click', () => {
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('summaryContainer').style.display = 'none';
@@ -732,6 +730,7 @@ document.getElementById('compareTab').addEventListener('click', () => {
   compareContainer.classList.remove('active');
   setTimeout(() => compareContainer.classList.add('active'), 10);
 });
+
 </script>
 </body>
 </html>
