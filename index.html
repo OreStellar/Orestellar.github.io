@@ -438,40 +438,48 @@ function drawStars() {
 drawStars();
 
 /* --- CSV Parsing --- */
-/* ========== FORM B PARSER CORE ========== */
-
+<script>
+// --- CSV Parsing & Price Data ---
 let priceData = {};
 let recognizedOres = [];
 let csvLoaded = false;
 
 const csvUrl = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
 
+// Helper to split CSV lines properly (handles quotes and commas)
+function parseCSVLine(line) {
+    const regex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
+    const match = line.match(regex);
+    if (!match) return [];
+    return match.map(c => c.replace(/^"|"$/g, '').trim());
+}
+
+// Fetch CSV and populate priceData
 fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
     const lines = text.trim().split('\n');
-    const oreLines = lines.slice(1, 191); // rows 2–191
-    const headers = lines[0].split(',');
-
+    const headers = parseCSVLine(lines[0]);
     const colPrice = headers.findIndex(h => h.trim() === "Suggested Buy Price @ 150%");
+
     if (colPrice === -1) {
-      console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
-      return;
+        console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
+        return;
     }
 
     priceData = {}; // clear previous data
 
+    // rows 2–191
+    const oreLines = lines.slice(1, 191);
     oreLines.forEach(line => {
-      const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-      if (!match) return;
+        const cols = parseCSVLine(line);
+        const oreVariant = cols[0];
+        if (!oreVariant || !cols[colPrice]) return;
 
-      const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
-      const oreVariant = cols[0];
-      if (!oreVariant || !cols[colPrice]) return;
+        const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
+        priceData[oreVariant] = { price };
 
-      const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
-      priceData[oreVariant] = { price };
-      console.log('Added to priceData:', oreVariant, '->', price);
+        console.log('Added to priceData:', oreVariant, '->', price);
     });
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
@@ -482,18 +490,19 @@ fetch(csvUrl)
   })
   .catch(err => console.error('Error loading CSV:', err));
 
+
 // --- Parse one line of inventory text ---
 function parseOreLine(line) {
     line = line.trim();
     if (!line) return null;
 
-    // Match longest variant first
     const sortedOres = Object.keys(priceData).sort((a,b) => b.length - a.length);
     let matchedOre = null;
+
     for (const oreName of sortedOres) {
         if (line.toLowerCase().includes(oreName.toLowerCase())) {
             matchedOre = oreName;
-            break;
+            break; // longest match first
         }
     }
 
@@ -511,16 +520,12 @@ function parseInventoryText(text) {
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
     const result = [];
 
-    // Sort ore names by length descending so variants match first
     const sortedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
 
     for (const line of lines) {
         let matchedOre = null;
-
         for (const oreName of sortedOres) {
-            // Match whole words including variants
-            const regex = new RegExp(`\\b${oreName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-            if (regex.test(line)) {
+            if (line.toLowerCase().includes(oreName.toLowerCase())) {
                 matchedOre = oreName;
                 break;
             }
@@ -528,7 +533,6 @@ function parseInventoryText(text) {
 
         if (!matchedOre) continue;
 
-        // Extract quantity (first number in line)
         const qtyMatch = line.match(/([\d,]+)/);
         const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
 
@@ -544,23 +548,19 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const input = document.getElementById('messageBox').value.trim();
     if (!input) return;
 
-    const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
+    const parsedLines = parseInventoryText(input);
     let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th><th>Compressed</th></tr>';
     let grandTotal = 0;
 
-    lines.forEach(line => {
-        const parsed = parseOreLine(line);
-        if (!parsed) return;
-
-        const unitPrice = priceData[parsed.ore]?.price || 0; // now uses full variant
-        const total = parsed.quantity * unitPrice;
+    parsedLines.forEach(item => {
+        const unitPrice = priceData[item.ore]?.price || 0;
+        const total = item.quantity * unitPrice;
         grandTotal += total;
-
-        const isCompressed = parsed.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+        const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
         table += `<tr>
-            <td>${parsed.ore}</td>
-            <td>${parsed.quantity.toLocaleString()}</td>
+            <td>${item.ore}</td>
+            <td>${item.quantity.toLocaleString()}</td>
             <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
             <td>${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
             <td style="text-align:center">${isCompressed}</td>
@@ -572,13 +572,10 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const summary = document.getElementById('summaryContainer');
     summary.innerHTML = table;
     summary.style.display = 'block';
-
     document.getElementById('inventoryContainer').style.display = 'none';
     document.getElementById('contract-left').style.display = 'block';
     document.getElementById('contract-right').style.display = 'block';
 });
-
-
 
 // --- Button Tabs ---
 const ratesTab = document.getElementById('ratesTab');
