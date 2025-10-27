@@ -636,6 +636,38 @@ compareTab.addEventListener('click', (e) => {
     `;
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll('.sideTab');
+  const containers = ['ratesContainer', 'compareContainer', 'summaryContainer'];
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Hide all containers
+      containers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      // Remove glow effect from all side tabs
+      tabs.forEach(t => t.classList.remove('active-tab'));
+
+      // Determine which one was clicked
+      if (tab.id === 'ratesTab') {
+        document.getElementById('ratesContainer').style.display = 'block';
+      } 
+      else if (tab.id === 'compareTab') {
+        document.getElementById('compareContainer').style.display = 'block';
+      }
+
+      // Highlight the active tab
+      tab.classList.add('active-tab');
+    });
+  });
+
+  // Default: show summary
+  document.getElementById('summaryContainer').style.display = 'block';
+});
+
 // Close panels when clicking outside
 document.addEventListener('click', (e) => {
     if (!ratesContainer.contains(e.target) && !compareContainer.contains(e.target) &&
