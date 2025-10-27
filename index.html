@@ -335,6 +335,19 @@
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
     z-index: 50;
 }
+#ratesClose {
+    position: absolute;
+    top: 7px;       /* adjust as needed */
+    right: 7px;     /* stay in top-right corner */
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff; /* optional white glow */
+    z-index: 100;
+}
 
   #ratesContainer input::placeholder {
       color: rgb(255, 255, 255); /* neon cyan color */
@@ -1067,6 +1080,7 @@ function showRatesGrid() {
     });
     // Create close button
 const closeBtn = document.createElement('div');
+closeBtn.id = 'ratesClose';  // now your CSS #ratesClose will apply
 closeBtn.innerHTML = '✕'; // Unicode white X
 closeBtn.style.position = 'absolute';
 closeBtn.style.top = '10px';
