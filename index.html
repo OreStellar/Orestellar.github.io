@@ -641,7 +641,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <td style="text-align:right;">0.00</td>
         `;
         tbody.appendChild(row);
-
+        console.log("Cells in row:", row.cells.length, row.innerHTML);
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
         const totalCell = row.cells[4];
