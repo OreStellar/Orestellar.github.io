@@ -870,7 +870,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
         console.log(`Animating row ${index}: ${row.cells[0].textContent}`);
         console.log("Qty cell:", qtyCell, "Price cell:", priceCell, "Total cell:", totalCell);
-
+        totalCell.style.color = "#00ff00"; // bright green
         setTimeout(() => {
             animateValue(qtyCell, 0, quantity, 500);
             animateValue(priceCell, 0, unitPrice, 500, true);
@@ -893,7 +893,7 @@ tbody.appendChild(totalRow);
 // Grab the actual cell containing the number (0.00)
 // It is the second <td>, so index = 1
 const grandCell = totalRow.cells[1];
-
+grandCell.style.color = "#00ff00"; // bright green
 console.log("Animating Grand Total cell:", grandCell); // debugging
 setTimeout(() => {
     animateValue(grandCell, 0, grandTotal, 800, true);
