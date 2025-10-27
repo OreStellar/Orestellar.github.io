@@ -309,9 +309,8 @@
     display: none;
     position: fixed;
     top: 50%;
-  left: 50%;
-    right: 10%;                  /* distance from right edge */
-    transform: translate(-50%, -50%) scale(0.8);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
     width: 50vw;                 /* make container responsive to screen width */
     max-width: 350px;            /* prevent it from getting too wide */
     max-height: 60vh;            /* max height 80% of viewport */
@@ -323,7 +322,7 @@
     overflow-y: auto;            /* vertical scroll only if needed */
     overflow-x: hidden;          /* hide horizontal scroll */
     opacity: 0;
-    transform-origin: right center; /* start near the rates tab */
+  transform-origin: center center; /* center from the middle */
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
   z-index: 50;
 }
