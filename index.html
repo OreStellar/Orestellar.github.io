@@ -54,7 +54,18 @@
     margin-bottom: 110px; /* spacing below the logo */
     transform: skewX(-10deg); /* positive = skew right */
   }
-
+  
+#contractsContainer {
+    display: flex;
+    justify-content: center;  /* centers everything horizontally */
+    align-items: flex-start;  /* top-aligns the contracts and summary */
+    gap: 20px;                /* space between contracts and summary */
+    width: 100%;
+    max-width: 1200px;        /* optional max width */
+    margin: 40px auto;        /* center container horizontally */
+    flex-wrap: nowrap;         /* prevent wrapping to next line */
+    box-sizing: border-box;
+}
   #inventoryContainer {
     width: 80%;
     max-width: 500px;
@@ -140,8 +151,6 @@
 }
 
 .contract-container {
-  max-width: 400px;
-  width: 90%;
   padding: 15px;
   margin: 10px;
   background: rgba(0,0,0,0.3);
@@ -149,7 +158,13 @@
   border: 1px solid rgba(0,255,255,0.4);
   border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 300px;             /* fixed width or responsive */
+    max-width: 30%;           /* makes it responsive on larger screens */
 }
+
 
 .contract-container:hover {
   transform: scale(1.02);
@@ -160,7 +175,7 @@
   #summaryContainer {
     font-family: 'Chivo Mono', monospace;
     width: 80%;             /* wider on most screens */
-    max-width: 575px;       /* cap the max width */
+    min-width: 575px;       /* cap the max width */
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
@@ -170,6 +185,8 @@
     overflow-x: auto;
     overflow-y: visible; /* or auto if you want scroll */
     position: relative;
+    flex: 1;
+    max-width: 30%;
   }
   
 #sideTabsContainer {
