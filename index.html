@@ -876,7 +876,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     rows.forEach(({ row, quantity, unitPrice, total }, index) => {
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
-        const totalCell = row.cells[3];
+        const totalCell = row.cells[4];
 
         console.log(`Animating row ${index}: ${row.cells[0].textContent}`);
         console.log("Qty cell:", qtyCell, "Price cell:", priceCell, "Total cell:", totalCell);
