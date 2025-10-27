@@ -209,7 +209,7 @@
   padding: 8px 12px;
   text-align: left;
   border-bottom: 1px solid rgba(0,255,255,0.2);
-  color: #0ff;
+  color: rgb(255, 255, 255);
   text-shadow: 0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
 }
 
@@ -354,7 +354,8 @@
           0 0 5px rgb(185, 185, 185),
           0 0 10px rgb(197, 197, 197),
           0 0 20px rgb(233, 233, 233);
-  }
+      text-align: right;  /* ensure placeholder aligns right */
+        }
 
 #compareTab {
     top: calc(30% + 25px); /* move it 25px lower than other tabs */
@@ -1032,7 +1033,7 @@ function showRatesGrid() {
     searchInput.style.borderRadius = "6px";
     searchInput.style.border = "1px solid rgba(255,255,255,0.2)";
     searchInput.style.background = "rgba(0,0,0,0.3)";
-    searchInput.style.color = "#0ff";
+    searchInput.style.color = "#fff";
     searchInput.style.fontFamily = "'Chivo Mono', monospace";
     ratesContainer.appendChild(searchInput);
 
@@ -1072,7 +1073,7 @@ function showRatesGrid() {
                 item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
             } else {
                 item.style.opacity = '0.3';
-                item.style.boxShadow = '0 0 5px #0ff, 0 0 10px #0ff';
+                item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
             }
         });
     });
@@ -1097,7 +1098,7 @@ style.innerHTML = `
     border-radius: 6px;
     text-align: center;
     font-size: 0.85rem;
-    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff;
     transform: translateY(10px);
     transition: transform 0.2s, box-shadow 0.3s;
   height: 60px; /* or whatever is half of the current height */
