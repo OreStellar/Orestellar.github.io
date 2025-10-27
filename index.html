@@ -641,6 +641,41 @@ document.addEventListener('click', (e) => {
         closePanels();
     }
 });
+function showRates() {
+    // Clear previous content
+    ratesContainer.innerHTML = '';
+
+    // Build table
+    const table = document.createElement('table');
+    const header = document.createElement('tr');
+    ['Ore', 'Unit Price', 'Quantity', 'Total', 'Compressed'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        header.appendChild(th);
+    });
+    table.appendChild(header);
+
+    // Loop through priceData
+    Object.keys(priceData).forEach(ore => {
+        const entry = priceData[ore];
+        const row = document.createElement('tr');
+
+        const qty = 1; // or pull actual quantity if needed
+        const total = (entry.price * qty).toFixed(2);
+        const isCompressed = ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+
+        row.innerHTML = `
+            <td>${ore}</td>
+            <td>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+            <td>${qty}</td>
+            <td>${total}</td>
+            <td style="text-align:center">${isCompressed}</td>
+        `;
+        table.appendChild(row);
+    });
+
+    ratesContainer.appendChild(table);
+}
 
 
 </script>
