@@ -490,19 +490,26 @@ fetch(csvUrl)
 // Main ore line parser
 function parseOreLine(line) {
     line = line.trim();
-    if (!line || line.toLowerCase().includes('top 10 overall')) return null;
+    if (!line) return null;
 
-    // Try to match the full ore name including variant
-    const matchedOre = recognizedOres.find(name => line.toLowerCase().startsWith(name.toLowerCase()));
+    // Sort all keys descending by length so longer variants are matched first
+    const sortedOres = Object.keys(priceData).sort((a,b) => b.length - a.length);
+
+    let matchedOre = null;
+    for (const oreName of sortedOres) {
+        if (line.toLowerCase().includes(oreName.toLowerCase())) {
+            matchedOre = oreName;
+            break;
+        }
+    }
+
     if (!matchedOre) return null;
 
-    // Extract quantity (first number found)
     const qtyMatch = line.match(/([\d,]+)/);
-    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
+    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g,''), 10) : 1;
 
     return { ore: matchedOre, quantity };
 }
-
 
 
 
