@@ -560,59 +560,107 @@ function parseInventoryText(text) {
 
 
 // --- Submit Button ---
-document.getElementById('submitButton').addEventListener('click', () => {
-  const input = document.getElementById('messageBox').value.trim();
-  if (!input) return;
-  // Hide inventory
-  document.getElementById('inventoryContainer').style.display = 'none';
-
-  // Show contracts
-  document.getElementById('contract-left').style.display = 'block';
-  document.getElementById('contract-right').style.display = 'block';
-
+document.addEventListener('DOMContentLoaded', () => {
+  // Make sure summary is hidden initially
   const summary = document.getElementById('summaryContainer');
+  summary.style.display = 'none';
 
-  // Clear previous table
-  summary.style.display = 'block';
+  document.getElementById('submitButton').addEventListener('click', () => {
+    const input = document.getElementById('messageBox').value.trim();
+    if (!input) return;
 
-  const tbody = summary.querySelector('tbody');
-  const parsedLines = parseInventoryText(input);
+    // Hide inventory
+    document.getElementById('inventoryContainer').style.display = 'none';
 
-  // Show summary container **after clearing and setting up table**
-  // Now animate rows...
-  let delay = 0;
-  let grandTotal = 0;
-  const animationDelay = 200;
-  
-  parsedLines.forEach((item, index) => {
-const displayName = item.ore.replace(/^Compressed\s+/i, '');
-const lookupName = displayName; // use displayName for price lookup
+    // Show contracts
+    document.getElementById('contract-left').style.display = 'block';
+    document.getElementById('contract-right').style.display = 'block';
 
-const unitPrice = priceData[lookupName]?.price || 0;
-const total = item.quantity * unitPrice;
-const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+    // Clear previous summary content
+    summary.innerHTML = '';
+    summary.style.display = 'block';
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td style="text-align:center;">${displayName}</td>
-      <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
-      <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-      <td style="text-align:center;">${isCompressed}</td>
-      <td style="text-align:right;">${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-    `;
+    const parsedLines = parseInventoryText(input);
+    const tbody = document.createElement('tbody');
+    const table = document.createElement('table');
+    table.classList.add('summary-table');
+    table.appendChild(tbody);
 
+    // Add header row
+    const header = document.createElement('tr');
+    ['Ore', 'Quantity', 'Unit Price', 'Compressed', 'Total'].forEach((text) => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      if (text === 'Ore') th.style.textAlign = 'center';
+      else th.style.textAlign = 'right';
+      header.appendChild(th);
+    });
+    tbody.appendChild(header);
+
+    let grandTotal = 0;
+    let delay = 0;
+    const animationDelay = 150; // ms between row animations
+
+    parsedLines.forEach((item, index) => {
+      const displayName = item.ore.replace(/^Compressed\s+/i, '');
+      const lookupName = displayName; // price lookup
+      const unitPrice = priceData[lookupName]?.price || 0;
+      const total = item.quantity * unitPrice;
+      grandTotal += total;
+      const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="text-align:center;">${displayName}</td>
+        <td style="text-align:right;">${item.quantity.toLocaleString()}</td>
+        <td style="text-align:right;">${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+        <td style="text-align:center;">${isCompressed}</td>
+        <td style="text-align:right;">0</td>
+      `;
+      row.style.opacity = 0;
+
+      // Staggered appearance with animation
+      setTimeout(() => {
+        tbody.appendChild(row);
+        row.style.display = '';
+        row.style.animation = `fadeInRow 0.4s ease forwards`;
+
+        // Animate the total column
+        animateCellValue(row.cells[4], 0, total, 600);
+      }, delay);
+
+      delay += animationDelay;
+    });
+
+    // Animate grand total after all rows
     setTimeout(() => {
-      tbody.appendChild(row);
-      row.style.animation = `fadeInRow 0.4s ease forwards`;
-      row.style.animationDelay = `${index * 0.15}s`;
-    }, delay);
+      const footerRow = document.createElement('tr');
+      footerRow.innerHTML = `
+        <td colspan="4" style="text-align:right;"><strong>Grand Total</strong></td>
+        <td style="text-align:right;">0</td>
+      `;
+      tbody.appendChild(footerRow);
+      animateCellValue(footerRow.cells[1], 0, grandTotal, 800); // animate total
+    }, delay + 200);
 
-    delay += animationDelay;
+    summary.appendChild(table);
   });
-
-  // Animate total ISK after all rows appear
-  setTimeout(() => animateTotalISK(grandTotal), delay + 200);
 });
+
+/**
+ * Animate a numeric value in a table cell from start to end over duration (ms)
+ */
+function animateCellValue(cell, start, end, duration) {
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const value = start + (end - start) * progress;
+    cell.textContent = value.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
 
 
 // --- Button Tabs ---
