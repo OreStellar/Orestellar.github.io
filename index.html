@@ -462,6 +462,8 @@ fetch(csvUrl)
       if (ore) priceData[ore.toLowerCase()] = { price };
 
     });
+    console.log('colPrice index:', colPrice);
+    console.log('priceData:', priceData);
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
