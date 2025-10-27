@@ -450,36 +450,40 @@ fetch(csvUrl)
   .then(res => res.text())
   .then(text => {
     const lines = text.trim().split('\n');
-
-    // Only consider rows 2–191 (slice indexes 1–190)
-    const oreLines = lines.slice(1, 191);
-
+    const oreLines = lines.slice(1, 191); // rows 2–191
     const headers = lines[0].split(',');
-    const colPrice = headers.length - 2; // second-to-last column
+
+    // Find the index of the "Suggested Buy Price @ 150%" column
+    const colPrice = headers.findIndex(h => h.trim() === "Suggested Buy Price @ 150%");
+    if (colPrice === -1) {
+        console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
+    }
 
     oreLines.forEach(line => {
-      // Handle quoted CSV values safely
-      const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-      if (!match) return;
+        const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+        if (!match) return;
 
-      const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
-      const ore = cols[0];
+        const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
+        const ore = cols[0]; // Ore Variant
 
-      // Skip if the price column is empty
-      if (!cols[colPrice]) {
-        console.warn('Skipping bad CSV line:', line);
-        return;
-      }
+        if (!cols[colPrice]) {
+            console.warn('Skipping bad CSV line:', line);
+            return;
+        }
 
-      const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
-      if (ore) priceData[ore] = { price };
+        const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
+
+        if (ore) {
+            priceData[ore] = { price };
+            console.log('Added to priceData:', ore, '->', price);
+        }
     });
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
 
     console.log('✅ CSV loaded', recognizedOres.length, 'ores');
-    console.log('priceData:', priceData);
+    console.log('Full priceData:', priceData);
   })
   .catch(err => console.error('Error loading CSV:', err));
 
