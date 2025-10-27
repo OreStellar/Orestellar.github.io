@@ -483,73 +483,38 @@ lines.slice(1).forEach(line => {
     console.log('priceData:', priceData);
 
 
-/* --- FORM B PARSER (Improved) --- */
-
-// Extract volume and ISK from a line if present
-function extractVolumeAndISK(line) {
-  let volume = 0;
-  let isk = 0;
-
-  // volume: e.g. "123,456 m3"
-  const volMatch = line.match(/([\d,\.]+)\s*m3/i);
-  if (volMatch) volume = parseFloat(volMatch[1].replace(/,/g, ''));
-
-  // ISK: e.g. "1,234,567 ISK"
-  const iskMatch = line.match(/([\d,\.]+)\s*ISK/i);
-  if (iskMatch) isk = parseFloat(iskMatch[1].replace(/,/g, ''));
-
-  return { volume, isk };
-}
-
-// Extract ore name from text
-function extractOreName(line) {
-  line = line.trim().toLowerCase();
-
-  // sort longer names first to prioritize full matches
-  const oreNames = Object.keys(priceData).sort((a,b) => b.length - a.length);
-
-  for (const name of oreNames) {
-    const n = name.toLowerCase();
-
-    // handle compressed names and case-insensitivity
-    if (line.startsWith(n)) return name;
-    if (line.startsWith("compressed " + n)) return "Compressed " + name;
-  }
-
-  // fallback: look for ore appearing later in the string
-  for (const name of oreNames) {
-    const n = name.toLowerCase();
-    if (line.includes(n)) return name;
-  }
-
-  return null;
-}
-
 // Main ore line parser
 function parseOreLine(line) {
     line = line.trim();
-    if (!line) return null;
+    if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-    // Sort ore names by length so longest names match first
-    const oreNames = Object.keys(priceData).sort((a,b) => b.length - a.length);
+    const oreNames = Object.keys(priceData);
+
     let matchedOre = null;
 
-    for (const name of oreNames) {
-        if (line.toLowerCase().includes(name.toLowerCase())) {
-            matchedOre = name; // match full variant
-            break;
-        }
+    // Handle compressed first
+    const isCompressed = line.toLowerCase().startsWith('compressed ');
+    const checkLine = isCompressed ? line.slice(10).trim() : line;
+
+    // 1️⃣ Try exact match
+    matchedOre = oreNames.find(name => name.toLowerCase() === checkLine.toLowerCase());
+
+    // 2️⃣ Fallback: starts-with match
+    if (!matchedOre) {
+        matchedOre = oreNames.find(name => checkLine.toLowerCase().startsWith(name.toLowerCase()));
     }
 
     if (!matchedOre) return null;
 
-    // Extract quantity: first number in the line
+    // Restore "Compressed" if applicable
+    if (isCompressed) matchedOre = "Compressed " + matchedOre;
+
+    // Extract quantity
     const qtyMatch = line.match(/([\d,]+)/);
-    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
+    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
 
     return { ore: matchedOre, quantity };
 }
-
 
 
 
