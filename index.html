@@ -493,12 +493,11 @@ function parseOreLine(line) {
     line = line.trim();
     if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-    // Exact CSV match first
-    let matchedOre = recognizedOres.find(name => line.toLowerCase().startsWith(name.toLowerCase()));
-
+    // Try to match the full ore name including variant
+    const matchedOre = recognizedOres.find(name => line.toLowerCase().startsWith(name.toLowerCase()));
     if (!matchedOre) return null;
 
-    // Extract quantity: grab first number in line
+    // Extract quantity (first number found)
     const qtyMatch = line.match(/([\d,]+)/);
     const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
 
@@ -524,45 +523,41 @@ function parseInventoryText(text) {
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
-  const input = document.getElementById('messageBox').value.trim();
-  if (!input) return;
+    const input = document.getElementById('messageBox').value.trim();
+    if (!input) return;
 
-  const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
+    const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
+    let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th><th>Compressed</th></tr>';
+    let grandTotal = 0;
 
-  // Table header
-  let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th><th>Compressed</th></tr>';
-  let grandTotal = 0;
+    lines.forEach(line => {
+        const parsed = parseOreLine(line);
+        if (!parsed) return;
 
-lines.forEach(line => {
-  const parsed = parseOreLine(line);
-  if (!parsed || !parsed.ore) return; // skip unrecognized lines
+        const unitPrice = priceData[parsed.ore]?.price || 0; // now uses full variant
+        const total = parsed.quantity * unitPrice;
+        grandTotal += total;
 
-  const unitPrice = parsed.ore && priceData[parsed.ore] ? priceData[parsed.ore].price : 0;
-  const total = parsed.quantity * unitPrice;
-  grandTotal += total;
+        const isCompressed = parsed.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
-  const isCompressed = parsed.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
+        table += `<tr>
+            <td>${parsed.ore}</td>
+            <td>${parsed.quantity.toLocaleString()}</td>
+            <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+            <td>${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+            <td style="text-align:center">${isCompressed}</td>
+        </tr>`;
+    });
 
-  table += `<tr>
-    <td>${parsed.ore}</td>
-    <td>${parsed.quantity.toLocaleString()}</td>
-    <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-    <td>${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-    <td style="text-align:center">${isCompressed}</td>
-  </tr>`;
-});
+    table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</th><th></th></tr>`;
 
-  // Grand total row
-  table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</th><th></th></tr>`;
+    const summary = document.getElementById('summaryContainer');
+    summary.innerHTML = table;
+    summary.style.display = 'block';
 
-  const summary = document.getElementById('summaryContainer');
-  summary.innerHTML = table;
-  summary.style.display = 'block';
-
-  // Hide input, show contracts
-  document.getElementById('inventoryContainer').style.display = 'none';
-  document.getElementById('contract-left').style.display = 'block';
-  document.getElementById('contract-right').style.display = 'block';
+    document.getElementById('inventoryContainer').style.display = 'none';
+    document.getElementById('contract-left').style.display = 'block';
+    document.getElementById('contract-right').style.display = 'block';
 });
 
 
