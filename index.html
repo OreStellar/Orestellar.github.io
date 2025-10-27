@@ -454,7 +454,8 @@ fetch(csvUrl)
       const cols = line.split(',');
       const ore = cols[0]?.trim();
       const price = parseFloat(cols[colPrice]) || 0;
-      if (ore) priceData[ore] = { price };
+      if (ore) priceData[ore.toLowerCase()] = { price };
+
     });
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
     csvLoaded = true;
