@@ -465,6 +465,11 @@ lines.slice(1).forEach(line => {
     const price = parseFloat(cols[ colPrice ].replace(/,/g, '')) || 0;
 
     if (ore) priceData[ore] = { price };
+    if (!cols[colPrice]) {
+    console.warn('Skipping bad CSV line:', line);
+    return;
+}
+
 });
 
 
