@@ -1079,12 +1079,7 @@ function showRatesGrid() {
 // --- CSS injection for grid ---
 const style = document.createElement('style');
 style.innerHTML = `
-#ratesContainer {
-  max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 15px;
-}
+
 #ratesContainer .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
