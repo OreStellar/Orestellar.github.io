@@ -1040,7 +1040,11 @@ function showRatesGrid() {
         const cell = document.createElement('div');
         cell.className = 'grid-item neon';
         cell.style.opacity = 0;
-        cell.innerHTML = `<strong>${ore}</strong><br>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        cell.innerHTML = `
+           <strong>${ore}</strong>
+           <span>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+        `;
+
         grid.appendChild(cell);
 
         setTimeout(() => {
@@ -1077,16 +1081,20 @@ style.innerHTML = `
   gap: 8px;
 }
 #ratesContainer .grid-item {
-  background: rgba(0,255,255,0.05);
-  padding: 8px;
-  border-radius
-  : 6px;
-  text-align: center;
-  font-size: 0.85rem;
-  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-  transform: translateY(10px);
-  transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;       /* stack vertically */
+    justify-content: space-between; /* pushes first item up, last item down */
+    background: rgba(0,255,255,0.05);
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.85rem;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    transform: translateY(10px);
+    transition: transform 0.2s, box-shadow 0.3s;
+    height: 100px;               /* fix height so all squares align */
 }
+
 #ratesContainer .grid-item:hover {
   transform: scale(1.05);
 }
