@@ -585,12 +585,12 @@ document.getElementById('submitButton').addEventListener('click', () => {
   const animationDelay = 200;
   
   parsedLines.forEach((item, index) => {
-    const unitPrice = priceData[item.ore]?.price || 0;
-    const total = item.quantity * unitPrice;
-    grandTotal += total;
+const displayName = item.ore.replace(/^Compressed\s+/i, '');
+const lookupName = displayName; // use displayName for price lookup
 
-    const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
-    const displayName = item.ore.replace(/^Compressed\s+/i, '');
+const unitPrice = priceData[lookupName]?.price || 0;
+const total = item.quantity * unitPrice;
+const isCompressed = item.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
     const row = document.createElement('tr');
     row.innerHTML = `
