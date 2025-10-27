@@ -583,7 +583,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     if (!parsed) return;  // skip unrecognized lines
 // Handle compressed ores
 const baseOre = parsed.ore.replace(/^Compressed\s+/i, '');
-const unitPrice = priceData[baseOre.toLowerCase()]?.price || 0;
+const unitPrice = priceData[baseOre]?.price || 0; // no toLowerCase()
 
     const total = parsed.quantity * unitPrice;
     grandTotal += total;
