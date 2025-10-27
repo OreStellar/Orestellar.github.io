@@ -949,11 +949,15 @@ function showPanel(panel, tab) {
     el.style.display = 'none';
   });
 
-  // set transform origin to the center of the clicked tab
-  const rect = tab.getBoundingClientRect();
-  const originX = rect.left + rect.width / 2;
-  const originY = rect.top + rect.height / 2;
-  panel.style.transformOrigin = `${originX}px ${originY}px`;
+ if (panel === ratesContainer) {
+    panel.style.transformOrigin = 'center center';
+} else {
+    // keep default behavior for other panels like compareContainer
+    const rect = tab.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    panel.style.transformOrigin = `${originX}px ${originY}px`;
+}
 
   // show overlay
   overlay.classList.add('visible');
