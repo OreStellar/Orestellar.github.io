@@ -574,21 +574,6 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
   // Clear previous table
   summary.style.display = 'block';
-  summary.innerHTML = `
-    <table class="summary-table neon">
-      <thead>
-        <tr>
-          <th style="text-align:center;">Ore</th>
-          <th style="text-align:right;">Quantity</th>
-          <th style="text-align:right;">Unit Price</th>
-          <th style="text-align:center;">Compressed</th>
-          <th style="text-align:right;">Total</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="totalISK" class="neonTotal" style="margin-top:10px; text-align:right;"></div>
-  `;
 
   const tbody = summary.querySelector('tbody');
   const parsedLines = parseInventoryText(input);
