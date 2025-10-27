@@ -322,18 +322,20 @@
 }
 
 #ratesContainer{
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    width: auto;          /* remove fixed width */
+    max-width: none;      /* allow it to expand */
+    max-height: none;     /* allow full height minus margin */
+    transform: none;      /* remove translate(-50%, -50%) */
     font-family: 'Chivo Mono', monospace;
     font-weight: 200;   /* regular text */
     font-size: 0.95rem; /* adjust as needed */
     color: #fff;
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 70vw;                 /* make container responsive to screen width */
-    max-width: 900px;            /* prevent it from getting too wide */
-    max-height: 70vh;            /* max height 80% of viewport */
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px;
