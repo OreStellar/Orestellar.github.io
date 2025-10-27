@@ -628,8 +628,9 @@ document.getElementById('submitButton').addEventListener('click', () => {
     // Build table and tbody
     const table = document.createElement('table');
     table.classList.add('summary-table');
+
+    // Swap Total and Compressed columns
     const thead = document.createElement('thead');
-    // Swap Compressed and Total columns
     thead.innerHTML = `<tr>
         <th>Ore</th>
         <th>Quantity</th>
@@ -668,7 +669,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
     });
 
     // Animate each row
-    rows.forEach(({ row, quantity, unitPrice, total }, index) => {
+    rows.forEach(({ row, quantity, unitPrice, total }) => {
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
         const totalCell = row.cells[3];
@@ -693,11 +694,12 @@ document.getElementById('submitButton').addEventListener('click', () => {
     tbody.appendChild(totalRow);
 
     // Animate grand total
-    const grandCell = totalRow.cells[3];
+    const grandCell = totalRow.cells[3]; // this is numeric cell
     setTimeout(() => {
         animateValue(grandCell, 0, grandTotal, 800, true);
     }, delay + 200);
 });
+
 
 // Helper function for counting animation
 function animateValue(cell, start, end, duration, isFloat = false) {
