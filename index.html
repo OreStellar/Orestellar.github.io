@@ -451,7 +451,7 @@
 }
 .summary-table {
   width: 100%;            /* fill the container */
-  table-layout: fixed;    /* evenly distribute columns */
+  table-layout: auto;    /* evenly distribute columns */
   border-collapse: collapse; /* remove spacing between cells */
 }
 
@@ -464,7 +464,12 @@
 #compareTab {
   top: calc(30% + 40px); /* 40px below ratesTab */
 }
-
+/* Force the Total column to not wrap */
+.summary-table td:nth-child(4),
+.summary-table th:nth-child(4) {
+    white-space: nowrap;   /* never wrap */
+    min-width: 80px;       /* optional: ensure some width */
+}
 
 </style>
 </head>
