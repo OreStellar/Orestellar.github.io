@@ -46,7 +46,26 @@
   z-index: -1; /* sits above static stars */
 }
 
+/* Overlay to dim the background */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  z-index: 40;
+}
 
+/* Show overlay */
+#overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+  
   #logo {
     text-align: center;
     font-size: 4rem;
@@ -246,10 +265,11 @@
     font-size: 0.95rem; /* adjust as needed */
     color: #fff;
     display: none;
-    position: absolute;
+    position: fixed;
     top: 50%;
+  left: 50%;
     right: 10%;                  /* distance from right edge */
-    transform: translateY(-50%) scale(0);
+    transform: translate(-50%, -50%) scale(0.8);
     width: 50vw;                 /* make container responsive to screen width */
     max-width: 350px;            /* prevent it from getting too wide */
     max-height: 60vh;            /* max height 80% of viewport */
@@ -262,6 +282,12 @@
     overflow-x: hidden;          /* hide horizontal scroll */
     opacity: 0;
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  z-index: 50;
+}
+  /* Active state: centered and fully visible */
+#ratesContainer.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
 }
 #compareTab {
   top: 155px; /* for example, if 30% was ~130px, add 25px = 155px */
@@ -370,6 +396,7 @@
 </style>
 </head>
 <body>
+<div id="overlay"></div>
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
 <div id="logo" class="neon">OreStellar</div>
