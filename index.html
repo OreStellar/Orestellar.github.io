@@ -606,30 +606,36 @@ function animateValue(cell, start, end, duration = 500, isFloat = false) {
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
+    console.log("=== Submit Button Clicked ===");
+
     const input = document.getElementById('messageBox').value.trim();
-    if (!input) return;
+    console.log("Input text:", input);
+    if (!input) {
+        console.log("No input provided. Exiting.");
+        return;
+    }
 
     const inventoryContainer = document.getElementById('inventoryContainer');
     const summary = document.getElementById('summaryContainer');
     const contractLeft = document.getElementById('contract-left');
     const contractRight = document.getElementById('contract-right');
 
-    // Hide inventory, show contracts and summary
+    console.log("Hiding inventory, showing contracts and summary");
     inventoryContainer.style.display = 'none';
     contractLeft.style.display = 'block';
     contractRight.style.display = 'block';
     summary.style.display = 'block';
 
-    // Clear previous table
+    console.log("Clearing previous summary table");
     summary.innerHTML = '';
 
     const parsedLines = parseInventoryText(input);
+    console.log("Parsed inventory lines:", parsedLines);
 
     // Build table and tbody
     const table = document.createElement('table');
     table.classList.add('summary-table');
 
-    // Swap Total and Compressed columns
     const thead = document.createElement('thead');
     thead.innerHTML = `<tr>
         <th>Ore</th>
@@ -646,9 +652,9 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
     let grandTotal = 0;
     let delay = 0;
-    const animationDelay = 200; // ms between each row
+    const animationDelay = 200;
 
-    // First create all rows and append them so cells exist
+    console.log("Creating rows for each ore...");
     const rows = parsedLines.map(item => {
         const displayName = item.ore.replace(/^Compressed\s+/i, '');
         const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
@@ -665,14 +671,21 @@ document.getElementById('submitButton').addEventListener('click', () => {
             <td style="text-align:center;">${isCompressed}</td>
         `;
         tbody.appendChild(row);
+
+        console.log("Row created:", row.innerHTML);
+        console.log("Cells in row:", row.cells.length);
+
         return { row, quantity: item.quantity, unitPrice, total };
     });
 
-    // Animate each row
-    rows.forEach(({ row, quantity, unitPrice, total }) => {
+    console.log("Animating rows...");
+    rows.forEach(({ row, quantity, unitPrice, total }, index) => {
         const qtyCell = row.cells[1];
         const priceCell = row.cells[2];
         const totalCell = row.cells[3];
+
+        console.log(`Animating row ${index}: ${row.cells[0].textContent}`);
+        console.log("Qty cell:", qtyCell, "Price cell:", priceCell, "Total cell:", totalCell);
 
         setTimeout(() => {
             animateValue(qtyCell, 0, quantity, 500);
@@ -684,7 +697,7 @@ document.getElementById('submitButton').addEventListener('click', () => {
         delay += animationDelay;
     });
 
-    // Add Grand Total row after all ore rows
+    console.log("Adding Grand Total row");
     const totalRow = document.createElement('tr');
     totalRow.innerHTML = `
         <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
@@ -692,12 +705,18 @@ document.getElementById('submitButton').addEventListener('click', () => {
         <td></td>
     `;
     tbody.appendChild(totalRow);
+    console.log("Grand Total row added:", totalRow.innerHTML);
 
     // Animate grand total
-    const grandCell = totalRow.cells[3]; // this is numeric cell
+    const grandCell = totalRow.cells[3];
+    console.log("Animating Grand Total cell:", grandCell);
+
     setTimeout(() => {
         animateValue(grandCell, 0, grandTotal, 800, true);
+        console.log("Grand Total animation started:", grandTotal);
     }, delay + 200);
+
+    console.log("=== Submit Button Finished Setup ===");
 });
 
 
