@@ -524,19 +524,23 @@ function extractOreName(line) {
 // Main ore line parser
 // --- Form B Parser (CSV-based Recognition) ---
 // Requires: priceData already loaded from prices.csv
-
 function parseOreLine(line) {
   line = line.trim();
   if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-  // Try to match the longest ore name from CSV data
   const oreNames = Object.keys(priceData).sort((a, b) => b.length - a.length);
   let matchedOre = null;
+  let isCompressed = false;
 
   for (const name of oreNames) {
-    // Match exact start of line or compressed variant
+    const compressedRegex = new RegExp(`^Compressed\\s+(${name})(\\s|$)`, 'i');
     const regex = new RegExp(`^(${name})(\\s|$)`, 'i');
-    if (regex.test(line)) {
+
+    if (compressedRegex.test(line)) {
+      matchedOre = "Compressed " + name;
+      isCompressed = true;
+      break;
+    } else if (regex.test(line)) {
       matchedOre = name;
       break;
     }
@@ -544,13 +548,13 @@ function parseOreLine(line) {
 
   if (!matchedOre) return null;
 
-  // Extract quantity (first number on the line)
   const qtyMatch = line.match(/([\d,]+)/);
   const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
 
-  // Store only ore and quantity (volume + isk not displayed but safe to track)
-  return { ore: matchedOre, quantity };
+  return { ore: matchedOre, quantity, isCompressed };
 }
+
+
 
 function parseInventoryText(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -582,12 +586,11 @@ document.getElementById('submitButton').addEventListener('click', () => {
     if (!parsed) return;  // skip unrecognized lines
 // Handle compressed ores
 const baseOre = parsed.ore.replace(/^Compressed\s+/i, '');
-const unitPrice = priceData[baseOre]?.price || 0; // no toLowerCase()
+const unitPrice = priceData[baseOre]?.price || 0;
+const total = parsed.quantity * unitPrice;
+grandTotal += total;
 
-    const total = parsed.quantity * unitPrice;
-    grandTotal += total;
-
-    const isCompressed = parsed.ore.startsWith("Compressed ") ? '✅' : '❌';
+const isCompressed = parsed.isCompressed ? '✅' : '❌';
 
     table += `<tr>
       <td>${parsed.ore}</td>
