@@ -522,37 +522,30 @@ function extractOreName(line) {
 }
 
 // Main ore line parser
-// --- Form B Parser (CSV-based Recognition) ---
-// Requires: priceData already loaded from prices.csv
 function parseOreLine(line) {
-  line = line.trim();
-  if (!line || line.toLowerCase().includes('top 10 overall')) return null;
+    line = line.trim();
+    if (!line) return null;
 
-  const oreNames = Object.keys(priceData).sort((a, b) => b.length - a.length);
-  let matchedOre = null;
-  let isCompressed = false;
+    // Sort ore names by length so longest names match first
+    const oreNames = Object.keys(priceData).sort((a,b) => b.length - a.length);
+    let matchedOre = null;
 
-  for (const name of oreNames) {
-    const compressedRegex = new RegExp(`^Compressed\\s+(${name})(\\s|$)`, 'i');
-    const regex = new RegExp(`^(${name})(\\s|$)`, 'i');
-
-    if (compressedRegex.test(line)) {
-      matchedOre = "Compressed " + name;
-      isCompressed = true;
-      break;
-    } else if (regex.test(line)) {
-      matchedOre = name;
-      break;
+    for (const name of oreNames) {
+        if (line.toLowerCase().includes(name.toLowerCase())) {
+            matchedOre = name; // match full variant
+            break;
+        }
     }
-  }
 
-  if (!matchedOre) return null;
+    if (!matchedOre) return null;
 
-  const qtyMatch = line.match(/([\d,]+)/);
-  const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
+    // Extract quantity: first number in the line
+    const qtyMatch = line.match(/([\d,]+)/);
+    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
 
-  return { ore: matchedOre, quantity, isCompressed };
+    return { ore: matchedOre, quantity };
 }
+
 
 
 
@@ -575,43 +568,45 @@ document.getElementById('submitButton').addEventListener('click', () => {
   const input = document.getElementById('messageBox').value.trim();
   if (!input) return;
 
-  const lines = input.split('\n').map(l => l.trim()).filter(l => l);
+  const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
 
-  // Add Compressed column
+  // Table header
   let table = '<table><tr><th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Total</th><th>Compressed</th></tr>';
   let grandTotal = 0;
 
   lines.forEach(line => {
     const parsed = parseOreLine(line);
-    if (!parsed) return;  // skip unrecognized lines
-// Handle compressed ores
-const baseOre = parsed.ore.replace(/^Compressed\s+/i, '');
-const unitPrice = priceData[baseOre]?.price || 0;
-const total = parsed.quantity * unitPrice;
-grandTotal += total;
+    if (!parsed) return; // skip unrecognized
 
-const isCompressed = parsed.isCompressed ? '✅' : '❌';
+    // Use full ore name to get unit price
+    const unitPrice = priceData[parsed.ore]?.price || 0;
+    const total = parsed.quantity * unitPrice;
+    grandTotal += total;
+
+    const isCompressed = parsed.ore.toLowerCase().startsWith("compressed ") ? '✅' : '❌';
 
     table += `<tr>
       <td>${parsed.ore}</td>
-      <td>${parsed.quantity?.toLocaleString() || 0}</td>
-      <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</td>
-      <td>${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</td>
+      <td>${parsed.quantity.toLocaleString()}</td>
+      <td>${unitPrice.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td>${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
       <td style="text-align:center">${isCompressed}</td>
     </tr>`;
   });
 
+  // Grand total row
   table += `<tr><th colspan="3">Grand Total</th><th>${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</th><th></th></tr>`;
 
   const summary = document.getElementById('summaryContainer');
   summary.innerHTML = table;
   summary.style.display = 'block';
 
-  // hide input, show contracts
+  // Hide input, show contracts
   document.getElementById('inventoryContainer').style.display = 'none';
   document.getElementById('contract-left').style.display = 'block';
   document.getElementById('contract-right').style.display = 'block';
 });
+
 
 
 // --- Button Tabs ---
