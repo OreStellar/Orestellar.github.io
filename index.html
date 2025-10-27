@@ -321,15 +321,18 @@
   box-shadow: 0 0 15px #fff, 0 0 30px rgb(255, 255, 255);
 }
 
-#ratesContainer{
+#ratesContainer {
     position: fixed;
-    width: auto;          /* remove fixed width */
-    max-width: none;      /* allow it to expand */
-    max-height: none;     /* allow full height minus margin */
- transform: translate(-50%, -50%) scale(0);  /* center & hidden initially */
+    top: 50%;
+    left: 50%;
+    width: calc(100% - 60px);   /* full width minus 30px margin each side */
+    height: calc(100% - 60px);  /* full height minus 30px top/bottom */
+    max-width: none;
+    max-height: none;
+    transform: translate(-50%, -50%) scale(0);  /* center & hidden initially */
     font-family: 'Chivo Mono', monospace;
-    font-weight: 200;   /* regular text */
-    font-size: 0.95rem; /* adjust as needed */
+    font-weight: 200;
+    font-size: 0.95rem;
     color: #fff;
     display: none;
     background: rgba(255,255,255,0.05);
@@ -337,14 +340,13 @@
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    overflow-y: auto;            /* vertical scroll only if needed */
-    overflow-x: hidden;          /* hide horizontal scroll */
+    overflow-y: auto;
+    overflow-x: hidden;
     opacity: 0;
-  transform-origin: center center; /* center from the middle */
+    transform-origin: center center;
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-  z-index: 50;
+    z-index: 50;
 }
-
 
 #compareTab {
     top: calc(30% + 25px); /* move it 25px lower than other tabs */
