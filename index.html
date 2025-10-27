@@ -775,12 +775,21 @@ ratesTab.addEventListener('click', (e) => {
 
 compareTab.addEventListener('click', (e) => {
     e.stopPropagation();
+    console.log("=== Compare Tab Clicked ===");
+
     // Hide rates panel
     ratesContainer.classList.remove('active');
     ratesContainer.style.display = 'none';
+    console.log("Rates container hidden");
 
+    // Show compare panel
     compareContainer.style.display = 'block';
-    setTimeout(() => compareContainer.classList.add('active'), 10);
+    console.log("Compare container display set to block");
+
+    setTimeout(() => {
+        compareContainer.classList.add('active');
+        console.log("Compare container 'active' class added");
+    }, 10);
 
     // populate static table
     compareContainer.innerHTML = `
@@ -791,7 +800,10 @@ compareTab.addEventListener('click', (e) => {
             <tr><td>Pyroxeres</td><td>120.00</td><td>118.00</td><td>-2.00</td></tr>
         </table>
     `;
+    console.log("Compare table HTML inserted");
+    console.log("Compare container rect:", compareContainer.getBoundingClientRect());
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const tabs = document.querySelectorAll('.sideTab');
