@@ -563,10 +563,17 @@ function parseInventoryText(text) {
 document.getElementById('submitButton').addEventListener('click', () => {
   const input = document.getElementById('messageBox').value.trim();
   if (!input) return;
+  // Hide inventory
+  document.getElementById('inventoryContainer').style.display = 'none';
+
+  // Show contracts
+  document.getElementById('contract-left').style.display = 'block';
+  document.getElementById('contract-right').style.display = 'block';
 
   const summary = document.getElementById('summaryContainer');
 
   // Clear previous table
+  summary.style.display = 'block';
   summary.innerHTML = `
     <table class="summary-table neon">
       <thead>
@@ -587,8 +594,6 @@ document.getElementById('submitButton').addEventListener('click', () => {
   const parsedLines = parseInventoryText(input);
 
   // Show summary container **after clearing and setting up table**
-  summary.style.display = 'block';
-
   // Now animate rows...
   let delay = 0;
   let grandTotal = 0;
