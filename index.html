@@ -159,6 +159,7 @@
   flex-direction: column;
   justify-content: space-between; /* distributes tabs evenly */
   height: 80%;           /* total vertical space for tabs */
+  z-index: 10;
 }
 /* --- Modern Side Tabs --- */
 .sideTab {
@@ -169,7 +170,7 @@
   justify-content: flex-start;   /* horizontally center content */
   top: 30%;               /* vertical placement */
   right: 0;            /* hidden offscreen initially */
-  margin: 0;
+  margin: 20px;
   width: 200px;
   text-align: left;
   background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
