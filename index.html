@@ -7,53 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  #contractGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 25px;
-  padding: 10px;
-  font-family: 'Chivo Mono', monospace;
-  color: #fff;
-}
-
-.contract-wrapper h3 {
-  margin-bottom: 5px;
-  text-shadow: 0 0 6px #fff;
-  font-size: 1rem;
-}
-
-.contract-table {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 4px 20px;
-  text-shadow: 0 0 6px #fff;
-}
-.row { display: contents; }
-.label { font-weight: bold; text-align: right; }
-.value { text-align: left; }
-
-.contract-boxed {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-shadow: 0 0 5px #fff;
-}
-.contract-boxed .row {
-  display: flex;
-  justify-content: space-between;
-  background: rgba(255,255,255,0.05);
-  padding: 6px 10px;
-  border-radius: 4px;
-}
-.contract-boxed .label { font-weight: bold; }
-
-.contract-indented { display:flex; flex-direction:column; gap:4px; text-shadow:0 0 5px #fff; }
-.contract-indented .desc { margin-left:15px; font-style:italic; }
-
-.contract-cards { display:flex; flex-wrap: wrap; gap:10px; text-shadow:0 0 6px #fff; }
-.contract-cards .card { padding:8px 12px; border:1px solid rgba(255,255,255,0.2); border-radius:5px; background: rgba(255,255,255,0.05); flex:1 1 200px; }
-
-.contract-bullets { display:flex; flex-direction:column; gap:3px; text-shadow:0 0 5px #fff; }
+  
   /* For WebKit browsers (Chrome, Edge, Safari) */
 #ratesContainer::-webkit-scrollbar {
     width: 8px;              /* scrollbar width */
@@ -287,6 +241,18 @@
   box-shadow: 0 0 30px rgb(253, 255, 255), 0 0 60px rgb(245, 245, 245);
 }
 
+#summaryContainer.contract-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: 'Chivo Mono', monospace;
+  color: #fff;
+  text-shadow: 0 0 5px #fff; /* neon white glow */
+  padding: 10px;
+}
+#summaryContainer.contract-bullets div {
+  line-height: 1.3rem;
+}
 
   #summaryContainer {
     font-family: 'Chivo Mono', monospace;
@@ -524,74 +490,6 @@
 
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
-<div id="contractGrid">
-  <div class="contract-wrapper">
-    <h3>Layout 1: Two-Column Table</h3>
-    <div class="contract-table">
-      <div class="row"><span class="label">Contract Type:</span><span class="value">Item Exchange</span></div>
-      <div class="row"><span class="label">Availability:</span><span class="value">Private</span></div>
-      <div class="row"><span class="label">Name:</span><span class="value">OreStellar</span></div>
-      <div class="row"><span class="label">I will pay:</span><span class="value">0</span></div>
-      <div class="row"><span class="label">I will receive:</span><span class="value">1,579,180.00</span></div>
-      <div class="row"><span class="label">Expiration:</span><span class="value">1 week</span></div>
-      <div class="row"><span class="label">Description:</span><span class="value">That was Stellar!</span></div>
-    </div>
-  </div>
-
-  <div class="contract-wrapper">
-    <h3>Layout 2: Boxed Rows</h3>
-    <div class="contract-boxed">
-      <div class="row"><span class="label">Contract Type</span>: <span class="value">Item Exchange</span></div>
-      <div class="row"><span class="label">Availability</span>: <span class="value">Private</span></div>
-      <div class="row"><span class="label">Name</span>: <span class="value">OreStellar</span></div>
-      <div class="row"><span class="label">I will pay</span>: <span class="value">0</span></div>
-      <div class="row"><span class="label">I will receive</span>: <span class="value">1,579,180.00</span></div>
-      <div class="row"><span class="label">Expiration</span>: <span class="value">1 week</span></div>
-      <div class="row"><span class="label">Description</span>: <span class="value">That was Stellar!</span></div>
-    </div>
-  </div>
-
-  <div class="contract-wrapper">
-    <h3>Layout 3: Indented Description</h3>
-    <div class="contract-indented">
-      <div><strong>Contract Type:</strong> Item Exchange</div>
-      <div><strong>Availability:</strong> Private</div>
-      <div><strong>Name:</strong> OreStellar</div>
-      <div><strong>I will pay:</strong> 0</div>
-      <div><strong>I will receive:</strong> 1,579,180.00</div>
-      <div><strong>Expiration:</strong> 1 week</div>
-      <div><strong>Description:</strong>
-        <div class="desc">That was Stellar!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="contract-wrapper">
-    <h3>Layout 4: Card Blocks</h3>
-    <div class="contract-cards">
-      <div class="card">Contract Type: Item Exchange</div>
-      <div class="card">Availability: Private</div>
-      <div class="card">Name: OreStellar</div>
-      <div class="card">I will pay: 0</div>
-      <div class="card">I will receive: 1,579,180.00</div>
-      <div class="card">Expiration: 1 week</div>
-      <div class="card">Description: That was Stellar!</div>
-    </div>
-  </div>
-
-  <div class="contract-wrapper">
-    <h3>Layout 5: Bullets</h3>
-    <div class="contract-bullets">
-      <div>• <strong>Contract Type:</strong> Item Exchange</div>
-      <div>• <strong>Availability:</strong> Private</div>
-      <div>• <strong>Name:</strong> OreStellar</div>
-      <div>• <strong>I will pay:</strong> 0</div>
-      <div>• <strong>I will receive:</strong> 1,579,180.00</div>
-      <div>• <strong>Expiration:</strong> 1 week</div>
-      <div>• <strong>Description:</strong> That was Stellar!</div>
-    </div>
-  </div>
-</div>
 <div id="overlay"></div>
 <div id="logo" class="neon">OreStellar</div>
 <div id="inventoryContainer">
@@ -630,45 +528,15 @@
 </div>
 </div>
 <div id="contractsContainer">
-  <div id="contract-left" class="contract-container" style="display:none;">
-    <table class="contract-table">
-      <tr>
-        <th>Contract Type</th>
-        <td>Item Exchange</td>
-      </tr>
-      <tr>
-        <th>Availability</th>
-        <td>Private</td>
-      </tr>
-      <tr>
-        <th>Name</th>
-        <td id="contract-left-name" class="copyable">OreStellar</td>
-      </tr>
-    </table>
-  </div>
-
-  <div id="summaryContainer" style="display: none;"></div>
-
-  <div id="contract-right" class="contract-container" style="display:none;">
-    <table class="contract-table">
-      <tr>
-        <th>I will pay</th>
-        <td>0</td>
-      </tr>
-      <tr>
-        <th>I will receive</th>
-        <td id="contract-right-receive">0</td>
-      </tr>
-      <tr>
-        <th>Expiration</th>
-        <td>1 week</td>
-      </tr>
-      <tr>
-        <th>Description</th>
-        <td>That was Stellar!</td>
-      </tr>
-    </table>
-  </div>
+  <div id="summaryContainer" class="contract-bullets">
+  <div>• <strong>Contract Type:</strong> Item Exchange</div>
+  <div>• <strong>Availability:</strong> Private</div>
+  <div>• <strong>Name:</strong> OreStellar</div>
+  <div>• <strong>I will pay:</strong> 0</div>
+  <div>• <strong>I will receive:</strong> 1,579,180.00</div>
+  <div>• <strong>Expiration:</strong> 1 week</div>
+  <div>• <strong>Description:</strong> That was Stellar!</div>
+</div>
 </div>
 <!-- Hidden content -->
 <div id="ratesContainer" class="neon"></div>
