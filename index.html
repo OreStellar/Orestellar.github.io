@@ -943,27 +943,23 @@ const overlay = document.getElementById('overlay');
 
 // --- Show Panel with zoom-from-button animation ---
 function showPanel(panel, tab) {
-  // hide any open panels first
+  // Hide any open panels
   [ratesContainer, compareContainer].forEach(el => {
     el.classList.remove('active');
     el.style.display = 'none';
   });
 
- if (panel === ratesContainer) {
-    panel.style.transformOrigin = 'center center';
-} else {
-
-
-panel.style.transformOrigin = 'center center';
-
-  // show overlay
+  // Show overlay
   overlay.classList.add('visible');
 
-  // show panel
+  // Show the panel
   panel.style.display = 'block';
+  panel.style.transformOrigin = 'center center';
+
+  // Trigger animation
   setTimeout(() => panel.classList.add('active'), 10);
 }
-}
+
 // --- Hide all panels ---
 function hidePanels() {
   overlay.classList.remove('visible');
