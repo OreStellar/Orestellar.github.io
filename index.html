@@ -610,55 +610,76 @@ ratesTab.addEventListener('click', () => {
 
 function showRates() {
   const ratesContainer = document.getElementById('ratesContainer');
-  ratesContainer.innerHTML = ''; // clear old table
 
   // Create table
   const table = document.createElement('table');
 
-  // Create table header
+  // Add headers
   const headerRow = document.createElement('tr');
-  ['Ore', 'Unit Price', 'Compressed'].forEach(text => {
+  ['Ore', 'Unit Price', 'Quantity', 'Total ISK', 'Compressed'].forEach(text => {
     const th = document.createElement('th');
     th.textContent = text;
     headerRow.appendChild(th);
   });
   table.appendChild(headerRow);
 
-  // Loop through ores
+  // Object to store totals per ore
+  const totals = {};
+
+  // Loop through input data
   Object.keys(priceData).forEach(ore => {
-    // Skip Top 10 Overall header
-    if (ore.includes("Top 10 Overall")) return;
-
     const entry = priceData[ore];
-    if (!entry || !entry.price) return;
+    if (!entry || !entry.price) return; // skip empty prices
 
+    // Extract quantity if included in the ore string (e.g., "Crokite 1694")
+    let [oreName, qtyStr] = ore.split(/\s+(\d+)$/); // splits at last number
+    oreName = oreName || ore; // fallback
+    const quantity = qtyStr ? parseInt(qtyStr, 10) : 1; // default 1 if no number
+
+    // Keep totals per ore name (variant separate)
+    if (!totals[oreName]) totals[oreName] = { unitPrice: entry.price, quantity: 0, compressed: false };
+    totals[oreName].quantity += quantity;
+
+    // Mark if compressed
+    if (oreName.startsWith('Compressed')) totals[oreName].compressed = true;
+  });
+
+  // Populate table
+  Object.keys(totals).forEach(oreName => {
     const row = document.createElement('tr');
 
-    // Ore name
     const nameCell = document.createElement('td');
-    nameCell.textContent = ore;
+    nameCell.textContent = oreName;
     row.appendChild(nameCell);
 
-    // Unit price
     const priceCell = document.createElement('td');
-    priceCell.textContent = entry.price.toFixed(2);
+    priceCell.textContent = totals[oreName].unitPrice.toFixed(2);
     row.appendChild(priceCell);
 
-    // Compressed status
+    const qtyCell = document.createElement('td');
+    qtyCell.textContent = totals[oreName].quantity;
+    row.appendChild(qtyCell);
+
+    const totalCell = document.createElement('td');
+    totalCell.textContent = (totals[oreName].unitPrice * totals[oreName].quantity).toFixed(2);
+    row.appendChild(totalCell);
+
     const compressedCell = document.createElement('td');
-    const isCompressed = ore.toLowerCase().startsWith('compressed ');
-    compressedCell.textContent = isCompressed ? '✔️' : '❌'; // green check / red X
+    compressedCell.textContent = totals[oreName].compressed ? '✅' : '❌';
     row.appendChild(compressedCell);
 
     table.appendChild(row);
   });
 
+  // Clear and add table
+  ratesContainer.innerHTML = '';
   ratesContainer.appendChild(table);
 
-  // simple fade-in
+  // optional fade-in
   ratesContainer.classList.remove('active');
   setTimeout(() => ratesContainer.classList.add('active'), 10);
 }
+
 
 
 /* --- Compare Tab --- */
