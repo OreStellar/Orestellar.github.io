@@ -994,11 +994,10 @@ document.addEventListener('click', e => {
   ) hidePanels();
 });
 
-// --- Build Neon Grid for Prices ---
 function showRatesGrid() {
     ratesContainer.innerHTML = ''; // clear previous
 
-    // Optional: search box
+    // Create search box
     const searchInput = document.createElement('input');
     searchInput.placeholder = "Search Ore...";
     searchInput.style.width = "100%";
@@ -1015,9 +1014,10 @@ function showRatesGrid() {
     grid.className = 'grid';
     ratesContainer.appendChild(grid);
 
+    // Populate ores
     Object.keys(priceData).forEach((ore, index) => {
-          // Skip "Compressed" ores in the rates tab
-    if (ore.toLowerCase().startsWith('compressed ')) return;
+        if (ore.toLowerCase().startsWith('compressed ')) return;
+
         const entry = priceData[ore];
         const cell = document.createElement('div');
         cell.className = 'grid-item neon';
@@ -1025,29 +1025,28 @@ function showRatesGrid() {
         cell.innerHTML = `<strong>${ore}</strong><br>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
         grid.appendChild(cell);
 
-        // Fade-in animation sequentially
         setTimeout(() => {
-            cell.style.transition = "opacity 0.4s ease, transform 0.3s ease";
+            cell.style.transition = "opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease";
             cell.style.opacity = 1;
             cell.style.transform = "translateY(0)";
-        }, index * 20); // stagger animation
+        }, index * 20);
     });
-  }
-// Filter function with dim/highlight effect
-searchInput.addEventListener('input', () => {
-    const filter = searchInput.value.toLowerCase();
-    document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
-        if (item.textContent.toLowerCase().includes(filter)) {
-            // Highlight matching ores
-            item.style.opacity = '1';
-            item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
-        } else {
-            // Dim non-matching ores
-            item.style.opacity = '0.3';
-            item.style.boxShadow = '0 0 5px #0ff, 0 0 10px #0ff'; // subtle neon
-        }
+
+    // Search & highlight/dim functionality
+    searchInput.addEventListener('input', () => {
+        const filter = searchInput.value.toLowerCase();
+        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(filter)) {
+                item.style.opacity = '1';
+                item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
+            } else {
+                item.style.opacity = '0.3';
+                item.style.boxShadow = '0 0 5px #0ff, 0 0 10px #0ff';
+            }
+        });
     });
-});
+}
 
 
 // --- CSS injection for grid ---
