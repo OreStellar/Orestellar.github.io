@@ -241,18 +241,7 @@
   box-shadow: 0 0 30px rgb(253, 255, 255), 0 0 60px rgb(245, 245, 245);
 }
 
-#summaryContainer.contract-bullets {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  font-family: 'Chivo Mono', monospace;
-  color: #fff;
-  text-shadow: 0 0 5px #fff; /* neon white glow */
-  padding: 10px;
-}
-#summaryContainer.contract-bullets div {
-  line-height: 1.3rem;
-}
+
 
   #summaryContainer {
     font-family: 'Chivo Mono', monospace;
@@ -528,15 +517,45 @@
 </div>
 </div>
 <div id="contractsContainer">
-  <div id="summaryContainer" class="contract-bullets">
-  <div>• <strong>Contract Type:</strong> Item Exchange</div>
-  <div>• <strong>Availability:</strong> Private</div>
-  <div>• <strong>Name:</strong> OreStellar</div>
-  <div>• <strong>I will pay:</strong> 0</div>
-  <div>• <strong>I will receive:</strong> 1,579,180.00</div>
-  <div>• <strong>Expiration:</strong> 1 week</div>
-  <div>• <strong>Description:</strong> That was Stellar!</div>
-</div>
+  <div id="contract-left" class="contract-container" style="display:none;">
+    <table class="contract-table">
+      <tr>
+        <th>Contract Type</th>
+        <td>Item Exchange</td>
+      </tr>
+      <tr>
+        <th>Availability</th>
+        <td>Private</td>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <td id="contract-left-name" class="copyable">OreStellar</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="summaryContainer" style="display: none;"></div>
+
+  <div id="contract-right" class="contract-container" style="display:none;">
+    <table class="contract-table">
+      <tr>
+        <th>I will pay</th>
+        <td>0</td>
+      </tr>
+      <tr>
+        <th>I will receive</th>
+        <td id="contract-right-receive">0</td>
+      </tr>
+      <tr>
+        <th>Expiration</th>
+        <td>1 week</td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>That was Stellar!</td>
+      </tr>
+    </table>
+  </div>
 </div>
 <!-- Hidden content -->
 <div id="ratesContainer" class="neon"></div>
