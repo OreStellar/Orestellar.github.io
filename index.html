@@ -934,6 +934,7 @@ function hidePanels() {
 // --- Event Listeners ---
 ratesTab.addEventListener('click', e => {
   e.stopPropagation();
+  showRates();            // populate ratesContainer
   showPanel(ratesContainer, ratesTab);
 });
 
