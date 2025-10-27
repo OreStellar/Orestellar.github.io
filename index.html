@@ -504,24 +504,46 @@ function extractOreName(line) {
 }
 
 // Main ore line parser
+// --- Form B Parser (CSV-based Recognition) ---
+// Requires: priceData already loaded from prices.csv
+
 function parseOreLine(line) {
   line = line.trim();
   if (!line || line.toLowerCase().includes('top 10 overall')) return null;
 
-  const oreName = extractOreName(line);
-  if (!oreName) return null;
+  // Try to match the longest ore name from CSV data
+  const oreNames = Object.keys(priceData).sort((a, b) => b.length - a.length);
+  let matchedOre = null;
 
-  const { volume, isk } = extractVolumeAndISK(line);
-  const priceEntry = priceData[oreName];
-  const price = priceEntry ? priceEntry.price : 0;
+  for (const name of oreNames) {
+    // Match exact start of line or compressed variant
+    const regex = new RegExp(`^(${name})(\\s|$)`, 'i');
+    if (regex.test(line)) {
+      matchedOre = name;
+      break;
+    }
+  }
 
-  return {
-    ore: oreName,
-    quantity: volume || 0,  // treat m3 as quantity substitute
-    volume: volume || 0,
-    isk: isk || 0,
-    unitPrice: price
-  };
+  if (!matchedOre) return null;
+
+  // Extract quantity (first number on the line)
+  const qtyMatch = line.match(/([\d,]+)/);
+  const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 0;
+
+  // Store only ore and quantity (volume + isk not displayed but safe to track)
+  return { ore: matchedOre, quantity };
+}
+
+function parseInventoryText(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const result = [];
+
+  for (const line of lines) {
+    const parsed = parseOreLine(line);
+    if (parsed) result.push(parsed);
+  }
+
+  return result;
 }
 
 
