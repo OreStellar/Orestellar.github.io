@@ -149,6 +149,7 @@
     box-shadow: 0 0 15px rgba(255,255,255,0.2);
     display: none;
     overflow-x: auto;
+    overflow-y: visible; /* or auto if you want scroll */
   }
   
 #sideTabsContainer {
@@ -655,13 +656,13 @@ document.getElementById('submitButton').addEventListener('click', () => {
         delay += animationDelay;
     });
 
-    // Grand total row
-    const grandRow = document.createElement('tr');
-    grandRow.innerHTML = `
-        <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total:</td>
-        <td style="text-align:right;">0.00</td>
-    `;
-    tbody.appendChild(grandRow);
+ const totalRow = document.createElement('tr');
+totalRow.innerHTML = `
+    <td colspan="3" style="text-align:right;font-weight:bold;">Grand Total</td>
+    <td style="text-align:right;font-weight:bold;">${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+    <td></td>
+`;
+tbody.appendChild(totalRow);
 
     // Animate grand total after all rows
     setTimeout(() => {
