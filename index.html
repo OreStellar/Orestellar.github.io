@@ -1032,15 +1032,23 @@ function showRatesGrid() {
             cell.style.transform = "translateY(0)";
         }, index * 20); // stagger animation
     });
-
-    // Filter function
-    searchInput.addEventListener('input', () => {
-        const filter = searchInput.value.toLowerCase();
-        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
-            item.style.display = item.textContent.toLowerCase().includes(filter) ? '' : 'none';
-        });
+  }
+// Filter function with dim/highlight effect
+searchInput.addEventListener('input', () => {
+    const filter = searchInput.value.toLowerCase();
+    document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+        if (item.textContent.toLowerCase().includes(filter)) {
+            // Highlight matching ores
+            item.style.opacity = '1';
+            item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
+        } else {
+            // Dim non-matching ores
+            item.style.opacity = '0.3';
+            item.style.boxShadow = '0 0 5px #0ff, 0 0 10px #0ff'; // subtle neon
+        }
     });
-}
+});
+
 
 // --- CSS injection for grid ---
 const style = document.createElement('style');
