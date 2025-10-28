@@ -1049,43 +1049,34 @@ function hidePanels() {
   }, 400); // match CSS transition
 }
 
+const ratesClose = document.getElementById('ratesClose');
+const inventoryContainer = document.getElementById('inventoryContainer');
+const logo = document.getElementById('logo');
+
 ratesTab.addEventListener('click', () => {
-    const logo = document.getElementById('logo');
-    const inventoryContainer = document.getElementById('inventoryContainer');
-    const summaryContainer = document.getElementById('summaryContainer');
-    const contractRightLogo = document.getElementById('contractRightLogo');
+  // Remember what's currently visible
+  previousVisible = [];
+  if (inventoryContainer.style.display !== 'none') previousVisible.push(inventoryContainer);
+  if (summaryContainer.style.display !== 'none') previousVisible.push(summaryContainer);
+  if (logo.style.display !== 'none') previousVisible.push(logo);
 
-    const sections = [logo, inventoryContainer, summaryContainer, contractRightLogo];
+  // Hide them
+  inventoryContainer.style.display = 'none';
+  summaryContainer.style.display = 'none';
+  logo.style.display = 'none';
 
-    if (!ratesContainer.classList.contains('active')) {
-        // --- Opening Rates tab ---
-        console.log("Opening Rates Container");
-
-        // Remember which sections were visible before opening
-        previousVisibleSections = sections.filter(el => el && el.style.display !== 'none');
-
-        // Hide all sections
-        sections.forEach(el => {
-            if (el) el.style.display = 'none';
-        });
-
-        // Show rates container
-        ratesContainer.style.display = 'block';
-        setTimeout(() => ratesContainer.classList.add('active'), 10);
-
-    } else {
-        // --- Closing Rates tab ---
-        console.log("Closing Rates Container");
-        ratesContainer.classList.remove('active');
-        setTimeout(() => {
-            ratesContainer.style.display = 'none';
-            // Restore previously visible sections
-            previousVisibleSections.forEach(el => {
-                if (el) el.style.display = (el.id === 'contractRightLogo') ? 'inline-block' : 'block';
-            });
-        }, 300);
-    }
+  // Show rates container
+  ratesContainer.style.display = 'block';
 });
+
+ratesClose.addEventListener('click', () => {
+  // Hide the rates container
+  ratesContainer.style.display = 'none';
+
+  // Restore what was visible before
+  previousVisible.forEach(el => el.style.display = 'block');
+});
+
 
 compareTab.addEventListener('click', e => {
   e.stopPropagation();
