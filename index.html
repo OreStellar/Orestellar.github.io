@@ -554,6 +554,39 @@
 </div>
 
 <script>
+const submitButton = document.getElementById('submitButton');
+const messageBox = document.getElementById('messageBox');
+const summaryContainer = document.getElementById('summaryContainer');
+const inventoryContainer = document.getElementById('inventoryContainer');
+const contractRightLogo = document.getElementById('contractRightLogo');
+const contractRight = document.getElementById('contractRight');
+
+  submitButton.addEventListener('click', () => {
+    const input = messageBox.value.trim();
+    if (!input) return;
+
+    // Hide inventory, show summary & contract icon
+    inventoryContainer.style.display = 'none';
+    summaryContainer.style.display = 'block';
+    contractRightLogo.style.display = 'inline-block';
+
+    const parsed = parseInventoryText(input);
+    renderSummary(parsed); // your function that builds the table
+});
+  function updateGrandTotal(value) {
+    document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Open modal
+contractRightLogo.addEventListener('click', () => {
+    contractRight.style.display = 'block';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === contractRight) contractRight.style.display = 'none';
+});
+
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
 const sctx = staticCanvas.getContext('2d');
