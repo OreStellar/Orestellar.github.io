@@ -795,9 +795,8 @@ function animateValue(cell, start, end, duration = 500, isFloat = false) {
 }
 
 // --- Submit Button ---
-    const submitButton = document.getElementById('submitButton');
-      submitButton.addEventListener('click', () => {
-        console.log("Submit clicked");
+document.getElementById('submitButton').addEventListener('click', () => {
+    console.log("=== Submit Button Clicked ===");
 
     const input = document.getElementById('messageBox').value.trim();
     console.log("Input text:", input);
@@ -1146,7 +1145,15 @@ else {
     }, 100);
 }
 
+ratesTab.addEventListener('click', () => {
+  ratesContainer.classList.toggle('active');
+  compareContainer.classList.remove('active');
+});
 
+compareTab.addEventListener('click', () => {
+  compareContainer.classList.toggle('active');
+  ratesContainer.classList.remove('active');
+});
 </script>
 </div>
 </body>
