@@ -1163,13 +1163,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const contractButton = document.getElementById('contractRightLogo');
 
   contractButton.addEventListener('click', () => {
-    overlay.classList.add('visible');
-    contractRight.style.display = 'block';
+overlay.classList.remove('hidden');
+overlay.classList.add('visible');    // fade in
+contractRight.classList.remove('hidden');
+
   });
 
   overlay.addEventListener('click', () => {
-    contractRight.style.display = 'none';
-    overlay.style.display = 'none';
+overlay.classList.remove('visible');   // fade out
+overlay.classList.add('hidden');       // actually hide after fade
+contractRight.classList.add('hidden'); // hide modal
   });
 });
 
