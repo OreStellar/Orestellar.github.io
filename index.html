@@ -1160,22 +1160,22 @@ else {
         }
     }, 100);
 }
-const contractRightLogo = document.getElementById('contractRightLogo');
-const contractRight = document.getElementById('contractRight');
- const modalContent = contractRight.querySelector('.modal-content');
+document.addEventListener('DOMContentLoaded', () => {
+  const contractRight = document.getElementById('contractRight');
+  const overlay = document.getElementById('overlay');
+  const contractButton = document.getElementById('contractRightLogo');
 
-  // 🟢 Open modal when logo is clicked
-  contractRightLogo.addEventListener('click', () => {
+  contractButton.addEventListener('click', () => {
+    overlay.style.display = 'block';
     contractRight.style.display = 'block';
   });
 
-  // 🔴 Close modal when clicking outside the modal content
-  window.addEventListener('click', (e) => {
-    if (contractRight.style.display === 'block' && !modalContent.contains(e.target) && e.target !== contractRightLogo) {
-      contractRight.style.display = 'none';
-    }
+  overlay.addEventListener('click', () => {
+    contractRight.style.display = 'none';
+    overlay.style.display = 'none';
   });
-  
+});
+
 // Dynamically update "I will receive" value
 function updateGrandTotal(value) {
   document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
