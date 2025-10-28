@@ -95,15 +95,12 @@
   }
 
 #contractsContainer {
-    display: flex;
-    justify-content: center;  /* centers everything horizontally */
-    align-items: flex-start;  /* top-aligns the contracts and summary */
-    gap: 20px;                /* space between contracts and summary */
-    width: 100%;
-    max-width: 1200px;        /* optional max width */
-    margin: 40px auto;        /* center container horizontally */
-    flex-wrap: nowrap;         /* prevent wrapping to next line */
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+  align-items: center;    /* center horizontally */
+  gap: 25px;              /* space between summary and logo */
+}
+
 }
   #inventoryContainer {
     width: 80%;
