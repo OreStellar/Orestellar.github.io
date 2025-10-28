@@ -474,6 +474,8 @@
 
 .contract-table th, .contract-table td {
   text-align: left;
+  position: relative;
+  white-space: nowrap;
   padding: 6px 4px;
   font-family: 'Chivo Mono', monospace;
 }
@@ -483,8 +485,10 @@
 }
 
 .glow-bullet {
-  color: rgb(0, 255, 34);
+  color: rgba(72, 255, 0, 0.473);
   margin-left: 3px;
+  width: 1ch;           /* ensures same space for every bullet */
+  text-align: center;   /* center the dot in that space */
 }
 
 </style>
@@ -551,8 +555,7 @@
       <td>Item Exchange</td>
     </tr>
     <tr>
-      <th>Availability<span class="glow-bullet">•</span></th>
-      <td>Private</td>
+      <th>Availability<span class="glow-bullet">•</span></th><td>Private</td>
     </tr>
     <tr>
       <th>Name<span class="glow-bullet">•</span></th>
