@@ -632,6 +632,9 @@ function showPanel(panel) {
         openPanel = null;
     }
 }
+ratesTab.addEventListener('click', () => showPanel(ratesContainer));
+compareTab.addEventListener('click', () => showPanel(compareContainer));
+overlay.addEventListener('click', () => showPanel(null));
 });
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
