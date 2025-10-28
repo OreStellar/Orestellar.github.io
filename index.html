@@ -73,18 +73,18 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.6); /* semi-transparent black */
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease;
-  z-index: 10;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
 }
-
-#overlay.visible {
+/* Show overlay when active */
+#overlay.active {
   opacity: 1;
   visibility: visible;
 }
+
   
   #logo {
     text-align: center;
@@ -172,8 +172,23 @@
 }
 
 
-#contractRight { z-index: 25; }
-
+#contractRight {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: #111;  /* dark modal background */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  z-index: 1010; /* above overlay */
+  max-width: 90%; /* responsive */
+  max-height: 90%;
+  overflow-y: auto;
+}
 
   #summaryContainer {
     font-family: 'Chivo Mono', monospace;
@@ -446,14 +461,6 @@
   color: rgb(0, 255, 34);
   margin-left: 3px;
 }
-#contractRightLogo {
-  display: none; /* hidden by default */
-  cursor: pointer;
-  margin: 1rem auto; /* will center when shown */
-}
-#contractRightLogo.active {
-  display: block;
-}
 
 </style>
 </head>
@@ -575,29 +582,6 @@ submitButton.addEventListener('click', () => {
     // Parse input and render summary
     const parsed = parseInventoryText(input);
 
-});
-const contractRight = document.getElementById('contractRight'); // modal
-const overlay = document.getElementById('overlay');
-
-contractRightLogo.addEventListener('click', () => {
-    overlay.classList.add('active');   // show overlay
-    contractRight.classList.add('active'); // show modal
-});
-
-// Close modal when clicking overlay
-overlay.addEventListener('click', () => {
-    overlay.classList.remove('active');
-    contractRight.classList.remove('active');
-});
-
-
-  function updateGrandTotal(value) {
-    document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-// Close modal when clicking outside
-window.addEventListener('click', (e) => {
-    if (e.target === contractRight) contractRight.style.display = 'none';
 });
 
 /* --- Static Background Stars --- */
@@ -1181,23 +1165,30 @@ else {
     }, 100);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const contractButton = document.getElementById('contractRightLogo');
-  const overlay = document.getElementById('overlay');
-  const contractRight = document.getElementById('contractRight');
+const contractRight = document.getElementById('contractRight'); // modal
+const overlay = document.getElementById('overlay');
+const contractRightLogo = document.getElementById('contractRightLogo'); // button
 
-  // Open modal
-  contractButton.addEventListener('click', () => {
-    overlay.style.display = 'block';
-    contractRight.style.display = 'block';
-  });
-
-  // Close modal when clicking overlay
-  overlay.addEventListener('click', () => {
-    overlay.style.display = 'none';
-    contractRight.style.display = 'none';
-  });
+// Open modal
+contractRightLogo.addEventListener('click', () => {
+    overlay.classList.add('active');
+    contractRight.classList.add('active');
 });
+
+// Close modal when clicking overlay
+overlay.addEventListener('click', () => {
+    overlay.classList.remove('active');
+    contractRight.classList.remove('active');
+});
+
+// Optional: close modal if you click outside the modal content
+window.addEventListener('click', (e) => {
+    if (e.target === overlay) { // click outside modal
+        overlay.classList.remove('active');
+        contractRight.classList.remove('active');
+    }
+});
+
 
 // Dynamically update "I will receive" value
 function updateGrandTotal(value) {
