@@ -451,10 +451,14 @@
   margin-left: 3px;
 }
 #contractRightLogo {
-  display: none; /* hide at start */
+  display: none; /* hidden by default */
   cursor: pointer;
-  margin: 1rem auto; /* center horizontally when shown */
+  margin: 1rem auto; /* will center when shown */
 }
+#contractRightLogo.active {
+  display: block;
+}
+
 </style>
 </head>
 <body>
@@ -563,21 +567,33 @@ submitButton.addEventListener('click', () => {
     const input = messageBox.value.trim();
     if (!input) return;
 
-    // Hide inventory container
-    inventoryContainer.classList.remove('active'); // just in case
-    inventoryContainer.classList.add('hidden');    // add a hidden class
+    // Hide inventory
+    inventoryContainer.classList.add('hidden');
 
     // Show summary
     summaryContainer.classList.add('active');
 
-    // Show contract button centered
-    contractRightLogo.classList.remove('hidden');
+    // Show contract button
     contractRightLogo.classList.add('active');
 
     // Parse input and render summary
     const parsed = parseInventoryText(input);
     renderSummary(parsed);
 });
+const contractRight = document.getElementById('contractRight'); // modal
+const overlay = document.getElementById('overlay');
+
+contractRightLogo.addEventListener('click', () => {
+    overlay.classList.add('active');   // show overlay
+    contractRight.classList.add('active'); // show modal
+});
+
+// Close modal when clicking overlay
+overlay.addEventListener('click', () => {
+    overlay.classList.remove('active');
+    contractRight.classList.remove('active');
+});
+
 
   function updateGrandTotal(value) {
     document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
