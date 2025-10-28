@@ -877,9 +877,10 @@ document.getElementById('submitButton').addEventListener('click', () => {
     const inventoryContainer = document.getElementById('inventoryContainer');
     const summary = document.getElementById('summaryContainer');
 
-    console.log("Hiding inventory, showing contracts and summary");
+    console.log("Hiding inventory, showing contracts and summary showing contractbutton");
     inventoryContainer.style.display = 'none';
     summary.style.display = 'block';
+    contractButton.style.display = 'inline-block';
 
     console.log("Clearing previous summary table");
     summary.innerHTML = '';
