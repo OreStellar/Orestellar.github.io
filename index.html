@@ -1052,6 +1052,7 @@ ratesTab.addEventListener('click', () => {
     inventoryContainer.style.display = 'none';
     contractRightLogo.style.display = 'none';
     summaryContainer.style.display = 'none';
+    document.getElementById('logo').style.display = 'none'; // hide logo
 
     // Toggle rates container
     if (!ratesContainer.classList.contains('active')) {
@@ -1059,10 +1060,12 @@ ratesTab.addEventListener('click', () => {
         setTimeout(() => ratesContainer.classList.add('active'), 10); // animate in
     } else {
         ratesContainer.classList.remove('active'); // animate out
-        setTimeout(() => ratesContainer.style.display = 'none', 300); // hide after animation
+        setTimeout(() => {
+            ratesContainer.style.display = 'none';
+            document.getElementById('logo').style.display = 'block'; // show logo again
+        }, 300); // hide after animation
     }
 });
-
 compareTab.addEventListener('click', e => {
   e.stopPropagation();
   showPanel(compareContainer, compareTab);
