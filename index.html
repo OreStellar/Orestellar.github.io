@@ -582,7 +582,8 @@ submitButton.addEventListener('click', () => {
 
     // Parse input and render summary
     const parsed = parseInventoryText(input);
-
+    renderSummary(parsed);
+});
 const contractRight = document.getElementById('contractRight'); // modal
 const overlay = document.getElementById('overlay');
 
@@ -596,7 +597,7 @@ overlay.addEventListener('click', () => {
     overlay.classList.remove('active');
     contractRight.classList.remove('active');
 });
-}
+
 
   function updateGrandTotal(value) {
     document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
