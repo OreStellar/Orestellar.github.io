@@ -419,6 +419,40 @@
   background: #000;
   color: rgb(255, 255, 255);
 }
+.contract-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.9);
+  color: #0ff;
+  padding: 20px;
+  border-radius: 15px;
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 0 20px #0ff;
+}
+
+.contract-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.contract-table th, .contract-table td {
+  text-align: left;
+  padding: 6px 4px;
+  font-family: 'Chivo Mono', monospace;
+}
+
+.contract-table th {
+  font-weight: 600;
+}
+
+.glow-bullet {
+  color: #0ff;
+  margin-left: 3px;
+}
 
 </style>
 </head>
@@ -467,42 +501,47 @@
 
   <div id="summaryContainer" style="display: none;"></div>
 
-  <div id="contract-right" class="contract-container" style="display:none;">
-    <table class="contract-table">
-      <tr>
-  <th>Contract Type<span class="glow-bullet">•</span></th>
-  <td>Item Exchange</td>
-</tr>
-<tr>
-  <th>Availability<span class="glow-bullet">•</span></th>
-  <td>Private</td>
-</tr>
-<tr>
-  <th>Name<span class="glow-bullet">•</span></th>
-  <td>OreStellar</td>
-</tr>
-<tr>
-  <th>I will pay<span class="glow-bullet">•</span></th>
-  <td>0</td>
-</tr>
-<tr>
-<tr>
-  <th>I will receive<span class="glow-bullet">•</span></th>
-  <td id="contract-right-receive">1,579,180.00</td>
-</tr>
+<!-- SVG Logo -->
+<div id="contractRightLogo" style="cursor:pointer; display:inline-block;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note">
+    <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/>
+    <path d="M15 3v4a2 2 0 0 0 2 2h4"/>
+  </svg>
+</div>
 
-</tr>
-<tr>
-  <th>Expiration<span class="glow-bullet">•</span></th>
-  <td>1 week</td>
-</tr>
-<tr>
-  <th>Description<span class="glow-bullet">•</span></th>
-  <td>That was Stellar!</td>
-</tr>
-
-    </table>
-  </div>
+<!-- Modal -->
+<div id="contractRight" class="contract-container" style="display:none;">
+  <table class="contract-table">
+    <tr>
+      <th>Contract Type<span class="glow-bullet">•</span></th>
+      <td>Item Exchange</td>
+    </tr>
+    <tr>
+      <th>Availability<span class="glow-bullet">•</span></th>
+      <td>Private</td>
+    </tr>
+    <tr>
+      <th>Name<span class="glow-bullet">•</span></th>
+      <td>OreStellar</td>
+    </tr>
+    <tr>
+      <th>I will pay<span class="glow-bullet">•</span></th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>I will receive<span class="glow-bullet">•</span></th>
+      <td id="grandTotalCell">0</td>
+    </tr>
+    <tr>
+      <th>Expiration<span class="glow-bullet">•</span></th>
+      <td>1 week</td>
+    </tr>
+    <tr>
+      <th>Description<span class="glow-bullet">•</span></th>
+      <td>That was Stellar!</td>
+    </tr>
+  </table>
+</div>
 </div>
 <div id="ratesContainer" class="neon" style="display:none;">
   <button id="ratesClose">✕</button>
@@ -1123,6 +1162,25 @@ else {
             clearInterval(checkCsv);
         }
     }, 100);
+}
+const contractRightLogo = document.getElementById('contractRightLogo');
+const contractRight = document.getElementById('contractRight');
+
+// Open modal when logo is clicked
+contractRightLogo.addEventListener('click', () => {
+  contractRight.style.display = 'block';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === contractRight) {
+    contractRight.style.display = 'none';
+  }
+});
+
+// Dynamically update "I will receive" value
+function updateGrandTotal(value) {
+  document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 </script>
