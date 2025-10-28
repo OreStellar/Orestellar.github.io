@@ -325,8 +325,13 @@
         
 #ratesTab {
   position: relative; /* required for left offset */
-  left: 30px;         /* moves it 40px to the right */
-  width: 50 pixels;
+  left: 0px;         /* moves it 40px to the right */
+}
+#ratesTabLogo {
+  position: absolute;
+  left: 10px; /* moves it 10px from the left edge */
+  top: 10px;  /* keep whatever top you had */
+  cursor: pointer;
 }
 #compareTab {
     top: 25px;
@@ -1067,8 +1072,11 @@ ratesTab.addEventListener('click', () => {
   logo.style.display = 'none';
 
   // Show rates container
+  
   ratesContainer.style.display = 'block';
+  showRatesGrid();
 });
+   
 
 ratesClose.addEventListener('click', () => {
   // Hide the rates container
