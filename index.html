@@ -1190,22 +1190,22 @@ else {
         }
     }, 100);
 }
+
 document.addEventListener('DOMContentLoaded', () => {
-  const contractRight = document.getElementById('contractRight');
-  const overlay = document.getElementById('overlay');
   const contractButton = document.getElementById('contractRightLogo');
+  const overlay = document.getElementById('overlay');
+  const contractRight = document.getElementById('contractRight');
 
+  // Open modal
   contractButton.addEventListener('click', () => {
-overlay.classList.remove('hidden');
-overlay.classList.add('visible');    // fade in
-contractRight.classList.remove('hidden');
-
+    overlay.style.display = 'block';
+    contractRight.style.display = 'block';
   });
 
+  // Close modal when clicking overlay
   overlay.addEventListener('click', () => {
-overlay.classList.remove('visible');   // fade out
-overlay.classList.add('hidden');       // actually hide after fade
-contractRight.classList.add('hidden'); // hide modal
+    overlay.style.display = 'none';
+    contractRight.style.display = 'none';
   });
 });
 
