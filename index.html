@@ -643,8 +643,8 @@ function showPanel(panel) {
   if (panel) {
     console.log("🟣 Opening panel:", panel.id);
 
-    // Make sure it's actually visible
     panel.style.display = 'block';
+    panel.classList.add('active'); // <-- ADD THIS LINE
     panel.style.zIndex = '1000';
     overlay.classList.add('active');
     openPanel = panel;
@@ -657,25 +657,11 @@ function showPanel(panel) {
     console.log("⚪ Closing all panels and restoring previous sections");
     overlay.classList.remove('active');
     openPanel = null;
-
-    // Fade back previously visible sections
-    if (previousVisibleSections.length > 0) {
-      console.log("🔵 Restoring previous sections:", previousVisibleSections.map(el => el.id));
-      previousVisibleSections.forEach(el => {
-        el.style.display = '';
-        el.style.opacity = 0;
-        el.style.transition = 'opacity 0.5s ease';
-        requestAnimationFrame(() => el.style.opacity = 1);
-      });
-      setTimeout(() => (previousVisibleSections = []), 600);
-    } else {
-      console.log("⚫ No previous sections recorded.");
-    }
   }
 
-  // Debug overlay visibility
   console.log("Overlay active?", overlay.classList.contains('active'));
 }
+
 
     // --- Rates Grid ---
     function showRatesGrid() {
