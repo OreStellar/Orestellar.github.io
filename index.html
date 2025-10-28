@@ -326,6 +326,7 @@
 #ratesTab {
   position: relative; /* required for left offset */
   right: 10px;
+  width: 20px;
 }
 #ratesTabLogo {
   position: absolute;
@@ -1025,11 +1026,19 @@ const compareContainer = document.getElementById('compareContainer');
 const overlay = document.getElementById('overlay');
 // --- Show Panel with zoom-from-button animation ---
 function showPanel(panel, tab) {
-  // Hide any open panels
+  // Hide other panels, but not the one we want to show
   [ratesContainer, compareContainer].forEach(el => {
-    el.classList.remove('active');
-    el.style.display = 'none';
+    if (el !== panel) {
+      el.classList.remove('active');
+      el.style.display = 'none';
+    }
   });
+
+  // Show the requested panel
+  panel.style.display = 'block';      // make it visible
+  panel.offsetHeight;                  // force reflow for CSS animation
+  panel.classList.add('active');       // trigger zoom/transition
+}
 
   // Show overlay
   overlay.classList.add('active');
@@ -1041,7 +1050,6 @@ function showPanel(panel, tab) {
   panel.offsetHeight; 
   panel.classList.add('active');
 
-}
 
 // --- Hide all panels ---
 function hidePanels() {
@@ -1069,7 +1077,7 @@ ratesTab.addEventListener('click', () => {
   summaryContainer.style.display = 'none';
   logo.style.display = 'none';
 
-  // Show rates container
+    showPanel(ratesContainer, ratesTab);
   
   ratesContainer.style.display = 'block';
   showRatesGrid();
