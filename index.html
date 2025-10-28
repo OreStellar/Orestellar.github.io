@@ -615,15 +615,18 @@ let openPanel = null; // remember which panel is currently open
 
 function showPanel(panel) {
     // Close any currently open panel
+    console.log("showPanel called with:", panel);
     if (openPanel) {
         openPanel.classList.remove('active');
     }
 
     if (panel) {
+      console.log("Opening panel", panel.id);
         panel.classList.add('active');  // show the new panel
         overlay.classList.add('active'); // show overlay
         openPanel = panel;               // remember which panel is open
     } else {
+      console.log("Closing all panels");
         overlay.classList.remove('active'); // hide overlay if no panel
         openPanel = null;
     }
