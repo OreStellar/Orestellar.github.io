@@ -500,9 +500,15 @@
     </table>
   </div>
 </div>
-<!-- Hidden content -->
-<div id="ratesContainer" class="neon"></div>
-<div id="compareContainer" class="neon"></div>
+<div id="ratesContainer" class="neon" style="display:none;">
+  <button id="ratesClose">✕</button>
+  <input type="text" id="searchInput" placeholder="Begin typing to search orelist..">
+  <div id="ratesGrid"></div>
+</div>
+
+<div id="compareContainer" class="neon" style="display:none;">
+  <!-- Compare content here -->
+</div>
 
 <script>
 /* --- Static Background Stars --- */
