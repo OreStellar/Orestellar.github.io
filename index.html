@@ -574,11 +574,6 @@ const summaryContainer = document.getElementById('summaryContainer');
     document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Open modal
-contractRightLogo.addEventListener('click', () => {
-    contractRight.style.display = 'block';
-});
-
 // Close modal when clicking outside
 window.addEventListener('click', (e) => {
     if (e.target === contractRight) contractRight.style.display = 'none';
