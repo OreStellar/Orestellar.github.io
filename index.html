@@ -291,8 +291,12 @@
       text-align: right;  /* ensure placeholder aligns right */
         }
 
+        #ratesTab {
+  position: relative; /* required for left offset */
+  left: 40px;         /* moves it 40px to the right */
+}
 #compareTab {
-    top: calc(30% + 25px); /* move it 25px lower than other tabs */
+    top: 25px;
 }
 #compareContainer {
     position: fixed;
