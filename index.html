@@ -290,13 +290,9 @@
           0 0 20px rgb(233, 233, 233);
       text-align: right;  /* ensure placeholder aligns right */
         }
-        
-#ratesTab {
-  position: relative; /* required for left offset */
-  left: 40px;         /* moves it 40px to the right */
-}
+
 #compareTab {
-    top: 25px;
+    top: calc(30% + 25px); /* move it 25px lower than other tabs */
 }
 #compareContainer {
     position: fixed;
@@ -455,14 +451,10 @@
   margin-left: 3px;
 }
 #contractRightLogo {
-  display: none; /* hidden by default */
+  display: none; /* hide at start */
   cursor: pointer;
-  margin: 1rem auto; /* will center when shown */
+  margin: 1rem auto; /* center horizontally when shown */
 }
-#contractRightLogo.active {
-  display: block;
-}
-
 </style>
 </head>
 <body>
@@ -567,37 +559,18 @@ const submitButton = document.getElementById('submitButton');
 const messageBox = document.getElementById('messageBox');
 const summaryContainer = document.getElementById('summaryContainer');
   
-submitButton.addEventListener('click', () => {
+  submitButton.addEventListener('click', () => {
     const input = messageBox.value.trim();
     if (!input) return;
 
-    // Hide inventory
-    inventoryContainer.classList.add('hidden');
+    // Hide inventory, show summary & contract icon
+    inventoryContainer.style.display = 'none';
+    summaryContainer.style.display = 'block';
+    contractRightLogo.style.display = 'inline-block';
 
-    // Show summary
-    summaryContainer.classList.add('active');
-
-    // Show contract button
-    contractRightLogo.classList.add('active');
-
-    // Parse input and render summary
     const parsed = parseInventoryText(input);
-
-const contractRight = document.getElementById('contractRight'); // modal
-const overlay = document.getElementById('overlay');
-
-contractRightLogo.addEventListener('click', () => {
-    overlay.classList.add('active');   // show overlay
-    contractRight.classList.add('active'); // show modal
+    renderSummary(parsed); // your function that builds the table
 });
-
-// Close modal when clicking overlay
-overlay.addEventListener('click', () => {
-    overlay.classList.remove('active');
-    contractRight.classList.remove('active');
-});
-
-
   function updateGrandTotal(value) {
     document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -1009,6 +982,7 @@ const ratesTab = document.getElementById('ratesTab');
 const compareTab = document.getElementById('compareTab');
 const ratesContainer = document.getElementById('ratesContainer');
 const compareContainer = document.getElementById('compareContainer');
+const overlay = document.getElementById('overlay');
 
 // --- Show Panel with zoom-from-button animation ---
 function showPanel(panel, tab) {
