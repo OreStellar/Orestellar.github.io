@@ -593,23 +593,6 @@ const messageBox = document.getElementById('messageBox');
 const summaryContainer = document.getElementById('summaryContainer');
 const contractRightLogo = document.getElementById('contractRightLogo');
   
-submitButton.addEventListener('click', () => {
-    const input = messageBox.value.trim();
-    if (!input) return;
-
-    // Hide inventory
-    inventoryContainer.classList.add('hidden');
-
-    // Show summary
-    summaryContainer.classList.add('active');
-
-    // Show contract button
-    contractRightLogo.classList.add('active');
-
-    // Parse input and render summary
-    const parsed = parseInventoryText(input);
-
-});
 
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
@@ -876,11 +859,12 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
     const inventoryContainer = document.getElementById('inventoryContainer');
     const summary = document.getElementById('summaryContainer');
+    const parsed = parseInventoryText(input);
 
     console.log("Hiding inventory, showing contracts and summary showing contractbutton");
     inventoryContainer.style.display = 'none';
     summary.style.display = 'block';
-    contractButton.style.display = 'inline-block';
+    contractRightLogo.style.display = 'inline-block';
 
     console.log("Clearing previous summary table");
     summary.innerHTML = '';
@@ -1066,7 +1050,7 @@ ratesTab.addEventListener('click', () => {
     // Hide other sections
     console.log("RatesTab clicked", ratesContainer);
     inventoryContainer.style.display = 'none';
-    contractButton.style.display = 'none';
+    contractRightLogo.style.display = 'none';
     summaryContainer.style.display = 'none';
 
     // Toggle rates container
