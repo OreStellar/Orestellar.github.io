@@ -325,10 +325,16 @@
         }
         
 #ratesTab {
-  position: relative; /* required for left offset */
-  right: 10px;
-  width: 20px;
+  display: inline-flex;       /* allow padding/alignment */
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;          /* clickable area */
+  min-width: 80px;            /* make it wide enough */
+  cursor: pointer;
+  background: rgba(0,0,0,0.3); /* optional for visibility */
+  border-radius: 6px;
 }
+
 #ratesTabLogo {
   position: absolute;
   cursor: pointer;
@@ -530,6 +536,7 @@
     <path d="M8 12h13"/>
     <path d="M8 19h13"/>
   </svg>
+  <span>Rates</span>
 </div>
 
 
