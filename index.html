@@ -504,7 +504,7 @@
 
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
-<div id="overlay"></div>
+<div id="overlay" style="display:none;"></div>
 <div id="logo" class="neon">OreStellar</div>
 <div id="inventoryContainer">
 
@@ -1025,7 +1025,6 @@ const ratesTab = document.getElementById('ratesTab');
 const compareTab = document.getElementById('compareTab');
 const ratesContainer = document.getElementById('ratesContainer');
 const compareContainer = document.getElementById('compareContainer');
-const overlay = document.getElementById('overlay');
 // --- Show Panel with zoom-from-button animation ---
 function showPanel(panel, tab) {
   // Hide other panels, but not the one we want to show
