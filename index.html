@@ -1058,17 +1058,17 @@ compareTab.addEventListener('click', e => {
   showPanel(compareContainer, compareTab);
 });
 
-overlay.addEventListener('click', hidePanels);
+overlay.addEventListener('click', () => showPanel(null));
 
-// --- Optional: click outside panel closes ---
 document.addEventListener('click', e => {
   if (
     !ratesContainer.contains(e.target) &&
     !compareContainer.contains(e.target) &&
     !ratesTab.contains(e.target) &&
     !compareTab.contains(e.target)
-  ) hidePanels();
+  ) showPanel(null);
 });
+
 
 function showRatesGrid() {
     ratesContainer.innerHTML = ''; // clear previous
