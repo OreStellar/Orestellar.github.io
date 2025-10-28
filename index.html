@@ -407,18 +407,6 @@
     min-width: 80px;       /* optional: ensure some width */
 }
 
-#ratesContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;      /* width of container */
-  max-width: 600px;
-  padding: 20px;
-  background: rgba(0,0,0,0.85);
-  border-radius: 15px;
-  text-align: center; /* center contents */
-}
 
 #searchInput {
   width: 50%;       /* half the container */
@@ -775,7 +763,6 @@ document.getElementById('submitButton').addEventListener('click', () => {
 
     const inventoryContainer = document.getElementById('inventoryContainer');
     const summary = document.getElementById('summaryContainer');
-    const contractRight = document.getElementById('contract-right');
 
     console.log("Hiding inventory, showing contracts and summary");
     inventoryContainer.style.display = 'none';
