@@ -592,7 +592,7 @@ const submitButton = document.getElementById('submitButton');
 const messageBox = document.getElementById('messageBox');
 const summaryContainer = document.getElementById('summaryContainer');
 const contractRightLogo = document.getElementById('contractRightLogo');
-  
+let previousVisibleSections = [];
 
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
@@ -1052,31 +1052,38 @@ ratesTab.addEventListener('click', () => {
     const summaryContainer = document.getElementById('summaryContainer');
     const contractRightLogo = document.getElementById('contractRightLogo');
 
+    const sections = [logo, inventoryContainer, summaryContainer, contractRightLogo];
+
     if (!ratesContainer.classList.contains('active')) {
-        // --- Opening the Rates tab ---
+        // --- Opening Rates tab ---
         console.log("Opening Rates Container");
+
+        // Remember which sections were visible before opening
+        previousVisibleSections = sections.filter(el => el && el.style.display !== 'none');
+
+        // Hide all sections
+        sections.forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+
+        // Show rates container
         ratesContainer.style.display = 'block';
         setTimeout(() => ratesContainer.classList.add('active'), 10);
 
-        // Hide everything else
-        logo.style.display = 'none';
-        inventoryContainer.style.display = 'none';
-        summaryContainer.style.display = 'none';
-        contractRightLogo.style.display = 'none';
     } else {
-        // --- Closing the Rates tab ---
+        // --- Closing Rates tab ---
         console.log("Closing Rates Container");
         ratesContainer.classList.remove('active');
         setTimeout(() => {
             ratesContainer.style.display = 'none';
-            // Show everything back
-            logo.style.display = 'block';
-            inventoryContainer.style.display = 'block';
-            summaryContainer.style.display = 'block';
-            contractRightLogo.style.display = 'inline-block';
-        }, 300); // Wait for animation
+            // Restore previously visible sections
+            previousVisibleSections.forEach(el => {
+                if (el) el.style.display = (el.id === 'contractRightLogo') ? 'inline-block' : 'block';
+            });
+        }, 300);
     }
 });
+
 compareTab.addEventListener('click', e => {
   e.stopPropagation();
   showPanel(compareContainer, compareTab);
