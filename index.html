@@ -958,33 +958,6 @@ const compareTab = document.getElementById('compareTab');
 const ratesContainer = document.getElementById('ratesContainer');
 const compareContainer = document.getElementById('compareContainer');
 const overlay = document.getElementById('overlay');
-ratesTab.addEventListener('click', () => {
-  if (!ratesContainer.classList.contains('active')) {
-    ratesContainer.style.display = 'block'; // show container
-    setTimeout(() => ratesContainer.classList.add('active'), 10); // animate
-  } else {
-    ratesContainer.classList.remove('active'); // hide animation
-    setTimeout(() => ratesContainer.style.display = 'none', 300); // after animation
-  }
-
-  // hide compare container
-  compareContainer.classList.remove('active');
-  setTimeout(() => compareContainer.style.display = 'none', 300);
-});
-
-compareTab.addEventListener('click', () => {
-  if (!compareContainer.classList.contains('active')) {
-    compareContainer.style.display = 'block';
-    setTimeout(() => compareContainer.classList.add('active'), 10);
-  } else {
-    compareContainer.classList.remove('active');
-    setTimeout(() => compareContainer.style.display = 'none', 300);
-  }
-
-  // hide rates container
-  ratesContainer.classList.remove('active');
-  setTimeout(() => ratesContainer.style.display = 'none', 300);
-});
 
 // --- Show Panel with zoom-from-button animation ---
 function showPanel(panel, tab) {
