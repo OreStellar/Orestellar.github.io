@@ -1033,17 +1033,6 @@ const ratesTab = document.getElementById('ratesTab');
 const compareTab = document.getElementById('compareTab');
 const compareContainer = document.getElementById('compareContainer');
 
-  // Show overlay
-  overlay.classList.add('active');
-
-  // Show the panel
-  panel.style.display = 'block';
-  panel.style.transformOrigin = 'center center';
-  // force reflow to trigger transition
-  panel.offsetHeight; 
-  panel.classList.add('active');
-
-
 // --- Hide all panels ---
 function hidePanels() {
   overlay.classList.remove('visible');
@@ -1063,15 +1052,6 @@ ratesTab.addEventListener('click', () => {
     // Optional: populate the rates grid
     showRatesGrid();
 });
-
-ratesClose.addEventListener('click', () => {
-  // Hide the rates container
-  ratesContainer.style.display = 'none';
-
-  // Restore what was visible before
-  previousVisible.forEach(el => el.style.display = 'block');
-});
-
 
 compareTab.addEventListener('click', e => {
   e.stopPropagation();
