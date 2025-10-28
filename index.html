@@ -613,7 +613,7 @@ const logo = document.getElementById('logo');
 
 let previousVisibleSections = [];
 let openPanel = null; // remember which panel is currently open
-});
+
 function showPanel(panel) {
     // Close any currently open panel
     console.log("showPanel called with:", panel);
@@ -632,7 +632,7 @@ function showPanel(panel) {
         openPanel = null;
     }
 }
-
+});
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
 const sctx = staticCanvas.getContext('2d');
