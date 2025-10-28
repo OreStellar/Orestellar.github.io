@@ -642,27 +642,34 @@ document.addEventListener('DOMContentLoaded', () => {
 function showPanel(panel) {
     console.log('🟢 showPanel called with:', panel);
 
+    // Close current panel if any
     if (currentPanel) {
         console.log('🔴 Closing currently open panel:', currentPanel.id);
         currentPanel.style.display = 'none';
         currentPanel.classList.remove('active');
-        previousPanel = currentPanel; // save previous
+        previousPanel = currentPanel; // save previous panel
     }
 
     if (panel) {
+        // Open the new panel
         console.log('🟣 Opening panel:', panel.id);
         panel.style.display = 'block';
-        panel.style.opacity = '1';
+        panel.style.opacity = '1'; // make fully visible
         console.log('✅ Panel should now be visible.');
         console.log('   Display:', panel.style.display);
         console.log('   Opacity:', panel.style.opacity);
         console.log('   Classes:', panel.className);
-        setTimeout(() => panel.classList.add('active'), 10);
+
+        // Animate in
+        setTimeout(() => {
+            if (panel) panel.classList.add('active');
+        }, 10);
+
         currentPanel = panel;
         overlay.style.display = 'block';
         console.log('   Overlay active? true');
     } else {
-        // closing modal
+        // Close panel
         console.log('🟠 Closing current panel, restoring previous if any.');
         overlay.style.display = 'none';
         currentPanel = null;
@@ -670,7 +677,12 @@ function showPanel(panel) {
         if (previousPanel) {
             console.log('🔵 Restoring previous panel:', previousPanel.id);
             previousPanel.style.display = 'block';
-            setTimeout(() => previousPanel.classList.add('active'), 10);
+            setTimeout(() => {
+                if (previousPanel) {
+                    previousPanel.classList.add('active');
+                    console.log('   ✅ Previous panel restored:', previousPanel.id);
+                }
+            }, 10);
             currentPanel = previousPanel;
             previousPanel = null;
         }
