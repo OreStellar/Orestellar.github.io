@@ -422,13 +422,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.9);
-  color: #0ff;
+  color: rgb(255, 255, 255);
   padding: 20px;
   border-radius: 15px;
   z-index: 9999;
   min-width: 300px;
   max-width: 400px;
-  box-shadow: 0 0 20px #0ff;
+  box-shadow: 0 0 20px rgb(255, 255, 255);
 }
 
 .contract-table {
@@ -447,10 +447,14 @@
 }
 
 .glow-bullet {
-  color: #0ff;
+  color: rgb(0, 255, 34);
   margin-left: 3px;
 }
-
+#contractRightLogo {
+  display: none; /* hide at start */
+  cursor: pointer;
+  margin: 1rem auto; /* center horizontally when shown */
+}
 </style>
 </head>
 <body>
@@ -555,18 +559,26 @@ const submitButton = document.getElementById('submitButton');
 const messageBox = document.getElementById('messageBox');
 const summaryContainer = document.getElementById('summaryContainer');
   
-  submitButton.addEventListener('click', () => {
+submitButton.addEventListener('click', () => {
     const input = messageBox.value.trim();
     if (!input) return;
 
-    // Hide inventory, show summary & contract icon
-    inventoryContainer.style.display = 'none';
-    summaryContainer.style.display = 'block';
-    contractRightLogo.style.display = 'inline-block';
+    // Hide inventory container
+    inventoryContainer.classList.remove('active'); // just in case
+    inventoryContainer.classList.add('hidden');    // add a hidden class
 
+    // Show summary
+    summaryContainer.classList.add('active');
+
+    // Show contract button centered
+    contractRightLogo.classList.remove('hidden');
+    contractRightLogo.classList.add('active');
+
+    // Parse input and render summary
     const parsed = parseInventoryText(input);
-    renderSummary(parsed); // your function that builds the table
+    renderSummary(parsed);
 });
+
   function updateGrandTotal(value) {
     document.getElementById('contract-right-receive').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
