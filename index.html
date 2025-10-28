@@ -1046,6 +1046,7 @@ function hidePanels() {
 const ratesClose = document.getElementById('ratesClose');
 
 ratesTab.addEventListener('click', () => {
+   console.log("Rates tab clicked");
     // Hide other panels and show rates
     showPanel(ratesContainer, ratesTab); 
 
@@ -1054,6 +1055,7 @@ ratesTab.addEventListener('click', () => {
 });
 
 compareTab.addEventListener('click', e => {
+   console.log("Rates tab clicked");
   e.stopPropagation();
   showPanel(compareContainer, compareTab);
 });
