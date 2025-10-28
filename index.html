@@ -1061,11 +1061,20 @@ function hidePanels() {
   }, 400); // match CSS transition
 }
 
-// --- Event Listeners ---
-ratesTab.addEventListener('click', e => {
-  e.stopPropagation();
-  showRatesGrid();            // populate ratesContainer
-  showPanel(ratesContainer, ratesTab);
+ratesTab.addEventListener('click', () => {
+    // Hide other sections
+    inventoryContainer.style.display = 'none';
+    contractButton.style.display = 'none';
+    summaryContainer.style.display = 'none';
+
+    // Show rates container
+    if (!ratesContainer.classList.contains('active')) {
+        ratesContainer.style.display = 'block'; // make visible
+        setTimeout(() => ratesContainer.classList.add('active'), 10); // animate
+    } else {
+        ratesContainer.classList.remove('active'); // hide animation
+        setTimeout(() => ratesContainer.style.display = 'none', 300); // after animation
+    }
 });
 
 compareTab.addEventListener('click', e => {
