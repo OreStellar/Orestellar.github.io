@@ -1047,23 +1047,34 @@ function hidePanels() {
 }
 
 ratesTab.addEventListener('click', () => {
-    // Hide other sections
-    console.log("RatesTab clicked", ratesContainer);
-    inventoryContainer.style.display = 'none';
-    contractRightLogo.style.display = 'none';
-    summaryContainer.style.display = 'none';
-    document.getElementById('logo').style.display = 'none'; // hide logo
+    const logo = document.getElementById('logo');
+    const inventoryContainer = document.getElementById('inventoryContainer');
+    const summaryContainer = document.getElementById('summaryContainer');
+    const contractRightLogo = document.getElementById('contractRightLogo');
 
-    // Toggle rates container
     if (!ratesContainer.classList.contains('active')) {
-        ratesContainer.style.display = 'block'; // show container
-        setTimeout(() => ratesContainer.classList.add('active'), 10); // animate in
+        // --- Opening the Rates tab ---
+        console.log("Opening Rates Container");
+        ratesContainer.style.display = 'block';
+        setTimeout(() => ratesContainer.classList.add('active'), 10);
+
+        // Hide everything else
+        logo.style.display = 'none';
+        inventoryContainer.style.display = 'none';
+        summaryContainer.style.display = 'none';
+        contractRightLogo.style.display = 'none';
     } else {
-        ratesContainer.classList.remove('active'); // animate out
+        // --- Closing the Rates tab ---
+        console.log("Closing Rates Container");
+        ratesContainer.classList.remove('active');
         setTimeout(() => {
             ratesContainer.style.display = 'none';
-            document.getElementById('logo').style.display = 'block'; // show logo again
-        }, 300); // hide after animation
+            // Show everything back
+            logo.style.display = 'block';
+            inventoryContainer.style.display = 'block';
+            summaryContainer.style.display = 'block';
+            contractRightLogo.style.display = 'inline-block';
+        }, 300); // Wait for animation
     }
 });
 compareTab.addEventListener('click', e => {
