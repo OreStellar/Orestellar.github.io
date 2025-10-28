@@ -629,37 +629,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let openPanel = null; // currently open panel
     let previousVisibleSections = [];
+         currentPanel = null;
+        previousPanel = null;
+        currentPanel = null;
+        previousPanel = null;
 
-    // --- Panel Management ---
 function showPanel(panel) {
-  console.log("🟢 showPanel called with:", panel);
+    console.log('🟢 showPanel called with:', panel);
 
-  if (openPanel) {
-    console.log("🔴 Closing currently open panel:", openPanel.id);
-    openPanel.classList.remove('active');
-    openPanel.style.display = 'none';
-  }
+    if (currentPanel) {
+        console.log('🔴 Closing currently open panel:', currentPanel.id);
+        currentPanel.style.display = 'none';
+        currentPanel.classList.remove('active');
+        previousPanel = currentPanel; // save previous
+    }
 
-  if (panel) {
-    console.log("🟣 Opening panel:", panel.id);
+    if (panel) {
+        console.log('🟣 Opening panel:', panel.id);
+        panel.style.display = 'block';
+        panel.style.opacity = '0';
+        console.log('✅ Panel should now be visible.');
+        console.log('   Display:', panel.style.display);
+        console.log('   Opacity:', panel.style.opacity);
+        console.log('   Classes:', panel.className);
+        setTimeout(() => panel.classList.add('active'), 10);
+        currentPanel = panel;
+        overlay.style.display = 'block';
+        console.log('   Overlay active? true');
+    } else {
+        // closing modal
+        console.log('🟠 Closing current panel, restoring previous if any.');
+        overlay.style.display = 'none';
+        currentPanel = null;
 
-    panel.style.display = 'block';
-    panel.classList.add('active'); // <-- ADD THIS LINE
-    panel.style.zIndex = '1000';
-    overlay.classList.add('active');
-    openPanel = panel;
-
-    console.log(`✅ Panel ${panel.id} should now be visible.`);
-    console.log(`   Display: ${getComputedStyle(panel).display}`);
-    console.log(`   Opacity: ${getComputedStyle(panel).opacity}`);
-    console.log(`   Classes: ${panel.className}`);
-  } else {
-    console.log("⚪ Closing all panels and restoring previous sections");
-    overlay.classList.remove('active');
-    openPanel = null;
-  }
-
-  console.log("Overlay active?", overlay.classList.contains('active'));
+        if (previousPanel) {
+            console.log('🔵 Restoring previous panel:', previousPanel.id);
+            previousPanel.style.display = 'block';
+            setTimeout(() => previousPanel.classList.add('active'), 10);
+            currentPanel = previousPanel;
+            previousPanel = null;
+        }
+    }
 }
 
 
@@ -716,21 +726,28 @@ function showPanel(panel) {
             }
         });
     });
-        // Create close button
-        const closeBtn = document.createElement('div');
-        closeBtn.id = 'ratesClose';  // now your CSS #ratesClose will apply
-        closeBtn.innerHTML = '✕'; // Unicode white X
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '-3px';
-        closeBtn.style.right = '10px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.style.fontSize = '1.2rem';
-        closeBtn.style.color = 'rgba(255,255,255,0.8)'; // semi-transparent white
-        closeBtn.style.transition = 'color 0.2s';
-        closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
-        closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
-        ratesContainer.appendChild(closeBtn);
+// Only create once
+if (!document.getElementById('ratesClose')) {
+    const closeBtn = document.createElement('div');
+    closeBtn.id = 'ratesClose';
+    closeBtn.innerHTML = '✕';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '-3px';
+    closeBtn.style.right = '10px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.fontSize = '1.2rem';
+    closeBtn.style.color = 'rgba(255,255,255,0.8)';
+    closeBtn.style.transition = 'color 0.2s';
+    closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
+    closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
 
+    ratesContainer.appendChild(closeBtn);
+
+    // Attach handler to close ratesContainer
+    closeBtn.addEventListener('click', () => {
+        showPanel(null); // close ratesContainer and restore previous
+    });
+}
 
 
     }
