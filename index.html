@@ -1064,17 +1064,18 @@ function hidePanels() {
 
 ratesTab.addEventListener('click', () => {
     // Hide other sections
+    console.log("RatesTab clicked", ratesContainer);
     inventoryContainer.style.display = 'none';
     contractButton.style.display = 'none';
     summaryContainer.style.display = 'none';
 
-    // Show rates container
+    // Toggle rates container
     if (!ratesContainer.classList.contains('active')) {
-        ratesContainer.style.display = 'block'; // make visible
-        setTimeout(() => ratesContainer.classList.add('active'), 10); // animate
+        ratesContainer.style.display = 'block'; // show container
+        setTimeout(() => ratesContainer.classList.add('active'), 10); // animate in
     } else {
-        ratesContainer.classList.remove('active'); // hide animation
-        setTimeout(() => ratesContainer.style.display = 'none', 300); // after animation
+        ratesContainer.classList.remove('active'); // animate out
+        setTimeout(() => ratesContainer.style.display = 'none', 300); // hide after animation
     }
 });
 
