@@ -269,6 +269,7 @@
     transform-origin: center center;
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
     z-index: 50;
+    text-align: center; /* center contents */
 }
 #ratesClose {
     position: absolute;
@@ -406,16 +407,31 @@
     min-width: 80px;       /* optional: ensure some width */
 }
 
-#searchInput {
-  width: 50%; /* half width */
-  display: block;
-  margin: 0 auto 15px auto; /* center it */
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.05);
-  color: #fff;
+#ratesContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;      /* width of container */
+  max-width: 600px;
+  padding: 20px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 15px;
+  text-align: center; /* center contents */
 }
+
+#searchInput {
+  width: 50%;       /* half the container */
+  min-width: 200px; /* optional, prevents it from being too small */
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 2px solid rgb(250, 250, 250); /* neon style */
+  background: #000;
+  color: rgb(255, 255, 255);
+}
+
 </style>
 </head>
 <body>
