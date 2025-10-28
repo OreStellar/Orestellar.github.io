@@ -632,43 +632,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Panel Management ---
 function showPanel(panel) {
-  console.log("showPanel called with:", panel);
+  console.log("🟢 showPanel called with:", panel);
 
-  // Close any currently open panel
   if (openPanel) {
+    console.log("🔴 Closing currently open panel:", openPanel.id);
     openPanel.classList.remove('active');
+    openPanel.style.display = 'none';
   }
 
   if (panel) {
-    console.log("Opening panel", panel.id);
+    console.log("🟣 Opening panel:", panel.id);
 
-    // 🔹 Record and hide currently visible sections
-    previousVisibleSections = Array.from(document.querySelectorAll('section, div'))
-      .filter(el =>
-        getComputedStyle(el).display !== 'none' &&
-        el.id !== 'ratesContainer' &&
-        el.id !== 'compareContainer' &&
-        el.id !== 'overlay'
-      );
-    previousVisibleSections.forEach(el => el.style.display = 'none');
-
-    // 🔹 Show the selected panel
-    panel.classList.add('active');
+    // Make sure it's actually visible
+    panel.style.display = 'block';
+    panel.style.zIndex = '1000';
     overlay.classList.add('active');
     openPanel = panel;
 
+    console.log(`✅ Panel ${panel.id} should now be visible.`);
+    console.log(`   Display: ${getComputedStyle(panel).display}`);
+    console.log(`   Opacity: ${getComputedStyle(panel).opacity}`);
+    console.log(`   Classes: ${panel.className}`);
   } else {
-    console.log("Closing all panels");
+    console.log("⚪ Closing all panels and restoring previous sections");
     overlay.classList.remove('active');
     openPanel = null;
 
-    // 🔹 Restore previously visible sections
+    // Fade back previously visible sections
     if (previousVisibleSections.length > 0) {
-      previousVisibleSections.forEach(el => el.style.display = '');
-      previousVisibleSections = [];
+      console.log("🔵 Restoring previous sections:", previousVisibleSections.map(el => el.id));
+      previousVisibleSections.forEach(el => {
+        el.style.display = '';
+        el.style.opacity = 0;
+        el.style.transition = 'opacity 0.5s ease';
+        requestAnimationFrame(() => el.style.opacity = 1);
+      });
+      setTimeout(() => (previousVisibleSections = []), 600);
+    } else {
+      console.log("⚫ No previous sections recorded.");
     }
   }
+
+  // Debug overlay visibility
+  console.log("Overlay active?", overlay.classList.contains('active'));
 }
+
     // --- Rates Grid ---
     function showRatesGrid() {
         ratesContainer.innerHTML = ''; // clear previous
