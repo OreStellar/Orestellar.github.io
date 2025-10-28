@@ -330,6 +330,8 @@
   justify-content: center;
   padding: 8px 16px;          /* clickable area */
   min-width: 80px;            /* make it wide enough */
+  width: calc((100% - 60px) * 0.85);   /* same as ratesContainer */
+  height: calc((100% - 60px) * 0.85);  /* same as ratesContainer */
   cursor: pointer;
   background: rgba(0,0,0,0.3); /* optional for visibility */
   border-radius: 6px;
@@ -608,6 +610,139 @@
 </div>
 
 <script>
+
+////NEEEEEEEWWWWWWWW CODDDDDDDEEEEE //////////////
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
+    const submitButton = document.getElementById('submitButton');
+    const messageBox = document.getElementById('messageBox');
+    const summaryContainer = document.getElementById('summaryContainer');
+    const inventoryContainer = document.getElementById('inventoryContainer');
+    const logo = document.getElementById('logo');
+
+    const contractRight = document.getElementById('contractRight');
+    const contractRightLogo = document.getElementById('contractRightLogo');
+    const overlay = document.getElementById('overlay');
+
+    const ratesTab = document.getElementById('ratesTab');
+    const compareTab = document.getElementById('compareTab');
+    const ratesContainer = document.getElementById('ratesContainer');
+    const compareContainer = document.getElementById('compareContainer');
+
+    let openPanel = null; // currently open panel
+    let previousVisibleSections = [];
+
+    // --- Panel Management ---
+    function showPanel(panel) {
+        if (openPanel) openPanel.classList.remove('active');
+
+        if (panel) {
+            panel.style.display = 'block';
+            panel.classList.add('active');
+            overlay.classList.add('active');
+            openPanel = panel;
+        } else {
+            if (openPanel) openPanel.style.display = 'none';
+            overlay.classList.remove('active');
+            openPanel = null;
+        }
+    }
+
+    // --- Rates Grid ---
+    function showRatesGrid() {
+        ratesContainer.innerHTML = ''; // clear previous
+
+        const searchInput = document.createElement('input');
+        searchInput.placeholder = "Begin typing to search orelist..";
+        searchInput.style.width = "55%";
+        searchInput.style.marginBottom = "10px";
+        searchInput.style.padding = "5px";
+        searchInput.style.borderRadius = "6px";
+        searchInput.style.border = "1px solid rgba(255,255,255,0.2)";
+        searchInput.style.background = "rgba(0,0,0,0.3)";
+        searchInput.style.color = "#fff";
+        searchInput.style.fontFamily = "'Chivo Mono', monospace";
+        ratesContainer.appendChild(searchInput);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        ratesContainer.appendChild(grid);
+
+        Object.keys(priceData).forEach((ore, index) => {
+            if (ore.toLowerCase().startsWith('compressed ')) return;
+
+            const entry = priceData[ore];
+            const cell = document.createElement('div');
+            cell.className = 'grid-item neon';
+            cell.style.opacity = 0;
+            cell.innerHTML = `
+                <strong>${ore}</strong>
+                <span>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+            `;
+            grid.appendChild(cell);
+
+            setTimeout(() => {
+                cell.style.transition = "opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease";
+                cell.style.opacity = 1;
+                cell.style.transform = "translateY(0)";
+            }, index * 20);
+        });
+    }
+
+    // --- Tab Clicks ---
+    ratesTab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        previousVisibleSections = [inventoryContainer, summaryContainer, logo].filter(el => el && el.style.display !== 'none');
+        previousVisibleSections.forEach(el => el.style.display = 'none');
+
+        showPanel(ratesContainer);
+        showRatesGrid();
+    });
+
+    compareTab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        previousVisibleSections = [inventoryContainer, summaryContainer, logo].filter(el => el && el.style.display !== 'none');
+        previousVisibleSections.forEach(el => el.style.display = 'none');
+
+        showPanel(compareContainer);
+    });
+
+    // --- Modal Clicks ---
+    contractRightLogo.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPanel(contractRight);
+    });
+
+    overlay.addEventListener('click', () => showPanel(null));
+
+    document.addEventListener('click', e => {
+        if (
+            (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
+            (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
+            (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
+        ) showPanel(null);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+    ///////NEWWWWWWWW CODEEEEEEEEE/////////////////
+
+
+
+
+
   document.addEventListener('DOMContentLoaded', () => {
 const submitButton = document.getElementById('submitButton');
 const messageBox = document.getElementById('messageBox');
