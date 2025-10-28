@@ -601,6 +601,7 @@
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
 const submitButton = document.getElementById('submitButton');
 const messageBox = document.getElementById('messageBox');
 const summaryContainer = document.getElementById('summaryContainer');
@@ -612,7 +613,7 @@ const logo = document.getElementById('logo');
 
 let previousVisibleSections = [];
 let openPanel = null; // remember which panel is currently open
-
+});
 function showPanel(panel) {
     // Close any currently open panel
     console.log("showPanel called with:", panel);
@@ -1032,6 +1033,7 @@ function animateValue(cell, start, end, duration, isFloat = false) {
 }
 
 // --- Tab Containers ---
+document.addEventListener('DOMContentLoaded', () => {
 const ratesTab = document.getElementById('ratesTab');
 const compareTab = document.getElementById('compareTab');
 const compareContainer = document.getElementById('compareContainer');
@@ -1074,7 +1076,7 @@ document.addEventListener('click', e => {
   ) showPanel(null);
 });
 
-
+});
 function showRatesGrid() {
     ratesContainer.innerHTML = ''; // clear previous
 
