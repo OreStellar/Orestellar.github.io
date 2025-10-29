@@ -603,7 +603,14 @@ if (!document.getElementById('ratesClose')) {
         showPanel(contractRight);
     });
 
-    overlay.addEventListener('click', () => showPanel(null));
+    overlay.addEventListener('click', (event) => {
+    // Only close if the click is directly on the overlay itself
+    if (event.target === overlay) {
+        event.stopPropagation(); // prevent bubbling to document
+        console.log('🟠 Closing modal via overlay click');
+        showPanel(null);
+    }
+});
 
     document.addEventListener('click', e => {
         if (
