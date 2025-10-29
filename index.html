@@ -314,20 +314,20 @@ body {
 .sideTab:active { transform: translateX(22px) scale(0.98); box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
 
 #ratesTab svg {
-  margin-left: 10px; /* adds space after the icon */
+  margin-left: 35px; /* adds space after the icon */
   vertical-align: middle;
 }
 
 #ratesTab {
-  left: 135px;
+  left: 95px;
 }
 
 #compareTab svg {
-  margin-left: 10px; /* adds space after the icon */
+  margin-left: 15x; /* adds space after the icon */
   vertical-align: middle;
 }
 #compareTab {
-  left: 135px;
+  left: 95px;
 }
 </style>
 </head>
@@ -501,37 +501,44 @@ setupClosePanelHandlers();
 function showPanel(panel) {
     console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
 
+    // If clicking the same panel that's already open, do nothing (or just keep it open)
     if (openPanel === panel) {
-        console.log('🔴 Closing currently open panel:', openPanel.id);
-        panel.style.display = 'none';
-        openPanel = null;
-
-        // Restore previously visible panels + logo
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-
-        overlay.style.display = 'none';
-        return;
+        console.log('⚪ Panel already open, doing nothing:', panel.id);
+        return; // skip everything else
     }
 
+    // Close currently open panel if it's different
     if (openPanel) {
+        console.log('🔴 Closing currently open panel:', openPanel.id);
         openPanel.style.display = 'none';
     }
 
-previousPanels = [];
-[contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
-    if (p && p !== panel && p.style.display !== 'none') {
-        previousPanels.push(p);
-        p.style.display = 'none';
-    }
-});
+    // Hide all other panels except the one we're opening
+    previousPanels = [];
+    [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
+        if (p && p !== panel && p.style.display !== 'none') {
+            previousPanels.push(p);
+            p.style.display = 'none';
+        }
+    });
 
-// Open the new panel after hiding others
-if (panel) {
-    panel.style.display = 'block';
-    openPanel = panel;
-    overlay.style.display = 'block';
-} 
+    // Open new panel
+    if (panel) {
+        console.log('🟣 Opening panel:', panel.id);
+        panel.style.display = 'block';
+        openPanel = panel;
+        overlay.style.display = 'block';
+    } else {
+        console.log('🟠 Closing modal, restoring previous visible sections.');
+        openPanel = null;
+        previousPanels.forEach(p => p.style.display = 'block');
+        previousPanels = [];
+        overlay.style.display = 'none';
+    }
+}
+
+
+
     // --- Rates Grid ---
     function showRatesGrid() {
         ratesContainer.innerHTML = ''; // clear previous
@@ -572,20 +579,19 @@ if (panel) {
             }, index * 20);
         });
             // Search & highlight/dim functionality
-searchInput.addEventListener('input', () => {
-    const filter = searchInput.value.toLowerCase();
-    document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(filter)) {
-            item.style.opacity = '1';
-            item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
-        } else {
-            item.style.opacity = '0.3';
-            item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
-        }
+        searchInput.addEventListener('input', () => {
+        const filter = searchInput.value.toLowerCase();
+        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(filter)) {
+                item.style.opacity = '1';
+                item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
+            } else {
+                item.style.opacity = '0.3';
+                item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
+            }
+        });
     });
-});
-
 // Only create once
 if (!document.getElementById('ratesClose')) {
     const closeBtn = document.createElement('div');
@@ -1118,6 +1124,7 @@ style.innerHTML = `
   height: 60px; /* or whatever is half of the current height */
   width: 90;
 }
+}
 
 #ratesContainer .grid-item:hover {
   transform: scale(1.05);
@@ -1143,10 +1150,11 @@ else {
 // Dynamically update "I will receive" value
 function updateGrandTotal(value) {
   document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
+}
 
 
-}); // closes DOMContentLoaded
+
+});
 
 </script>
 </div>
