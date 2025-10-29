@@ -140,8 +140,12 @@ body {
     #ratesContainer {
     display: none;
     position: fixed;  /* important so z-index applies correctly */
-    top: 50%;
-    left: 50%;
+    top: 25px;
+    left: 25px;
+    right: 25px;
+    bottom: 25px;
+    width: auto;
+    height: auto;
     transform: translate(-50%, -50%);
     background: #111;
     padding: 20px;
@@ -968,8 +972,7 @@ fetch(csvUrl)
 
         const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
         priceData[oreVariant] = { price };
-
-        console.log('Added to priceData:', oreVariant, '->', price);
+    
     });
 
     recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
