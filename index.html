@@ -399,24 +399,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let previousVisibleSections = [];
     let currentPanel = null;
 
-// Close modal only when clicking the overlay background
-overlay.addEventListener('click', (event) => {
-  // Only trigger if the click was directly on the overlay itself
-  if (event.target === overlay) {
-    event.stopPropagation(); // prevent document click handler from firing
-    console.log('🟠 Closing modal, restoring previous visible sections.');
-
-    // Hide all active sections
-    const panels = [contractRight, summaryContainer, compareContainer, ratesContainer];
-    panels.forEach(panel => {
-      if (panel) panel.style.display = 'none';
+// -------------------------
+// Overlay + Document Click
+// -------------------------
+function setupClosePanelHandlers() {
+    // Click on overlay should close the open panel
+    overlay.addEventListener('click', (e) => {
+        // Only if overlay itself was clicked
+        if (e.target === overlay && openPanel) {
+            console.log('🟠 Overlay click: closing', openPanel.id);
+            showPanel(null);
+        }
     });
 
-    // Hide the overlay itself
-    overlay.style.display = 'none';
-  }
-});
+    // Click anywhere else in the document
+    document.addEventListener('click', (e) => {
+        if (!openPanel) return; // nothing is open, do nothing
 
+        // Check if click is outside the currently open panel and its corresponding tab
+        const isRates = openPanel === ratesContainer;
+        const isCompare = openPanel === compareContainer;
+        const isContract = openPanel === contractRight;
+
+        const tabCheck = (isRates && ratesTab.contains(e.target)) ||
+                         (isCompare && compareTab.contains(e.target)) ||
+                         (isContract && contractRightLogo.contains(e.target));
+
+        if (!openPanel.contains(e.target) && !tabCheck) {
+            console.log('💥 Document click outside panel: closing', openPanel.id);
+            showPanel(null);
+        }
+    });
+}
+
+// Call it after DOMContentLoaded
+setupClosePanelHandlers();
     
 // -------------------------
 // Main showPanel function
@@ -495,13 +512,6 @@ if (!ratesClose) {
 ratesTab.addEventListener('click', (event) => {
   event.stopPropagation();
   showPanel(ratesContainer);
-});
-
-// -------------------------
-// Overlay click
-// -------------------------
-overlay.addEventListener('click', () => {
-    showPanel(null);
 });
 
     // --- Rates Grid ---
@@ -606,29 +616,6 @@ if (!document.getElementById('ratesClose')) {
         e.stopPropagation();
         showPanel(contractRight);
     });
-
-    overlay.addEventListener('click', (event) => {
-    // Only close if the click is directly on the overlay itself
-    if (event.target === overlay) {
-        event.stopPropagation(); // prevent bubbling to document
-        console.log('🟠 Closing modal via overlay click');
-        showPanel(null);
-    }
-});
-
-document.addEventListener('click', e => {
-    console.log('📌 Document click target:', e.target, 'openPanel:', openPanel?.id);
-  if (e.target === overlay) return; // ignore overlay clicks
-
-  if (
-    (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-    (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-    (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-  ) showPanel(null);
-});
-
-
-
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
