@@ -50,6 +50,10 @@ body {
 }
 
 /* ----------------- Starfield layers ----------------- */
+#oreStellarlogo {
+    position: relative;
+    z-index: 5;
+}
 #staticStars,
 #starfield {
     position: fixed;
@@ -500,41 +504,45 @@ function showPanel(panel) {
     // If clicking the same panel that's already open, do nothing (or just keep it open)
     if (openPanel === panel) {
         console.log('⚪ Panel already open, doing nothing:', panel.id);
-        return; // skip everything else
+        return; //function showPanel(panel) {
+    console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
+
+    // If clicking the same panel, toggle it closed
+    if (openPanel === panel) {
+        console.log('🔴 Closing currently open panel:', openPanel.id);
+        panel.style.display = 'none';
+        openPanel = null;
+
+        // Restore previously visible panels + logo
+        previousPanels.forEach(p => p.style.display = 'block');
+        previousPanels = [];
+
+        overlay.style.display = 'none';
+        return;
     }
 
-    // Close currently open panel if it's different
+    // Hide currently open panel if different
     if (openPanel) {
-        console.log('🔴 Closing currently open panel:', openPanel.id);
         openPanel.style.display = 'none';
     }
 
-    // Hide all other panels except the one we're opening
+    // Hide all other panels + OreStellar logo
     previousPanels = [];
-    [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
+    [contractRight, summaryContainer, compareContainer, ratesContainer, oreStellarLogo].forEach(p => {
         if (p && p !== panel && p.style.display !== 'none') {
             previousPanels.push(p);
             p.style.display = 'none';
         }
     });
 
-    // Open new panel
+    // Open the new panel
     if (panel) {
-        console.log('🟣 Opening panel:', panel.id);
         panel.style.display = 'block';
         openPanel = panel;
         overlay.style.display = 'block';
-    } else {
-        console.log('🟠 Closing modal, restoring previous visible sections.');
-        openPanel = null;
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-        overlay.style.display = 'none';
-    }
-}
+    
 
-
-
+    }}
     // --- Rates Grid ---
     function showRatesGrid() {
         ratesContainer.innerHTML = ''; // clear previous
@@ -1150,7 +1158,7 @@ function updateGrandTotal(value) {
 
 
 
-});
+}});
 
 </script>
 </div>
