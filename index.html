@@ -1090,18 +1090,6 @@ function hidePanels() {
   }, 400); // match CSS transition
 }
 
-
-ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation();  // Prevent document click handler from firing
-    console.log("Rates tab clicked");
-
-    // Show the rates panel
-    showPanel(ratesContainer, ratesTab);
-
-    // Optional: populate the rates grid
-    showRatesGrid();
-});
-
 compareTab.addEventListener('click', e => {
    console.log("Rates tab clicked");
   e.stopPropagation();
