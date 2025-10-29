@@ -397,7 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let openPanel = null; // currently open panel
     let previousVisibleSections = [];
-    let currentPanel = null;
+
+    overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) { // only close if clicking directly on overlay
+        console.log('💡 Overlay click detected, closing panel');
+        showPanel(null);
+    }
+});
 
 // -------------------------
 // Overlay + Document Click
@@ -439,44 +445,39 @@ setupClosePanelHandlers();
 // Main showPanel function
 // -------------------------
 function showPanel(panel) {
-    console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel);
+    console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
 
-
-    // Save currently visible sections before opening a new panel
-    if (panel && openPanel !== panel) {
-        previousVisibleSections = [];
-        document.querySelectorAll('#inventoryContainer, #logo, #summaryContainer, #contractRight').forEach(el => {
-            if (el && el.style.display !== 'none') previousVisibleSections.push(el.id);
-        });
-        console.log('💾 Saved previous visible sections:', previousVisibleSections);
-    }
-
-    // Close currently open panel
-    if (openPanel) {
+    // If a panel is currently open and it’s different from the new panel, hide it
+    if (openPanel && openPanel !== panel) {
         console.log('🔴 Closing currently open panel:', openPanel.id);
         openPanel.style.display = 'none';
         openPanel.classList.remove('active');
     }
 
-    if (panel) {
-        console.log('🟣 Opening panel:', panel.id);
-        panel.style.display = 'block';
-        panel.style.opacity = '1';
-        setTimeout(() => panel.classList.add('active'), 10);
-        openPanel = panel;
-        overlay.style.display = 'block';
-        console.log('✅ Panel visible, overlay active.');
-    } else {
+    if (!panel) {
         console.log('🟠 Closing modal, restoring previous visible sections.');
-        overlay.style.display = 'none';
-        openPanel = null;
 
+        // Restore previously visible sections
         previousVisibleSections.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'block';
         });
-        previousVisibleSections = [];
+
+        overlay.style.display = 'none';
+        openPanel = null;
+        return;
     }
+
+    // Save currently visible sections (excluding overlay and the panel itself)
+    previousVisibleSections = Array.from(document.querySelectorAll('.visible'))
+        .filter(el => el !== panel && el.id !== 'overlay')
+        .map(el => el.id);
+
+    // Show the new panel
+    console.log('🟣 Opening panel:', panel.id);
+    panel.style.display = 'block';
+    overlay.style.display = 'block';
+    openPanel = panel;
 }
 
 // -------------------------
@@ -616,6 +617,25 @@ if (!document.getElementById('ratesClose')) {
         e.stopPropagation();
         showPanel(contractRight);
     });
+
+    document.addEventListener('click', (e) => {
+    console.log('📌 Document click target:', e.target, 'openPanel:', openPanel?.id);
+
+    if (!openPanel) return; // nothing is open, ignore
+
+    // Ignore clicks inside overlay or the current panel/tab
+    if (overlay.contains(e.target)) return;
+
+    if (
+        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
+        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
+        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
+    ) {
+        console.log('💥 Closing panel due to outside click:', openPanel.id);
+        showPanel(null);
+    }
+});
+
 
 // --- Submit Button ---
 document.getElementById('submitButton').addEventListener('click', () => {
