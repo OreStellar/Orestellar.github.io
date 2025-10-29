@@ -137,6 +137,18 @@ body {
     box-sizing: border-box;
 }
 
+    #ratesContainer {
+    display: none;
+    position: fixed;  /* important so z-index applies correctly */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #111;
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 11;  /* <-- must be higher than overlay (10) */
+}
+
 #summaryContainer {
     font-family: 'Chivo Mono', monospace;
     width: 80%;
