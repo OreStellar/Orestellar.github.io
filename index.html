@@ -423,6 +423,7 @@ overlay.addEventListener('click', (event) => {
 // -------------------------
 function showPanel(panel) {
     console.log('🟢 showPanel called with:', panel);
+    if (!panel) console.trace('Closing panel triggered by:');
 
     // Save currently visible sections before opening a new panel
     if (panel && openPanel !== panel) {
