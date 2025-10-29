@@ -475,37 +475,58 @@ overlay.style.display = 'none';
 // Overlay + Document Click
 // -------------------------
 function setupClosePanelHandlers() {
-    // Click on overlay should close the open panel
+    console.log("🧠 setupClosePanelHandlers initialized.");
+
+    // 🟣 Overlay click handler
     overlay.addEventListener('click', (e) => {
-        // Only if overlay itself was clicked
+        console.log("🟪 Overlay clicked:", e.target, "openPanel:", openPanel?.id);
+
         if (e.target === overlay && openPanel) {
             console.log('🟠 Overlay click: closing', openPanel.id);
             showPanel(null);
+        } else {
+            console.log("⚪ Overlay click ignored (not overlay or no openPanel).");
         }
     });
 
-    // Click anywhere else in the document
+    // 🟢 Document click handler
     document.addEventListener('click', (e) => {
-        if (!openPanel) return; // nothing is open, do nothing
+        console.log("📜 Document click detected on:", e.target);
+        if (!openPanel) {
+            console.log("🚫 No openPanel, ignoring document click.");
+            return; // nothing is open
+        }
 
-        // Check if click is outside the currently open panel and its corresponding tab
+        // Identify which panel is open
         const isRates = openPanel === ratesContainer;
         const isCompare = openPanel === compareContainer;
         const isContract = openPanel === contractRight;
 
-        const tabCheck = (isRates && ratesTab.contains(e.target)) ||
-                         (isCompare && compareTab.contains(e.target)) ||
-                         (isContract && contractRightLogo.contains(e.target));
+        console.log("🔍 Open panel type:", 
+            isRates ? "Rates" : isCompare ? "Compare" : isContract ? "Contract" : openPanel.id);
 
+        // Check if click was on the tab for the currently open panel
+        const tabCheck =
+            (isRates && ratesTab.contains(e.target)) ||
+            (isCompare && compareTab.contains(e.target)) ||
+            (isContract && contractRightLogo.contains(e.target));
+
+        console.log("🧩 tabCheck:", tabCheck,
+            "| Click inside openPanel?", openPanel.contains(e.target));
+
+        // Close only if click was outside both the open panel and its tab
         if (!openPanel.contains(e.target) && !tabCheck) {
             console.log('💥 Document click outside panel: closing', openPanel.id);
             showPanel(null);
+        } else {
+            console.log("✅ Click ignored (inside panel or tab).");
         }
     });
 }
 
-// Call it after DOMContentLoaded
+// 🧩 Call after DOMContentLoaded
 setupClosePanelHandlers();
+
     
 // -------------------------
 // Main showPanel function
