@@ -639,67 +639,75 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPanel = null;
         previousPanel = null;
 
-function showPanel(panel) {
-        console.log('🟢 showPanel called with:', panel ? panel.id : 'null');
-
-        if (currentPanel) {
-            console.log('🔴 Closing currently open panel:', currentPanel.id);
-            currentPanel.style.display = 'none';
-            currentPanel.classList.remove('active');
-        }
+ // --- Main showPanel function ---
+    function showPanel(panel) {
+        console.log('🟢 showPanel called with:', panel);
 
         if (panel) {
-            // Save currently visible sections BEFORE opening modal
-            previousVisibleSections = [summaryContainer, inventoryContainer, logo]
-                .filter(el => el && el.style.display !== 'none');
-            console.log('💾 Saved previous visible sections:', previousVisibleSections.map(el => el.id));
+            // Save previously visible sections only once
+            if (previousVisibleSections.length === 0) {
+                previousVisibleSections = [];
+                [inventoryContainer, logo, summaryContainer].forEach(el => {
+                    if (el && el.style.display !== 'none') previousVisibleSections.push(el.id);
+                });
+                console.log('💾 Saved previous visible sections:', previousVisibleSections);
+            }
 
-            // Show the modal
+            // Close current panel if open
+            if (currentPanel) {
+                console.log('🔴 Closing currently open panel:', currentPanel.id);
+                currentPanel.style.display = 'none';
+                currentPanel.classList.remove('active');
+            }
+
+            // Show new panel
             console.log('🟣 Opening panel:', panel.id);
             panel.style.display = 'block';
             panel.style.opacity = '1';
             setTimeout(() => panel.classList.add('active'), 10);
             currentPanel = panel;
 
-            // Show overlay
+            // Activate overlay
             overlay.style.display = 'block';
             console.log('✅ Panel visible, overlay active.');
+
         } else {
             // Closing modal
             console.log('🟠 Closing modal, restoring previous visible sections.');
-            overlay.style.display = 'none';
-            currentPanel = null;
-
-            previousVisibleSections.forEach(el => {
-                if (el) {
-                    el.style.display = 'block';
-                    console.log('🔵 Restored:', el.id);
-                }
+            if (currentPanel) {
+                currentPanel.style.display = 'none';
+                currentPanel.classList.remove('active');
+            }
+            previousVisibleSections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'block';
             });
             previousVisibleSections = [];
+            currentPanel = null;
+            overlay.style.display = 'none';
         }
     }
 
-    // Overlay click closes modal
+    // --- Overlay click closes modal ---
     overlay.addEventListener('click', () => {
         console.log('🟣 Overlay clicked, closing modal.');
         showPanel(null);
     });
 
-    // Example: Rates close button
+    // --- Rates close button dynamically created ---
     const ratesClose = document.getElementById('ratesClose');
     if (ratesClose) {
         ratesClose.addEventListener('click', () => showPanel(null));
     }
 
-    // Example: Rates tab click
+    // --- Tab clicks ---
     ratesTab.addEventListener('click', () => showPanel(ratesContainer));
+    compareTab.addEventListener('click', () => showPanel(compareContainer));
 
-// --- Overlay click handler ---
-overlay.addEventListener('click', () => {
-    console.log('🟣 Overlay clicked, closing modal.');
-    showPanel(null);
-});
+    // Optional: contractRightLogo opens its panel if needed
+    if (contractRightLogo) {
+        contractRightLogo.addEventListener('click', () => showPanel(contractRight));
+    }
 
 // --- Example ✕ button creation and handler for ratesContainer ---
 const closeBtn = document.createElement('div');
