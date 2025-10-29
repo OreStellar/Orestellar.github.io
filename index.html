@@ -515,8 +515,7 @@ function showPanel(panel) {
         previousPanels = [];
         document.getElementById('logo').style.display = 'block';
 
-        overlay.style.display = 'none';
-        return;
+
     }
 
     // Hide currently open panel if different
@@ -524,24 +523,34 @@ function showPanel(panel) {
         openPanel.style.display = 'none';
     }
 
-    // Save and hide other panels + logo
-panels.forEach(p => {
-    if (p && p !== panel && p.style.display !== 'none') {
-        previousPanels.push(p);
-        p.style.display = 'none';
+   // Restore previously visible panels + logo
+        previousPanels.forEach(p => p.style.display = 'block');
+        previousPanels = [];
+
+        overlay.style.display = 'none';
+        return;
+  
+
+    // Hide currently open panel if different
+    if (openPanel) {
+        openPanel.style.display = 'none';
     }
-});
 
-    document.getElementById('logo').style.display = 'none';
-
-    // Open the new panel
+    // Hide all other panels + OreStellar logo
+    previousPanels = [];
+    panels.forEach(p => {
+        if (p && p !== panel && p.style.display !== 'none') {
+            previousPanels.push(p);
+            p.style.display = 'none';
+        }
+    });
+  }
+    // OPEN the new panel
     if (panel) {
         panel.style.display = 'block';
-        openPanel = panel;
+        openPanel = panel;  // <--- make sure this is AFTER display set
         overlay.style.display = 'block';
     }
-}
-
 
     // --- Rates Grid ---
     function showRatesGrid() {
