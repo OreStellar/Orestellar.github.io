@@ -640,48 +640,60 @@ document.addEventListener('DOMContentLoaded', () => {
         previousPanel = null;
 
 function showPanel(panel) {
-    console.log('🟢 showPanel called with:', panel ? panel.id : 'null');
+        console.log('🟢 showPanel called with:', panel ? panel.id : 'null');
 
-    if (currentPanel) {
-        console.log('🔴 Closing currently open panel:', currentPanel.id);
-        currentPanel.style.display = 'none';
-        currentPanel.classList.remove('active');
-        currentPanel = null;
+        if (currentPanel) {
+            console.log('🔴 Closing currently open panel:', currentPanel.id);
+            currentPanel.style.display = 'none';
+            currentPanel.classList.remove('active');
+        }
+
+        if (panel) {
+            // Save currently visible sections BEFORE opening modal
+            previousVisibleSections = [summaryContainer, inventoryContainer, logo]
+                .filter(el => el && el.style.display !== 'none');
+            console.log('💾 Saved previous visible sections:', previousVisibleSections.map(el => el.id));
+
+            // Show the modal
+            console.log('🟣 Opening panel:', panel.id);
+            panel.style.display = 'block';
+            panel.style.opacity = '1';
+            setTimeout(() => panel.classList.add('active'), 10);
+            currentPanel = panel;
+
+            // Show overlay
+            overlay.style.display = 'block';
+            console.log('✅ Panel visible, overlay active.');
+        } else {
+            // Closing modal
+            console.log('🟠 Closing modal, restoring previous visible sections.');
+            overlay.style.display = 'none';
+            currentPanel = null;
+
+            previousVisibleSections.forEach(el => {
+                if (el) {
+                    el.style.display = 'block';
+                    console.log('🔵 Restored:', el.id);
+                }
+            });
+            previousVisibleSections = [];
+        }
     }
 
-    if (panel) {
-        // --- Save currently visible sections ---
-        previousVisibleSections = [];
-        [summaryContainer, inventoryContainer, contractRight].forEach(el => {
-            if (el && el.style.display !== 'none') {
-                previousVisibleSections.push(el);
-                el.style.display = 'none'; // hide while modal is open
-            }
-        });
+    // Overlay click closes modal
+    overlay.addEventListener('click', () => {
+        console.log('🟣 Overlay clicked, closing modal.');
+        showPanel(null);
+    });
 
-        // --- Show the modal panel ---
-        console.log('🟣 Opening panel:', panel.id);
-        panel.style.display = 'block';
-        panel.style.opacity = '1';
-        setTimeout(() => panel.classList.add('active'), 10);
-        currentPanel = panel;
-
-        overlay.style.display = 'block';
-        console.log('✅ Panel visible, overlay active.');
-    } else {
-        // --- Closing modal ---
-        console.log('🟠 Closing modal, restoring previous visible sections.');
-        overlay.style.display = 'none';
-
-        previousVisibleSections.forEach(el => {
-            console.log('🔵 Restoring:', el.id);
-            el.style.display = 'block';
-        });
-
-        previousVisibleSections = [];
-        currentPanel = null;
+    // Example: Rates close button
+    const ratesClose = document.getElementById('ratesClose');
+    if (ratesClose) {
+        ratesClose.addEventListener('click', () => showPanel(null));
     }
-}
+
+    // Example: Rates tab click
+    ratesTab.addEventListener('click', () => showPanel(ratesContainer));
 
 // --- Overlay click handler ---
 overlay.addEventListener('click', () => {
