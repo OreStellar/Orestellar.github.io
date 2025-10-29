@@ -594,23 +594,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Tab Clicks ---
-    ratesTab.addEventListener('click', e => { e.stopPropagation(); showPanel('ratesContainer'); showRatesGrid(); });
-    compareTab.addEventListener('click', e => { e.stopPropagation(); showPanel('compareContainer'); });
-    contractRightLogo.addEventListener('click', e => { e.stopPropagation(); showPanel('contractRight'); });
+// --- Tab Clicks (OPEN ONLY, NO AUTO-CLOSE) ---
+function openTab(tabId) {
+    switch(tabId) {
+        case 'ratesContainer':
+            ratesContainer.style.display = 'block';
+            showRatesGrid();
+            break;
+        case 'compareContainer':
+            compareContainer.style.display = 'block';
+            break;
+        case 'contractRight':
+            contractRight.style.display = 'block';
+            break;
+    }
+    overlay.style.display = 'block'; // overlay shows, optional
+}
 
-    // --- Overlay Click ---
-    overlay.addEventListener('click', e => { if (e.target === overlay) showPanel(null); });
+ratesTab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openTab('ratesContainer');
+});
 
-    // --- Document Click Closer ---
-    document.addEventListener('click', e => {
-        if (!openPanel) return;
-        const panelEl = panels[openPanel];
-        const tabEl = tabs[openPanel];
-        if (!panelEl.contains(e.target) && !tabEl.contains(e.target)) {
-            showPanel(null);
-        }
-    });
+compareTab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openTab('compareContainer');
+});
+
+contractRightLogo.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openTab('contractRight');
+});
+
+
+// --- Overlay Click (SAFE) ---
+overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+        // Hide all open panels
+        ratesContainer.style.display = 'none';
+        compareContainer.style.display = 'none';
+        contractRight.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+});
 
     // --- Submit Button ---
     submitButton.addEventListener('click', () => {
