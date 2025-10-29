@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageBox = document.getElementById('messageBox');
     const summaryContainer = document.getElementById('summaryContainer');
     const inventoryContainer = document.getElementById('inventoryContainer');
-    const logo = document.getElementById('logo');
+    const oreStellarLogo = document.getElementById('logo');
 
     const contractRight = document.getElementById('contractRight');
     const contractRightLogo = document.getElementById('contractRightLogo');
@@ -410,137 +410,74 @@ document.addEventListener('DOMContentLoaded', () => {
     const ratesContainer = document.getElementById('ratesContainer');
     const compareContainer = document.getElementById('compareContainer');
 
-    let openPanel = null; // currently open panel
-    let previousVisibleSections = [];
-    let previousPanels = [];
+    const panels = {
+        contractRight: contractRight,
+        summaryContainer: summaryContainer,
+        compareContainer: compareContainer,
+        ratesContainer: ratesContainer
+    };
 
-    overlay.addEventListener('click', (event) => {
-    if (event.target === overlay) { // only close if clicking directly on overlay
-        console.log('💡 Overlay click detected, closing panel');
-        showPanel(null);
-    }
-});
+    const tabs = {
+        contractRight: contractRightLogo,
+        compareContainer: compareTab,
+        ratesContainer: ratesTab
+    };
 
-// -------------------------
-// Overlay + Document Click
-// -------------------------
-function setupClosePanelHandlers() {
-    // Click on overlay should close the open panel
-    overlay.addEventListener('click', (e) => {
-        // Only if overlay itself was clicked
-        if (e.target === overlay && openPanel) {
-            console.log('🟠 Overlay click: closing', openPanel.id);
-            showPanel(null);
-        }
-    });
+    let openPanel = null;
 
-    // Click anywhere else in the document
-    document.addEventListener('click', (e) => {
-        if (!openPanel) return; // nothing is open, do nothing
+    // --- Default visibility ---
+    inventoryContainer.style.display = 'block';
+    oreStellarLogo.style.display = 'block';
+    contractRight.style.display = 'none';
+    summaryContainer.style.display = 'none';
+    compareContainer.style.display = 'none';
+    ratesContainer.style.display = 'none';
+    overlay.style.display = 'none';
 
-        // Check if click is outside the currently open panel and its corresponding tab
-        const isRates = openPanel === ratesContainer;
-        const isCompare = openPanel === compareContainer;
-        const isContract = openPanel === contractRight;
+    // --- Show Panel (fixed: no toggling) ---
+    function showPanel(panelKey) {
+        if (!panelKey) return; // nothing to open
 
-        const tabCheck = (isRates && ratesTab.contains(e.target)) ||
-                         (isCompare && compareTab.contains(e.target)) ||
-                         (isContract && contractRightLogo.contains(e.target));
+        // Close any other panel
+        Object.keys(panels).forEach(key => {
+            if (key !== panelKey) panels[key].style.display = 'none';
+        });
 
-        if (!openPanel.contains(e.target) && !tabCheck) {
-            console.log('💥 Document click outside panel: closing', openPanel.id);
-            showPanel(null);
-        }
-    });
-}
-
-// Call it after DOMContentLoaded
-setupClosePanelHandlers();
-    
-// -------------------------
-// Main showPanel function
-// -------------------------
-function showPanel(panel) {
-    console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
-
-    // If clicking the same panel that's already open, close it
-    if (openPanel === panel) {
-        console.log('🔴 Closing currently open panel:', openPanel.id);
-        openPanel.style.display = 'none';
-        openPanel = null;
-
-        // Restore previous panels
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-
-        // Hide overlay if nothing else is open
-        overlay.style.display = 'none';
-        return;
-    }
-
-    // Closing current panel if any
-    if (openPanel) {
-        console.log('🔴 Closing currently open panel:', openPanel.id);
-        openPanel.style.display = 'none';
-    }
-
-    // Save currently visible panels before opening new one
-    previousPanels = [];
-    [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
-        if (p && p !== panel && p.style.display !== 'none') {
-            previousPanels.push(p);
-            p.style.display = 'none';
-        }
-    });
-
-    // Open new panel
-    if (panel) {
-        console.log('🟣 Opening panel:', panel.id);
-        panel.style.display = 'block';
-        openPanel = panel;
+        // Open this panel
+        panels[panelKey].style.display = 'block';
         overlay.style.display = 'block';
-    } else {
-        console.log('🟠 Closing modal, restoring previous visible sections.');
-        openPanel = null;
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-        overlay.style.display = 'none';
+        openPanel = panelKey;
     }
-}
 
+    // --- Overlay click closes panels ---
+    overlay.addEventListener('click', () => {
+        Object.keys(panels).forEach(key => panels[key].style.display = 'none');
+        overlay.style.display = 'none';
+        openPanel = null;
+    });
 
-// -------------------------
-// Rates close button (✕) 
-// -------------------------
-let ratesClose = document.getElementById('ratesClose');
-if (!ratesClose) {
-    // Create if it doesn't exist
-    ratesClose = document.createElement('div');
-    ratesClose.id = 'ratesClose';
-    ratesClose.innerHTML = '✕';
-    ratesClose.style.position = 'absolute';
-    ratesClose.style.top = '-3px';
-    ratesClose.style.right = '10px';
-    ratesClose.style.cursor = 'pointer';
-    ratesClose.style.fontSize = '1.2rem';
-    ratesClose.style.color = 'rgba(255,255,255,0.8)';
-    ratesClose.style.transition = 'color 0.2s';
-    ratesClose.onmouseover = () => ratesClose.style.color = '#fff';
-    ratesClose.onmouseout = () => ratesClose.style.color = 'rgba(255,255,255,0.8)';
-    ratesContainer.appendChild(ratesClose);
-}
+    // --- Rates Tab ---
+    ratesTab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPanel('ratesContainer');
+        showRatesGrid();
+    });
 
-ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation();
-    console.log("📌 Rates tab clicked");
-    showPanel(ratesContainer);
-    showRatesGrid();
-});
+    // --- Compare Tab ---
+    compareTab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPanel('compareContainer');
+    });
 
+    // --- Contract Tab ---
+    contractRightLogo.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPanel('contractRight');
+    });
 
-    // --- Rates Grid ---
+    // --- Rates Grid Function ---
     function showRatesGrid() {
-        ratesContainer.innerHTML = ''; // clear previous
+        ratesContainer.innerHTML = '';
 
         const searchInput = document.createElement('input');
         searchInput.placeholder = "Begin typing to search orelist..";
@@ -565,10 +502,7 @@ ratesTab.addEventListener('click', (e) => {
             const cell = document.createElement('div');
             cell.className = 'grid-item neon';
             cell.style.opacity = 0;
-            cell.innerHTML = `
-                <strong>${ore}</strong>
-                <span>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
-            `;
+            cell.innerHTML = `<strong>${ore}</strong><span>${entry.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>`;
             grid.appendChild(cell);
 
             setTimeout(() => {
@@ -577,245 +511,212 @@ ratesTab.addEventListener('click', (e) => {
                 cell.style.transform = "translateY(0)";
             }, index * 20);
         });
-            // Search & highlight/dim functionality
+
         searchInput.addEventListener('input', () => {
-        const filter = searchInput.value.toLowerCase();
-        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(filter)) {
-                item.style.opacity = '1';
-                item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
-            } else {
-                item.style.opacity = '0.3';
-                item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
+            const filter = searchInput.value.toLowerCase();
+            document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.opacity = '1';
+                    item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
+                } else {
+                    item.style.opacity = '0.3';
+                    item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
+                }
+            });
+        });
+
+        if (!document.getElementById('ratesClose')) {
+            const closeBtn = document.createElement('div');
+            closeBtn.id = 'ratesClose';
+            closeBtn.innerHTML = '✕';
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.top = '-3px';
+            closeBtn.style.right = '10px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.fontSize = '1.2rem';
+            closeBtn.style.color = 'rgba(255,255,255,0.8)';
+            closeBtn.style.transition = 'color 0.2s';
+            closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
+            closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
+            ratesContainer.appendChild(closeBtn);
+
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                Object.keys(panels).forEach(key => panels[key].style.display = 'none');
+                overlay.style.display = 'none';
+                openPanel = null;
+            });
+        }
+    }
+
+    // --- Submit Button ---
+    submitButton.addEventListener('click', () => {
+        const input = messageBox.value.trim();
+        if (!input) return;
+
+        const summary = summaryContainer;
+        const parsedLines = parseInventoryText(input);
+
+        inventoryContainer.style.display = 'none';
+        summary.style.display = 'block';
+        contractRightLogo.style.display = 'inline-block';
+
+        summary.innerHTML = '';
+
+        const table = document.createElement('table');
+        table.classList.add('summary-table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr>
+            <th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Compressed</th><th>Total</th>
+        </tr>`;
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        summary.appendChild(table);
+
+        let grandTotal = 0;
+        let delay = 0;
+        const animationDelay = 200;
+
+        const rows = parsedLines.map(item => {
+            const displayName = item.ore.replace(/^Compressed\s+/i, '');
+            const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+            const unitPrice = priceData[item.ore]?.price || 0;
+            const total = item.quantity * unitPrice;
+            grandTotal += total;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `<td style="text-align:center;">${displayName}</td>
+                             <td style="text-align:right;">0</td>
+                             <td style="text-align:right;">0.00</td>
+                             <td style="text-align:center;">${isCompressed}</td>
+                             <td style="text-align:right;">0.00</td>`;
+            tbody.appendChild(row);
+            document.getElementById('contract-right-receive').textContent = grandTotal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+            return { row, quantity: item.quantity, unitPrice, total };
+        });
+
+        rows.forEach(({ row, quantity, unitPrice, total }, index) => {
+            const qtyCell = row.cells[1];
+            const priceCell = row.cells[2];
+            const totalCell = row.cells[4];
+            totalCell.style.color = "#00ff00";
+            setTimeout(() => {
+                animateValue(qtyCell, 0, quantity, 500);
+                animateValue(priceCell, 0, unitPrice, 500, true);
+                animateValue(totalCell, 0, total, 500, true);
+                row.style.animation = `fadeInRow 0.4s ease forwards`;
+            }, delay);
+            delay += animationDelay;
+        });
+
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
+                              <td style="text-align:right;font-weight:bold;">0.00</td>`;
+        tbody.appendChild(totalRow);
+        const grandCell = totalRow.querySelector('td:last-child');
+        grandCell.style.color = "#00ff00";
+        setTimeout(() => animateValue(grandCell,0,grandTotal,800,true), delay+200);
+    });
+
+    // --- Animate numeric values ---
+    function animateValue(cell, start, end, duration = 500, isFloat = false) {
+        const startTime = performance.now();
+        function update(time) {
+            const elapsed = time - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const value = start + (end - start) * progress;
+            cell.textContent = isFloat ? value.toFixed(2) : Math.round(value);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // --- CSV & Price Data ---
+    let priceData = {};
+    const csvUrl = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
+    fetch(csvUrl)
+        .then(res => res.text())
+        .then(text => {
+            const lines = text.split('\n').slice(1, 192); // rows 2-191
+            lines.forEach(line => {
+                const [ore, price] = line.split(',');
+                if (!ore || !price) return;
+                priceData[ore.trim()] = { price: parseFloat(price) };
+            });
+        });
+
+    // --- Parse Inventory Text ---
+    function parseInventoryText(input) {
+        const lines = input.split('\n');
+        const results = [];
+        lines.forEach(line => {
+            const match = line.match(/^(.+?)\s+(\d+)$/);
+            if (match) {
+                const ore = match[1].trim();
+                const quantity = parseInt(match[2]);
+                results.push({ ore, quantity });
             }
         });
-    });
-// Only create once
-if (!document.getElementById('ratesClose')) {
-    const closeBtn = document.createElement('div');
-    closeBtn.id = 'ratesClose';
-    closeBtn.innerHTML = '✕';
-    closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '-3px';
-    closeBtn.style.right = '10px';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.style.fontSize = '1.2rem';
-    closeBtn.style.color = 'rgba(255,255,255,0.8)';
-    closeBtn.style.transition = 'color 0.2s';
-    closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
-    closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
+        return results;
+    }
 
-    ratesContainer.appendChild(closeBtn);
 
-    // Attach handler to close ratesContainer
-    closeBtn.addEventListener('click', () => {
-        showPanel(null); // close ratesContainer and restore previous
-    });
+// --- CSS injection for grid dynamically injects a <style> tag into your page’s <head> with all the CSS needed for your rates grid layout.
+
+const style = document.createElement('style');
+style.innerHTML = `
+
+#ratesContainer .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+#ratesContainer .grid-item {
+    display: flex;
+    flex-direction: column;       /* stack vertically */
+    justify-content: space-between; /* pushes first item up, last item down */
+    background: rgba(0,255,255,0.05);
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.85rem;
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+    transform: translateY(10px);
+    transition: transform 0.2s, box-shadow 0.3s;
+  height: 60px; /* or whatever is half of the current height */
+  width: 90;
+}
 }
 
-
-    }
-
-// --- Tab Clicks ---
-ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation(); // prevent document click from firing
-    console.log('📌 Rates tab clicked');
-
-    showPanel(ratesContainer); // this now handles saving/restoring previous panels
-    showRatesGrid();           // keep your grid function call
-});
-
-compareTab.addEventListener('click', (e) => {
-    e.stopPropagation();
-    console.log('📌 Compare tab clicked');
-
-    showPanel(compareContainer); // restores previous panels automatically
-});
-
-
-    // --- Modal Clicks ---
-    contractRightLogo.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showPanel(contractRight);
-    });
-
-document.addEventListener('click', (e) => {
-    console.log('📌 Document click target:', e.target, 'openPanel:', openPanel?.id);
-    if (!openPanel || overlay.contains(e.target)) return;
-
-    if (
-        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-    ) {
-        console.log('💥 Closing panel due to outside click:', openPanel.id);
-        showPanel(null);
-    }
-});
-
-
-
-// --- Submit Button ---
-document.getElementById('submitButton').addEventListener('click', () => {
-    console.log("=== Submit Button Clicked ===");
-
-    const input = document.getElementById('messageBox').value.trim();
-    console.log("Input text:", input);
-    if (!input) {
-        console.log("No input provided. Exiting.");
-        return;
-    }
-    const summary = document.getElementById('summaryContainer');
-    const parsed = parseInventoryText(input);
-
-    console.log("Hiding inventory, showing contracts and summary showing contractbutton");
-    inventoryContainer.style.display = 'none';
-    summary.style.display = 'block';
-    contractRightLogo.style.display = 'inline-block';
-
-    console.log("Clearing previous summary table");
-    summary.innerHTML = '';
-
-    const parsedLines = parseInventoryText(input);
-    console.log("Parsed inventory lines:", parsedLines);
-
-    // Build table and tbody
-    const table = document.createElement('table');
-    table.classList.add('summary-table');
-
-    const thead = document.createElement('thead');
-    thead.innerHTML = `<tr>
-        <th>Ore</th>
-        <th>Quantity</th>
-        <th>Unit Price</th>
-        <th>Compressed</th>
-        <th>Total</th>
-    </tr>`;
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    summary.appendChild(table);
-
-    let grandTotal = 0;
-    let delay = 0;
-    const animationDelay = 200;
-
-    console.log("Creating rows for each ore...");
-    const rows = parsedLines.map(item => {
-        const displayName = item.ore.replace(/^Compressed\s+/i, '');
-        const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
-        const unitPrice = priceData[item.ore]?.price || 0;
-        const total = item.quantity * unitPrice;
-        grandTotal += total;
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td style="text-align:center;">${displayName}</td>
-            <td style="text-align:right;">0</td>
-            <td style="text-align:right;">0.00</td>
-            <td style="text-align:center;">${isCompressed}</td> 
-            <td style="text-align:right;">0.00</td>              
-        `;
-        tbody.appendChild(row);
-
-        //right contract receives grand total amount
-        document.getElementById('contract-right-receive').textContent = grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        console.log("Row created:", row.innerHTML);
-        console.log("Cells in row:", row.cells.length);
-
-        return { row, quantity: item.quantity, unitPrice, total };
-    });
-
-    console.log("Animating rows...");
-    rows.forEach(({ row, quantity, unitPrice, total }, index) => {
-        const qtyCell = row.cells[1];
-        const priceCell = row.cells[2];
-        const totalCell = row.cells[4];
-
-        console.log(`Animating row ${index}: ${row.cells[0].textContent}`);
-        console.log("Qty cell:", qtyCell, "Price cell:", priceCell, "Total cell:", totalCell);
-        totalCell.style.color = "#00ff00"; // bright green
-        setTimeout(() => {
-            animateValue(qtyCell, 0, quantity, 500);
-            animateValue(priceCell, 0, unitPrice, 500, true);
-            animateValue(totalCell, 0, total, 500, true);
-            row.style.animation = `fadeInRow 0.4s ease forwards`;
-        }, delay);
-
-        delay += animationDelay;
-    });
-
-    console.log("Adding Grand Total row");
-    const totalRow = document.createElement('tr');
-    totalRow.innerHTML = `
-    <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
-    <td style="text-align:right;font-weight:bold;">0.00</td>
+#ratesContainer .grid-item:hover {
+  transform: scale(1.05);
+}
 `;
-tbody.appendChild(totalRow);
+document.head.appendChild(style);
 
-// Grab the actual cell containing the number (0.00)
-// It is the second <td>, so index = 1
-const grandCell = totalRow.cells[1];
-grandCell.style.color = "#00ff00"; // bright green
-console.log("Animating Grand Total cell:", grandCell); // debugging
-setTimeout(() => {
-    animateValue(grandCell, 0, grandTotal, 800, true);
-}, delay + 200);
-// --- Debug container positions ---
-function debugContainers() {
-    const containers = [
-        { name: 'Summary', el: summary },
-        { name: 'Compare', el: compareContainer }
-    ];
 
-    containers.forEach(c => {
-        // Temporarily make visible if hidden
-        const wasHidden = c.el.style.display === 'none';
-        if (wasHidden) {
-            c.el.style.display = 'block';
-            c.el.style.position = 'absolute';
-            c.el.style.visibility = 'hidden';
+// --- Call it after CSV is loaded ---
+if (csvLoaded) showRatesGrid();
+else {
+    const checkCsv = setInterval(() => {
+        if (csvLoaded) {
+            showRatesGrid();
+            clearInterval(checkCsv);
         }
-
-        const rect = c.el.getBoundingClientRect();
-        console.log(`${c.name} container rect:`, rect);
-
-        // Restore previous state
-        if (wasHidden) {
-            c.el.style.display = 'none';
-            c.el.style.visibility = 'visible';
-            c.el.style.position = '';
-        }
-    });
+    }, 100);
 }
 
-// Call the debug function
-debugContainers();
 
 
-    console.log("=== Submit Button Finished Setup ===");
-});
 
-
-// Helper function for counting animation
-function animateValue(cell, start, end, duration, isFloat = false) {
-    const range = end - start;
-    let startTime = null;
-
-    function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        const value = start + range * progress;
-        cell.textContent = isFloat
-            ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            : Math.round(value).toLocaleString();
-        if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+// Dynamically update "I will receive" value
+function updateGrandTotal(value) {
+  document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
 
 /* --- Static Background Stars --- */
 const staticCanvas = document.getElementById('staticStars');
@@ -929,229 +830,6 @@ function drawStars() {
 }
 
 drawStars();
-
-
-// --- CSV Parsing & Price Data ---
-let priceData = {};
-let recognizedOres = [];
-let csvLoaded = false;
-
-const csvUrl = 'https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv';
-
-// Helper to split CSV lines properly (handles quotes and commas)
-function parseCSVLine(line) {
-    const regex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
-    const match = line.match(regex);
-    if (!match) return [];
-    return match.map(c => c.replace(/^"|"$/g, '').trim());
-}
-
-// Fetch CSV and populate priceData
-fetch(csvUrl)
-  .then(res => res.text())
-  .then(text => {
-    const lines = text.trim().split('\n');
-    const headers = parseCSVLine(lines[0]);
-    const colPrice = headers.findIndex(h => h.trim() === "Suggested Buy Price @ 150%");
-
-    if (colPrice === -1) {
-        console.error('❌ Could not find "Suggested Buy Price @ 150%" column in CSV!');
-        return;
-    }
-
-    priceData = {}; // clear previous data
-
-    // rows 2–191
-    const oreLines = lines.slice(1, 191);
-    oreLines.forEach(line => {
-        const cols = parseCSVLine(line);
-        const oreVariant = cols[0];
-        if (!oreVariant || !cols[colPrice]) return;
-
-        const price = parseFloat(cols[colPrice].replace(/,/g, '')) || 0;
-        priceData[oreVariant] = { price };
-
-        console.log('Added to priceData:', oreVariant, '->', price);
-    });
-
-    recognizedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
-    csvLoaded = true;
-
-    console.log('✅ CSV loaded', recognizedOres.length, 'ores');
-    console.log('Full priceData:', priceData);
-  })
-  .catch(err => console.error('Error loading CSV:', err));
-
-
-// --- Parse one line of inventory text ---
-function parseOreLine(line) {
-    line = line.trim();
-    if (!line) return null;
-
-    const sortedOres = Object.keys(priceData).sort((a,b) => b.length - a.length);
-    let matchedOre = null;
-
-    for (const oreName of sortedOres) {
-        if (line.toLowerCase().includes(oreName.toLowerCase())) {
-            matchedOre = oreName;
-            break; // longest match first
-        }
-    }
-
-    if (!matchedOre) return null;
-
-    const qtyMatch = line.match(/([\d,]+)/);
-    const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g,''), 10) : 1;
-
-    return { ore: matchedOre, quantity };
-}
-
-
-// --- Parse full inventory text ---
-function parseInventoryText(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    const result = [];
-
-    const sortedOres = Object.keys(priceData).sort((a, b) => b.length - a.length);
-
-    for (const line of lines) {
-        let matchedOre = null;
-        for (const oreName of sortedOres) {
-            if (line.toLowerCase().includes(oreName.toLowerCase())) {
-                matchedOre = oreName;
-                break;
-            }
-        }
-
-        if (!matchedOre) continue;
-
-        const qtyMatch = line.match(/([\d,]+)/);
-        const quantity = qtyMatch ? parseInt(qtyMatch[1].replace(/,/g, ''), 10) : 1;
-
-        result.push({ ore: matchedOre, quantity });
-    }
-
-    return result;
-}
-
-
-// --- Animate numeric values ---
-function animateValue(cell, start, end, duration = 500, isFloat = false) {
-    const startTime = performance.now();
-
-    function step(currentTime) {
-        const progress = Math.min((currentTime - startTime) / duration, 1);
-        const value = start + (end - start) * progress;
-
-        cell.textContent = isFloat
-            ? value.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})
-            : Math.round(value).toLocaleString();
-
-        if (progress < 1) requestAnimationFrame(step);
-    }
-
-    requestAnimationFrame(step);
-}
-
-// --- Hide all panels ---
-function hidePanels() {
-  overlay.classList.remove('visible');
-  [ratesContainer, compareContainer].forEach(el => el.classList.remove('active'));
-
-  setTimeout(() => {
-    [ratesContainer, compareContainer].forEach(el => (el.style.display = 'none'));
-  }, 400); // match CSS transition
-}
-
-
-ratesTab.addEventListener('click', () => {
-   console.log("Rates tab clicked");
-    // Hide other panels and show rates
-    showPanel(ratesContainer, ratesTab); 
-
-    // Optional: populate the rates grid
-    showRatesGrid();
-});
-
-compareTab.addEventListener('click', e => {
-   console.log("Rates tab clicked");
-  e.stopPropagation();
-  showPanel(compareContainer, compareTab);
-});
-
-document.addEventListener('click', e => {
-    console.log('💥 Document click:', e.target, 'openPanel:', openPanel?.id);
-
-    if (overlay.contains(e.target)) {
-        console.log('💡 Click on overlay ignored');
-        return; // don't close panel when clicking overlay
-    }
-
-    if (
-        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-    ) {
-        console.log('💥 Closing panel due to outside click:', openPanel.id);
-        showPanel(null);
-    }
-});
-
-
-
-// --- CSS injection for grid dynamically injects a <style> tag into your page’s <head> with all the CSS needed for your rates grid layout.
-
-const style = document.createElement('style');
-style.innerHTML = `
-
-#ratesContainer .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-}
-#ratesContainer .grid-item {
-    display: flex;
-    flex-direction: column;       /* stack vertically */
-    justify-content: space-between; /* pushes first item up, last item down */
-    background: rgba(0,255,255,0.05);
-    padding: 8px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 0.85rem;
-    box-shadow: 0 0 10px #fff, 0 0 20px #fff;
-    transform: translateY(10px);
-    transition: transform 0.2s, box-shadow 0.3s;
-  height: 60px; /* or whatever is half of the current height */
-  width: 90;
-}
-}
-
-#ratesContainer .grid-item:hover {
-  transform: scale(1.05);
-}
-`;
-document.head.appendChild(style);
-
-
-// --- Call it after CSV is loaded ---
-if (csvLoaded) showRatesGrid();
-else {
-    const checkCsv = setInterval(() => {
-        if (csvLoaded) {
-            showRatesGrid();
-            clearInterval(checkCsv);
-        }
-    }, 100);
-}
-
-
-
-
-// Dynamically update "I will receive" value
-function updateGrandTotal(value) {
-  document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 
 
 });
