@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 overlay.addEventListener('click', (event) => {
   // Only trigger if the click was directly on the overlay itself
   if (event.target === overlay) {
+    event.stopPropagation(); // prevent document click handler from firing
     console.log('🟠 Closing modal, restoring previous visible sections.');
 
     // Hide all active sections
@@ -412,6 +413,7 @@ overlay.addEventListener('click', (event) => {
     overlay.style.display = 'none';
   }
 });
+
     
 // -------------------------
 // Main showPanel function
