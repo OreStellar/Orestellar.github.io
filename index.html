@@ -497,28 +497,19 @@ setupClosePanelHandlers();
 function showPanel(panel) {
     console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
 
-    // If clicking the same panel that's already open, close it
+    // If clicking the same panel that's already open, do nothing (or just keep it open)
     if (openPanel === panel) {
-        console.log('🔴 Closing currently open panel:', openPanel.id);
-        openPanel.style.display = 'none';
-        openPanel = null;
-
-        // Restore previous panels
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-
-        // Hide overlay if nothing else is open
-        overlay.style.display = 'none';
-        return;
+        console.log('⚪ Panel already open, doing nothing:', panel.id);
+        return; // skip everything else
     }
 
-    // Closing current panel if any
+    // Close currently open panel if it's different
     if (openPanel) {
         console.log('🔴 Closing currently open panel:', openPanel.id);
         openPanel.style.display = 'none';
     }
 
-    // Save currently visible panels before opening new one
+    // Hide all other panels except the one we're opening
     previousPanels = [];
     [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
         if (p && p !== panel && p.style.display !== 'none') {
@@ -542,34 +533,6 @@ function showPanel(panel) {
     }
 }
 
-
-// -------------------------
-// Rates close button (✕) 
-// -------------------------
-let ratesClose = document.getElementById('ratesClose');
-if (!ratesClose) {
-    // Create if it doesn't exist
-    ratesClose = document.createElement('div');
-    ratesClose.id = 'ratesClose';
-    ratesClose.innerHTML = '✕';
-    ratesClose.style.position = 'absolute';
-    ratesClose.style.top = '-3px';
-    ratesClose.style.right = '10px';
-    ratesClose.style.cursor = 'pointer';
-    ratesClose.style.fontSize = '1.2rem';
-    ratesClose.style.color = 'rgba(255,255,255,0.8)';
-    ratesClose.style.transition = 'color 0.2s';
-    ratesClose.onmouseover = () => ratesClose.style.color = '#fff';
-    ratesClose.onmouseout = () => ratesClose.style.color = 'rgba(255,255,255,0.8)';
-    ratesContainer.appendChild(ratesClose);
-}
-
-ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation();
-    console.log("📌 Rates tab clicked");
-    showPanel(ratesContainer);
-    showRatesGrid();
-});
 
 
     // --- Rates Grid ---
