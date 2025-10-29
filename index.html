@@ -447,10 +447,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const compareTab = document.getElementById('compareTab');
     const ratesContainer = document.getElementById('ratesContainer');
     const compareContainer = document.getElementById('compareContainer');
+    
 
     let openPanel = null; // currently open panel
     let previousVisibleSections = [];
     let previousPanels = [];
+
+    const panels = [contractRight, summaryContainer, compareContainer, ratesContainer, logo];
 
     overlay.addEventListener('click', (event) => {
     if (event.target === overlay) { // only close if clicking directly on overlay
@@ -522,13 +525,13 @@ function showPanel(panel) {
     }
 
     // Save and hide other panels + logo
-    previousPanels = [];
-    [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
-        if (p && p !== panel && p.style.display !== 'none') {
-            previousPanels.push(p);
-            p.style.display = 'none';
-        }
-    });
+panels.forEach(p => {
+    if (p && p !== panel && p.style.display !== 'none') {
+        previousPanels.push(p);
+        p.style.display = 'none';
+    }
+});
+
     document.getElementById('logo').style.display = 'none';
 
     // Open the new panel
