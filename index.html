@@ -257,7 +257,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 250px;
     height: 30px;
     background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
@@ -269,6 +269,7 @@ body {
     text-shadow: 0 0 5px #fff, 0 0 10px #fff;
     box-shadow: 0 0 10px #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 10px;
 }
 .sideTab:hover { transform: translateX(-20px); box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
 .sideTab:active { transform: translateX(22px) scale(0.98); box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
