@@ -333,7 +333,16 @@ body {
   vertical-align: middle;
 }
 #compareTab {
-  left: 170px;
+
+    right: -180px; /* negative value moves it off-screen */
+}
+
+
+#compareTab:hover {
+    right: 10px; /* slide in when hovered */
+}
+#compareTab span {
+    display: inline-block; /* text appears on hover */
 }
 </style>
 </head>
