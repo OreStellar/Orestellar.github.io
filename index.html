@@ -395,6 +395,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let previousVisibleSections = [];
     let currentPanel = null;
 
+// Close modal only when clicking the overlay background
+overlay.addEventListener('click', (event) => {
+  // Only trigger if the click was directly on the overlay itself
+  if (event.target === overlay) {
+    console.log('🟠 Closing modal, restoring previous visible sections.');
+
+    // Hide all active sections
+    const panels = [contractRight, summaryContainer, compareContainer, ratesContainer];
+    panels.forEach(panel => {
+      if (panel) panel.style.display = 'none';
+    });
+
+    // Hide the overlay itself
+    overlay.style.display = 'none';
+  }
+});
+    
 // -------------------------
 // Main showPanel function
 // -------------------------
@@ -441,9 +458,11 @@ function showPanel(panel) {
 // -------------------------
 // Rates tab click
 // -------------------------
-ratesTab.addEventListener('click', () => {
+ratesTab.addEventListener('click', (event) => {
+    event.stopPropagation(); // 🔒 prevents overlay click handler from firing
     showPanel(ratesContainer);
 });
+
 
 // -------------------------
 // Rates close button (✕) 
@@ -466,8 +485,9 @@ if (!ratesClose) {
     ratesContainer.appendChild(ratesClose);
 }
 
-ratesClose.addEventListener('click', () => {
-    showPanel(null);
+ratesTab.addEventListener('click', (event) => {
+  event.stopPropagation();
+  showPanel(ratesContainer);
 });
 
 // -------------------------
