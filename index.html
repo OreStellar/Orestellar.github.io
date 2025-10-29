@@ -642,11 +642,15 @@ if (!document.getElementById('ratesClose')) {
 
 // --- Tab Clicks ---
 ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation(); // prevent document click from firing
-    console.log('📌 Rates tab clicked');
+    console.log("🔹 Rates tab clicked");
+    e.stopPropagation();  // Prevent document click handler
+    console.log('🔹 openPanel before showPanel:', openPanel?.id);
 
-    showPanel(ratesContainer); // this now handles saving/restoring previous panels
-    showRatesGrid();           // keep your grid function call
+    showPanel(ratesContainer, ratesTab);
+
+    console.log('🔹 openPanel after showPanel:', openPanel?.id);
+
+    showRatesGrid();
 });
 
 compareTab.addEventListener('click', (e) => {
@@ -1104,21 +1108,30 @@ compareTab.addEventListener('click', e => {
   showPanel(compareContainer, compareTab);
 });
 
-document.addEventListener('click', e => {
-    console.log('💥 Document click:', e.target, 'openPanel:', openPanel?.id);
+document.addEventListener('click', (e) => {
+    console.log('📌 Document clicked:', e.target);
+    console.log('📌 Current openPanel:', openPanel ? openPanel.id : null);
 
-    if (overlay.contains(e.target)) {
-        console.log('💡 Click on overlay ignored');
-        return; // don't close panel when clicking overlay
+    if (!openPanel) {
+        console.log('❌ No panel open, skipping.');
+        return;
     }
 
-    if (
-        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-    ) {
-        console.log('💥 Closing panel due to outside click:', openPanel.id);
+    const panel = openPanel;
+    console.log('📌 Panel is open:', panel.id);
+
+    const tabCheck = (panel === ratesContainer && ratesTab.contains(e.target)) ||
+                     (panel === compareContainer && compareTab.contains(e.target)) ||
+                     (panel === contractRight && contractRightLogo.contains(e.target));
+
+    console.log('📌 Click inside tab?', tabCheck);
+    console.log('📌 Click inside panel?', panel.contains(e.target));
+
+    if (!panel.contains(e.target) && !tabCheck) {
+        console.log('💥 Click outside panel and tab: closing', panel.id);
         showPanel(null);
+    } else {
+        console.log('✅ Click ignored, inside panel or tab');
     }
 });
 
