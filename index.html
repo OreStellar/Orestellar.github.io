@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageBox = document.getElementById('messageBox');
     const summaryContainer = document.getElementById('summaryContainer');
     const inventoryContainer = document.getElementById('inventoryContainer');
-    const logo = document.getElementById('logo');
+    const oreStellarLogo = document.getElementById('logo');
 
     const contractRight = document.getElementById('contractRight');
     const contractRightLogo = document.getElementById('contractRightLogo');
@@ -452,6 +452,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let openPanel = null; // currently open panel
     let previousVisibleSections = [];
     let previousPanels = [];
+
+    // Make default visible panels
+inventoryContainer.style.display = 'block';
+oreStellarLogo.style.display = 'block';
+contractRight.style.display = 'none';
+summaryContainer.style.display = 'none';
+compareContainer.style.display = 'none';
+ratesContainer.style.display = 'none';
+overlay.style.display = 'none';
 
     const panels = [contractRight, summaryContainer, compareContainer, ratesContainer, logo];
 
@@ -656,16 +665,17 @@ compareTab.addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => {
     console.log('📌 Document click target:', e.target, 'openPanel:', openPanel?.id);
-    if (!openPanel || overlay.contains(e.target)) return;
-
-    if (
-        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-    ) {
-        console.log('💥 Closing panel due to outside click:', openPanel.id);
+document.addEventListener('click', (e) => {
+    if (!openPanel) return;
+    if (!openPanel.contains(e.target) &&
+        !ratesTab.contains(e.target) &&
+        !compareTab.contains(e.target) &&
+        !contractRightLogo.contains(e.target)) {
+        console.log('💥 Document click outside panel: closing', openPanel.id);
         showPanel(null);
     }
+});
+
 });
 
 
@@ -1077,10 +1087,12 @@ function hidePanels() {
 }
 
 
-ratesTab.addEventListener('click', () => {
-   console.log("Rates tab clicked");
-    // Hide other panels and show rates
-    showPanel(ratesContainer, ratesTab); 
+ratesTab.addEventListener('click', (e) => {
+    e.stopPropagation();  // Prevent document click handler from firing
+    console.log("Rates tab clicked");
+
+    // Show the rates panel
+    showPanel(ratesContainer, ratesTab);
 
     // Optional: populate the rates grid
     showRatesGrid();
