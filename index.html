@@ -523,22 +523,9 @@ function showPanel(panel) {
         previousPanels.forEach(p => p.style.display = 'block');
         previousPanels = [];
         document.getElementById('logo').style.display = 'block';
-
-
-    }
-
-    // Hide currently open panel if different
-    if (openPanel) {
-        openPanel.style.display = 'none';
-    }
-
-   // Restore previously visible panels + logo
-        previousPanels.forEach(p => p.style.display = 'block');
-        previousPanels = [];
-
         overlay.style.display = 'none';
-        return;
-  
+        return; // ✅ Only one return here
+    }
 
     // Hide currently open panel if different
     if (openPanel) {
@@ -553,13 +540,15 @@ function showPanel(panel) {
             p.style.display = 'none';
         }
     });
-  }
+
     // OPEN the new panel
     if (panel) {
         panel.style.display = 'block';
-        openPanel = panel;  // <--- make sure this is AFTER display set
+        openPanel = panel;  // Make sure this happens AFTER display is set
         overlay.style.display = 'block';
     }
+  }
+
 
     // --- Rates Grid ---
     function showRatesGrid() {
