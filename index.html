@@ -498,15 +498,6 @@ function showPanel(panel) {
 
 
 // -------------------------
-// Rates tab click
-// -------------------------
-ratesTab.addEventListener('click', (event) => {
-    event.stopPropagation(); // 🔒 prevents overlay click handler from firing
-    showPanel(ratesContainer);
-});
-
-
-// -------------------------
 // Rates close button (✕) 
 // -------------------------
 let ratesClose = document.getElementById('ratesClose');
@@ -527,10 +518,13 @@ if (!ratesClose) {
     ratesContainer.appendChild(ratesClose);
 }
 
-ratesTab.addEventListener('click', (event) => {
-  event.stopPropagation();
-  showPanel(ratesContainer);
+ratesTab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    console.log("📌 Rates tab clicked");
+    showPanel(ratesContainer);
+    showRatesGrid();
 });
+
 
     // --- Rates Grid ---
     function showRatesGrid() {
