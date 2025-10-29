@@ -501,13 +501,6 @@ setupClosePanelHandlers();
 function showPanel(panel) {
     console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
 
-    // If clicking the same panel that's already open, do nothing (or just keep it open)
-    if (openPanel === panel) {
-        console.log('⚪ Panel already open, doing nothing:', panel.id);
-        return; //function showPanel(panel) {
-    console.log('🟢 showPanel called with:', panel, 'current openPanel:', openPanel?.id);
-
-    // If clicking the same panel, toggle it closed
     if (openPanel === panel) {
         console.log('🔴 Closing currently open panel:', openPanel.id);
         panel.style.display = 'none';
@@ -521,13 +514,11 @@ function showPanel(panel) {
         return;
     }
 
-    // Hide currently open panel if different
     if (openPanel) {
         openPanel.style.display = 'none';
     }
 
-    // Hide all other panels + OreStellar logo
-    previousPanels = [];
+previousPanels = [];
 [contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
     if (p && p !== panel && p.style.display !== 'none') {
         previousPanels.push(p);
@@ -535,14 +526,12 @@ function showPanel(panel) {
     }
 });
 
-    // Open the new panel
-    if (panel) {
-        panel.style.display = 'block';
-        openPanel = panel;
-        overlay.style.display = 'block';
-    
-
-    }
+// Open the new panel after hiding others
+if (panel) {
+    panel.style.display = 'block';
+    openPanel = panel;
+    overlay.style.display = 'block';
+} 
     // --- Rates Grid ---
     function showRatesGrid() {
         ratesContainer.innerHTML = ''; // clear previous
@@ -583,18 +572,20 @@ function showPanel(panel) {
             }, index * 20);
         });
             // Search & highlight/dim functionality
-        searchInput.addEventListener('input', () => {
-        const filter = searchInput.value.toLowerCase();
-        document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(filter)) {
-                item.style.opacity = '1';
-                item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
-            } else {
-                item.style.opacity = '0.3';
-                item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
-        });
-        });
+searchInput.addEventListener('input', () => {
+    const filter = searchInput.value.toLowerCase();
+    document.querySelectorAll('#ratesContainer .grid-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            item.style.opacity = '1';
+            item.style.boxShadow = '0 0 15px #fff, 0 0 30px #fff';
+        } else {
+            item.style.opacity = '0.3';
+            item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
+        }
+    });
+});
+
 // Only create once
 if (!document.getElementById('ratesClose')) {
     const closeBtn = document.createElement('div');
@@ -1152,13 +1143,10 @@ else {
 // Dynamically update "I will receive" value
 function updateGrandTotal(value) {
   document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
 }
 
-
-
-}
-}
-});
+}); // closes DOMContentLoaded
 
 </script>
 </div>
