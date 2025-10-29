@@ -616,13 +616,16 @@ if (!document.getElementById('ratesClose')) {
     }
 });
 
-    document.addEventListener('click', e => {
-        if (
-            (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
-            (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
-            (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
-        ) showPanel(null);
-    });
+document.addEventListener('click', e => {
+  if (e.target === overlay) return; // ignore overlay clicks
+
+  if (
+    (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
+    (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
+    (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
+  ) showPanel(null);
+});
+
 
 
 
