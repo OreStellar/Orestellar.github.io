@@ -1053,16 +1053,24 @@ compareTab.addEventListener('click', e => {
   showPanel(compareContainer, compareTab);
 });
 
-overlay.addEventListener('click', () => showPanel(null));
-
 document.addEventListener('click', e => {
-  if (
-    !ratesContainer.contains(e.target) &&
-    !compareContainer.contains(e.target) &&
-    !ratesTab.contains(e.target) &&
-    !compareTab.contains(e.target)
-  ) showPanel(null);
+    console.log('💥 Document click:', e.target, 'openPanel:', openPanel?.id);
+
+    if (overlay.contains(e.target)) {
+        console.log('💡 Click on overlay ignored');
+        return; // don't close panel when clicking overlay
+    }
+
+    if (
+        (openPanel === ratesContainer && !ratesContainer.contains(e.target) && !ratesTab.contains(e.target)) ||
+        (openPanel === compareContainer && !compareContainer.contains(e.target) && !compareTab.contains(e.target)) ||
+        (openPanel === contractRight && !contractRight.contains(e.target) && !contractRightLogo.contains(e.target))
+    ) {
+        console.log('💥 Closing panel due to outside click:', openPanel.id);
+        showPanel(null);
+    }
 });
+
 
 
 // --- CSS injection for grid dynamically injects a <style> tag into your page’s <head> with all the CSS needed for your rates grid layout.
