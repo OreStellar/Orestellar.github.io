@@ -528,12 +528,12 @@ function showPanel(panel) {
 
     // Hide all other panels + OreStellar logo
     previousPanels = [];
-    [contractRight, summaryContainer, compareContainer, ratesContainer, oreStellarLogo].forEach(p => {
-        if (p && p !== panel && p.style.display !== 'none') {
-            previousPanels.push(p);
-            p.style.display = 'none';
-        }
-    });
+[contractRight, summaryContainer, compareContainer, ratesContainer].forEach(p => {
+    if (p && p !== panel && p.style.display !== 'none') {
+        previousPanels.push(p);
+        p.style.display = 'none';
+    }
+});
 
     // Open the new panel
     if (panel) {
@@ -593,9 +593,8 @@ function showPanel(panel) {
             } else {
                 item.style.opacity = '0.3';
                 item.style.boxShadow = '0 0 5px #C4C4C4, 0 0 10px #C4C4C4';
-            }
         });
-    });
+        });
 // Only create once
 if (!document.getElementById('ratesClose')) {
     const closeBtn = document.createElement('div');
