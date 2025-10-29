@@ -698,20 +698,6 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 
-// --- Call it after CSV is loaded ---
-if (csvLoaded) showRatesGrid();
-else {
-    const checkCsv = setInterval(() => {
-        if (csvLoaded) {
-            showRatesGrid();
-            clearInterval(checkCsv);
-        }
-    }, 100);
-}
-
-
-
-
 // Dynamically update "I will receive" value
 function updateGrandTotal(value) {
   document.getElementById('grandTotalCell').textContent = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
