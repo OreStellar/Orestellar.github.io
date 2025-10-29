@@ -161,17 +161,34 @@ body {
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    display: grid;
-    grid-template-columns: repeat(5, 1fr) auto; /* evenly space first 5 cols, last one auto-sized */
     gap: 5px; /* space between columns */
     text-align: center;
     overflow-x: auto;
     overflow-y: visible;
     position: relative;
-    flex: 1;
-    max-width: 30%;
 }
 
+#summaryContainer th, 
+#summaryContainer td {
+    padding: 8px 12px;
+    text-align: left;
+    overflow: hidden;         /* Prevent text from spilling */
+    text-overflow: ellipsis;  /* Shows "..." if text is too long */
+    white-space: nowrap;      /* Prevent wrapping */
+}
+
+/* Make all columns except the last stretch evenly */
+#summaryContainer th:not(:last-child),
+#summaryContainer td:not(:last-child) {
+    width: auto;              /* Evenly divide space */
+}
+
+/* Ensure last column (Total) keeps its size and doesn't wrap */
+#summaryContainer th:last-child,
+#summaryContainer td:last-child {
+    white-space: nowrap;
+    text-align: right;        /* Align numbers nicely */
+}
 #contractRight {
     display: none;
     position: fixed;
