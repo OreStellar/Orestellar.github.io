@@ -193,6 +193,12 @@ body {
     white-space: nowrap;
     text-align: right;        /* Align numbers nicely */
 }
+
+#summaryContainer table.summary-table {
+    table-layout: fixed; /* ensures columns don’t expand randomly */
+    width: 100%;
+}
+
 #contractRight {
     display: none;
     position: fixed;
@@ -464,7 +470,8 @@ overlay.style.display = 'none';
 
     const panels = [contractRight, summaryContainer, compareContainer, ratesContainer, logo];
 
-    overlay.addEventListener('click', (event) => {
+overlay.addEventListener('click', (event) => {
+    event.stopPropagation(); // ✅ prevent bubbling to document click
     if (event.target === overlay) { // only close if clicking directly on overlay
         console.log('💡 Overlay click detected, closing panel');
         showPanel(null);
@@ -644,9 +651,10 @@ if (!document.getElementById('ratesClose')) {
     ratesContainer.appendChild(closeBtn);
 
     // Attach handler to close ratesContainer
-    closeBtn.addEventListener('click', () => {
-        showPanel(null); // close ratesContainer and restore previous
-    });
+closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // ✅ prevent bubbling to document click
+    showPanel(null);     // close ratesContainer and restore previous
+});
 }
 
 
@@ -798,7 +806,7 @@ tbody.appendChild(totalRow);
 
 // Grab the actual cell containing the number (0.00)
 // It is the second <td>, so index = 1
-const grandCell = totalRow.cells[1];
+const grandCell = totalRow.querySelector('td:last-child'); // reliably selects the last cell
 grandCell.style.color = "#00ff00"; // bright green
 console.log("Animating Grand Total cell:", grandCell); // debugging
 setTimeout(() => {
