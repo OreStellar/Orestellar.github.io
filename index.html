@@ -634,98 +634,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let openPanel = null; // currently open panel
     let previousVisibleSections = [];
-         currentPanel = null;
-        previousPanel = null;
-        currentPanel = null;
-        previousPanel = null;
+    let currentPanel = null;
 
- // --- Main showPanel function ---
-    function showPanel(panel) {
-        console.log('🟢 showPanel called with:', panel);
+// -------------------------
+// Main showPanel function
+// -------------------------
+function showPanel(panel) {
+    console.log('🟢 showPanel called with:', panel);
 
-        if (panel) {
-            // Save previously visible sections only once
-            if (previousVisibleSections.length === 0) {
-                previousVisibleSections = [];
-                [inventoryContainer, logo, summaryContainer].forEach(el => {
-                    if (el && el.style.display !== 'none') previousVisibleSections.push(el.id);
-                });
-                console.log('💾 Saved previous visible sections:', previousVisibleSections);
-            }
-
-            // Close current panel if open
-            if (currentPanel) {
-                console.log('🔴 Closing currently open panel:', currentPanel.id);
-                currentPanel.style.display = 'none';
-                currentPanel.classList.remove('active');
-            }
-
-            // Show new panel
-            console.log('🟣 Opening panel:', panel.id);
-            panel.style.display = 'block';
-            panel.style.opacity = '1';
-            setTimeout(() => panel.classList.add('active'), 10);
-            currentPanel = panel;
-
-            // Activate overlay
-            overlay.style.display = 'block';
-            console.log('✅ Panel visible, overlay active.');
-
-        } else {
-            // Closing modal
-            console.log('🟠 Closing modal, restoring previous visible sections.');
-            if (currentPanel) {
-                currentPanel.style.display = 'none';
-                currentPanel.classList.remove('active');
-            }
-            previousVisibleSections.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'block';
-            });
-            previousVisibleSections = [];
-            currentPanel = null;
-            overlay.style.display = 'none';
-        }
+    // Save currently visible sections before opening a new panel
+    if (panel && openPanel !== panel) {
+        previousVisibleSections = [];
+        document.querySelectorAll('#inventoryContainer, #logo, #summaryContainer, #contractRight').forEach(el => {
+            if (el && el.style.display !== 'none') previousVisibleSections.push(el.id);
+        });
+        console.log('💾 Saved previous visible sections:', previousVisibleSections);
     }
 
-    // --- Overlay click closes modal ---
-    overlay.addEventListener('click', () => {
-        console.log('🟣 Overlay clicked, closing modal.');
-        showPanel(null);
-    });
-
-    // --- Rates close button dynamically created ---
-    const ratesClose = document.getElementById('ratesClose');
-    if (ratesClose) {
-        ratesClose.addEventListener('click', () => showPanel(null));
+    // Close currently open panel
+    if (openPanel) {
+        console.log('🔴 Closing currently open panel:', openPanel.id);
+        openPanel.style.display = 'none';
+        openPanel.classList.remove('active');
     }
 
-    // --- Tab clicks ---
-    ratesTab.addEventListener('click', () => showPanel(ratesContainer));
-    compareTab.addEventListener('click', () => showPanel(compareContainer));
+    if (panel) {
+        console.log('🟣 Opening panel:', panel.id);
+        panel.style.display = 'block';
+        panel.style.opacity = '1';
+        setTimeout(() => panel.classList.add('active'), 10);
+        openPanel = panel;
+        overlay.style.display = 'block';
+        console.log('✅ Panel visible, overlay active.');
+    } else {
+        console.log('🟠 Closing modal, restoring previous visible sections.');
+        overlay.style.display = 'none';
+        openPanel = null;
 
-    // Optional: contractRightLogo opens its panel if needed
-    if (contractRightLogo) {
-        contractRightLogo.addEventListener('click', () => showPanel(contractRight));
+        previousVisibleSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        });
+        previousVisibleSections = [];
     }
+}
 
-// --- Example ✕ button creation and handler for ratesContainer ---
-const closeBtn = document.createElement('div');
-closeBtn.id = 'ratesClose';
-closeBtn.innerHTML = '✕';
-closeBtn.style.position = 'absolute';
-closeBtn.style.top = '-3px';
-closeBtn.style.right = '10px';
-closeBtn.style.cursor = 'pointer';
-closeBtn.style.fontSize = '1.2rem';
-closeBtn.style.color = 'rgba(255,255,255,0.8)';
-closeBtn.style.transition = 'color 0.2s';
-closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
-closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
-ratesContainer.appendChild(closeBtn);
+// -------------------------
+// Rates tab click
+// -------------------------
+ratesTab.addEventListener('click', () => {
+    showPanel(ratesContainer);
+});
 
-document.getElementById('ratesClose').addEventListener('click', () => {
-    console.log('✕ button clicked, closing ratesContainer');
+// -------------------------
+// Rates close button (✕) 
+// -------------------------
+let ratesClose = document.getElementById('ratesClose');
+if (!ratesClose) {
+    // Create if it doesn't exist
+    ratesClose = document.createElement('div');
+    ratesClose.id = 'ratesClose';
+    ratesClose.innerHTML = '✕';
+    ratesClose.style.position = 'absolute';
+    ratesClose.style.top = '-3px';
+    ratesClose.style.right = '10px';
+    ratesClose.style.cursor = 'pointer';
+    ratesClose.style.fontSize = '1.2rem';
+    ratesClose.style.color = 'rgba(255,255,255,0.8)';
+    ratesClose.style.transition = 'color 0.2s';
+    ratesClose.onmouseover = () => ratesClose.style.color = '#fff';
+    ratesClose.onmouseout = () => ratesClose.style.color = 'rgba(255,255,255,0.8)';
+    ratesContainer.appendChild(ratesClose);
+}
+
+ratesClose.addEventListener('click', () => {
+    showPanel(null);
+});
+
+// -------------------------
+// Overlay click
+// -------------------------
+overlay.addEventListener('click', () => {
     showPanel(null);
 });
 
