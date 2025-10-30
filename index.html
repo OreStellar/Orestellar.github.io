@@ -810,7 +810,8 @@ style.innerHTML = `
 #ratesContainer .grid-item {
     display: flex;
     flex-direction: column;       /* stack vertically */
-    justify-content: space-between; /* pushes first item up, last item down */
+    justify-content: center;
+    align-items: center;                /* horizontally center */
     background: rgba(0,255,255,0.05);
     padding: 5px;
     border-radius: 6px;
@@ -819,7 +820,7 @@ style.innerHTML = `
     box-shadow: 0 0 10px #fff, 0 0 20px #fff;
     transform: translateY(10px);
     transition: transform 0.2s, box-shadow 0.3s;
-  height: 60px; /* or whatever is half of the current height */
+  height: 65px; /* or whatever is half of the current height */
   width: 90%;
 }
 
