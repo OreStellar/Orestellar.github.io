@@ -282,25 +282,29 @@ body {
     box-shadow: 0 0 10px #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     gap: 10px;
+    transform: translateX(100px);
 }
-.sideTab:hover { transform: translateX(-50px); box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
-.sideTab:active { transform: translateX(22px) scale(0.98); box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
+.sideTab:hover { 
+    transform: translateX(10px);
+    box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
+
+
+
+.sideTab:active { 
+    transform: translateX(22px) scale(0.98);
+    box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
 
 #ratesTab svg {
   position: relative;
   left: 5px;
 }
 
-#ratesTab {
-  transform: translateX(100px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+#compareTab svg {
+  position: relative;
+  left: 5px;
 }
 
-#ratesTab:hover {
-  transform: translateX(-30px);
-  box-shadow: 0 0 20px #fff, 0 0 40px #0ff;
-}
+
 </style>
 </head>
 <body>
