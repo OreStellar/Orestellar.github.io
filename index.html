@@ -314,9 +314,10 @@ body {
     gap: 10px;
     transform: translateX(220px);
 }
-.sideTab:hover { 
-    .sideTab:hover { transform: translateX(25px); }
-    box-shadow: 0 0 20px #fff, 0 0 40px #fff; }
+.sideTab:hover {
+    transform: translateX(25px);
+    box-shadow: 0 0 20px #fff, 0 0 40px #fff;
+}
 
 #ratesTab svg {
   position: relative;
@@ -755,35 +756,47 @@ function parseInventoryText(input) {
     }
 
 // --- Price Data ---
-   let priceData = {};
-let csvLoaded = false;
+  let priceData = {};
+  let csvLoaded = false;
 
-fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
-  .then(res => res.text())
-  .then(text => {
-    console.log("CSV loaded successfully.");
-    const lines = text.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
-    console.log("CSV headers:", headers);
+.then(text => {
+  if (!text || !text.includes(',')) {
+    console.error("CSV fetch succeeded but no valid CSV content found:", text.slice(0, 100));
+    return;
+  }
 
-    const priceIndex = headers.indexOf('Suggest buy @ 150%');
-    if (priceIndex === -1) console.error("CSV missing 'Suggest buy @ 150%' column");
+  console.log("CSV loaded successfully.");
+  const lines = text.split('\n');
+  if (!lines[0]) {
+    console.error("CSV file appears empty or malformed.");
+    return;
+  }
 
-    priceData = {};
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols.length < headers.length) {
-        console.warn(`Skipping malformed line ${i}:`, lines[i]);
-        continue;
-      }
-      const ore = cols[0].trim();
-      const price = parseFloat(cols[priceIndex].trim()) || 0;
-      priceData[ore] = { price150: price };
-      console.log(`Loaded price for ${ore}: ${price}`);
+  const headers = lines[0].split(',').map(h => h.trim());
+  console.log("CSV headers:", headers);
+
+  const priceIndex = headers.indexOf('Suggest buy @ 150%');
+  if (priceIndex === -1) {
+    console.error("CSV missing 'Suggest buy @ 150%' column");
+    return;
+  }
+
+  priceData = {};
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(',');
+    if (cols.length < headers.length) {
+      console.warn(`Skipping malformed line ${i}:`, lines[i]);
+      continue;
     }
-    csvLoaded = true;
-    console.log("Price data loaded:", priceData);
-  })
+    const ore = cols[0].trim();
+    const price = parseFloat(cols[priceIndex].trim()) || 0;
+    priceData[ore] = { price150: price };
+  }
+
+  csvLoaded = true;
+  console.log("Price data loaded:", priceData);
+})
+
   .catch(err => console.error("Error loading CSV:", err));
 
 
@@ -812,7 +825,7 @@ style.innerHTML = `
   height: 60px; /* or whatever is half of the current height */
   width: 90px;
 }
-}
+
 
 #ratesContainer .grid-item:hover {
   transform: scale(1.05);
@@ -941,7 +954,12 @@ function drawStars() {
 drawStars();
 
 
+
+
+
+
 });
+
 
 </script>
 </div>
