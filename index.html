@@ -726,8 +726,8 @@ function parseInventoryText(input) {
 
 
   let grandTotal = 0;
-  let delay = 0; // starting delay
-const animationDelay = 50; // 50ms between rows
+  let delay = 100; // starting delay
+const animationDelay = 200; // 50ms between rows
 
 parsedLines.forEach((item, index) => {
     const displayName = item.ore.replace(/^Compressed\s+/i, '');
