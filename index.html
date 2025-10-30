@@ -294,8 +294,13 @@ body {
 #ratesTab {
   transform: translateX(190px);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+
 }
 
+#ratesTab:hover {
+  transform: translateX(30px);
+  box-shadow: 0 0 20px #fff, 0 0 40px #0ff;
+}
 </style>
 </head>
 <body>
@@ -571,9 +576,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const table = document.createElement('table');
         table.classList.add('summary-table');
         const thead = document.createElement('thead');
-        thead.innerHTML = `<tr>
+        thead.innerHTML = `
             <th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Compressed</th><th>Total</th>
-        </tr>`;
+        `;
         table.appendChild(thead);
 
         const tbody = document.createElement('tbody');
