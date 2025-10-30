@@ -476,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!panelKey) return; // nothing to open
 
         // Close any other panel
+        
         Object.keys(panels).forEach(key => {
             if (key !== panelKey) panels[key].style.display = 'none';
         });
@@ -612,6 +613,27 @@ function showRatesGrid() {
     overlay.style.display = 'block';
     openPanel = 'ratesContainer';
 }
+// --- Parse Inventory Text ---
+function parseInventoryText(input) {
+  const lines = input.split('\n');
+  const results = [];
+  console.log("Parsing inventory input:", input);
+
+  lines.forEach((line, i) => {
+    const match = line.match(/^(.+?)\s+([\d.]+)$/); // support floats
+    if (match) {
+      const ore = match[1].trim();
+      const quantity = parseFloat(match[2]);
+      results.push({ ore, quantity });
+      console.log(`Parsed line ${i}:`, ore, quantity);
+    } else {
+      console.warn(`Line ${i} did not match pattern:`, line);
+    }
+  });
+
+  console.log("Parsed inventory results:", results);
+  return results;
+}
 
 
     // --- Submit Button ---
@@ -703,40 +725,36 @@ function showRatesGrid() {
     }
 
 // --- Price Data ---
-    let priceData = {};
-    let csvLoaded = false;
+   let priceData = {};
+let csvLoaded = false;
 
-    fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
-        .then(res => res.text())
-        .then(text => {
-            const lines = text.split('\n');
-            const headers = lines[0].split(',');
-            priceData = {};
-            for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',');
-                if (cols.length < headers.length) continue;
-                const ore = cols[0];
-                priceData[ore] = {
-                    price150: parseFloat(cols[headers.indexOf('Suggest buy @ 150%')]) || 0
-                };
-            }
-            csvLoaded = true;
-        });
+fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
+  .then(res => res.text())
+  .then(text => {
+    console.log("CSV loaded successfully.");
+    const lines = text.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    console.log("CSV headers:", headers);
 
-    // --- Parse Inventory Text ---
-    function parseInventoryText(input) {
-        const lines = input.split('\n');
-        const results = [];
-        lines.forEach(line => {
-            const match = line.match(/^(.+?)\s+(\d+)$/);
-            if (match) {
-                const ore = match[1].trim();
-                const quantity = parseInt(match[2]);
-                results.push({ ore, quantity });
-            }
-        });
-        return results;
+    const priceIndex = headers.indexOf('Suggest buy @ 150%');
+    if (priceIndex === -1) console.error("CSV missing 'Suggest buy @ 150%' column");
+
+    priceData = {};
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length < headers.length) {
+        console.warn(`Skipping malformed line ${i}:`, lines[i]);
+        continue;
+      }
+      const ore = cols[0].trim();
+      const price = parseFloat(cols[priceIndex].trim()) || 0;
+      priceData[ore] = { price150: price };
+      console.log(`Loaded price for ${ore}: ${price}`);
     }
+    csvLoaded = true;
+    console.log("Price data loaded:", priceData);
+  })
+  .catch(err => console.error("Error loading CSV:", err));
 
 
 // --- CSS injection for grid dynamically injects a <style> tag into your page’s <head> with all the CSS needed for your rates grid layout.
