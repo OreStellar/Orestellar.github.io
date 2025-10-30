@@ -759,7 +759,8 @@ function parseInventoryText(input) {
   let priceData = {};
   let csvLoaded = false;
 
-.then(text => {
+  .then(res => res.text())
+  .then(text => {
   if (!text || !text.includes(',')) {
     console.error("CSV fetch succeeded but no valid CSV content found:", text.slice(0, 100));
     return;
