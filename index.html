@@ -576,8 +576,8 @@ function showRatesGrid() {
         grid = document.createElement('div');
         grid.id = 'ratesGridContainer';
         grid.style.display = "grid";
-        grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(140px, 1fr))";
-        grid.style.gap = "8px";
+        grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(160px, 1fr))";
+        grid.style.gap = "5px";
         ratesContainer.appendChild(grid);
     }
 
@@ -852,7 +852,7 @@ style.innerHTML = `
     transform: translateY(10px);
     transition: transform 0.2s, box-shadow 0.3s;
   height: 60px; /* or whatever is half of the current height */
-  width: 90px;
+  width: auto;
 }
 
 
