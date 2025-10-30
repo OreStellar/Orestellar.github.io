@@ -153,6 +153,21 @@ body {
     z-index: 11;  /* <-- must be higher than overlay (10) */
 }
 
+#ratesClose {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.8);
+    transition: color 0.2s;
+    z-index: 20; /* above other elements */
+}
+
+#ratesClose:hover {
+    color: #fff;
+}
+
 #summaryContainer {
     font-family: 'Chivo Mono', monospace;
     width: 100%;
@@ -334,6 +349,15 @@ body {
     font-size: 1.1rem; /* optional */
     margin-bottom: 10px; /* optional spacing */
 }
+
+#searchInput {
+    background: rgba(0,0,0,0.3); /* semi-transparent dark background */
+    color: #fff;                  /* text color */
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 5px;
+    border-radius: 6px;
+    font-family: 'Chivo Mono', monospace;
+}
 </style>
 </head>
 <body>
@@ -424,9 +448,9 @@ body {
   </table>
 </div>
 </div>
-<div id="ratesContainer" class="open-modal neon" style="display:none;">
+<div id="ratesContainer" class="open-modal" style="display:none;">
   <button id="ratesClose">✕</button>
-  <input type="text" id="searchInput" placeholder="WHAT GOES HERE">
+  <input type="text" id="searchInput" placeholder="OreStellar Buy Rates">
   <div id="ratesGrid"></div>
 </div>
 
@@ -632,13 +656,12 @@ function showRatesGrid() {
         closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
         ratesContainer.appendChild(closeBtn);
 
-        closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            console.log("Closing rates container");
-            ratesContainer.style.display = 'none';
-            overlay.style.display = 'none';
-            openPanel = null;
-        });
+closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    ratesContainer.style.display = 'none';
+    overlay.style.display = 'none';
+    openPanel = null;
+});
     }
 
     // --- Show container & overlay ---
