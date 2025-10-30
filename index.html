@@ -715,7 +715,7 @@ function parseInventoryText(input) {
 
   console.log("Grand Total:", grandTotal);
   document.getElementById('contract-right-receive').textContent = grandTotal.toFixed(2);
-});
+
 
         rows.forEach(({ row, quantity, unitPrice, total }, index) => {
             const qtyCell = row.cells[1];
@@ -738,8 +738,10 @@ function parseInventoryText(input) {
         const grandCell = totalRow.querySelector('td:last-child');
         grandCell.style.color = "#00ff00";
         setTimeout(() => animateValue(grandCell,0,grandTotal,800,true), delay+200);
-    });
-
+      
+      }
+      
+  
     // --- Animate numeric values ---
     function animateValue(cell, start, end, duration = 500, isFloat = false) {
         const startTime = performance.now();
