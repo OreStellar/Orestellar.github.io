@@ -759,6 +759,8 @@ function parseInventoryText(input) {
   let priceData = {};
   let csvLoaded = false;
 
+
+  fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
   .then(res => res.text())
   .then(text => {
   if (!text || !text.includes(',')) {
