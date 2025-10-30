@@ -496,12 +496,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-// --- Rates Tab ---
-const ratesTab = document.getElementById('ratesTab');
-ratesTab.addEventListener('click', (e) => {
-    e.stopPropagation();      // prevent event bubbling
-    showRatesGrid();          // populate and show rates container
-});
+    // --- Rates Tab ---
+    ratesTab.addEventListener('click', (e) => {
+        e.stopPropagation();      // prevent event bubbling
+        showRatesGrid();          // populate and show rates container
+    });
 
     // --- Compare Tab ---
     compareTab.addEventListener('click', (e) => {
