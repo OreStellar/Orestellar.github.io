@@ -98,18 +98,6 @@ body {
 }
 
 /* ----------------- Containers ----------------- */
-#infoboxContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 40px auto;
-    flex-wrap: nowrap;
-    box-sizing: border-box;
-}
 
 #inventoryContainer {
     width: 80%;
@@ -237,7 +225,7 @@ body {
     transform: translate(-50%, -50%) scale(1);
 }
 
-#infoTab { display: none; cursor: pointer; }
+#infoTab { display: inline-block; cursor: pointer; }
 
 /* ----------------- Buttons ----------------- */
 #submitButton {
@@ -650,7 +638,6 @@ function parseInventoryText(input) {
   // Hide inventory, show summary
   inventoryContainer.style.display = 'none';
   summaryContainer.style.display = 'block';
-  infoTab.style.display = 'inline-block';
   summaryContainer.innerHTML = '';
 
   const table = document.createElement('table');
