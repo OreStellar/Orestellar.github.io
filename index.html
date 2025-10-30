@@ -292,7 +292,7 @@ body {
 }
 
 #ratesTab {
-  transform: translateX(20px);
+  transform: translateX(190px);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
 }
@@ -576,9 +576,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const table = document.createElement('table');
         table.classList.add('summary-table');
         const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <th>Ore</th><th>Quantity</th><th>Unit Price</th><th>Compressed</th><th>Total</th>
-        `;
+        thead.innerHTML = `<tr>
+            <th>Ore</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Compressed</th>
+            <th>Total</th>
+        </tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement('tbody');
@@ -622,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const totalRow = document.createElement('tr');
-        totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
+        totalRow.innerHTML = `<td colspan="6" style="text-align:right;font-weight:bold;">Grand Total</td>
                               <td style="text-align:right;font-weight:bold;">0.00</td>`;
         tbody.appendChild(totalRow);
         const grandCell = totalRow.querySelector('td:last-child');
