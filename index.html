@@ -98,7 +98,7 @@ body {
 }
 
 /* ----------------- Containers ----------------- */
-#contractsContainer {
+#infoboxContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -213,7 +213,7 @@ body {
   background: rgba(255, 255, 255, 0.05);
 }
 
-#contractRight {
+#infobox {
     display: none;
     position: fixed;
     top: 50%; left: 50%;
@@ -230,14 +230,14 @@ body {
     max-height: 90%;
     overflow-y: auto;
 }
-#contractRight.active {
+#infobox.active {
     display: block;
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, -50%) scale(1);
 }
 
-#contractRightLogo { display: none; cursor: pointer; }
+#infoTab { display: none; cursor: pointer; }
 
 /* ----------------- Buttons ----------------- */
 #submitButton {
@@ -261,45 +261,6 @@ body {
     justify-content: center;
     gap: 20px;
     margin-top: 20px;
-}
-
-/* ----------------- Contract Boxes ----------------- */
-.contract-container {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.9);
-    color: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    z-index: 20;
-    min-width: 300px;
-    max-width: 400px;
-    box-shadow: 0 0 20px #fff;
-}
-
-.contract-container,
-.contract-table th,
-.contract-table td {
-    font-family: 'Chivo Mono', monospace;
-}
-
-.contract-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.contract-table th, .contract-table td {
-    text-align: left;
-    white-space: nowrap;
-    padding: 6px 4px;
-}
-.contract-table th { font-weight: 600; }
-
-.glow-bullet {
-    color: rgba(72, 255, 0, 0.473);
-    margin-left: 3px;
-    width: 1ch;
-    text-align: center;
 }
 
 /* ----------------- Side Tabs ----------------- */
@@ -345,6 +306,12 @@ body {
   position: relative;
   left: 5px;
 }
+
+#infoTab svg {
+  position: relative;
+  left: 5px;
+}
+
 
 .PasteText {
     text-align: center;
@@ -402,53 +369,24 @@ body {
     <path d="M12 3v18"/>
     <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
   </svg>
+    <span>Compare</span>
 </div>
+
+ <!-- Info tab -->
+  <div id="infoTab" class="sideTab">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ...>
+      <path d="M16 3H5a2 2 0 0 0-2 2v14a2..." />
+      <path d="M15 3v4a2 2 0 0 0 2 2h4" />
+    </svg>
+    <span>Info</span>
+  </div>
 </div>
-<div id="contractsContainer">
+
 
   <div id="summaryContainer" style="display: none;"></div>
 
-<!-- SVG Logo -->
-<div id="contractRightLogo" class="open-modal" data-modal="contractRight" style="cursor:pointer;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note">
-    <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/>
-    <path d="M15 3v4a2 2 0 0 0 2 2h4"/>
-  </svg>
-</div>
-
 <!-- Modal -->
-<div id="contractRight" class="contract-container modal">
 
-  <table class="contract-table">
-    <tr>
-      <th>Contract Type<span class="glow-bullet">•</span></th>
-      <td>Item Exchange</td>
-    </tr>
-    <tr>
-      <th>Availability<span class="glow-bullet">•</span></th><td>Private</td>
-    </tr>
-    <tr>
-      <th>Name<span class="glow-bullet">•</span></th>
-      <td>OreStellar</td>
-    </tr>
-    <tr>
-      <th>I will pay<span class="glow-bullet">•</span></th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>I will receive<span class="glow-bullet">•</span></th>
-      <td id="contract-right-receive">0</td>
-    </tr>
-    <tr>
-      <th>Expiration<span class="glow-bullet">•</span></th>
-      <td>1 week</td>
-    </tr>
-    <tr>
-      <th>Description<span class="glow-bullet">•</span></th>
-      <td>That was Stellar!</td>
-    </tr>
-  </table>
-</div>
 </div>
 <div id="ratesContainer" class="open-modal" style="display:none;">
   <div id="ratesGrid"></div>
@@ -467,8 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const inventoryContainer = document.getElementById('inventoryContainer');
     const oreStellarLogo = document.getElementById('logo');
 
-    const contractRight = document.getElementById('contractRight');
-    const contractRightLogo = document.getElementById('contractRightLogo');
+    const infobox = document.getElementById('infobox');
+    const infoTab = document.getElementById('infoTab');
     const overlay = document.getElementById('overlay');
 
     const ratesTab = document.getElementById('ratesTab');
@@ -477,14 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const compareContainer = document.getElementById('compareContainer');
 
     const panels = {
-        contractRight: contractRight,
+        infobox: infobox,
         summaryContainer: summaryContainer,
         compareContainer: compareContainer,
         ratesContainer: ratesContainer
     };
 
     const tabs = {
-        contractRight: contractRightLogo,
+        infobox: infoTab,
         compareContainer: compareTab,
         ratesContainer: ratesTab
     };
@@ -494,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Default visibility ---
     inventoryContainer.style.display = 'block';
     oreStellarLogo.style.display = 'block';
-    contractRight.style.display = 'none';
+    infobox.style.display = 'none';
     summaryContainer.style.display = 'none';
     compareContainer.style.display = 'none';
     ratesContainer.style.display = 'none';
@@ -536,10 +474,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showPanel('compareContainer');
     });
 
-    // --- Contract Tab ---
-    contractRightLogo.addEventListener('click', (e) => {
+    // --- Info Tab ---
+    infoTab.addEventListener('click', (e) => {
         e.stopPropagation();
-        showPanel('contractRight');
+        showPanel('infobox');
     });
 
 function showRatesGrid() {
@@ -705,7 +643,7 @@ function parseInventoryText(input) {
   // Hide inventory, show summary
   inventoryContainer.style.display = 'none';
   summaryContainer.style.display = 'block';
-  contractRightLogo.style.display = 'inline-block';
+  infoTab.style.display = 'inline-block';
   summaryContainer.innerHTML = '';
 
   const table = document.createElement('table');
