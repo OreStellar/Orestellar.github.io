@@ -665,14 +665,16 @@ closeBtn.addEventListener('click', (e) => {
     ratesContainer.style.display = 'none';
     overlay.style.display = 'none';
     openPanel = null;
-});
-    }
 
+});
+    
+  
     // --- Show container & overlay ---
     console.log("Showing rates container");
     ratesContainer.style.display = 'block';
     overlay.style.display = 'block';
     openPanel = 'ratesContainer';
+}
 });
 
 // --- Parse Inventory Text ---
@@ -697,89 +699,102 @@ function parseInventoryText(input) {
   return results;
 }
 
+/*Submit Button*/
 
- submitButton.addEventListener('click', () => {
-  const input = messageBox.value.trim();
-  if (!input) {
-    console.warn("Submit clicked with empty input.");
-    return;
-  }
+submitButton.addEventListener('click', () => {
+    const input = messageBox.value.trim();
+    if (!input) {
+        console.warn("Submit clicked with empty input.");
+        return;
+    }
 
-  console.log("Submit clicked. Inventory input:", input);
-  const parsedLines = parseInventoryText(input);
-  if (!parsedLines.length) console.warn("No valid ores found.");
+    const parsedLines = parseInventoryText(input);
+    if (!parsedLines.length) {
+        console.warn("No valid ores found.");
+        return;
+    }
 
-  // Hide inventory, show summary
-  inventoryContainer.style.display = 'none';
-  summaryContainer.style.display = 'block';
-  contractRightLogo.style.display = 'inline-block';
-  summaryContainer.innerHTML = '';
+    // --- Hide inventory, show summary ---
+    inventoryContainer.style.display = 'none';
+    summaryContainer.style.display = 'block';
+    contractRightLogo.style.display = 'inline-block';
+    summaryContainer.innerHTML = '';
 
-  const table = document.createElement('table');
-  table.classList.add('summary-table');
-  const thead = document.createElement('thead');
-  thead.innerHTML = `<tr>
-      <th>Ore</th>
-      <th>Quantity</th>
-      <th>Unit Price</th>
-      <th>Compressed</th>
-      <th>Total</th>
-  </tr>`;
-  table.appendChild(thead);
+    // --- Create summary table ---
+    const table = document.createElement('table');
+    table.classList.add('summary-table');
 
-  const tbody = document.createElement('tbody');
-  table.appendChild(tbody);
-  summaryContainer.appendChild(table);
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th>Ore</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Compressed</th>
+            <th>Total</th>
+        </tr>
+    `;
+    table.appendChild(thead);
 
-  let grandTotal = 0;
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    summaryContainer.appendChild(table);
 
-  parsedLines.forEach((item, index) => {
-    const displayName = item.ore.replace(/^Compressed\s+/i, '');
-    const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
-    const unitPrice = priceData[item.ore]?.price150 || 0;
-    const total = item.quantity * unitPrice;
-    grandTotal += total;
+    // --- Populate rows and calculate grand total ---
+    let grandTotal = 0;
+    parsedLines.forEach(item => {
+        const displayName = item.ore.replace(/^Compressed\s+/i, '');
+        const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+        const unitPrice = priceData[item.ore]?.price150 || 0;
+        const total = item.quantity * unitPrice;
+        grandTotal += total;
 
-    const row = document.createElement('tr');
-    row.innerHTML = `<td style="text-align:center;">${displayName}</td>
-                     <td style="text-align:right;">${item.quantity}</td>
-                     <td style="text-align:right;">${unitPrice.toFixed(2)}</td>
-                     <td style="text-align:center;">${isCompressed}</td>
-                     <td style="text-align:right;">${total.toFixed(2)}</td>`;
-    tbody.appendChild(row);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td style="text-align:center;">${displayName}</td>
+            <td style="text-align:right;">${item.quantity}</td>
+            <td style="text-align:right;">${unitPrice.toFixed(2)}</td>
+            <td style="text-align:center;">${isCompressed}</td>
+            <td style="text-align:right;">${total.toFixed(2)}</td>
+        `;
+        tbody.appendChild(row);
+    });
 
-    console.log(`Row ${index}: ${displayName} | Qty: ${item.quantity} | Unit: ${unitPrice} | Total: ${total}`);
-  });
+    document.getElementById('contract-right-receive').textContent = grandTotal.toFixed(2);
 
-  console.log("Grand Total:", grandTotal);
-  document.getElementById('contract-right-receive').textContent = grandTotal.toFixed(2);
-
-
-        rows.forEach(({ row, quantity, unitPrice, total }, index) => {
-            const qtyCell = row.cells[1];
-            const priceCell = row.cells[2];
-            const totalCell = row.cells[4];
-            totalCell.style.color = "#00ff00";
-            setTimeout(() => {
-                animateValue(qtyCell, 0, quantity, 500);
-                animateValue(priceCell, 0, unitPrice, 500, true);
-                animateValue(totalCell, 0, total, 500, true);
-                row.style.animation = `fadeInRow 0.4s ease forwards`;
-            }, delay);
-            delay += animationDelay;
-        });
-
-        const totalRow = document.createElement('tr');
-        totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
-                              <td style="text-align:right;font-weight:bold;">0.00</td>`;
-        tbody.appendChild(totalRow);
-        const grandCell = totalRow.querySelector('td:last-child');
-        grandCell.style.color = "#00ff00";
-        setTimeout(() => animateValue(grandCell,0,grandTotal,800,true), delay+200);
- });
-      
-  
     // --- Animate numeric values ---
+    const rows = Array.from(tbody.rows);
+    let delay = 0;
+    const animationDelay = 50;
+
+    rows.forEach(row => {
+        const qtyCell = row.cells[1];
+        const priceCell = row.cells[2];
+        const totalCell = row.cells[4];
+        totalCell.style.color = "#00ff00";
+
+        setTimeout(() => {
+            animateValue(qtyCell, 0, parseFloat(qtyCell.textContent), 500);
+            animateValue(priceCell, 0, parseFloat(priceCell.textContent), 500, true);
+            animateValue(totalCell, 0, parseFloat(totalCell.textContent), 500, true);
+            row.style.animation = `fadeInRow 0.4s ease forwards`;
+        }, delay);
+
+        delay += animationDelay;
+    });
+
+    // --- Animate grand total row ---
+    const totalRow = document.createElement('tr');
+    totalRow.innerHTML = `
+        <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
+        <td style="text-align:right;font-weight:bold;">${grandTotal.toFixed(2)}</td>
+    `;
+    tbody.appendChild(totalRow);
+    const grandCell = totalRow.querySelector('td:last-child');
+    grandCell.style.color = "#00ff00";
+    setTimeout(() => animateValue(grandCell, 0, grandTotal, 800, true), delay + 200);
+
+    // --- Animate function ---
     function animateValue(cell, start, end, duration = 500, isFloat = false) {
         const startTime = performance.now();
         function update(time) {
@@ -791,6 +806,7 @@ function parseInventoryText(input) {
         }
         requestAnimationFrame(update);
     }
+});
 
 // --- Price Data ---
   let priceData = {};
