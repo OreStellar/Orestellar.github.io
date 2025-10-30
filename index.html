@@ -452,7 +452,6 @@ body {
 </div>
 <div id="ratesContainer" class="open-modal" style="display:none;">
   <button id="ratesClose">✕</button>
-  <input type="text" id="searchInput" placeholder="OreStellar Buy Rates">
   <div id="ratesGrid"></div>
 </div>
 
@@ -559,7 +558,7 @@ function showRatesGrid() {
         console.log("Creating search input...");
         searchInput = document.createElement('input');
         searchInput.id = 'ratesSearchInput';
-        searchInput.placeholder = "Begin typing to search orelist..";
+        searchInput.placeholder = "OreStellar Buy Rates - begin typing to search the orelist..";
         searchInput.style.width = "55%";
         searchInput.style.marginBottom = "10px";
         searchInput.style.padding = "5px";
