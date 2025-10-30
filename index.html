@@ -611,7 +611,8 @@ function showRatesGrid() {
         cell.style.boxShadow = "0 0 10px #fff, 0 0 20px #fff";
         cell.innerHTML = `<strong>${ore}</strong><br><span>${entry.price150.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</span>`;
         grid.appendChild(cell);
-
+        const value = parseFloat(row.price);
+        cell.textContent = value.toFixed(0); // always shows 2 decimals
         console.log(`Created grid cell for ${ore}:`, entry.price150);
 
         // Fade-in animation
