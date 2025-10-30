@@ -757,51 +757,44 @@ function parseInventoryText(input) {
 
 // --- Price Data ---
   let priceData = {};
-  let csvLoaded = false;
+let csvLoaded = false;
 
-
-  fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
+fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/data/prices.csv')
   .then(res => res.text())
   .then(text => {
-  if (!text || !text.includes(',')) {
-    console.error("CSV fetch succeeded but no valid CSV content found:", text.slice(0, 100));
-    return;
-  }
-
-  console.log("CSV loaded successfully.");
-  const lines = text.split('\n');
-  if (!lines[0]) {
-    console.error("CSV file appears empty or malformed.");
-    return;
-  }
-
-  const headers = lines[0].split(',').map(h => h.trim());
-  console.log("CSV headers:", headers);
-
-  const priceIndex = headers.indexOf('Suggested Buy Price @ 150%');
-  if (priceIndex === -1) {
-    console.error("CSV missing 'Suggest buy @ 150%' column");
-    return;
-  }
-
-  priceData = {};
-  for (let i = 1; i < lines.length; i++) {
-    const cols = lines[i].split(',');
-    if (cols.length < headers.length) {
-      console.warn(`Skipping malformed line ${i}:`, lines[i]);
-      continue;
+    if (!text || !text.includes(',')) {
+      console.error("CSV fetch succeeded but no valid CSV content found:", text.slice(0, 100));
+      return;
     }
-    const ore = cols[0].trim();
-    const price = parseFloat(cols[priceIndex].trim()) || 0;
-    priceData[ore] = { price150: price };
-  }
 
-  csvLoaded = true;
-  console.log("Price data loaded:", priceData);
-})
+    const lines = text.trim().split(/\r?\n/); // split into lines
+    const headers = lines[0].split(',').map(h => h.trim());
+    console.log("CSV headers:", headers);
 
+    const priceIndex = headers.indexOf('Suggested Buy Price @ 150%');
+    if (priceIndex === -1) {
+      console.error("Column 'Suggested Buy Price @ 150%' not found");
+      return;
+    }
+
+    priceData = {};
+    // Only process lines 2-191 (indexes 1-190)
+    for (let i = 1; i <= 190 && i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length < headers.length) {
+        console.warn(`Skipping malformed line ${i + 1}:`, lines[i]);
+        continue;
+      }
+
+      const ore = cols[0].trim();
+      const price = parseFloat(cols[priceIndex].trim()) || 0;
+      priceData[ore] = { price150: price };
+    }
+
+    csvLoaded = true;
+    console.log("Price data loaded:", priceData);
+  })
   .catch(err => console.error("Error loading CSV:", err));
-
 
 // --- CSS injection for grid dynamically injects a <style> tag into your page’s <head> with all the CSS needed for your rates grid layout.
 
