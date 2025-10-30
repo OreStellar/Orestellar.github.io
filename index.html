@@ -590,38 +590,34 @@ function showRatesGrid() {
     console.log("Number of ores to display:", ores.length);
 
     ores.forEach((ore, index) => {
-        if (ore.toLowerCase().startsWith('compressed ')) {
-            console.log("Skipping compressed ore:", ore);
-            return;
-        }
+    if (ore.toLowerCase().startsWith('compressed ')) return;
 
-        const entry = priceData[ore];
-        if (!entry) {
-            console.warn("No price data for ore:", ore);
-            return;
-        }
+    const entry = priceData[ore];
+    if (!entry) return;
 
-        const cell = document.createElement('div');
-        cell.className = 'grid-item';
-        cell.style.opacity = 0;
-        cell.style.padding = "8px";
-        cell.style.borderRadius = "6px";
-        cell.style.textAlign = "center";
-        cell.style.background = "rgba(0,255,255,0.05)";
-        cell.style.boxShadow = "0 0 10px #fff, 0 0 20px #fff";
-        cell.innerHTML = `<strong>${ore}</strong><br><span>${entry.price150.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</span>`;
-        grid.appendChild(cell);
-        const value = parseFloat(row.price);
-        cell.textContent = value.toFixed(0); // always shows 2 decimals
-        console.log(`Created grid cell for ${ore}:`, entry.price150);
+    const cell = document.createElement('div');
+    cell.className = 'grid-item';
+    cell.style.opacity = 0;
+    cell.style.padding = "8px";
+    cell.style.borderRadius = "6px";
+    cell.style.textAlign = "center";
+    cell.style.background = "rgba(0,255,255,0.05)";
+    cell.style.boxShadow = "0 0 10px #fff, 0 0 20px #fff";
 
-        // Fade-in animation
-        setTimeout(() => {
-            cell.style.transition = "opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease";
-            cell.style.opacity = 1;
-            cell.style.transform = "translateY(0)";
-        }, index * 20);
-    });
+    // --- Correct number formatting ---
+    const value = parseFloat(entry.price150);
+    cell.innerHTML = `<strong>${ore}</strong><br><span>${value % 1 === 0 ? value.toFixed(0) : value}</span>`;
+
+    grid.appendChild(cell);
+
+    // Fade-in animation
+    setTimeout(() => {
+        cell.style.transition = "opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease";
+        cell.style.opacity = 1;
+        cell.style.transform = "translateY(0)";
+    }, index * 20);
+});
+
 
     // --- Filter function ---
     searchInput.oninput = () => {
