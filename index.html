@@ -151,8 +151,8 @@ body {
 
 #summaryContainer {
     font-family: 'Chivo Mono', monospace;
-    width: 80%;
-    min-width: 620px;
+    width: 100%;
+    min-width: auto;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
@@ -292,13 +292,13 @@ body {
 }
 
 #ratesTab {
-  transform: translateX(190px);
+  transform: translateX(100px);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
 }
 
 #ratesTab:hover {
-  transform: translateX(-90px);
+  transform: translateX(-30px);
   box-shadow: 0 0 20px #fff, 0 0 40px #0ff;
 }
 </style>
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const totalRow = document.createElement('tr');
-        totalRow.innerHTML = `<td colspan="2" style="text-align:right;font-weight:bold;">Grand Total</td>
+        totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
                               <td style="text-align:right;font-weight:bold;">0.00</td>`;
         tbody.appendChild(totalRow);
         const grandCell = totalRow.querySelector('td:last-child');
