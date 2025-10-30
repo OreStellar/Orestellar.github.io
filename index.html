@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = parsedLines.map(item => {
             const displayName = item.ore.replace(/^Compressed\s+/i, '');
             const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
-            const unitPrice = priceData[item.ore]?.price || 0;
+            const unitPrice = priceData[item.ore]?.price150 || 0;
             const total = item.quantity * unitPrice;
             grandTotal += total;
 
