@@ -759,10 +759,11 @@ parsedLines.forEach((item, index) => {
     delay += animationDelay;
 });
 
-      const totalRow = document.createElement('tr');
+const totalRow = document.createElement('tr');
 totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
-                      <td style="text-align:right;font-weight:bold;">0</td>`;
+                      <td style="text-align:right;font-weight:bold;">${grandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
 tbody.appendChild(totalRow);
+
 
 const grandCell = totalRow.querySelector('td:last-child');
 grandCell.style.color = "#00ff00";
