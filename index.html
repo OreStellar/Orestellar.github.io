@@ -641,25 +641,28 @@ function showRatesGrid() {
     };
 
     // --- Close button ---
-    let closeBtn = document.getElementById('ratesClose');
-    if (!closeBtn) {
-        console.log("Creating close button...");
-        closeBtn = document.createElement('div');
-        closeBtn.id = 'ratesClose';
-        closeBtn.innerHTML = '✕';
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '5px';
-        closeBtn.style.right = '10px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.style.fontSize = '1.2rem';
-        closeBtn.style.color = 'rgba(255,255,255,0.8)';
-        closeBtn.style.transition = 'color 0.2s';
-        closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
-        closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
-        ratesContainer.appendChild(closeBtn);
+let closeBtn = document.getElementById('ratesClose');
+if (!closeBtn) {
+    console.log("Creating close button...");
+    closeBtn = document.createElement('div');
+    closeBtn.id = 'ratesClose';
+    closeBtn.innerHTML = '✕';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '5px';
+    closeBtn.style.right = '10px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.fontSize = '1.2rem';
+    closeBtn.style.color = 'rgba(31, 29, 29, 0.61)';
+    closeBtn.style.transition = 'color 0.2s';
+    closeBtn.onmouseover = () => closeBtn.style.color = '#0e0d0dd0';
+    closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(19, 19, 19, 0.8)';
+    ratesContainer.appendChild(closeBtn);
+}
 
+// Attach listener **always**, whether newly created or existing
 closeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    console.log("Close button clicked"); // for debugging
     ratesContainer.style.display = 'none';
     overlay.style.display = 'none';
     openPanel = null;
