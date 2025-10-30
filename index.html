@@ -153,7 +153,7 @@ body {
     font-family: 'Chivo Mono', monospace;
     width: 100%;
     max-width: 100%;
-    min-width: 1000px;
+    min-width: 500px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
@@ -165,6 +165,31 @@ body {
     position: relative;
     flex: 1;
     margin: 0 auto;
+}
+/*SUMMARY TABLE STUFF*/
+.summary-table {
+  width: 100%;                       /* ✅ fill the container */
+  border-collapse: collapse;          /* remove gaps between cells */
+  margin-top: 10px;
+  color: #fff;
+  text-align: center;                 /* optional: center text */
+  table-layout: fixed;                /* ensures equal column widths */
+}
+
+.summary-table th,
+.summary-table td {
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  word-wrap: break-word;              /* prevent overflow */
+}
+
+.summary-table th {
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+}
+
+.summary-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 #contractRight {
