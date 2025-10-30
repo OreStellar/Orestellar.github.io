@@ -15,7 +15,7 @@
     background: transparent;  /* make the scrollbar track transparent */
 }
 #ratesContainer::-webkit-scrollbar-thumb {
-    background: rgba(15, 15, 15, 0.4); /* faint thumb */
+    background: rgba(255, 255, 255, 0.2); /* faint thumb */
     border-radius: 4px;
 }
 #ratesContainer::-webkit-scrollbar-thumb:hover {
@@ -332,7 +332,7 @@ body {
     transform: translateX(-200x);
 }
 .sideTab:hover {
-    transform: translateX(0px);
+    transform: translateX(-150px);
     box-shadow: 0 0 20px #fff, 0 0 40px #fff;
 }
 
@@ -452,6 +452,7 @@ body {
 </div>
 <div id="ratesContainer" class="open-modal" style="display:none;">
   <button id="ratesClose">✕</button>
+  <input type="text" id="searchInput" placeholder="OreStellar Buy Rates">
   <div id="ratesGrid"></div>
 </div>
 
@@ -558,7 +559,7 @@ function showRatesGrid() {
         console.log("Creating search input...");
         searchInput = document.createElement('input');
         searchInput.id = 'ratesSearchInput';
-        searchInput.placeholder = "OreStellar Buy Rates - begin typing to search the orelist..";
+        searchInput.placeholder = "Begin typing to search orelist..";
         searchInput.style.width = "55%";
         searchInput.style.marginBottom = "10px";
         searchInput.style.padding = "5px";
@@ -640,42 +641,37 @@ function showRatesGrid() {
     };
 
     // --- Close button ---
-let closeBtn = document.getElementById('ratesClose');
-if (!closeBtn) {
-    console.log("Creating close button...");
-    closeBtn = document.createElement('div');
-    closeBtn.id = 'ratesClose';
-    closeBtn.innerHTML = '✕';
-    closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '5px';
-    closeBtn.style.right = '10px';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.style.fontSize = '1.2rem';
-    closeBtn.style.color = 'rgba(31, 29, 29, 0.61)';
-    closeBtn.style.transition = 'color 0.2s';
-    closeBtn.onmouseover = () => closeBtn.style.color = '#0e0d0dd0';
-    closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(19, 19, 19, 0.8)';
-    ratesContainer.appendChild(closeBtn);
-}
+    let closeBtn = document.getElementById('ratesClose');
+    if (!closeBtn) {
+        console.log("Creating close button...");
+        closeBtn = document.createElement('div');
+        closeBtn.id = 'ratesClose';
+        closeBtn.innerHTML = '✕';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '5px';
+        closeBtn.style.right = '10px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.fontSize = '1.2rem';
+        closeBtn.style.color = 'rgba(255,255,255,0.8)';
+        closeBtn.style.transition = 'color 0.2s';
+        closeBtn.onmouseover = () => closeBtn.style.color = '#fff';
+        closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.8)';
+        ratesContainer.appendChild(closeBtn);
 
-// Attach listener **always**, whether newly created or existing
 closeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    console.log("Close button clicked"); // for debugging
     ratesContainer.style.display = 'none';
     overlay.style.display = 'none';
     openPanel = null;
-
 });
-    
-  
+    }
+
     // --- Show container & overlay ---
     console.log("Showing rates container");
     ratesContainer.style.display = 'block';
     overlay.style.display = 'block';
     openPanel = 'ratesContainer';
 }
-});
 
 // --- Parse Inventory Text ---
 function parseInventoryText(input) {
@@ -699,102 +695,89 @@ function parseInventoryText(input) {
   return results;
 }
 
-/*Submit Button*/
 
-submitButton.addEventListener('click', () => {
-    const input = messageBox.value.trim();
-    if (!input) {
-        console.warn("Submit clicked with empty input.");
-        return;
-    }
+ submitButton.addEventListener('click', () => {
+  const input = messageBox.value.trim();
+  if (!input) {
+    console.warn("Submit clicked with empty input.");
+    return;
+  }
 
-    const parsedLines = parseInventoryText(input);
-    if (!parsedLines.length) {
-        console.warn("No valid ores found.");
-        return;
-    }
+  console.log("Submit clicked. Inventory input:", input);
+  const parsedLines = parseInventoryText(input);
+  if (!parsedLines.length) console.warn("No valid ores found.");
 
-    // --- Hide inventory, show summary ---
-    inventoryContainer.style.display = 'none';
-    summaryContainer.style.display = 'block';
-    contractRightLogo.style.display = 'inline-block';
-    summaryContainer.innerHTML = '';
+  // Hide inventory, show summary
+  inventoryContainer.style.display = 'none';
+  summaryContainer.style.display = 'block';
+  contractRightLogo.style.display = 'inline-block';
+  summaryContainer.innerHTML = '';
 
-    // --- Create summary table ---
-    const table = document.createElement('table');
-    table.classList.add('summary-table');
+  const table = document.createElement('table');
+  table.classList.add('summary-table');
+  const thead = document.createElement('thead');
+  thead.innerHTML = `<tr>
+      <th>Ore</th>
+      <th>Quantity</th>
+      <th>Unit Price</th>
+      <th>Compressed</th>
+      <th>Total</th>
+  </tr>`;
+  table.appendChild(thead);
 
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-        <tr>
-            <th>Ore</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Compressed</th>
-            <th>Total</th>
-        </tr>
-    `;
-    table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+  summaryContainer.appendChild(table);
 
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    summaryContainer.appendChild(table);
+  let grandTotal = 0;
 
-    // --- Populate rows and calculate grand total ---
-    let grandTotal = 0;
-    parsedLines.forEach(item => {
-        const displayName = item.ore.replace(/^Compressed\s+/i, '');
-        const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
-        const unitPrice = priceData[item.ore]?.price150 || 0;
-        const total = item.quantity * unitPrice;
-        grandTotal += total;
+  parsedLines.forEach((item, index) => {
+    const displayName = item.ore.replace(/^Compressed\s+/i, '');
+    const isCompressed = item.ore.toLowerCase().startsWith('compressed ') ? '✅' : '❌';
+    const unitPrice = priceData[item.ore]?.price150 || 0;
+    const total = item.quantity * unitPrice;
+    grandTotal += total;
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td style="text-align:center;">${displayName}</td>
-            <td style="text-align:right;">${item.quantity}</td>
-            <td style="text-align:right;">${unitPrice.toFixed(2)}</td>
-            <td style="text-align:center;">${isCompressed}</td>
-            <td style="text-align:right;">${total.toFixed(2)}</td>
-        `;
-        tbody.appendChild(row);
-    });
+    const row = document.createElement('tr');
+    row.innerHTML = `<td style="text-align:center;">${displayName}</td>
+                     <td style="text-align:right;">${item.quantity}</td>
+                     <td style="text-align:right;">${unitPrice.toFixed(2)}</td>
+                     <td style="text-align:center;">${isCompressed}</td>
+                     <td style="text-align:right;">${total.toFixed(2)}</td>`;
+    tbody.appendChild(row);
 
-    document.getElementById('contract-right-receive').textContent = grandTotal.toFixed(2);
+    console.log(`Row ${index}: ${displayName} | Qty: ${item.quantity} | Unit: ${unitPrice} | Total: ${total}`);
+  });
 
+  console.log("Grand Total:", grandTotal);
+  document.getElementById('contract-right-receive').textContent = grandTotal.toFixed(2);
+
+
+        rows.forEach(({ row, quantity, unitPrice, total }, index) => {
+            const qtyCell = row.cells[1];
+            const priceCell = row.cells[2];
+            const totalCell = row.cells[4];
+            totalCell.style.color = "#00ff00";
+            setTimeout(() => {
+                animateValue(qtyCell, 0, quantity, 500);
+                animateValue(priceCell, 0, unitPrice, 500, true);
+                animateValue(totalCell, 0, total, 500, true);
+                row.style.animation = `fadeInRow 0.4s ease forwards`;
+            }, delay);
+            delay += animationDelay;
+        });
+
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `<td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
+                              <td style="text-align:right;font-weight:bold;">0.00</td>`;
+        tbody.appendChild(totalRow);
+        const grandCell = totalRow.querySelector('td:last-child');
+        grandCell.style.color = "#00ff00";
+        setTimeout(() => animateValue(grandCell,0,grandTotal,800,true), delay+200);
+ });
+      
+  
     // --- Animate numeric values ---
-    const rows = Array.from(tbody.rows);
-    let delay = 0;
-    const animationDelay = 50;
-
-    rows.forEach(row => {
-        const qtyCell = row.cells[1];
-        const priceCell = row.cells[2];
-        const totalCell = row.cells[4];
-        totalCell.style.color = "#00ff00";
-
-        setTimeout(() => {
-            animateValue(qtyCell, 0, parseFloat(qtyCell.textContent), 500);
-            animateValue(priceCell, 0, parseFloat(priceCell.textContent), 500, true);
-            animateValue(totalCell, 0, parseFloat(totalCell.textContent), 500, true);
-            row.style.animation = `fadeInRow 0.4s ease forwards`;
-        }, delay);
-
-        delay += animationDelay;
-    });
-
-    // --- Animate grand total row ---
-    const totalRow = document.createElement('tr');
-    totalRow.innerHTML = `
-        <td colspan="4" style="text-align:right;font-weight:bold;">Grand Total</td>
-        <td style="text-align:right;font-weight:bold;">${grandTotal.toFixed(2)}</td>
-    `;
-    tbody.appendChild(totalRow);
-    const grandCell = totalRow.querySelector('td:last-child');
-    grandCell.style.color = "#00ff00";
-    setTimeout(() => animateValue(grandCell, 0, grandTotal, 800, true), delay + 200);
-
-    // --- Animate function ---
     function animateValue(cell, start, end, duration = 500, isFloat = false) {
         const startTime = performance.now();
         function update(time) {
@@ -806,7 +789,6 @@ submitButton.addEventListener('click', () => {
         }
         requestAnimationFrame(update);
     }
-});
 
 // --- Price Data ---
   let priceData = {};
