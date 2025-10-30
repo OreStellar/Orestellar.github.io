@@ -731,11 +731,10 @@ fetch('https://raw.githubusercontent.com/OreStellar/Orestellar.github.io/main/da
 
     const lines = text.trim().split(/\r?\n/); // split into lines
     const headers = lines[0].split(',').map(h => h.trim());
-    console.log("CSV headers:", headers);
 
     const priceIndex = headers.indexOf('Suggested Buy Price @ 150%');
     if (priceIndex === -1) {
-      console.error("Column 'Suggested Buy Price @ 150%' not found");
+
       return;
     }
 
