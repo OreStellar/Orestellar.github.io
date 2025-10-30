@@ -775,7 +775,7 @@ function parseInventoryText(input) {
   const headers = lines[0].split(',').map(h => h.trim());
   console.log("CSV headers:", headers);
 
-  const priceIndex = headers.indexOf('Suggest buy @ 150%');
+  const priceIndex = headers.indexOf('Suggested Buy Price @ 150%');
   if (priceIndex === -1) {
     console.error("CSV missing 'Suggest buy @ 150%' column");
     return;
