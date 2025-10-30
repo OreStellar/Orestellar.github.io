@@ -228,8 +228,22 @@ body {
 #infoTab { 
     display: inline-block;
     cursor: pointer; 
-    width: 250px;               /* normal tab width */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 250px;
     height: 30px;
+    background: linear-gradient(145deg, rgba(0,255,255,0.05), rgba(0,255,255,0.1));
+    border: 2px solid rgba(0,0,0,0.5);
+    border-left: none;
+    border-radius: 25px;
+    color: #fff;
+    cursor: pointer;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff;
+    box-shadow: 0 0 10px #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 10px;
   }
 
 /* ----------------- Buttons ----------------- */
