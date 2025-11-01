@@ -91,56 +91,66 @@ body {
 .modal.active { display: block; }
 
 /* ----------------- Logo ----------------- */
-#logo {
-    text-align: center;
-    font-size: 4rem;
-    margin: 110px 0;
-    transform: skewX(-10deg);
-}
 /* --- LOGO FLICKER ANIMATION --- */
 #logo {
   font-family: 'Orbitron', sans-serif;
   font-size: 48px;
   letter-spacing: 2px;
-  color: cyan;
-  text-shadow: 0 0 10px rgba(0,255,255,0.6);
+  color: white;
+  text-shadow: 0 0 10px rgba(255,255,255,0.6);
 }
 
-/* "Ore" flickers and glows */
+/* --- "Ore" flickers and glows white --- */
 #logo .ore {
   display: inline-block;
   opacity: 0.3;
   animation: oreFlickerSequence 3s ease-in-out forwards;
 }
 
-/* "Stellar" remains stable */
+/* --- "Stellar" stays dim until Ore’s final flash --- */
 #logo .stellar {
-  opacity: 0.85;
+  display: inline-block;
+  opacity: 0.25;
+  filter: brightness(0.5);
+  animation: stellarLightup 3s ease-in-out forwards;
 }
 
-/* --- Flicker + Glow Sequence --- */
+/* --- Ore Flicker Sequence (white) --- */
 @keyframes oreFlickerSequence {
-  0% { opacity: 0.3; filter: brightness(0.5); }          /* dim start */
-  40% { opacity: 0.3; }                                  /* hold dim (1.2s) */
-  45% { opacity: 1; filter: brightness(1.2); }           /* flicker 1 */
-  53% { opacity: 0.3; filter: brightness(0.5); }         /* back to dim */
-  60% { opacity: 1; filter: brightness(1.3); }           /* flicker 2 */
-  75% { opacity: 0.3; filter: brightness(0.5); }         /* dim pause */
-  85% { opacity: 1; filter: brightness(1.5); }           /* final flash */
+  0%   { opacity: 0.3; filter: brightness(0.5); }
+  40%  { opacity: 0.3; }
+  45%  { opacity: 1; filter: brightness(1.2); text-shadow: 0 0 20px white; }
+  53%  { opacity: 0.3; filter: brightness(0.5); text-shadow: none; }
+  60%  { opacity: 1; filter: brightness(1.3); text-shadow: 0 0 25px white; }
+  75%  { opacity: 0.3; filter: brightness(0.5); text-shadow: none; }
+  85%  { opacity: 1; filter: brightness(1.6); text-shadow: 0 0 40px white, 0 0 80px white; }
   100% {
     opacity: 1;
-    filter: brightness(1.6);
-    text-shadow: 0 0 20px cyan, 0 0 40px cyan, 0 0 80px cyan;
+    filter: brightness(1.8);
+    text-shadow: 0 0 30px white, 0 0 60px white, 0 0 120px white;
   }
 }
 
-/* --- Gentle Pulse After Flicker --- */
-@keyframes oreGlowPulse {
-  0% { text-shadow: 0 0 20px cyan, 0 0 40px cyan; }
-  100% { text-shadow: 0 0 30px cyan, 0 0 60px cyan, 0 0 100px cyan; }
+/* --- Stellar Lights Up On Ore's Final Flash (white glow) --- */
+@keyframes stellarLightup {
+  0%, 84% {
+    opacity: 0.25;
+    filter: brightness(0.5);
+    text-shadow: none;
+  }
+  85%, 100% {
+    opacity: 1;
+    filter: brightness(1.6);
+    text-shadow: 0 0 30px white, 0 0 60px white, 0 0 120px white;
+  }
 }
 
-/* Add after flicker to loop the glow pulse */
+/* --- Gentle Pulse After Flicker (white glow) --- */
+@keyframes oreGlowPulse {
+  0% { text-shadow: 0 0 30px white, 0 0 60px white; }
+  100% { text-shadow: 0 0 45px white, 0 0 90px white, 0 0 150px white; }
+}
+
 #logo .ore.glow {
   animation: oreFlickerSequence 3s ease-in-out forwards,
              oreGlowPulse 2s ease-in-out infinite alternate;
