@@ -97,6 +97,54 @@ body {
     margin: 110px 0;
     transform: skewX(-10deg);
 }
+/* --- LOGO FLICKER ANIMATION --- */
+#logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  letter-spacing: 2px;
+  color: cyan;
+  text-shadow: 0 0 10px rgba(0,255,255,0.6);
+}
+
+/* "Ore" flickers and glows */
+#logo .ore {
+  display: inline-block;
+  opacity: 0.3;
+  animation: oreFlickerSequence 3s ease-in-out forwards;
+}
+
+/* "Stellar" remains stable */
+#logo .stellar {
+  opacity: 0.85;
+}
+
+/* --- Flicker + Glow Sequence --- */
+@keyframes oreFlickerSequence {
+  0% { opacity: 0.3; filter: brightness(0.5); }          /* dim start */
+  40% { opacity: 0.3; }                                  /* hold dim (1.2s) */
+  45% { opacity: 1; filter: brightness(1.2); }           /* flicker 1 */
+  53% { opacity: 0.3; filter: brightness(0.5); }         /* back to dim */
+  60% { opacity: 1; filter: brightness(1.3); }           /* flicker 2 */
+  75% { opacity: 0.3; filter: brightness(0.5); }         /* dim pause */
+  85% { opacity: 1; filter: brightness(1.5); }           /* final flash */
+  100% {
+    opacity: 1;
+    filter: brightness(1.6);
+    text-shadow: 0 0 20px cyan, 0 0 40px cyan, 0 0 80px cyan;
+  }
+}
+
+/* --- Gentle Pulse After Flicker --- */
+@keyframes oreGlowPulse {
+  0% { text-shadow: 0 0 20px cyan, 0 0 40px cyan; }
+  100% { text-shadow: 0 0 30px cyan, 0 0 60px cyan, 0 0 100px cyan; }
+}
+
+/* Add after flicker to loop the glow pulse */
+#logo .ore.glow {
+  animation: oreFlickerSequence 3s ease-in-out forwards,
+             oreGlowPulse 2s ease-in-out infinite alternate;
+}
 
 /* ----------------- Containers ----------------- */
 
@@ -361,7 +409,9 @@ box-shadow: 0 0 20px #fff, 0 0 40px #fff;
 <canvas id="staticStars"></canvas>
 <canvas id="starfield"></canvas>
 <div id="overlay" style="display:none;"></div>
-<div id="logo" class="neon">OreStellar</div>
+<div id="logo" class="neon">
+  <span class="ore">Ore</span><span class="stellar">Stellar</span>
+</div>
 <div id="inventoryContainer">
 
   <p class="PasteText">Paste Your Inventory Below</p>
@@ -954,7 +1004,10 @@ drawStars();
 
 
 
-
+/*logo flicker forever*/
+setTimeout(() => {
+  document.querySelector('#logo .ore').classList.add('glow');
+}, 3000); // matches flicker sequence length
 
 
 });
