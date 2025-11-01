@@ -9,6 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 
+#header, .titlebar {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
 /* ----------------- Scrollbars ----------------- */
 /* WebKit browsers (Chrome, Edge, Safari) */
 #ratesContainer::-webkit-scrollbar {
@@ -97,6 +103,9 @@ body {
   letter-spacing: 2px;
   color: white;
   text-shadow: 0 0 10px rgba(255,255,255,0.6);
+  display: inline-block; /* or keep whatever display you used originally */
+  text-align: center;    /* if it was centered */
+  vertical-align: middle;
 }
 
 /* --- "Ore" flickers and glows --- */
@@ -156,7 +165,18 @@ body {
   animation: whiteGlowPulse 2s ease-in-out infinite alternate;
   filter: brightness(1.8);
 }
+/* Fix inline-block spacing shift from splitting text */
+#logo .ore,
+#logo .stellar {
+  display: inline;  /* was inline-block — switch to inline */
+  vertical-align: baseline;
+}
 
+/* Maintain glow and flicker without affecting layout */
+#logo .ore,
+#logo .stellar {
+  animation-fill-mode: forwards;
+}
 /* ----------------- Containers ----------------- */
 
 #inventoryContainer {
